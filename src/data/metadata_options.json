@@ -1,0 +1,17 @@
+{
+  "religions": ["Hindu", "Muslim", "Sikh", "Christian", "Jain", "Parsi", "Buddhist", "Jewish", "No Religion"],
+  "mother_tongues": ["Hindi", "English", "Punjabi", "Marathi", "Telugu", "Tamil", "Bengali", "Gujarati", "Kannada", "Malayalam"],
+  "diet_types": ["Veg", "Non-Veg", "Eggetarian", "Vegan", "Jain"],
+  "marital_status": ["Never Married", "Divorced", "Widowed", "Awaiting Divorce"],
+  "income_brackets": [
+    {"label": "Below ₹5L", "value": "0-5"},
+    {"label": "₹5L - ₹10L", "value": "5-10"},
+    {"label": "₹10L - ₹20L", "value": "10-20"},
+    {"label": "₹20L - ₹35L", "value": "20-35"},
+    {"label": "₹35L - ₹50L", "value": "35-50"},
+    {"label": "₹50L - ₹1Cr", "value": "50-100"},
+    {"label": "₹1Cr+", "value": "100-plus"}
+  ],
+  "family_values": ["Traditional", "Moderate", "Liberal"],
+  "working_with": ["Private Sector", "Government/PSU", "Defense", "Business/Self-Employed", "Not Working"]
+}

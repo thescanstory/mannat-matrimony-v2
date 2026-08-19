@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --vara-bg: #FBF9F4;
+    --vara-card: #F4EFE6;
+    --vara-card-border: #E8E1D5;
+    --vara-gold: #B89552;
+    --vara-gold-dark: #967639;
+    --vara-dark: #111111;
+    --vara-muted: #777777;
+  }
+
+  body {
+    background: #FBF9F4;
+    color: #111111;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .font-serif-editorial {
+    font-family: 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .font-instrument {
+    font-family: 'Instrument Serif', Georgia, serif;
+  }
+}
+
+/* Vara Editorial Utilities */
+.bg-vara-linen {
+  background-color: #FBF9F4;
+}
+
+.bg-vara-tile {
+  background-color: #F4EFE6;
+}
+
+.border-vara-tile {
+  border-color: #E8E1D5;
+}
+
+.text-vara-gold {
+  color: #B89552;
+}
+
+.bg-vara-gold {
+  background-color: #B89552;
+}
+
+.btn-vara-primary {
+  background-color: #111111;
+  color: #FFFFFF;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+}
+.btn-vara-primary:hover {
+  background-color: #B89552;
+}
+
+.btn-vara-gold {
+  background-color: #B89552;
+  color: #FFFFFF;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+}
+.btn-vara-gold:hover {
+  background-color: #967639;
+}
+
+.phone-vara-bezel {
+  border: 10px solid #242220;
+  box-shadow: 
+    0 25px 75px -15px rgba(184, 149, 82, 0.15),
+    0 15px 35px -10px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 2px rgba(184, 149, 82, 0.3);
+}
+
+.glass-dock-vara {
+  background: rgba(251, 249, 244, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(232, 225, 213, 0.9);
+}
+
+/* Custom scrollbar */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,33 @@
+{
+  "user_id": "usr-rahul-01",
+  "display_name": "Rahul Sharma",
+  "age": 29,
+  "height_cm": 178,
+  "marital_status": "Never Married",
+  "religion": "Hindu",
+  "caste": "Brahmin",
+  "mother_tongue": "Hindi",
+  "city": "Bangalore",
+  "education": "MBA",
+  "occupation": "Product Manager",
+  "income_bracket": "20-35",
+  "diet": "Veg",
+  "is_vouched": true,
+  "vouch_video_url": "https://assets.mixkit.co/videos/preview/mixkit-man-working-on-his-laptop-in-a-coffee-shop-41142-large.mp4",
+  "intro_video_url": "https://assets.mixkit.co/videos/preview/mixkit-man-holding-a-tablet-and-smiling-41138-large.mp4",
+  "voice_intro_url": "https://cdn.freesound.org/previews/588/588234_11861866-lq.mp3",
+  
+  "behavioral_data": {
+    "scenarios_completed": 5,
+    "primary_values": ["Career-focused", "Independent Living", "Travel-loving"],
+    "conflict_style": "Collaborative",
+    "financial_style": "Joint expenses, separate savings"
+  },
+  
+  "hard_filters_json": {
+    "religion_pref": ["Hindu"],
+    "age_range": [25, 30],
+    "diet_pref": ["Veg", "Eggetarian"],
+    "income_min": 15
+  }
+}
