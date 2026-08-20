@@ -120,10 +120,16 @@ export const authService = {
     try {
       localStorage.removeItem('mannat_active_user');
       localStorage.removeItem('mannat_demo_user');
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('sb-') || key.includes('supabase')) {
+          localStorage.removeItem(key);
+        }
+      });
+      sessionStorage.clear();
     } catch {}
     if (isSupabaseConfigured()) {
       try {
-        await supabase.auth.signOut();
+        await supabase.auth.signOut({ scope: 'global' });
       } catch {}
     }
     return { error: null };
@@ -134,10 +140,16 @@ export const authService = {
     try {
       localStorage.clear();
       sessionStorage.clear();
+      // Also clear all cookies
+      if (typeof document !== 'undefined') {
+        document.cookie.split(';').forEach((c) => {
+          document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+        });
+      }
     } catch {}
     if (isSupabaseConfigured()) {
       try {
-        await supabase.auth.signOut();
+        await supabase.auth.signOut({ scope: 'global' });
       } catch {}
     }
     return { success: true };

@@ -188,22 +188,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
             </svg>
             <span>Continue with Apple ID</span>
           </button>
-          <button
-            type="button"
-            disabled={loading}
-            onClick={() => handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com')}
-            className="w-full py-3.5 px-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 active:scale-98 text-xs font-black text-[#8C6D32] border border-[#B89552]/40 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
-          >
-            <Sparkles className="w-4 h-4 text-[#B89552]" />
-            <span>Instant Sign In (Patrick Abraham)</span>
-          </button>
         </div>
 
         {/* Divider */}
         <div className="relative flex items-center justify-center pt-2">
           <div className="border-t border-[#E8E1D5] w-full" />
           <span className="bg-[#F4EFE6] px-3 text-[10px] text-[#777777] font-bold uppercase tracking-wider absolute">
-            or passwordless email link
+            or sign in with candidate profile
           </span>
         </div>
 
@@ -217,8 +208,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Patrick Abraham"
+              placeholder="e.g. Rahul Sharma"
               className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
+              required
             />
           </div>
 
@@ -231,7 +223,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="patrickabraham.abraham@gmail.com"
+                placeholder="rahul.sharma@example.com"
                 className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
                 required
               />
