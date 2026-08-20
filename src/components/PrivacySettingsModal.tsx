@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 import { X, Lock, Eye, Check, ShieldCheck, Sparkles } from 'lucide-react';
 import type { PrivacySettings } from '../types';
+import type { UserSession } from '../services/authService';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LogOut } from 'lucide-react';
 
 interface PrivacySettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialSettings: PrivacySettings;
   onSave: (settings: PrivacySettings) => void;
+  currentUser?: UserSession | null;
+  onLogout?: () => void;
 }
 
 export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
   isOpen,
   onClose,
   initialSettings,
-  onSave
+  onSave,
+  currentUser,
+  onLogout
 }) => {
   const [photoPrivacy, setPhotoPrivacy] = useState(initialSettings.photo_privacy || 'visible_to_everyone');
   const [profileVisibility, setProfileVisibility] = useState(initialSettings.profile_visibility || 'visible_in_discovery');
@@ -237,6 +243,35 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
 
             {/* Apple App Store Mandated: Account Deletion (Guideline 5.1.1) */}
             <div className="pt-2 border-t border-[#E8E1D5] space-y-2">
+              {/* Account Session & Logout */}
+              {currentUser && onLogout && (
+                <div className="p-4 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-black text-[#8C6D32] uppercase tracking-wider block">
+                      Logged In As
+                    </span>
+                    <p className="text-xs font-bold text-[#111111] truncate">
+                      {currentUser.user_metadata?.full_name || currentUser.email || 'Candidate User'}
+                    </p>
+                    {currentUser.email && (
+                      <p className="text-[11px] text-[#777777] truncate">{currentUser.email}</p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onLogout();
+                      onClose();
+                    }}
+                    className="px-3.5 py-2 rounded-full bg-white border border-[#E8E1D5] hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-[#111111] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 active:scale-95"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              )}
+
+              {/* GDPR Delete Data */}
               <div className="p-4 rounded-2xl bg-rose-50/70 border border-rose-200/80 space-y-2">
                 <span className="text-xs font-black text-rose-800 uppercase tracking-wider block">
                   Account Management & GDPR

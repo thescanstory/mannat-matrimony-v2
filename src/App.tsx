@@ -16,7 +16,7 @@ import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { Toast } from './components/Toast';
-import { Home, Heart, ShieldCheck, Crown, Eye, UserCheck, Filter, X, Sparkles } from 'lucide-react';
+import { Home, Heart, ShieldCheck, Crown, Eye, UserCheck, Filter, X, Sparkles, LogOut, LogIn } from 'lucide-react';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
@@ -41,6 +41,17 @@ export function App() {
     setToastMessage(msg);
     setToastType(type);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authService.signOut();
+      setCurrentUser(null);
+      triggerToast('Logged out successfully', 'success');
+    } catch {
+      setCurrentUser(null);
+      triggerToast('Logged out', 'success');
+    }
   };
 
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
@@ -242,10 +253,31 @@ export function App() {
             <span className="hidden sm:inline">Upgrade</span>
           </button>
 
-          {currentUser && (
-            <span className="hidden lg:inline-block text-xs text-emerald-700 font-extrabold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              ✓ {currentUser.user_metadata?.full_name || currentUser.email}
-            </span>
+          {/* User Account / Auth & Logout */}
+          {currentUser ? (
+            <div className="flex items-center gap-1.5">
+              <span className="hidden lg:inline-block text-xs text-emerald-700 font-extrabold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                ✓ {currentUser.user_metadata?.full_name || currentUser.email}
+              </span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="px-3 py-1.5 rounded-full bg-white border border-[#E8E1D5] hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-[#111111] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+                title="Log Out"
+              >
+                <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                <span>Log Out</span>
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setCurrentView('auth')}
+              className="px-3 py-1.5 rounded-full bg-white border border-[#E8E1D5] hover:bg-[#F4EFE6] text-[#111111] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              <LogIn className="w-3.5 h-3.5 text-[#B89552]" />
+              <span>Log In</span>
+            </button>
           )}
         </div>
       </header>
@@ -350,6 +382,8 @@ export function App() {
         isOpen={showPrivacyModal}
         onClose={() => setShowPrivacyModal(false)}
         initialSettings={privacySettings}
+        currentUser={currentUser}
+        onLogout={handleLogout}
         onSave={(settings) => {
           setPrivacySettings(settings);
           triggerToast('Privacy preferences updated!', 'success');
