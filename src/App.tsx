@@ -15,13 +15,14 @@ import { PrivacySettingsModal } from './components/PrivacySettingsModal';
 import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
+import { ProfileScreen } from './components/ProfileScreen';
 import { Toast } from './components/Toast';
-import { Home, Heart, ShieldCheck, Crown, Eye, UserCheck, Sparkles, LogOut, LogIn } from 'lucide-react';
+import { Home, Heart, Eye, Sparkles, User } from 'lucide-react';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
-  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal'>('home');
+  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile'>('home');
   const [shareProfile, setShareProfile] = useState<Profile | null>(null);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -172,78 +173,14 @@ export function App() {
       <div className="w-full max-w-md mx-auto flex-1 min-h-screen bg-[#FBF9F4] flex flex-col relative">
         
         {/* App Header Inside The App Frame */}
-        <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-4 py-3 z-40 sticky top-0 shadow-xs flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => setCurrentView('home')}
-              className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight hover:opacity-80 transition-opacity cursor-pointer leading-none"
-            >
-              mannat
-            </button>
-          </div>
-
-          <div className="flex items-center gap-1.5 flex-nowrap overflow-x-auto no-scrollbar py-0.5">
-            {/* AI Match Trigger */}
-            <button
-              type="button"
-              onClick={() => setShowAiModal(true)}
-              className="px-3 py-1.5 rounded-full bg-[#111111] text-[#B89552] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs border border-[#B89552]/40 shrink-0 active:scale-95"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>AI Match</span>
-            </button>
-
-            {/* Parent Mode Toggle */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsParentView(!isParentView);
-                triggerToast(
-                  !isParentView ? 'Parent Mode Activated 👨‍👩‍👧 Large Text & Extra Guidance' : 'Switched back to Candidate Mode',
-                  'sparkle'
-                );
-              }}
-              className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer shadow-xs shrink-0 ${
-                isParentView ? 'bg-amber-600 text-white font-extrabold shadow-sm' : 'bg-white text-[#111111] border border-[#E8E1D5] hover:bg-gray-100'
-              }`}
-            >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>Parent Mode ({isParentView ? 'ON' : 'OFF'})</span>
-            </button>
-
-            {/* Upgrade Button */}
-            <button
-              type="button"
-              onClick={() => setShowPaywallModal(true)}
-              className="w-8 h-8 rounded-full bg-[#111111] text-white hover:bg-[#B89552] flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0 active:scale-95"
-              title="Upgrade to Gold"
-            >
-              <Crown className="w-3.5 h-3.5 text-[#B89552]" />
-            </button>
-
-            {/* User Account / Auth & Logout */}
-            {currentUser ? (
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="px-3 py-1.5 rounded-full bg-white border border-[#E8E1D5] hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-[#111111] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 active:scale-95"
-                title={`Logged in as ${currentUser.user_metadata?.full_name || currentUser.email || 'User'}`}
-              >
-                <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                <span className="hidden sm:inline">Log Out</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setCurrentView('auth')}
-                className="px-3 py-1.5 rounded-full bg-white border border-[#E8E1D5] hover:bg-[#F4EFE6] text-[#111111] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 active:scale-95"
-              >
-                <LogIn className="w-3.5 h-3.5 text-[#B89552]" />
-                <span>Log In</span>
-              </button>
-            )}
-          </div>
+        <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-5 py-4 z-40 sticky top-0 shadow-xs flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setCurrentView('home')}
+            className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight hover:opacity-80 transition-opacity cursor-pointer leading-none"
+          >
+            mannat
+          </button>
         </header>
 
         {/* Parent View Header Bar Banner */}
@@ -323,6 +260,28 @@ export function App() {
                 onBackToFeed={() => setCurrentView('home')}
               />
             )}
+
+            {/* Profile & Account View */}
+            {currentView === 'profile' && (
+              <ProfileScreen
+                currentUser={currentUser}
+                privacySettings={privacySettings}
+                isParentView={isParentView}
+                onToggleParentView={() => {
+                  setIsParentView(!isParentView);
+                  triggerToast(
+                    !isParentView ? 'Parent Mode Activated 👨‍👩‍👧 Large Text & Extra Guidance' : 'Switched back to Candidate Mode',
+                    'sparkle'
+                  );
+                }}
+                onOpenPrivacySettings={() => setShowPrivacyModal(true)}
+                onOpenPaywall={() => setShowPaywallModal(true)}
+                onOpenAiMatchmaker={() => setShowAiModal(true)}
+                onOpenOnboarding={() => setCurrentView('onboarding')}
+                onOpenAuth={() => setCurrentView('auth')}
+                onLogout={handleLogout}
+              />
+            )}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -369,7 +328,7 @@ export function App() {
       />
 
       {/* Modern Floating Bottom Dock Navigation Bar */}
-      {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections') && (
+      {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass-dock-vara rounded-full z-50 px-4 py-2.5 flex items-center justify-around shadow-xl border border-[#E8E1D5]">
           <button
             type="button"
@@ -393,7 +352,6 @@ export function App() {
             <span>For You</span>
           </button>
 
-
           <button
             type="button"
             onClick={() => setShowAiModal(true)}
@@ -416,11 +374,13 @@ export function App() {
 
           <button
             type="button"
-            onClick={() => setShowPrivacyModal(true)}
-            className="flex flex-col items-center gap-0.5 text-[10px] font-black text-[#777777] hover:text-[#111111] transition-all cursor-pointer"
+            onClick={() => setCurrentView('profile')}
+            className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
+              currentView === 'profile' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
+            }`}
           >
-            <ShieldCheck className="w-5 h-5" />
-            <span>Privacy</span>
+            <User className="w-5 h-5" />
+            <span>Profile</span>
           </button>
         </div>
       )}
