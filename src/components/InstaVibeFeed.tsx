@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
@@ -50,15 +50,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (showIntroBanner) {
-      // Automatically slide out to the left after 4.2 seconds to reveal profiles smoothly
-      const timer = setTimeout(() => {
-        dismissIntroBanner();
-      }, 4200);
-      return () => clearTimeout(timer);
-    }
-  }, [showIntroBanner]);
+  // Card stays until user swipes left, seamlessly unlocking the profile feed
 
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
