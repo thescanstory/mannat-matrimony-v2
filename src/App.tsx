@@ -16,7 +16,7 @@ import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { Toast } from './components/Toast';
-import { Home, Heart, ShieldCheck, Crown, Eye, UserCheck, Filter, X, Sparkles, Plus } from 'lucide-react';
+import { Home, Heart, ShieldCheck, Crown, Eye, UserCheck, Filter, X, Sparkles } from 'lucide-react';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
@@ -174,16 +174,6 @@ export function App() {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Create Profile Button */}
-          <button
-            type="button"
-            onClick={() => setCurrentView('onboarding')}
-            className="px-3 py-1.5 rounded-full bg-white border border-[#E8E1D5] hover:bg-gray-100 text-[#111111] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
-          >
-            <Plus className="w-3.5 h-3.5 text-[#B89552]" />
-            <span>Add Profile</span>
-          </button>
-
           {/* AI Matchmaker Trigger */}
           <button
             type="button"
