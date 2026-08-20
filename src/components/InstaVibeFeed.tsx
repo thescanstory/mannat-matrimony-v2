@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, SlidersHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
@@ -510,19 +510,20 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       </AnimatePresence>
 
       {/* Recommended Vertical Video Profiles List */}
-      <div className="px-5 space-y-4 flex-1">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-xl font-serif-editorial font-bold text-[#111111] tracking-tight">Curated Intros</h3>
-            <p className="text-[11px] text-[#777777] font-bold">Verified Vertical Stream</p>
-          </div>
+      <div className="px-4 space-y-4 flex-1 pt-2">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[11px] font-black uppercase tracking-widest text-[#B89552] flex items-center gap-1.5 bg-[#F4EFE6] px-3 py-1 rounded-full border border-[#E8E1D5]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Verified Intros ({profiles.length})
+          </span>
+
           <button
             type="button"
             onClick={onOpenFilters}
-            className="text-xs font-extrabold text-[#B89552] hover:underline flex items-center gap-0.5 bg-[#F4EFE6] px-3.5 py-1.5 rounded-full border border-[#E8E1D5] cursor-pointer"
+            className="text-[11px] font-black uppercase tracking-wider text-[#777777] hover:text-[#111111] flex items-center gap-1 bg-[#F4EFE6] px-3 py-1 rounded-full border border-[#E8E1D5] hover:border-[#B89552] transition-colors cursor-pointer"
           >
-            <span>Filter</span>
-            <ChevronRight className="w-3.5 h-3.5 text-[#B89552]" />
+            <SlidersHorizontal className="w-3 h-3 text-[#B89552]" />
+            <span>Refine</span>
           </button>
         </div>
 

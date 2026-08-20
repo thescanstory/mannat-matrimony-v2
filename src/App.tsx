@@ -17,7 +17,7 @@ import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { ProfileScreen } from './components/ProfileScreen';
 import { Toast } from './components/Toast';
-import { Home, Heart, Eye, Sparkles, User, ArrowLeft } from 'lucide-react';
+import { Home, Heart, Eye, Sparkles, User, ArrowLeft, SlidersHorizontal } from 'lucide-react';
 
 type ViewType = 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile';
 
@@ -275,15 +275,15 @@ export function App() {
       {/* Main Responsive Mobile App Container */}
       <div className="w-full max-w-md mx-auto flex-1 min-h-screen bg-[#FBF9F4] flex flex-col relative">
         
-        {/* App Header with Back Button and Brand Logo */}
+        {/* App Header with Back Button, Brand Logo, and Filter Button */}
         <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-4 py-3.5 z-40 sticky top-0 shadow-xs flex items-center justify-between">
-          <div className="w-16 flex items-center justify-start">
+          <div className="w-14 flex items-center justify-start">
             {currentView !== 'home' && currentView !== 'auth' && (
               <button
                 type="button"
                 onClick={goBack}
                 className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
-                title="Go Back (or swipe right)"
+                title="Go Back"
               >
                 <ArrowLeft className="w-4 h-4 text-[#B89552]" />
                 <span>Back</span>
@@ -299,7 +299,21 @@ export function App() {
             mannat
           </button>
 
-          <div className="w-16" />
+          <div className="w-14 flex items-center justify-end">
+            {currentView === 'home' && (
+              <button
+                type="button"
+                onClick={() => setShowFiltersModal(true)}
+                className="p-2 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] hover:border-[#B89552] text-[#111111] hover:text-[#B89552] transition-all shadow-xs active:scale-95 cursor-pointer relative"
+                title="Filter Profiles"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-[#B89552]" />
+                {activeFilters && (
+                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#B89552] ring-2 ring-white" />
+                )}
+              </button>
+            )}
+          </div>
         </header>
 
         {/* Parent View Header Bar Banner */}
