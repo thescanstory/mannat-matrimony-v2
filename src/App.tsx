@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MOCK_PROFILES } from './services/mockData';
 import { profileService } from './services/profileService';
 import { authService } from './services/authService';
 import type { UserSession } from './services/authService';
-import type { Profile, PrivacySettings } from './types';
+import type { Profile, PrivacySettings, FilterCriteria } from './types';
 import { InstaVibeFeed } from './components/InstaVibeFeed';
 import { ConnectionsScreen } from './components/ConnectionsScreen';
 import { OnboardingCarousel } from './components/OnboardingCarousel';
@@ -14,7 +14,8 @@ import { FamilySharePortal } from './components/FamilySharePortal';
 import { PrivacySettingsModal } from './components/PrivacySettingsModal';
 import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
-import { Home, Heart, Wifi, Battery, Smartphone, Maximize2, ShieldCheck, Crown, Eye, UserCheck } from 'lucide-react';
+import { AiMatchmakerModal } from './components/AiMatchmakerModal';
+import { Home, Heart, Wifi, Battery, Smartphone, Maximize2, ShieldCheck, Crown, Eye, UserCheck, Filter, X, Sparkles } from 'lucide-react';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
@@ -24,15 +25,17 @@ export function App() {
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showPaywallModal, setShowPaywallModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
   const [isPhoneFrame, setIsPhoneFrame] = useState(true);
   const [isParentView, setIsParentView] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<FilterCriteria | null>(null);
   const [privacySettings, setPrivacySettings] = useState<PrivacySettings>({
     photo_privacy: 'visible_to_everyone',
     profile_visibility: 'visible_in_discovery',
     financial_privacy: 'show_verified_badge'
   });
 
-  // Fetch initial profiles from Supabase Database on mount
+  // Fetch initial profiles from Supabase Database on mount and listen to auth changes
   useEffect(() => {
     async function loadBackendData() {
       try {
@@ -47,7 +50,81 @@ export function App() {
       }
     }
     loadBackendData();
+
+    const { data: authListener } = authService.onAuthStateChange((user) => {
+      setCurrentUser(user);
+    });
+
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
   }, []);
+
+  // Compute dynamic filtered profiles based on active filters
+  const filteredProfiles = useMemo(() => {
+    if (!activeFilters) return profiles;
+
+    const filtered = profiles.filter((p) => {
+      // 1. Age Range
+      if (p.age < activeFilters.ageMin || p.age > activeFilters.ageMax) {
+        return false;
+      }
+
+      // 2. Religion Faith
+      if (activeFilters.selectedReligion && activeFilters.selectedReligion.length > 0) {
+        if (!activeFilters.selectedReligion.includes(p.religion)) {
+          return false;
+        }
+      }
+
+      // 3. Sub-Community / Caste
+      if (activeFilters.selectedSubCommunity && activeFilters.selectedSubCommunity.length > 0) {
+        const matchesCommunity = activeFilters.selectedSubCommunity.some(
+          (sub) =>
+            (p.sub_community && p.sub_community.toLowerCase().includes(sub.toLowerCase())) ||
+            (p.community && p.community.toLowerCase().includes(sub.toLowerCase())) ||
+            (p.caste && p.caste.toLowerCase().includes(sub.toLowerCase()))
+        );
+        if (!matchesCommunity) return false;
+      }
+
+      // 4. Manglik Preference
+      if (activeFilters.manglikPref && activeFilters.manglikPref !== "Doesn't Matter") {
+        if (p.horoscope?.manglik && p.horoscope.manglik !== activeFilters.manglikPref) {
+          return false;
+        }
+      }
+
+      // 5. Gun Milan Score
+      if (p.gun_milan_score !== undefined && activeFilters.gunMilanMin) {
+        if (p.gun_milan_score < activeFilters.gunMilanMin) {
+          return false;
+        }
+      }
+
+      // 6. Net Worth Bracket
+      if (activeFilters.selectedNetWorth && activeFilters.selectedNetWorth.length > 0) {
+        if (p.lifestyle_details?.net_worth) {
+          if (!activeFilters.selectedNetWorth.includes(p.lifestyle_details.net_worth)) {
+            return false;
+          }
+        }
+      }
+
+      // 7. Second Home Preference
+      if (activeFilters.secondHomePref) {
+        if (!p.lifestyle_details?.second_home) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    return filtered.length > 0 ? filtered : profiles;
+  }, [profiles, activeFilters]);
 
   const handleUnlockSuccess = (profileId: string) => {
     setProfiles((prev) =>
@@ -67,6 +144,18 @@ export function App() {
         <span className="font-instrument text-2xl lowercase text-[#B89552] tracking-tight">mannat</span>
         <div className="h-4 w-px bg-[#E8E1D5]" />
 
+        {/* AI Matchmaker Trigger */}
+        <button
+          type="button"
+          onClick={() => setShowAiModal(true)}
+          className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#111111] to-[#333333] text-[#B89552] hover:text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-xs border border-[#B89552]/40"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>AI Matchmaker</span>
+        </button>
+
+        <div className="h-4 w-px bg-[#E8E1D5]" />
+
         {/* Parent Mode Toggle */}
         <button
           type="button"
@@ -80,6 +169,25 @@ export function App() {
         </button>
 
         <div className="h-4 w-px bg-[#E8E1D5]" />
+
+        {/* Filter State Indicator */}
+        {activeFilters && (
+          <>
+            <div className="flex items-center gap-1.5 bg-[#B89552]/15 text-[#8C6D32] px-3 py-1.5 rounded-full border border-[#B89552]/30">
+              <Filter className="w-3 h-3" />
+              <span>Filters Active</span>
+              <button
+                type="button"
+                onClick={() => setActiveFilters(null)}
+                className="hover:text-black ml-1 cursor-pointer"
+                title="Clear Filters"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="h-4 w-px bg-[#E8E1D5]" />
+          </>
+        )}
 
         <button
           type="button"
@@ -192,7 +300,7 @@ export function App() {
               {/* Main Home Dashboard Feed */}
               {currentView === 'home' && (
                 <InstaVibeFeed
-                  profiles={profiles}
+                  profiles={filteredProfiles}
                   onOpenFilters={() => setShowFiltersModal(true)}
                   onOpenSharePortal={handleOpenSharePortal}
                   onOpenPaywall={() => setShowPaywallModal(true)}
@@ -203,16 +311,16 @@ export function App() {
               {/* For You / Who Viewed Me Tab */}
               {currentView === 'for-you' && (
                 <WhoViewedMeScreen
-                  profiles={profiles}
+                  profiles={filteredProfiles}
                   onOpenPaywall={() => setShowPaywallModal(true)}
                   onOpenProfile={handleOpenSharePortal}
                 />
               )}
 
-              {/* Connections View */}
+              {/* Connections View with Live Chat */}
               {currentView === 'connections' && (
                 <ConnectionsScreen
-                  profiles={profiles}
+                  profiles={filteredProfiles}
                   onOpenProfile={(p) => {
                     setShareProfile(p);
                     setCurrentView('share-portal');
@@ -236,7 +344,9 @@ export function App() {
         <SearchFiltersModal
           isOpen={showFiltersModal}
           onClose={() => setShowFiltersModal(false)}
-          onApply={() => {}}
+          onApply={(filters) => setActiveFilters(filters)}
+          initialFilters={activeFilters || undefined}
+          onReset={() => setActiveFilters(null)}
         />
 
         <PrivacySettingsModal
@@ -250,6 +360,13 @@ export function App() {
           isOpen={showPaywallModal}
           onClose={() => setShowPaywallModal(false)}
           onSelectTier={() => {}}
+        />
+
+        <AiMatchmakerModal
+          isOpen={showAiModal}
+          onClose={() => setShowAiModal(false)}
+          profiles={profiles}
+          onSelectCandidate={handleOpenSharePortal}
         />
 
         {/* Modern Floating Glass Dock Navigation Bar */}
@@ -275,6 +392,15 @@ export function App() {
             >
               <Eye className="w-5 h-5" />
               <span>For You</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowAiModal(true)}
+              className="flex flex-col items-center gap-0.5 text-[10px] font-black text-[#B89552] hover:text-[#9A7B3E] transition-all cursor-pointer"
+            >
+              <Sparkles className="w-5 h-5" />
+              <span>AI Match</span>
             </button>
 
             <button

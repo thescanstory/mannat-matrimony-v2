@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle2, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
+import { X, CheckCircle2, ShieldCheck, Zap, ArrowRight, Apple } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { Profile } from '../types';
+import { paymentService } from '../services/paymentService';
+import { iapService, isIOSDevice } from '../services/iapService';
 
 interface SachetPaywallModalProps {
   isOpen: boolean;
@@ -17,33 +19,47 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
   onClose,
   onSuccess
 }) => {
-  const [selectedApp, setSelectedApp] = useState<'gpay' | 'phonepe' | 'paytm' | 'bhim'>('gpay');
+  const [selectedApp, setSelectedApp] = useState<'gpay' | 'phonepe' | 'paytm' | 'apple'>('gpay');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const isIOS = isIOSDevice();
 
-  const handlePayNow = () => {
+  const handlePayNow = async () => {
     setIsProcessing(true);
 
-    // Simulate Razorpay UPI Intent / Web Payment Flow
-    setTimeout(() => {
+    try {
+      let result;
+      if (selectedApp === 'apple' || isIOS) {
+        result = await iapService.purchase('vip.mannat.sachet49');
+      } else {
+        result = await paymentService.processPayment({
+          amount: 49,
+          name: 'Mannat Matrimony',
+          description: `Instant Unlock for ${profile.display_name}`,
+          profileId: profile.id,
+        });
+      }
+
+      if (result.success) {
+        setIsSuccess(true);
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#FFD700', '#FFE55C', '#FFFFFF']
+        });
+
+        setTimeout(() => {
+          onSuccess(profile.id);
+          setIsSuccess(false);
+          onClose();
+        }, 1200);
+      }
+    } catch (e) {
+      console.warn('Payment failed or cancelled:', e);
+    } finally {
       setIsProcessing(false);
-      setIsSuccess(true);
-
-      // Trigger Confetti Burst
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#FFD700', '#FFE55C', '#FFFFFF']
-      });
-
-      // Complete unlock flow after short delay
-      setTimeout(() => {
-        onSuccess(profile.id);
-        setIsSuccess(false);
-        onClose();
-      }, 1200);
-    }, 1500);
+    }
   };
 
   if (!isOpen) return null;
@@ -71,7 +87,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full bg-gray-800/80 text-gray-400 hover:text-white"
+              className="p-2 rounded-full bg-gray-800/80 text-gray-400 hover:text-white cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -96,7 +112,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
                 </div>
                 <div className="text-right">
                   <span className="text-xs text-gray-400 line-through">₹199</span>
-                  <div className="text-xl font-black text-amber-300">₹49</div>
+                  <div className="text-xl font-black text-amber-300">₹49 / $0.99</div>
                 </div>
               </div>
 
@@ -116,28 +132,28 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
                 </div>
               </div>
 
-              {/* UPI Intent Options (Indian Mobile Payment Focus) */}
+              {/* Payment Method Selector */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2.5">
-                  Select UPI Intent App (Razorpay Fast Checkout)
+                  Payment Method (In-App Purchase / UPI)
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {[
+                    { id: 'apple', name: ' Apple IAP', color: 'bg-white/10 border-white/30 text-white' },
                     { id: 'gpay', name: 'GPay', color: 'bg-blue-600/20 border-blue-500/40 text-blue-300' },
                     { id: 'phonepe', name: 'PhonePe', color: 'bg-purple-600/20 border-purple-500/40 text-purple-300' },
                     { id: 'paytm', name: 'Paytm', color: 'bg-cyan-600/20 border-cyan-500/40 text-cyan-300' },
-                    { id: 'bhim', name: 'BHIM UPI', color: 'bg-amber-600/20 border-amber-500/40 text-amber-300' },
                   ].map((app) => (
                     <button
                       key={app.id}
                       onClick={() => setSelectedApp(app.id as any)}
-                      className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 ${
+                      className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 cursor-pointer ${
                         selectedApp === app.id
                           ? 'border-amber-400 bg-amber-500/20 shadow-[0_0_12px_rgba(255,215,0,0.3)]'
                           : 'border-gray-800 bg-gray-900/60 hover:border-gray-700'
                       }`}
                     >
-                      <span className="text-xs font-bold">{app.name}</span>
+                      <span className="text-[11px] font-bold">{app.name}</span>
                     </button>
                   ))}
                 </div>
@@ -147,23 +163,24 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
               <button
                 disabled={isProcessing}
                 onClick={handlePayNow}
-                className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-extrabold text-sm shadow-[0_4px_25px_rgba(255,215,0,0.4)] hover:shadow-[0_6px_30px_rgba(255,215,0,0.6)] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-black font-extrabold text-sm shadow-[0_4px_25px_rgba(255,215,0,0.4)] hover:shadow-[0_6px_30px_rgba(255,215,0,0.6)] active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {isProcessing ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    <span>Connecting UPI App...</span>
+                    <span>Processing In-App Purchase...</span>
                   </div>
                 ) : (
                   <>
-                    <span>Pay ₹49 via {selectedApp.toUpperCase()}</span>
+                    <span>Unlock for ₹49 ($0.99)</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </button>
 
-              <div className="text-center text-[11px] text-gray-500">
-                🔒 256-bit Encrypted Razorpay UPI Intent Payment
+              <div className="text-center text-[11px] text-gray-500 flex items-center justify-center gap-1.5">
+                <Apple className="w-3.5 h-3.5 text-gray-400" />
+                <span>Apple StoreKit & 256-bit Encrypted Checkout</span>
               </div>
             </div>
           ) : (

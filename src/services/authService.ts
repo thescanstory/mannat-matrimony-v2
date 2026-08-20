@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured, getGoogleClientId } from './supabaseClient';
 
 export interface UserSession {
   id: string;
@@ -23,10 +23,26 @@ export const authService = {
       };
     }
 
+    const clientId = getGoogleClientId();
+    const redirectUri = window.location.origin + '/auth/callback';
+
+    const options: any = {
+      provider: 'google',
+      options: {
+        redirectTo: redirectUri
+      }
+    };
+
+    // Add client ID if configured - this enables proper Google OAuth flow
+    if (clientId) {
+      options.options.client_id = clientId;
+    }
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin
+        redirectTo: redirectUri,
+        ...(clientId && { client_id: clientId })
       }
     });
 
@@ -90,5 +106,16 @@ export const authService = {
   signOut: async () => {
     if (!isSupabaseConfigured()) return { error: null };
     return await supabase.auth.signOut();
+  },
+
+  // Auth State Change Listener
+  onAuthStateChange: (callback: (user: UserSession | null) => void) => {
+    if (!isSupabaseConfigured()) {
+      return { data: { subscription: { unsubscribe: () => {} } } };
+    }
+    return supabase.auth.onAuthStateChange((_event, session) => {
+      callback((session?.user as UserSession) || null);
+    });
   }
 };
+

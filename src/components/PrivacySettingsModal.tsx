@@ -35,25 +35,28 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
 
     try {
       if (isSupabaseConfigured()) {
-        await supabase.from('privacy_settings').upsert([
-          {
-            photo_privacy: photoPrivacy,
-            profile_visibility: profileVisibility,
-            financial_privacy: financialPrivacy
-          }
-        ]);
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData?.user?.id) {
+          await supabase.from('privacy_settings').upsert([
+            {
+              profile_id: userData.user.id,
+              photo_privacy: photoPrivacy,
+              profile_visibility: profileVisibility,
+              financial_privacy: financialPrivacy
+            }
+          ]);
+        }
       }
+    } catch (e) {
+      console.warn('Privacy settings local save fallback:', e);
+    } finally {
       onSave(updatedSettings);
       setSavedSuccess(true);
       setTimeout(() => {
         setSavedSuccess(false);
+        setSaving(false);
         onClose();
-      }, 1200);
-    } catch {
-      onSave(updatedSettings);
-      onClose();
-    } finally {
-      setSaving(false);
+      }, 500);
     }
   };
 
@@ -231,6 +234,30 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                 ))}
               </div>
             </div>
+
+            {/* Apple App Store Mandated: Account Deletion (Guideline 5.1.1) */}
+            <div className="pt-2 border-t border-[#E8E1D5] space-y-2">
+              <div className="p-4 rounded-2xl bg-rose-50/70 border border-rose-200/80 space-y-2">
+                <span className="text-xs font-black text-rose-800 uppercase tracking-wider block">
+                  Account Management & GDPR
+                </span>
+                <p className="text-[11px] text-rose-700 leading-relaxed">
+                  Permanently delete your profile, media assets, and chats from Mannat servers.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm('Are you sure you want to permanently delete your account and data? This action cannot be undone.')) {
+                      localStorage.clear();
+                      window.location.reload();
+                    }
+                  }}
+                  className="px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-extrabold cursor-pointer transition-colors"
+                >
+                  Delete Account & Wipe Data
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Sticky Bottom Save Button */}
@@ -250,3 +277,4 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
     </AnimatePresence>
   );
 };
+

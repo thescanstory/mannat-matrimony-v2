@@ -163,6 +163,14 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
             </button>
           </form>
         )}
+
+        <button
+          type="button"
+          onClick={() => onLoginSuccess()}
+          className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-bold text-[#B89552] hover:text-[#9A7B3E] hover:bg-[#E8E1D5]/40 transition-colors cursor-pointer"
+        >
+          ✨ Explore Demo Profiles directly →
+        </button>
       </div>
 
       {/* Footer Branding */}

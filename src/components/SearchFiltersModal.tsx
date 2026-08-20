@@ -1,29 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, RotateCcw, Check, Sparkles, Filter, Globe, Star } from 'lucide-react';
 import metadataOptions from '../data/metadata_options.json';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { FilterCriteria } from '../types';
+
+export const DEFAULT_FILTERS: FilterCriteria = {
+  ageMin: 22,
+  ageMax: 35,
+  selectedReligion: ['Hindu'],
+  selectedSubCommunity: ['Brahmin', 'Kayastha'],
+  manglikPref: "Doesn't Matter",
+  gunMilanMin: 24,
+  locationIntent: ['Open to Relocate to US', 'Only Same City'],
+  selectedNetWorth: ['₹5Cr - ₹10Cr'],
+  secondHomePref: false
+};
 
 interface SearchFiltersModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onApply: () => void;
+  onApply: (filters: FilterCriteria) => void;
+  initialFilters?: FilterCriteria;
+  onReset?: () => void;
 }
 
 export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
   isOpen,
   onClose,
-  onApply
+  onApply,
+  initialFilters,
+  onReset
 }) => {
   const [activeTab, setActiveTab] = useState<'basic' | 'horoscope' | 'lifestyle'>('basic');
-  const [ageMin, setAgeMin] = useState(24);
-  const [ageMax, setAgeMax] = useState(30);
-  const [selectedReligion, setSelectedReligion] = useState<string[]>(['Hindu']);
-  const [selectedSubCommunity, setSelectedSubCommunity] = useState<string[]>(['Brahmin', 'Kayastha']);
-  const [manglikPref, setManglikPref] = useState<'Yes' | 'No' | "Doesn't Matter">("Doesn't Matter");
-  const [gunMilanMin, setGunMilanMin] = useState(24);
-  const [locationIntent, setLocationIntent] = useState<string[]>(['Open to Relocate to US', 'Only Same City']);
-  const [selectedNetWorth, setSelectedNetWorth] = useState<string[]>(['₹5Cr - ₹10Cr']);
-  const [secondHomePref, setSecondHomePref] = useState<boolean>(true);
+  const [ageMin, setAgeMin] = useState(initialFilters?.ageMin ?? DEFAULT_FILTERS.ageMin);
+  const [ageMax, setAgeMax] = useState(initialFilters?.ageMax ?? DEFAULT_FILTERS.ageMax);
+  const [selectedReligion, setSelectedReligion] = useState<string[]>(
+    initialFilters?.selectedReligion ?? DEFAULT_FILTERS.selectedReligion
+  );
+  const [selectedSubCommunity, setSelectedSubCommunity] = useState<string[]>(
+    initialFilters?.selectedSubCommunity ?? DEFAULT_FILTERS.selectedSubCommunity
+  );
+  const [manglikPref, setManglikPref] = useState<'Yes' | 'No' | "Doesn't Matter">(
+    initialFilters?.manglikPref ?? DEFAULT_FILTERS.manglikPref
+  );
+  const [gunMilanMin, setGunMilanMin] = useState(
+    initialFilters?.gunMilanMin ?? DEFAULT_FILTERS.gunMilanMin
+  );
+  const [locationIntent, setLocationIntent] = useState<string[]>(
+    initialFilters?.locationIntent ?? DEFAULT_FILTERS.locationIntent
+  );
+  const [selectedNetWorth, setSelectedNetWorth] = useState<string[]>(
+    initialFilters?.selectedNetWorth ?? DEFAULT_FILTERS.selectedNetWorth
+  );
+  const [secondHomePref, setSecondHomePref] = useState<boolean>(
+    initialFilters?.secondHomePref ?? DEFAULT_FILTERS.secondHomePref
+  );
+
+  // Sync state if initialFilters change
+  useEffect(() => {
+    if (initialFilters) {
+      setAgeMin(initialFilters.ageMin);
+      setAgeMax(initialFilters.ageMax);
+      setSelectedReligion(initialFilters.selectedReligion);
+      setSelectedSubCommunity(initialFilters.selectedSubCommunity);
+      setManglikPref(initialFilters.manglikPref);
+      setGunMilanMin(initialFilters.gunMilanMin);
+      setLocationIntent(initialFilters.locationIntent);
+      setSelectedNetWorth(initialFilters.selectedNetWorth);
+      setSecondHomePref(initialFilters.secondHomePref);
+    }
+  }, [initialFilters]);
 
   if (!isOpen) return null;
 
@@ -38,17 +84,36 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
   };
 
   const handleReset = () => {
-    setAgeMin(22);
-    setAgeMax(32);
-    setSelectedReligion(['Hindu']);
-    setSelectedSubCommunity(['Brahmin']);
-    setManglikPref("Doesn't Matter");
-    setGunMilanMin(24);
-    setLocationIntent(['Open to Relocate to US']);
-    setSelectedNetWorth(['₹5Cr - ₹10Cr']);
+    setAgeMin(DEFAULT_FILTERS.ageMin);
+    setAgeMax(DEFAULT_FILTERS.ageMax);
+    setSelectedReligion(DEFAULT_FILTERS.selectedReligion);
+    setSelectedSubCommunity(DEFAULT_FILTERS.selectedSubCommunity);
+    setManglikPref(DEFAULT_FILTERS.manglikPref);
+    setGunMilanMin(DEFAULT_FILTERS.gunMilanMin);
+    setLocationIntent(DEFAULT_FILTERS.locationIntent);
+    setSelectedNetWorth(DEFAULT_FILTERS.selectedNetWorth);
+    setSecondHomePref(DEFAULT_FILTERS.secondHomePref);
+    if (onReset) onReset();
+  };
+
+  const handleApplyClick = () => {
+    const filters: FilterCriteria = {
+      ageMin,
+      ageMax,
+      selectedReligion,
+      selectedSubCommunity,
+      manglikPref,
+      gunMilanMin,
+      locationIntent,
+      selectedNetWorth,
+      secondHomePref
+    };
+    onApply(filters);
+    onClose();
   };
 
   const SUB_COMMUNITIES = ['Brahmin', 'Kanyakubja Brahmin', 'Kayastha', 'Srivastava Kayastha', 'Agarwal', 'Khatri', 'Iyer', 'Menon Nair', 'Maratha'];
+
 
   return (
     <AnimatePresence>
@@ -364,10 +429,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
           <div className="p-5 border-t border-[#E8E1D5] bg-[#FBF9F4] sticky bottom-0 z-20 shadow-lg flex items-center gap-3">
             <button
               type="button"
-              onClick={() => {
-                onApply();
-                onClose();
-              }}
+              onClick={handleApplyClick}
               className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-[#B89552]" />
@@ -379,3 +441,4 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
     </AnimatePresence>
   );
 };
+

@@ -99,3 +99,55 @@ export interface CallbackRequest {
   meet_link: string;
   status: 'pending' | 'accepted' | 'completed';
 }
+
+export interface FilterCriteria {
+  ageMin: number;
+  ageMax: number;
+  selectedReligion: string[];
+  selectedSubCommunity: string[];
+  manglikPref: 'Yes' | 'No' | "Doesn't Matter";
+  gunMilanMin: number;
+  locationIntent: string[];
+  selectedNetWorth: string[];
+  secondHomePref: boolean;
+}
+
+export interface Match {
+  id: string;
+  user_a_id: string;
+  user_b_id: string;
+  match_score: number;
+  created_at: string;
+  partner?: Profile;
+  last_message?: string;
+  last_message_at?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  match_id: string;
+  sender_id: string;
+  message: string;
+  sent_at: string;
+  is_self?: boolean;
+}
+
+export interface PaymentOrder {
+  amount: number; // in INR (e.g., 49 or 2999)
+  currency?: string;
+  name: string;
+  description: string;
+  userEmail?: string;
+  userPhone?: string;
+  profileId?: string;
+  tierId?: string;
+}
+
+export interface PaymentResult {
+  success: boolean;
+  paymentId?: string;
+  orderId?: string;
+  signature?: string;
+  error?: string;
+}
+

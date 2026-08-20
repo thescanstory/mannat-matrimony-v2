@@ -1,5 +1,5 @@
 -- ====================================================================
--- MANNAT PRODUCTION DATABASE SCHEMA (PHASE 1 FOUNDATION & AUTH)
+-- MANNAT PRODUCTION DATABASE SCHEMA (IDEMPOTENT & SAFE FOR RE-RUNS)
 -- ====================================================================
 
 -- 1. Enable UUID Extension
@@ -79,8 +79,31 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 7. Matches Table (pairwise)
+CREATE TABLE IF NOT EXISTS public.matches (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_a_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_b_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    match_score INT DEFAULT 100
+);
+
+-- 8. Chats Table (one row per message)
+CREATE TABLE IF NOT EXISTS public.chats (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    match_id UUID REFERENCES public.matches(id) ON DELETE CASCADE,
+    sender_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    sent_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for lightning fast queries
+CREATE INDEX IF NOT EXISTS idx_chats_match_id ON public.chats(match_id);
+CREATE INDEX IF NOT EXISTS idx_chats_sent_at ON public.chats(sent_at);
+CREATE INDEX IF NOT EXISTS idx_matches_users ON public.matches(user_a_id, user_b_id);
+
 -- ====================================================================
--- ROW-LEVEL SECURITY (RLS) POLICIES
+-- ROW-LEVEL SECURITY (RLS) POLICIES (DROP + RECREATE FOR CLEAN IDEMPOTENCY)
 -- ====================================================================
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -88,21 +111,60 @@ ALTER TABLE public.privacy_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.creator_vouches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.callback_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.matches ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.chats ENABLE ROW LEVEL SECURITY;
 
--- Read Discovery Feed (Public/Authenticated candidates can view profiles)
-CREATE POLICY "Public Read Access for Profiles"
-ON public.profiles FOR SELECT
-USING (true);
+-- Profiles Policies
+DROP POLICY IF EXISTS "Public Read Access for Profiles" ON public.profiles;
+CREATE POLICY "Public Read Access for Profiles" ON public.profiles FOR SELECT USING (true);
 
--- Insert/Update Own Profile Only
-CREATE POLICY "Users Manage Own Profile"
-ON public.profiles FOR ALL
-USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users Manage Own Profile" ON public.profiles;
+CREATE POLICY "Users Manage Own Profile" ON public.profiles FOR ALL USING (auth.uid() = user_id);
 
 -- Privacy Settings Policy
-CREATE POLICY "Users Manage Own Privacy"
-ON public.privacy_settings FOR ALL
-USING (auth.uid() IN (SELECT user_id FROM public.profiles WHERE id = profile_id));
+DROP POLICY IF EXISTS "Users Manage Own Privacy" ON public.privacy_settings;
+CREATE POLICY "Users Manage Own Privacy" ON public.privacy_settings FOR ALL USING (
+    auth.uid() IN (SELECT user_id FROM public.profiles WHERE id = profile_id)
+);
+
+-- Creator Vouches Policy
+DROP POLICY IF EXISTS "Allow public read vouches" ON public.creator_vouches;
+CREATE POLICY "Allow public read vouches" ON public.creator_vouches FOR SELECT USING (true);
+
+-- Callback Requests Policy
+DROP POLICY IF EXISTS "Callback Requests Owner" ON public.callback_requests;
+CREATE POLICY "Callback Requests Owner" ON public.callback_requests FOR ALL USING (auth.uid() = requester_id);
+
+-- Subscriptions Policy
+DROP POLICY IF EXISTS "Subscriptions Owner" ON public.subscriptions;
+CREATE POLICY "Subscriptions Owner" ON public.subscriptions FOR ALL USING (auth.uid() = user_id);
+
+-- Matches Policies
+DROP POLICY IF EXISTS "Allow public read matches" ON public.matches;
+CREATE POLICY "Allow public read matches" ON public.matches FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated insert matches" ON public.matches;
+CREATE POLICY "Allow authenticated insert matches" ON public.matches FOR INSERT WITH CHECK (true);
+
+-- Chats Policies
+DROP POLICY IF EXISTS "Allow public read chats" ON public.chats;
+CREATE POLICY "Allow public read chats" ON public.chats FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow authenticated insert chats" ON public.chats;
+CREATE POLICY "Allow authenticated insert chats" ON public.chats FOR INSERT WITH CHECK (true);
+
+-- Enable Supabase Realtime for instant chat message broadcasting
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND tablename = 'chats'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.chats;
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN NULL;
+END $$;
 
 -- ====================================================================
 -- SAMPLE SEED DATA INSERTION (OPTIONAL SEED FOR SUPABASE DB)
@@ -132,3 +194,17 @@ INSERT INTO public.profiles (
     TRUE, FALSE, 96, 31,
     '{"net_worth": "₹15Cr - ₹30Cr", "private_clubs": "Bangalore Club", "second_home": true}'::jsonb
 ) ON CONFLICT DO NOTHING;
+
+-- Seed data for matches and chats
+INSERT INTO public.matches (user_a_id, user_b_id, match_score)
+SELECT p1.id, p2.id, 95
+FROM public.profiles p1, public.profiles p2
+WHERE p1.id <> p2.id
+LIMIT 5
+ON CONFLICT DO NOTHING;
+
+INSERT INTO public.chats (match_id, sender_id, message)
+SELECT m.id, m.user_a_id, 'Hello! Nice to meet you.'
+FROM public.matches m
+LIMIT 5
+ON CONFLICT DO NOTHING;
