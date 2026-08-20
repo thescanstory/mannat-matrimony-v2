@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MOCK_PROFILES } from './services/mockData';
 import { profileService } from './services/profileService';
@@ -17,7 +17,9 @@ import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { ProfileScreen } from './components/ProfileScreen';
 import { Toast } from './components/Toast';
-import { Home, Heart, Eye, Sparkles, User } from 'lucide-react';
+import { Home, Heart, Eye, Sparkles, User, ArrowLeft } from 'lucide-react';
+
+type ViewType = 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
@@ -29,7 +31,7 @@ export function App() {
       return null;
     }
   });
-  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile'>(() => {
+  const [currentView, setCurrentView] = useState<ViewType>(() => {
     try {
       const stored = localStorage.getItem('mannat_active_user');
       return stored ? 'home' : 'auth';
@@ -37,6 +39,51 @@ export function App() {
       return 'auth';
     }
   });
+
+  // Navigation History Stack & Slide Direction (-1 = back/left, 1 = forward/right)
+  const [history, setHistory] = useState<ViewType[]>(['home']);
+  const [slideDirection, setSlideDirection] = useState<number>(1);
+
+  const navigateTo = useCallback((view: ViewType) => {
+    if (view === currentView) return;
+    setHistory((prev) => [...prev, currentView]);
+    setSlideDirection(1);
+    setCurrentView(view);
+  }, [currentView]);
+
+  const goBack = useCallback(() => {
+    if (history.length > 0) {
+      const prevView = history[history.length - 1];
+      setHistory((prev) => prev.slice(0, -1));
+      setSlideDirection(-1);
+      setCurrentView(prevView);
+    } else if (currentView !== 'home' && currentView !== 'auth') {
+      setSlideDirection(-1);
+      setCurrentView('home');
+    }
+  }, [history, currentView]);
+
+  // Touch Swipe Gesture for iOS-style slide-back (drag from left edge / rightward swipe)
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+
+    // Detect rightward swipe: swipe right by > 65px and predominantly horizontal
+    if (deltaX > 65 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5 && (currentView !== 'home' && currentView !== 'auth')) {
+      goBack();
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
   const [shareProfile, setShareProfile] = useState<Profile | null>(null);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -190,7 +237,7 @@ export function App() {
 
   const handleOpenSharePortal = (profile: Profile) => {
     setShareProfile(profile);
-    setCurrentView('share-portal');
+    navigateTo('share-portal');
   };
 
   const handleProfileCreated = (newProfile?: Profile) => {
@@ -198,25 +245,60 @@ export function App() {
       setProfiles((prev) => [newProfile, ...prev]);
       triggerToast(`🎉 Profile for ${newProfile.display_name} created & added to feed!`, 'sparkle');
     }
-    setCurrentView('home');
+    navigateTo('home');
+  };
+
+  const slideVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 40 : -40,
+      opacity: 0
+    }),
+    center: {
+      x: 0,
+      opacity: 1
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -40 : 40,
+      opacity: 0
+    })
   };
 
   return (
-    <div className={`min-h-screen bg-[#FBF9F4] text-[#111111] flex flex-col items-center justify-start p-0 font-sans select-none relative overflow-x-hidden ${isParentView ? 'text-lg font-bold' : ''}`}>
+    <div 
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className={`min-h-screen bg-[#FBF9F4] text-[#111111] flex flex-col items-center justify-start p-0 font-sans select-none relative overflow-x-hidden ${isParentView ? 'text-lg font-bold' : ''}`}
+    >
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
       {/* Main Responsive Mobile App Container */}
       <div className="w-full max-w-md mx-auto flex-1 min-h-screen bg-[#FBF9F4] flex flex-col relative">
         
-        {/* App Header Inside The App Frame */}
-        <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-5 py-4 z-40 sticky top-0 shadow-xs flex items-center justify-center">
+        {/* App Header with Back Button and Brand Logo */}
+        <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-4 py-3.5 z-40 sticky top-0 shadow-xs flex items-center justify-between">
+          <div className="w-16 flex items-center justify-start">
+            {currentView !== 'home' && currentView !== 'auth' && (
+              <button
+                type="button"
+                onClick={goBack}
+                className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
+                title="Go Back (or swipe right)"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                <span>Back</span>
+              </button>
+            )}
+          </div>
+
           <button
             type="button"
-            onClick={() => setCurrentView('home')}
-            className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight hover:opacity-80 transition-opacity cursor-pointer leading-none"
+            onClick={() => navigateTo('home')}
+            className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight hover:opacity-80 transition-opacity cursor-pointer leading-none text-center"
           >
             mannat
           </button>
+
+          <div className="w-16" />
         </header>
 
         {/* Parent View Header Bar Banner */}
@@ -235,105 +317,107 @@ export function App() {
           </div>
         )}
 
-        {/* Main Content Area */}
-        <main className="w-full flex-1 relative pb-20">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentView}
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            transition={{ duration: 0.15 }}
-            className="w-full flex-1 flex flex-col"
-          >
-            {/* Onboarding View */}
-            {currentView === 'onboarding' && (
-              <OnboardingCarousel onComplete={handleProfileCreated} />
-            )}
+        {/* Main Content Area with Smooth Slide Animations */}
+        <main className="w-full flex-1 relative pb-20 overflow-x-hidden">
+          <AnimatePresence mode="wait" custom={slideDirection}>
+            <motion.div
+              key={currentView}
+              custom={slideDirection}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.2, ease: [0.25, 1, 0.5, 1] }}
+              className="w-full flex-1 flex flex-col"
+            >
+              {/* Onboarding View */}
+              {currentView === 'onboarding' && (
+                <OnboardingCarousel onComplete={handleProfileCreated} />
+              )}
 
-            {/* Auth View */}
-            {currentView === 'auth' && (
-              <AuthScreen 
-                onLoginSuccess={async (user) => {
-                  if (user) {
-                    setCurrentUser(user);
-                  } else {
-                    const u = await authService.getCurrentUser();
-                    setCurrentUser(u);
-                  }
-                  setCurrentView('profile');
-                  triggerToast('Signed in successfully! ✨', 'sparkle');
-                }} 
-              />
-            )}
+              {/* Auth View */}
+              {currentView === 'auth' && (
+                <AuthScreen 
+                  onLoginSuccess={async (user) => {
+                    if (user) {
+                      setCurrentUser(user);
+                    } else {
+                      const u = await authService.getCurrentUser();
+                      setCurrentUser(u);
+                    }
+                    navigateTo('profile');
+                    triggerToast('Signed in successfully! ✨', 'sparkle');
+                  }} 
+                />
+              )}
 
-            {/* Main Home Dashboard Feed */}
-            {currentView === 'home' && (
-              <InstaVibeFeed
-                profiles={filteredProfiles}
-                onOpenFilters={() => setShowFiltersModal(true)}
-                onOpenSharePortal={handleOpenSharePortal}
-                onOpenPaywall={() => setShowPaywallModal(true)}
-                onOpenCreateProfile={() => setCurrentView('onboarding')}
-                onUnlockSuccess={handleUnlockSuccess}
-              />
-            )}
+              {/* Main Home Dashboard Feed */}
+              {currentView === 'home' && (
+                <InstaVibeFeed
+                  profiles={filteredProfiles}
+                  onOpenFilters={() => setShowFiltersModal(true)}
+                  onOpenSharePortal={handleOpenSharePortal}
+                  onOpenPaywall={() => setShowPaywallModal(true)}
+                  onOpenCreateProfile={() => navigateTo('onboarding')}
+                  onUnlockSuccess={handleUnlockSuccess}
+                />
+              )}
 
-            {/* For You / Who Viewed Me Tab */}
-            {currentView === 'for-you' && (
-              <WhoViewedMeScreen
-                profiles={filteredProfiles}
-                onOpenPaywall={() => setShowPaywallModal(true)}
-                onOpenProfile={handleOpenSharePortal}
-              />
-            )}
+              {/* For You / Who Viewed Me Tab */}
+              {currentView === 'for-you' && (
+                <WhoViewedMeScreen
+                  profiles={filteredProfiles}
+                  onOpenPaywall={() => setShowPaywallModal(true)}
+                  onOpenProfile={handleOpenSharePortal}
+                />
+              )}
 
-            {/* Connections View with Live Chat */}
-            {currentView === 'connections' && (
-              <ConnectionsScreen
-                profiles={filteredProfiles}
-                onOpenProfile={(p) => {
-                  setShareProfile(p);
-                  setCurrentView('share-portal');
-                }}
-                onOpenFilters={() => setShowFiltersModal(true)}
-              />
-            )}
+              {/* Connections View with Live Chat */}
+              {currentView === 'connections' && (
+                <ConnectionsScreen
+                  profiles={filteredProfiles}
+                  onOpenProfile={(p) => {
+                    setShareProfile(p);
+                    navigateTo('share-portal');
+                  }}
+                  onOpenFilters={() => setShowFiltersModal(true)}
+                />
+              )}
 
-            {/* Family Share Portal */}
-            {currentView === 'share-portal' && (
-              <FamilySharePortal
-                profile={shareProfile || profiles[0]}
-                onBackToFeed={() => setCurrentView('home')}
-              />
-            )}
+              {/* Family Share Portal */}
+              {currentView === 'share-portal' && (
+                <FamilySharePortal
+                  profile={shareProfile || profiles[0]}
+                  onBackToFeed={goBack}
+                />
+              )}
 
-            {/* Profile & Account View */}
-            {currentView === 'profile' && (
-              <ProfileScreen
-                currentUser={currentUser}
-                privacySettings={privacySettings}
-                isParentView={isParentView}
-                onToggleParentView={() => {
-                  setIsParentView(!isParentView);
-                  triggerToast(
-                    !isParentView ? 'Parent Mode Activated 👨‍👩‍👧 Large Text & Extra Guidance' : 'Switched back to Candidate Mode',
-                    'sparkle'
-                  );
-                }}
-                onOpenPrivacySettings={() => setShowPrivacyModal(true)}
-                onOpenPaywall={() => setShowPaywallModal(true)}
-                onOpenAiMatchmaker={() => setShowAiModal(true)}
-                onOpenOnboarding={() => setCurrentView('onboarding')}
-                onOpenAuth={() => setCurrentView('auth')}
-                onLogout={handleLogout}
-                onResetAllData={handleResetAllData}
-              />
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </main>
-    </div>
+              {/* Profile & Account View */}
+              {currentView === 'profile' && (
+                <ProfileScreen
+                  currentUser={currentUser}
+                  privacySettings={privacySettings}
+                  isParentView={isParentView}
+                  onToggleParentView={() => {
+                    setIsParentView(!isParentView);
+                    triggerToast(
+                      !isParentView ? 'Parent Mode Activated 👨‍👩‍👧 Large Text & Extra Guidance' : 'Switched back to Candidate Mode',
+                      'sparkle'
+                    );
+                  }}
+                  onOpenPrivacySettings={() => setShowPrivacyModal(true)}
+                  onOpenPaywall={() => setShowPaywallModal(true)}
+                  onOpenAiMatchmaker={() => setShowAiModal(true)}
+                  onOpenOnboarding={() => navigateTo('onboarding')}
+                  onOpenAuth={() => navigateTo('auth')}
+                  onLogout={handleLogout}
+                  onResetAllData={handleResetAllData}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </main>
+      </div>
 
       {/* Modals */}
       <SearchFiltersModal
@@ -380,7 +464,7 @@ export function App() {
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass-dock-vara rounded-full z-50 px-4 py-2.5 flex items-center justify-around shadow-xl border border-[#E8E1D5]">
           <button
             type="button"
-            onClick={() => setCurrentView('home')}
+            onClick={() => navigateTo('home')}
             className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
               currentView === 'home' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
             }`}
@@ -391,7 +475,7 @@ export function App() {
 
           <button
             type="button"
-            onClick={() => setCurrentView('for-you')}
+            onClick={() => navigateTo('for-you')}
             className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
               currentView === 'for-you' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
             }`}
@@ -411,7 +495,7 @@ export function App() {
 
           <button
             type="button"
-            onClick={() => setCurrentView('connections')}
+            onClick={() => navigateTo('connections')}
             className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
               currentView === 'connections' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
             }`}
@@ -422,7 +506,7 @@ export function App() {
 
           <button
             type="button"
-            onClick={() => setCurrentView('profile')}
+            onClick={() => navigateTo('profile')}
             className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
               currentView === 'profile' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
             }`}
