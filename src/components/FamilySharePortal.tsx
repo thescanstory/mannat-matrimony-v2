@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Share2, Volume2, Award, ExternalLink, ArrowLeft, QrCode } from 'lucide-react';
+import { ShieldCheck, Share2, Volume2, VolumeX, Award, ExternalLink, ArrowLeft, QrCode } from 'lucide-react';
 import type { Profile } from '../types';
 import { FamilyCallModal } from './FamilyCallModal';
 
@@ -35,8 +35,32 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
+  const toggleVoicePlayback = () => {
+    if (isPlayingAudio) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsPlayingAudio(false);
+    } else {
+      setIsPlayingAudio(true);
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const introSpeech = new SpeechSynthesisUtterance(
+          `Namaste. I am ${profile.display_name}, ${profile.age} years old from ${profile.city}. I work as a ${profile.occupation} at ${profile.company_name}. I value family harmony, mutual respect, and lifelong companionship.`
+        );
+        introSpeech.rate = 0.95;
+        introSpeech.pitch = 1.05;
+        introSpeech.onend = () => setIsPlayingAudio(false);
+        introSpeech.onerror = () => setIsPlayingAudio(false);
+        window.speechSynthesis.speak(introSpeech);
+      } else {
+        setTimeout(() => setIsPlayingAudio(false), 4000);
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] p-4 max-w-lg mx-auto select-none font-sans">
+    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] p-4 max-w-xl mx-auto select-none font-sans">
       <FamilyCallModal
         isOpen={showCallModal}
         onClose={() => setShowCallModal(false)}
@@ -45,12 +69,12 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
       />
 
       {/* Top Banner */}
-      <div className="pt-2 pb-4 flex items-center justify-between border-b border-[#E8E1D5] mb-6 bg-[#FBF9F4] px-4 py-3 rounded-2xl shadow-sm">
+      <div className="pt-2 pb-4 flex items-center justify-between border-b border-[#E8E1D5] mb-6 bg-[#FBF9F4] px-4 py-3 rounded-2xl shadow-xs">
         {onBackToFeed && (
           <button
             type="button"
             onClick={onBackToFeed}
-            className="flex items-center gap-1.5 text-xs text-[#111111] font-bold bg-[#F4EFE6] px-3.5 py-1.5 rounded-full hover:bg-[#E8E1D5] border border-[#E8E1D5] transition-all cursor-pointer"
+            className="flex items-center gap-1.5 text-xs text-[#111111] font-bold bg-[#F4EFE6] px-3.5 py-1.5 rounded-full hover:bg-[#E8E1D5] border border-[#E8E1D5] transition-all cursor-pointer shadow-xs"
           >
             <ArrowLeft className="w-4 h-4 text-[#111111]" />
             <span>App Feed</span>
@@ -66,7 +90,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
       </div>
 
       {/* Main Traditional Bio-data Card */}
-      <div className="bg-[#F4EFE6] border border-[#E8E1D5] rounded-3xl p-6 space-y-6 shadow-sm">
+      <div className="bg-[#F4EFE6] border border-[#E8E1D5] rounded-3xl p-6 space-y-6 shadow-xs">
         {/* Header Profile Photo & Verification */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -98,7 +122,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
           </div>
 
           {/* QR Code linking to Video Intro */}
-          <div className="p-3 bg-white rounded-2xl border border-[#E8E1D5] text-center space-y-1 shadow-sm">
+          <div className="p-3 bg-white rounded-2xl border border-[#E8E1D5] text-center space-y-1 shadow-xs">
             <QrCode className="w-12 h-12 text-[#111111] mx-auto" />
             <span className="text-[9px] font-black text-[#B89552] block uppercase">Scan Video</span>
           </div>
@@ -115,7 +139,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
           <button
             type="button"
             onClick={() => setShowCallModal(true)}
-            className="px-4 py-2 rounded-full bg-[#B89552] text-white text-xs font-extrabold uppercase hover:bg-white hover:text-[#111111] transition-all cursor-pointer shadow"
+            className="px-4 py-2 rounded-full bg-[#B89552] text-white text-xs font-extrabold uppercase hover:bg-white hover:text-[#111111] transition-all cursor-pointer shadow-xs"
           >
             Schedule Call
           </button>
@@ -129,7 +153,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
 
         {/* Creator Vouch Section */}
         {profile.creator_vouch && (
-          <div className="p-4 rounded-2xl bg-white border border-[#E8E1D5] space-y-3 shadow-sm">
+          <div className="p-4 rounded-2xl bg-white border border-[#E8E1D5] space-y-3 shadow-xs">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Award className="w-5 h-5 text-[#B89552]" />
@@ -193,29 +217,31 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
             Family Background Details
           </h3>
           <p className="text-xs text-[#555555] leading-relaxed bg-white p-3.5 rounded-2xl border border-[#E8E1D5]">
-            {profile.family_background}
+            {profile.family_background || 'Respectable family settled in metro city with strong cultural values.'}
           </p>
         </div>
 
         {/* Voice Intro Player */}
-        {profile.voice_intro_url && (
-          <div className="p-3.5 rounded-2xl bg-white border border-[#E8E1D5] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-                className="w-10 h-10 rounded-full bg-[#111111] text-white flex items-center justify-center shadow hover:bg-[#B89552] transition-colors cursor-pointer"
-              >
-                <Volume2 className="w-5 h-5 text-white" />
-              </button>
-              <div>
-                <span className="text-xs font-bold text-[#111111] block">Voice Intro Audio</span>
-                <span className="text-[11px] text-[#B89552] font-semibold">10-sec self description</span>
-              </div>
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E8E1D5] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={toggleVoicePlayback}
+              className={`w-10 h-10 rounded-full flex items-center justify-center shadow-xs transition-colors cursor-pointer ${
+                isPlayingAudio ? 'bg-amber-600 text-white animate-pulse' : 'bg-[#111111] text-white hover:bg-[#B89552]'
+              }`}
+            >
+              {isPlayingAudio ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 text-white" />}
+            </button>
+            <div>
+              <span className="text-xs font-bold text-[#111111] block">Voice Intro Audio</span>
+              <span className="text-[11px] text-[#B89552] font-semibold">
+                {isPlayingAudio ? 'Playing candidate voice introduction...' : 'Listen to 10-sec self description'}
+              </span>
             </div>
-            {isPlayingAudio && <span className="text-xs text-[#B89552] font-mono animate-pulse">Playing...</span>}
           </div>
-        )}
+          {isPlayingAudio && <span className="text-xs text-[#B89552] font-mono animate-pulse">Playing...</span>}
+        </div>
       </div>
 
       {/* Actions */}
@@ -232,7 +258,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
         <button
           type="button"
           onClick={handleCopyLink}
-          className="w-full py-3.5 px-6 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-[#E8E1D5] active:scale-98 flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+          className="w-full py-3.5 px-6 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-[#E8E1D5] active:scale-98 flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
         >
           <ExternalLink className="w-4 h-4" />
           <span>{copied ? '✓ Link Copied!' : 'Copy Direct Web Portal Link'}</span>

@@ -3,6 +3,7 @@ import { SlidersHorizontal, MessageSquare, Send, X, ShieldCheck, CheckCheck } fr
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile, ChatMessage } from '../types';
 import { chatService } from '../services/chatService';
+import { Toast } from './Toast';
 
 interface ConnectionsScreenProps {
   profiles: Profile[];
@@ -20,7 +21,28 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'heart' | 'sparkle'>('success');
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
+
+  // Dynamic state for connections
+  const [acceptedList, setAcceptedList] = useState<Profile[]>([]);
+  const [sentList, setSentList] = useState<Profile[]>([]);
+  const [receivedList, setReceivedList] = useState<Profile[]>([]);
+
+  useEffect(() => {
+    if (profiles && profiles.length > 0) {
+      setAcceptedList(profiles.slice(0, 2));
+      setSentList(profiles.slice(2, 4));
+      setReceivedList(profiles.slice(4, 6).length > 0 ? profiles.slice(4, 6) : profiles.slice(0, 1));
+    }
+  }, [profiles]);
+
+  const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {
+    setToastMessage(msg);
+    setToastType(type);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Load chat messages and subscribe when chat modal opens
   useEffect(() => {
@@ -82,10 +104,27 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
     }
   };
 
+  const handleAcceptReceived = (profile: Profile, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setReceivedList((prev) => prev.filter((p) => p.id !== profile.id));
+    setAcceptedList((prev) => [profile, ...prev]);
+    setActiveTab('Accepted');
+    setActiveChatProfile(profile);
+    triggerToast(`Accepted wave from ${profile.display_name}! 💬`, 'sparkle');
+  };
+
+  const handleDeclineReceived = (profile: Profile, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setReceivedList((prev) => prev.filter((p) => p.id !== profile.id));
+    triggerToast(`Declined wave from ${profile.display_name}`, 'success');
+  };
+
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] max-w-md mx-auto flex flex-col justify-between pb-28 select-none font-sans">
+    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] w-full max-w-xl mx-auto flex flex-col justify-between pb-28 select-none font-sans">
+      <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
+
       {/* Top Header */}
-      <div className="bg-[#FBF9F4] px-5 pt-6 pb-4 border-b border-[#E8E1D5] flex items-center justify-between sticky top-0 z-30 shadow-sm">
+      <div className="bg-[#FBF9F4] px-5 pt-6 pb-4 border-b border-[#E8E1D5] flex items-center justify-between sticky top-0 z-30 shadow-xs">
         <div>
           <h1 className="text-2xl font-serif-editorial font-bold text-[#111111] tracking-tight">Connections</h1>
           <p className="text-[11px] text-[#777777] font-semibold">Mutual Waves & Direct Discussions</p>
@@ -93,7 +132,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         <button
           type="button"
           onClick={onOpenFilters}
-          className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer"
+          className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer shadow-xs"
         >
           <SlidersHorizontal className="w-4 h-4 text-[#111111]" />
         </button>
@@ -103,7 +142,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
       <div className="bg-[#FBF9F4] px-5 border-b border-[#E8E1D5] flex items-center justify-around sticky top-[69px] z-20">
         {(['Accepted', 'Sent', 'Received'] as const).map((tab) => {
           const isActive = activeTab === tab;
-          const count = tab === 'Accepted' ? 2 : tab === 'Sent' ? 2 : 1;
+          const count = tab === 'Accepted' ? acceptedList.length : tab === 'Sent' ? sentList.length : receivedList.length;
 
           return (
             <button
@@ -115,7 +154,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
               }`}
             >
               <span>{tab}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                 isActive ? 'bg-[#B89552] text-white' : 'bg-[#E8E1D5] text-[#777777]'
               }`}>
                 {count}
@@ -132,140 +171,154 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
       <div className="p-4 space-y-4 flex-1 bg-[#FBF9F4]">
         {activeTab === 'Accepted' && (
           <div className="space-y-4">
-            {profiles.slice(0, 2).map((profile) => (
-              <div
-                key={profile.id}
-                onClick={() => onOpenProfile(profile)}
-                className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-sm space-y-3 cursor-pointer hover:shadow-md transition-all text-left"
-              >
-                {/* Photo Header */}
-                <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
-                  <img
-                    src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                    alt={profile.display_name}
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#B89552] bg-white px-3 py-1 rounded-full shadow border border-[#E8E1D5] flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-[#B89552]" />
-                    <span>Accepted Connection</span>
-                  </span>
-                </div>
-
-                {/* Profile Brief */}
-                <div>
-                  <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
-                  <p className="text-xs text-[#777777] font-semibold mt-0.5">
-                    {profile.age}yrs, {profile.height || "5'6\""} • {profile.religion} ({profile.sub_community || profile.community})
-                  </p>
-                  <p className="text-xs text-[#999999] mt-0.5">{profile.occupation} • {profile.city}</p>
-                </div>
-
-                {/* Actions Grid */}
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveChatProfile(profile);
-                    }}
-                    className="py-3 px-3 rounded-2xl bg-[#B89552] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#9A7B3E] active:scale-98 transition-all cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Live Chat</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenProfile(profile);
-                    }}
-                    className="py-3 px-3 rounded-2xl bg-[#111111] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-gray-800 active:scale-98 transition-all cursor-pointer shadow-sm"
-                  >
-                    Bio-data
-                  </button>
-                </div>
+            {acceptedList.length === 0 ? (
+              <div className="py-12 text-center text-gray-500 text-xs font-medium">
+                No accepted connections yet. Accept interest waves to start conversations.
               </div>
-            ))}
+            ) : (
+              acceptedList.map((profile) => (
+                <div
+                  key={profile.id}
+                  onClick={() => onOpenProfile(profile)}
+                  className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer hover:shadow-md transition-all text-left"
+                >
+                  {/* Photo Header */}
+                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
+                    <img
+                      src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                      alt={profile.display_name}
+                      className="w-full h-full object-cover"
+                    />
+                    <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#B89552] bg-white px-3 py-1 rounded-full shadow-xs border border-[#E8E1D5] flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-[#B89552]" />
+                      <span>Accepted Connection</span>
+                    </span>
+                  </div>
+
+                  {/* Profile Brief */}
+                  <div>
+                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
+                    <p className="text-xs text-[#777777] font-semibold mt-0.5">
+                      {profile.age}yrs, {profile.height || "5'6\""} • {profile.religion} ({profile.sub_community || profile.community})
+                    </p>
+                    <p className="text-xs text-[#999999] mt-0.5">{profile.occupation} • {profile.city}</p>
+                  </div>
+
+                  {/* Actions Grid */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveChatProfile(profile);
+                      }}
+                      className="py-3 px-3 rounded-2xl bg-[#B89552] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#9A7B3E] active:scale-98 transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>Live Chat</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenProfile(profile);
+                      }}
+                      className="py-3 px-3 rounded-2xl bg-[#111111] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-gray-800 active:scale-98 transition-all cursor-pointer shadow-xs"
+                    >
+                      View Bio-data
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 
         {activeTab === 'Sent' && (
           <div className="space-y-4">
-            {profiles.slice(1, 3).map((profile) => (
-              <div
-                key={profile.id}
-                onClick={() => onOpenProfile(profile)}
-                className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-sm space-y-3 cursor-pointer text-left"
-              >
-                <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
-                  <img
-                    src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                    alt={profile.display_name}
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#777777] bg-white px-3 py-1 rounded-full shadow border border-[#E8E1D5]">
-                    Pending Response
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
-                  <p className="text-xs text-[#777777] font-semibold mt-0.5">
-                    {profile.age}yrs • {profile.occupation}
-                  </p>
-                </div>
+            {sentList.length === 0 ? (
+              <div className="py-12 text-center text-gray-500 text-xs font-medium">
+                No outgoing waves sent yet. Send waves to profiles from the main feed.
               </div>
-            ))}
+            ) : (
+              sentList.map((profile) => (
+                <div
+                  key={profile.id}
+                  onClick={() => onOpenProfile(profile)}
+                  className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left"
+                >
+                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
+                    <img
+                      src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                      alt={profile.display_name}
+                      className="w-full h-full object-cover"
+                    />
+                    <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#777777] bg-white px-3 py-1 rounded-full shadow-xs border border-[#E8E1D5]">
+                      Pending Response
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
+                    <p className="text-xs text-[#777777] font-semibold mt-0.5">
+                      {profile.age}yrs • {profile.occupation} • {profile.city}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 
         {activeTab === 'Received' && (
           <div className="space-y-4">
-            {profiles.slice(0, 1).map((profile) => (
-              <div
-                key={profile.id}
-                onClick={() => onOpenProfile(profile)}
-                className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-sm space-y-3 cursor-pointer text-left"
-              >
-                <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
-                  <img
-                    src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                    alt={profile.display_name}
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#B89552] bg-white px-3 py-1 rounded-full shadow border border-[#E8E1D5]">
-                    New Interest Request
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
-                  <p className="text-xs text-[#777777] font-semibold mt-0.5">
-                    {profile.age}yrs • {profile.city}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5 pt-1">
-                  <button
-                    type="button"
-                    onClick={(e) => e.stopPropagation()}
-                    className="py-3 px-4 rounded-2xl bg-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-gray-300 active:scale-98 transition-all cursor-pointer"
-                  >
-                    Decline
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveTab('Accepted');
-                      setActiveChatProfile(profile);
-                    }}
-                    className="py-3 px-4 rounded-2xl bg-[#111111] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-sm"
-                  >
-                    Accept Wave
-                  </button>
-                </div>
+            {receivedList.length === 0 ? (
+              <div className="py-12 text-center text-gray-500 text-xs font-medium">
+                No pending received requests.
               </div>
-            ))}
+            ) : (
+              receivedList.map((profile) => (
+                <div
+                  key={profile.id}
+                  onClick={() => onOpenProfile(profile)}
+                  className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left"
+                >
+                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
+                    <img
+                      src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                      alt={profile.display_name}
+                      className="w-full h-full object-cover"
+                    />
+                    <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#B89552] bg-white px-3 py-1 rounded-full shadow-xs border border-[#E8E1D5]">
+                      New Interest Request
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
+                    <p className="text-xs text-[#777777] font-semibold mt-0.5">
+                      {profile.age}yrs • {profile.occupation} • {profile.city}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeclineReceived(profile, e)}
+                      className="py-3 px-4 rounded-2xl bg-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-gray-300 active:scale-98 transition-all cursor-pointer shadow-xs"
+                    >
+                      Decline
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => handleAcceptReceived(profile, e)}
+                      className="py-3 px-4 rounded-2xl bg-[#111111] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-sm"
+                    >
+                      Accept Wave
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>
@@ -279,10 +332,10 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="w-full max-w-md h-[90vh] sm:h-[750px] bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
+              className="w-full max-w-lg h-[90vh] sm:h-[750px] bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
             >
               {/* Chat Header */}
-              <div className="px-5 py-4 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-sm shrink-0">
+              <div className="px-5 py-4 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-xs shrink-0">
                 <div className="flex items-center gap-3">
                   <img
                     src={activeChatProfile.photos?.[0] || activeChatProfile.creator_vouch?.creator_avatar_url}
@@ -323,7 +376,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     className={`flex flex-col ${msg.is_self ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`max-w-[80%] px-4 py-3 rounded-2xl text-xs leading-relaxed shadow-sm ${
+                      className={`max-w-[80%] px-4 py-3 rounded-2xl text-xs leading-relaxed shadow-xs ${
                         msg.is_self
                           ? 'bg-[#111111] text-white rounded-br-none'
                           : 'bg-white text-[#111111] border border-[#E8E1D5] rounded-bl-none'
@@ -361,7 +414,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || isSending}
-                  className="w-10 h-10 rounded-full bg-[#111111] text-white hover:bg-[#B89552] disabled:opacity-40 transition-colors flex items-center justify-center cursor-pointer shrink-0 shadow-sm"
+                  className="w-10 h-10 rounded-full bg-[#111111] text-white hover:bg-[#B89552] disabled:opacity-40 transition-colors flex items-center justify-center cursor-pointer shrink-0 shadow-xs"
                 >
                   <Send className="w-4 h-4" />
                 </button>

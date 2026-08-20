@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, Bell, ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star } from 'lucide-react';
+import { Search, Bell, ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
@@ -10,6 +10,7 @@ interface InstaVibeFeedProps {
   onOpenFilters: () => void;
   onOpenSharePortal: (profile: Profile) => void;
   onOpenPaywall: () => void;
+  onOpenCreateProfile?: () => void;
   onUnlockSuccess?: (profileId: string) => void;
 }
 
@@ -17,7 +18,8 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   profiles,
   onOpenFilters,
   onOpenSharePortal,
-  onOpenPaywall
+  onOpenPaywall,
+  onOpenCreateProfile
 }) => {
   const [selectedDetailProfile, setSelectedDetailProfile] = useState<Profile | null>(null);
   const [likedProfiles, setLikedProfiles] = useState<Record<string, boolean>>({});
@@ -418,26 +420,38 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       )}
 
       {/* Top Header */}
-      <div className="bg-[#FBF9F4] px-5 pt-6 pb-4 border-b border-[#E8E1D5] sticky top-0 z-40 flex items-center justify-between shadow-sm">
+      <div className="bg-[#FBF9F4] px-5 pt-6 pb-4 border-b border-[#E8E1D5] sticky top-0 z-40 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
           <span className="font-instrument text-4xl lowercase text-[#B89552] tracking-tight">mannat</span>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          {onOpenCreateProfile && (
+            <button
+              type="button"
+              onClick={onOpenCreateProfile}
+              className="px-3 py-1.5 rounded-full bg-[#111111] hover:bg-[#B89552] text-white transition-all text-xs font-bold flex items-center gap-1 cursor-pointer shadow-xs active:scale-95"
+            >
+              <Plus className="w-3.5 h-3.5 text-[#B89552]" />
+              <span>+ Add Profile</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => {
               onOpenFilters();
               triggerToast('Opening Search Partner Filters...', 'sparkle');
             }}
-            className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer"
+            className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer shadow-xs"
+            title="Search & Filters"
           >
             <Search className="w-4 h-4 text-[#111111]" />
           </button>
           <button
             type="button"
-            onClick={() => triggerToast('You have 3 New Verified Intros! ✨', 'sparkle')}
-            className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors relative border border-[#E8E1D5] cursor-pointer"
+            onClick={() => triggerToast('You have 3 New Verified Intros today! ✨', 'sparkle')}
+            className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors relative border border-[#E8E1D5] cursor-pointer shadow-xs"
+            title="Notifications"
           >
             <Bell className="w-4 h-4 text-[#111111]" />
             <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#B89552] border-2 border-[#FBF9F4] animate-pulse" />
@@ -447,8 +461,8 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
       {/* Hero Banner */}
       <div className="p-5">
-        <div className="bg-[#F4EFE6] rounded-[28px] p-6 text-[#111111] text-left space-y-3.5 relative overflow-hidden border border-[#E8E1D5] shadow-sm">
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-white px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block shadow-sm">
+        <div className="bg-[#F4EFE6] rounded-[28px] p-6 text-[#111111] text-left space-y-3.5 relative overflow-hidden border border-[#E8E1D5] shadow-xs">
+          <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-white px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block shadow-xs">
             INTENTION-FIRST MATCHMAKING
           </span>
 
@@ -460,17 +474,29 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             Explore verified vertical video profiles of partners seeking marriage.
           </p>
 
-          <button
-            type="button"
-            onClick={() => {
-              onOpenFilters();
-              triggerToast('Filtering Introductions...', 'sparkle');
-            }}
-            className="px-6 py-3.5 rounded-full bg-[#111111] text-white font-extrabold text-xs tracking-wider uppercase hover:bg-[#B89552] active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-sm cursor-pointer"
-          >
-            <Sparkles className="w-4 h-4 text-[#B89552]" />
-            <span>Filter Introductions</span>
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => {
+                onOpenFilters();
+                triggerToast('Filtering Introductions...', 'sparkle');
+              }}
+              className="px-5 py-3 rounded-full bg-[#111111] text-white font-extrabold text-xs tracking-wider uppercase hover:bg-[#B89552] active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-xs cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-[#B89552]" />
+              <span>Filter Intros</span>
+            </button>
+            {onOpenCreateProfile && (
+              <button
+                type="button"
+                onClick={onOpenCreateProfile}
+                className="px-4 py-3 rounded-full bg-white text-[#111111] border border-[#E8E1D5] font-extrabold text-xs tracking-wider uppercase hover:bg-[#E8E1D5] active:scale-95 transition-all duration-200 flex items-center gap-1.5 shadow-xs cursor-pointer"
+              >
+                <Plus className="w-4 h-4 text-[#B89552]" />
+                <span>Create Bio-data</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
