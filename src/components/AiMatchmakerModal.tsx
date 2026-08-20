@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Bot, Compass, Award, Star, CheckCircle, ArrowRight } from 'lucide-react';
+import { X, Sparkles, Bot, Compass, Award, Star, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 
@@ -58,25 +58,30 @@ export const AiMatchmakerModal: React.FC<AiMatchmakerModalProps> = ({
           className="w-full max-w-md h-[92vh] sm:h-[820px] bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
         >
           {/* Header */}
-          <div className="px-6 pt-5 pb-4 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-sm sticky top-0 z-20">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[#111111] text-[#B89552] flex items-center justify-center">
-                <Bot className="w-4 h-4" />
-              </div>
+          <div className="px-5 pt-4 pb-3.5 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-xs sticky top-0 z-20">
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
+                title="Go Back"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                <span>Back</span>
+              </button>
+              <div className="h-4 w-px bg-[#E8E1D5]" />
               <div>
-                <h3 className="font-serif-editorial text-lg font-bold text-[#111111] leading-tight">
-                  AI Matchmaker Concierge
+                <h3 className="font-serif-editorial text-base font-bold text-[#111111] leading-tight">
+                  AI Matchmaker
                 </h3>
-                <span className="text-[10px] text-[#B89552] font-black uppercase tracking-wider">
-                  Gemini-Powered Compatibility
-                </span>
               </div>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-[#F4EFE6] text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-[#E8E1D5]/50 text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+              title="Close"
             >
               <X className="w-5 h-5" />
             </button>

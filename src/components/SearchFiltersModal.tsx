@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, RotateCcw, Check, Sparkles, Filter, Globe, Star } from 'lucide-react';
+import { X, RotateCcw, Check, Sparkles, Globe, Star, ArrowLeft } from 'lucide-react';
 import metadataOptions from '../data/metadata_options.json';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { FilterCriteria } from '../types';
@@ -125,15 +125,20 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           className="w-full max-w-md h-[92vh] sm:h-[840px] bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
         >
-          {/* Top Header */}
-          <div className="px-6 pt-5 pb-4 bg-[#FBF9F4] border-b border-[#E8E1D5] sticky top-0 z-20 flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-2">
-              <span className="font-instrument text-3xl lowercase text-[#B89552]">mannat</span>
+          {/* Top Header with Back Button */}
+          <div className="px-5 pt-4 pb-3.5 bg-[#FBF9F4] border-b border-[#E8E1D5] sticky top-0 z-20 flex items-center justify-between shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
+                title="Go Back"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                <span>Back</span>
+              </button>
               <div className="h-4 w-px bg-[#E8E1D5]" />
-              <div className="flex items-center gap-1 text-xs font-bold text-[#111111]">
-                <Filter className="w-3.5 h-3.5 text-[#B89552]" />
-                <span>Refine Search</span>
-              </div>
+              <span className="font-instrument text-2xl lowercase text-[#B89552] leading-none">mannat</span>
             </div>
 
             <div className="flex items-center gap-2">
@@ -148,7 +153,8 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-[#F4EFE6] text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+                className="p-1.5 rounded-full hover:bg-[#E8E1D5]/50 text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+                title="Close"
               >
                 <X className="w-5 h-5" />
               </button>

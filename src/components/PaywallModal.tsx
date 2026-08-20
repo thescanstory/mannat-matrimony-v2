@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Check, Crown, RefreshCw, ShieldCheck, FileText, Apple } from 'lucide-react';
+import { X, Check, RefreshCw, ShieldCheck, FileText, Apple, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import confetti from 'canvas-confetti';
@@ -162,20 +162,26 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           className="w-full max-w-md h-[92vh] sm:h-[840px] bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
         >
           {/* Header */}
-          <div className="px-6 pt-5 pb-4 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-sm sticky top-0 z-20">
-            <div className="flex items-center gap-2">
-              <span className="font-instrument text-3xl lowercase text-[#B89552]">mannat</span>
+          <div className="px-5 pt-4 pb-3.5 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-xs sticky top-0 z-20">
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
+                title="Go Back"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                <span>Back</span>
+              </button>
               <div className="h-4 w-px bg-[#E8E1D5]" />
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#111111]">
-                <Crown className="w-4 h-4 text-[#B89552]" />
-                <span>Luxury Membership</span>
-              </div>
+              <span className="font-instrument text-2xl lowercase text-[#B89552] leading-none">mannat</span>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-[#F4EFE6] text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-[#E8E1D5]/50 text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+              title="Close"
             >
               <X className="w-5 h-5" />
             </button>
