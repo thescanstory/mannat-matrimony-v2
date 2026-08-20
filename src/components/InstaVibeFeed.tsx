@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, Plus } from 'lucide-react';
+import { ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
@@ -18,8 +18,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   profiles,
   onOpenFilters,
   onOpenSharePortal,
-  onOpenPaywall,
-  onOpenCreateProfile
+  onOpenPaywall
 }) => {
   const [selectedDetailProfile, setSelectedDetailProfile] = useState<Profile | null>(null);
   const [likedProfiles, setLikedProfiles] = useState<Record<string, boolean>>({});
@@ -456,42 +455,31 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             initial={{ opacity: 0, y: -20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ 
-              x: '-120%', 
+              x: '-125%', 
               opacity: 0, 
               scale: 0.95,
               height: 0,
               paddingTop: 0,
               paddingBottom: 0,
               marginBottom: 0,
-              transition: { duration: 0.45, ease: [0.32, 0.72, 0, 1] } 
+              transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } 
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={{ left: 0.8, right: 0.1 }}
+            dragElastic={{ left: 0.9, right: 0.05 }}
             onDragEnd={(_e, info) => {
-              if (info.offset.x < -40 || info.velocity.x < -300) {
+              if (info.offset.x < -30 || info.velocity.x < -200) {
                 dismissIntroBanner();
                 triggerToast('Curated Profiles Unlocked ✨', 'sparkle');
               }
             }}
-            className="p-5 overflow-hidden"
+            onClick={dismissIntroBanner}
+            className="p-5 overflow-hidden cursor-grab active:cursor-grabbing"
           >
-            <div className="bg-[#F4EFE6] rounded-[28px] p-6 text-[#111111] text-left space-y-3.5 relative overflow-hidden border border-[#E8E1D5] shadow-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-white px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block shadow-xs">
-                  INTENTION-FIRST MATCHMAKING
-                </span>
-
-                <button
-                  type="button"
-                  onClick={dismissIntroBanner}
-                  className="text-[10px] font-extrabold text-gray-500 hover:text-[#111111] flex items-center gap-1 bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-colors cursor-pointer shadow-xs"
-                  title="Swipe left to see profiles"
-                >
-                  <span>Swipe left</span>
-                  <X className="w-3.5 h-3.5 text-gray-400" />
-                </button>
-              </div>
+            <div className="bg-[#F4EFE6] rounded-[28px] p-6 text-[#111111] text-left space-y-4 relative overflow-hidden border border-[#E8E1D5] shadow-md hover:border-[#B89552] transition-colors">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-white px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block shadow-xs">
+                INTENTION-FIRST MATCHMAKING
+              </span>
 
               <h3 className="text-2xl sm:text-3xl font-serif-editorial font-bold tracking-tight leading-tight text-[#111111]">
                 Curated, vetted & intention-first.
@@ -501,40 +489,28 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 Explore verified vertical video profiles of partners seeking marriage.
               </p>
 
-              <div className="flex items-center gap-2 flex-wrap pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    dismissIntroBanner();
-                    onOpenFilters();
-                    triggerToast('Filtering Introductions...', 'sparkle');
-                  }}
-                  className="px-5 py-3 rounded-full bg-[#111111] text-white font-extrabold text-xs tracking-wider uppercase hover:bg-[#B89552] active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-xs cursor-pointer"
-                >
-                  <Sparkles className="w-4 h-4 text-[#B89552]" />
-                  <span>Filter Intros</span>
-                </button>
-                {onOpenCreateProfile && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      dismissIntroBanner();
-                      onOpenCreateProfile();
-                    }}
-                    className="px-4 py-3 rounded-full bg-white text-[#111111] border border-[#E8E1D5] font-extrabold text-xs tracking-wider uppercase hover:bg-[#E8E1D5] active:scale-95 transition-all duration-200 flex items-center gap-1.5 shadow-xs cursor-pointer"
+              {/* Animated Swipe Left Gesture Cue */}
+              <div className="pt-3 border-t border-[#E8E1D5] flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <motion.div
+                    animate={{ x: [0, -8, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
+                    className="w-7 h-7 rounded-full bg-[#111111] text-[#B89552] flex items-center justify-center shadow-xs"
                   >
-                    <Plus className="w-4 h-4 text-[#B89552]" />
-                    <span>Create Bio-data</span>
-                  </button>
-                )}
+                    <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                  </motion.div>
+                  <span className="text-xs font-black uppercase tracking-wider text-[#111111]">
+                    Swipe left to view profiles
+                  </span>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={dismissIntroBanner}
-                  className="text-xs font-black text-[#B89552] hover:underline px-2 py-1 cursor-pointer ml-auto flex items-center gap-0.5"
+                <motion.span 
+                  animate={{ opacity: [0.4, 1, 0.4] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  className="text-[10px] text-[#B89552] font-black uppercase tracking-widest"
                 >
-                  <span>Explore profiles →</span>
-                </button>
+                  ← SWIPE
+                </motion.span>
               </div>
             </div>
           </motion.div>
