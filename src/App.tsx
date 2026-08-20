@@ -67,6 +67,13 @@ export function App() {
 
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
   useEffect(() => {
+    // Clear any stale OAuth hash or query fragments from previous Google redirects
+    if (typeof window !== 'undefined' && (window.location.hash || window.location.search)) {
+      if (window.location.hash.includes('error') || window.location.hash.includes('access_token') || window.location.search.includes('error')) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    }
+
     async function loadBackendData() {
       try {
         const liveProfiles = await profileService.getProfiles();
