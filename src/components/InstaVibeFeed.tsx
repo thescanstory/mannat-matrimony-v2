@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, Bell, ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, Plus } from 'lucide-react';
+import { ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
@@ -419,45 +419,6 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
         </div>
       )}
 
-      {/* Top Header */}
-      <div className="bg-[#FBF9F4] px-5 pt-6 pb-4 border-b border-[#E8E1D5] sticky top-0 z-40 flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
-          <span className="font-instrument text-4xl lowercase text-[#B89552] tracking-tight">mannat</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {onOpenCreateProfile && (
-            <button
-              type="button"
-              onClick={onOpenCreateProfile}
-              className="px-3 py-1.5 rounded-full bg-[#111111] hover:bg-[#B89552] text-white transition-all text-xs font-bold flex items-center gap-1 cursor-pointer shadow-xs active:scale-95"
-            >
-              <Plus className="w-3.5 h-3.5 text-[#B89552]" />
-              <span>+ Add Profile</span>
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => {
-              onOpenFilters();
-              triggerToast('Opening Search Partner Filters...', 'sparkle');
-            }}
-            className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer shadow-xs"
-            title="Search & Filters"
-          >
-            <Search className="w-4 h-4 text-[#111111]" />
-          </button>
-          <button
-            type="button"
-            onClick={() => triggerToast('You have 3 New Verified Intros today! ✨', 'sparkle')}
-            className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors relative border border-[#E8E1D5] cursor-pointer shadow-xs"
-            title="Notifications"
-          >
-            <Bell className="w-4 h-4 text-[#111111]" />
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-[#B89552] border-2 border-[#FBF9F4] animate-pulse" />
-          </button>
-        </div>
-      </div>
 
       {/* Hero Banner */}
       <div className="p-5">
