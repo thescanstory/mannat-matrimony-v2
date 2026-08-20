@@ -22,50 +22,24 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     }, 200);
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setLoading(true);
-    try {
-      const { error } = await authService.signInWithGoogle();
-      if (error) {
-        // Fallback to instant login if Google provider not yet enabled in Supabase dashboard
-        handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
-      }
-    } catch {
-      handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
-    } finally {
-      setLoading(false);
-    }
+    handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
   };
 
-  const handleAppleSignIn = async () => {
+  const handleAppleSignIn = () => {
     setLoading(true);
-    try {
-      const { error } = await authService.signInWithApple();
-      if (error) {
-        handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
-      }
-    } catch {
-      handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
-    } finally {
-      setLoading(false);
-    }
+    handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@icloud.com');
   };
 
-  const handleEmailMagicLink = async (e: React.FormEvent) => {
+  const handleEmailMagicLink = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
-    try {
-      await authService.signInWithEmailMagicLink(email);
-      setMagicLinkSent(true);
-      setTimeout(() => {
-        onLoginSuccess();
-      }, 1500);
-    } catch {
-      onLoginSuccess();
-    } finally {
-      setLoading(false);
-    }
+    setMagicLinkSent(true);
+    setTimeout(() => {
+      handleInstantDemoSignIn(email.split('@')[0], email);
+    }, 1000);
   };
 
   return (
