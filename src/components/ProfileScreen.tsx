@@ -45,14 +45,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   return (
     <div className="w-full min-h-screen bg-[#FBF9F4] text-[#111111] pb-28 select-none font-sans">
-      {/* Top Header */}
-      <div className="bg-[#FBF9F4] px-5 pt-6 pb-4 border-b border-[#E8E1D5] flex items-center justify-between sticky top-0 z-30 shadow-xs">
-        <div className="flex items-center gap-2">
-          <span className="font-instrument text-3xl lowercase text-[#B89552]">mannat</span>
-          <div className="h-4 w-px bg-[#E8E1D5]" />
-          <h1 className="text-xl font-serif-editorial font-bold text-[#111111]">My Profile & Account</h1>
-        </div>
-      </div>
 
       <div className="p-5 space-y-5">
         {/* User Card */}
