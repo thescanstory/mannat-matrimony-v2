@@ -61,8 +61,8 @@ export function App() {
     setCurrentUser(null);
     setProfiles(MOCK_PROFILES);
     setActiveFilters(null);
-    setCurrentView('home');
-    triggerToast('All test data & sessions wiped clean! ✨', 'sparkle');
+    setCurrentView('auth');
+    triggerToast('All test data & sessions wiped clean! Please sign in.', 'sparkle');
   };
 
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes

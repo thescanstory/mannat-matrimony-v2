@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Sparkles, Mail, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Sparkles, Mail } from 'lucide-react';
 import { authService, GOOGLE_CLIENT_ID } from '../services/authService';
 
 import type { UserSession } from '../services/authService';
@@ -10,12 +10,34 @@ interface AuthScreenProps {
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  const handleInstantDemoSignIn = (name = 'Patrick Abraham', userEmail = 'patrickabraham.abraham@gmail.com') => {
+  const handleInstantDemoSignIn = (userName = 'Patrick Abraham', userEmail = 'patrickabraham.abraham@gmail.com') => {
     setLoading(true);
-    const user = authService.signInWithDemoUser(name, userEmail);
+    const user = authService.signInWithDemoUser(userName, userEmail);
+    setTimeout(() => {
+      setLoading(false);
+      onLoginSuccess(user);
+    }, 200);
+  };
+
+  const handleCustomSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    const candidateName = name.trim() || email.split('@')[0];
+    const user: UserSession = {
+      id: 'usr_' + Math.random().toString(36).substring(2, 9),
+      email: email.trim(),
+      user_metadata: {
+        full_name: candidateName,
+        avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+      }
+    };
+    try {
+      localStorage.setItem('mannat_active_user', JSON.stringify(user));
+    } catch {}
     setTimeout(() => {
       setLoading(false);
       onLoginSuccess(user);
@@ -105,16 +127,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  const handleEmailMagicLink = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setLoading(true);
-    setMagicLinkSent(true);
-    setTimeout(() => {
-      handleInstantDemoSignIn(email.split('@')[0], email);
-    }, 1000);
-  };
-
   return (
     <div className="min-h-screen bg-[#FBF9F4] flex flex-col justify-between p-6 select-none max-w-md mx-auto relative font-sans text-[#111111] text-left">
       {/* Top Branding */}
@@ -195,46 +207,47 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
           </span>
         </div>
 
-        {/* Passwordless Email Magic Link Form */}
-        {magicLinkSent ? (
-          <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl text-center space-y-1 animate-fadeIn">
-            <CheckCircle2 className="w-6 h-6 text-emerald-600 mx-auto mb-1" />
-            <span className="text-xs font-extrabold text-emerald-800 block">
-              Magic Link Sent to {email}!
-            </span>
-            <span className="text-[11px] text-emerald-700 font-medium block">
-              Signing you into Mannat feed...
-            </span>
+        {/* Custom Name & Email Sign In / Sign Up Form */}
+        <form onSubmit={handleCustomSignIn} className="space-y-3 pt-1">
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1">
+              Your Full Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Patrick Abraham"
+              className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
+            />
           </div>
-        ) : (
-          <form onSubmit={handleEmailMagicLink} className="space-y-3 pt-1">
-            <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1">
-                Enter Email Address
-              </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@example.com"
-                  className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
-                  required
-                />
-                <Mail className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
-              </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 px-4 rounded-xl bg-[#F4EFE6] border border-[#E8E1D5] hover:bg-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-[#B89552]" />
-              <span>Send 1-Click Login Link</span>
-            </button>
-          </form>
-        )}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1">
+              Email Address
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="patrickabraham.abraham@gmail.com"
+                className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
+                required
+              />
+              <Mail className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 px-4 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+          >
+            <Sparkles className="w-4 h-4 text-[#B89552]" />
+            <span>Sign In / Save Account</span>
+          </button>
+        </form>
 
         <button
           type="button"
