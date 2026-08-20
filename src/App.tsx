@@ -118,6 +118,7 @@ export function App() {
 
   const handleResetAllData = async () => {
     await authService.clearAllData();
+    localStorage.removeItem('mannat_intro_dismissed');
     setCurrentUser(null);
     setProfiles(MOCK_PROFILES);
     setActiveFilters(null);

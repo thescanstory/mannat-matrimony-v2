@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronRight, ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
@@ -32,6 +32,34 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   const [isMuted, setIsMuted] = useState(true);
   const [pausedVideos, setPausedVideos] = useState<Record<string, boolean>>({});
   const [doubleTapHeart, setDoubleTapHeart] = useState<Record<string, boolean>>({});
+
+  // First-time login banner state: shows on first login, then slides away to left
+  const [showIntroBanner, setShowIntroBanner] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('mannat_intro_dismissed') !== 'true';
+    } catch {
+      return true;
+    }
+  });
+
+  const dismissIntroBanner = () => {
+    setShowIntroBanner(false);
+    try {
+      localStorage.setItem('mannat_intro_dismissed', 'true');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    if (showIntroBanner) {
+      // Automatically slide out to the left after 4.2 seconds to reveal profiles smoothly
+      const timer = setTimeout(() => {
+        dismissIntroBanner();
+      }, 4200);
+      return () => clearTimeout(timer);
+    }
+  }, [showIntroBanner]);
 
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
@@ -420,46 +448,98 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       )}
 
 
-      {/* Hero Banner */}
-      <div className="p-5">
-        <div className="bg-[#F4EFE6] rounded-[28px] p-6 text-[#111111] text-left space-y-3.5 relative overflow-hidden border border-[#E8E1D5] shadow-xs">
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-white px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block shadow-xs">
-            INTENTION-FIRST MATCHMAKING
-          </span>
+      {/* Hero Banner (First-time Login / Introductory Slide-Out to Left) */}
+      <AnimatePresence>
+        {showIntroBanner && (
+          <motion.div 
+            key="first-time-intro-banner"
+            initial={{ opacity: 0, y: -20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ 
+              x: '-120%', 
+              opacity: 0, 
+              scale: 0.95,
+              height: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+              marginBottom: 0,
+              transition: { duration: 0.45, ease: [0.32, 0.72, 0, 1] } 
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={{ left: 0.8, right: 0.1 }}
+            onDragEnd={(_e, info) => {
+              if (info.offset.x < -40 || info.velocity.x < -300) {
+                dismissIntroBanner();
+                triggerToast('Curated Profiles Unlocked ✨', 'sparkle');
+              }
+            }}
+            className="p-5 overflow-hidden"
+          >
+            <div className="bg-[#F4EFE6] rounded-[28px] p-6 text-[#111111] text-left space-y-3.5 relative overflow-hidden border border-[#E8E1D5] shadow-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-white px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block shadow-xs">
+                  INTENTION-FIRST MATCHMAKING
+                </span>
 
-          <h3 className="text-2xl sm:text-3xl font-serif-editorial font-bold tracking-tight leading-tight text-[#111111]">
-            Curated, vetted & intention-first.
-          </h3>
+                <button
+                  type="button"
+                  onClick={dismissIntroBanner}
+                  className="text-[10px] font-extrabold text-gray-500 hover:text-[#111111] flex items-center gap-1 bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-colors cursor-pointer shadow-xs"
+                  title="Swipe left to see profiles"
+                >
+                  <span>Swipe left</span>
+                  <X className="w-3.5 h-3.5 text-gray-400" />
+                </button>
+              </div>
 
-          <p className="text-xs text-[#666666] max-w-xs leading-relaxed font-medium">
-            Explore verified vertical video profiles of partners seeking marriage.
-          </p>
+              <h3 className="text-2xl sm:text-3xl font-serif-editorial font-bold tracking-tight leading-tight text-[#111111]">
+                Curated, vetted & intention-first.
+              </h3>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={() => {
-                onOpenFilters();
-                triggerToast('Filtering Introductions...', 'sparkle');
-              }}
-              className="px-5 py-3 rounded-full bg-[#111111] text-white font-extrabold text-xs tracking-wider uppercase hover:bg-[#B89552] active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-xs cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4 text-[#B89552]" />
-              <span>Filter Intros</span>
-            </button>
-            {onOpenCreateProfile && (
-              <button
-                type="button"
-                onClick={onOpenCreateProfile}
-                className="px-4 py-3 rounded-full bg-white text-[#111111] border border-[#E8E1D5] font-extrabold text-xs tracking-wider uppercase hover:bg-[#E8E1D5] active:scale-95 transition-all duration-200 flex items-center gap-1.5 shadow-xs cursor-pointer"
-              >
-                <Plus className="w-4 h-4 text-[#B89552]" />
-                <span>Create Bio-data</span>
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+              <p className="text-xs text-[#666666] max-w-xs leading-relaxed font-medium">
+                Explore verified vertical video profiles of partners seeking marriage.
+              </p>
+
+              <div className="flex items-center gap-2 flex-wrap pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    dismissIntroBanner();
+                    onOpenFilters();
+                    triggerToast('Filtering Introductions...', 'sparkle');
+                  }}
+                  className="px-5 py-3 rounded-full bg-[#111111] text-white font-extrabold text-xs tracking-wider uppercase hover:bg-[#B89552] active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-[#B89552]" />
+                  <span>Filter Intros</span>
+                </button>
+                {onOpenCreateProfile && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      dismissIntroBanner();
+                      onOpenCreateProfile();
+                    }}
+                    className="px-4 py-3 rounded-full bg-white text-[#111111] border border-[#E8E1D5] font-extrabold text-xs tracking-wider uppercase hover:bg-[#E8E1D5] active:scale-95 transition-all duration-200 flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4 text-[#B89552]" />
+                    <span>Create Bio-data</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={dismissIntroBanner}
+                  className="text-xs font-black text-[#B89552] hover:underline px-2 py-1 cursor-pointer ml-auto flex items-center gap-0.5"
+                >
+                  <span>Explore profiles →</span>
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Recommended Vertical Video Profiles List */}
       <div className="px-5 space-y-4 flex-1">
