@@ -24,30 +24,11 @@ export const authService = {
   },
 
   // 1-Click Google OAuth Sign In
-  signInWithGoogle: async () => {
-    if (!isSupabaseConfigured()) {
-      return {
-        user: {
-          id: 'demo-google-user-123',
-          email: 'patrickabraham.abraham@gmail.com',
-          user_metadata: { full_name: 'Patrick Abraham' }
-        },
-        error: null
-      };
-    }
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent'
-        }
-      }
-    });
-
-    return { data, error };
+  signInWithGoogle: () => {
+    const redirectUri = encodeURIComponent('https://qexwbaykwguoigkaqiwa.supabase.co/auth/v1/callback');
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
+    window.location.href = googleAuthUrl;
+    return { data: null, error: null };
   },
 
   // 1-Click Apple OAuth Sign In

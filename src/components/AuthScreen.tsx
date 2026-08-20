@@ -56,25 +56,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     }
   }, [onLoginSuccess]);
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setLoading(true);
-    const win = window as any;
-    if (win.google?.accounts?.id) {
-      win.google.accounts.id.prompt((notification: any) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // Fallback to instant login or standard OAuth
-          handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
-        }
-      });
-    } else {
-      try {
-        await authService.signInWithGoogle();
-      } catch {
-        handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
-      } finally {
-        setLoading(false);
-      }
-    }
+    authService.signInWithGoogle();
   };
 
   const handleAppleSignIn = async () => {
