@@ -9,7 +9,20 @@ export interface UserSession {
   };
 }
 
+export const GOOGLE_CLIENT_ID = '953419391945-pb3f0afso7h4dj2b9ni3mo14m08qip87.apps.googleusercontent.com';
+
 export const authService = {
+  // Exchange Google ID Token with Supabase
+  signInWithGoogleIdToken: async (idToken: string) => {
+    if (!isSupabaseConfigured()) {
+      return { data: null, error: null };
+    }
+    return await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: idToken,
+    });
+  },
+
   // 1-Click Google OAuth Sign In
   signInWithGoogle: async () => {
     if (!isSupabaseConfigured()) {
