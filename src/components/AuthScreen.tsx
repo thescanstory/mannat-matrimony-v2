@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { ShieldCheck, Sparkles, Mail, CheckCircle2 } from 'lucide-react';
 import { authService } from '../services/authService';
 
+import type { UserSession } from '../services/authService';
+
 interface AuthScreenProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (user?: UserSession) => void;
 }
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
@@ -13,11 +15,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
 
   const handleInstantDemoSignIn = (name = 'Patrick Abraham', userEmail = 'patrickabraham.abraham@gmail.com') => {
     setLoading(true);
-    authService.signInWithDemoUser(name, userEmail);
+    const user = authService.signInWithDemoUser(name, userEmail);
     setTimeout(() => {
       setLoading(false);
-      onLoginSuccess();
-    }, 400);
+      onLoginSuccess(user);
+    }, 200);
   };
 
   const handleGoogleSignIn = async () => {

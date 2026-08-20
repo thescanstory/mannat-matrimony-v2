@@ -217,7 +217,18 @@ export function App() {
 
             {/* Auth View */}
             {currentView === 'auth' && (
-              <AuthScreen onLoginSuccess={() => setCurrentView('home')} />
+              <AuthScreen 
+                onLoginSuccess={async (user) => {
+                  if (user) {
+                    setCurrentUser(user);
+                  } else {
+                    const u = await authService.getCurrentUser();
+                    setCurrentUser(u);
+                  }
+                  setCurrentView('profile');
+                  triggerToast('Signed in successfully! ✨', 'sparkle');
+                }} 
+              />
             )}
 
             {/* Main Home Dashboard Feed */}
