@@ -404,16 +404,6 @@ export function App() {
             <span>For You</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setCurrentView('onboarding')}
-            className="flex flex-col items-center gap-0.5 text-[10px] font-black text-[#111111] hover:text-[#B89552] transition-all cursor-pointer"
-          >
-            <div className="w-6 h-6 rounded-full bg-[#111111] text-white flex items-center justify-center -mt-1 shadow-xs">
-              <Plus className="w-4 h-4 text-[#B89552]" />
-            </div>
-            <span>Add</span>
-          </button>
 
           <button
             type="button"
