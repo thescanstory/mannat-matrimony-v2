@@ -22,14 +22,29 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     }, 200);
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setLoading(true);
-    handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@gmail.com');
+    try {
+      const { error } = await authService.signInWithGoogle();
+      if (error) {
+        console.error('Google Sign In Error:', error);
+      }
+    } catch (err) {
+      console.error('Google Sign In Catch:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleAppleSignIn = () => {
+  const handleAppleSignIn = async () => {
     setLoading(true);
-    handleInstantDemoSignIn('Patrick Abraham', 'patrickabraham.abraham@icloud.com');
+    try {
+      await authService.signInWithApple();
+    } catch (err) {
+      console.error('Apple Sign In Catch:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEmailMagicLink = (e: React.FormEvent) => {
