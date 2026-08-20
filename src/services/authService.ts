@@ -88,7 +88,23 @@ export const authService = {
 
   // Get Current Active User
   getCurrentUser: async (): Promise<UserSession | null> => {
-    // Check local session first
+    if (isSupabaseConfigured()) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const u: UserSession = {
+            id: session.user.id,
+            email: session.user.email,
+            user_metadata: session.user.user_metadata,
+          };
+          try {
+            localStorage.setItem('mannat_active_user', JSON.stringify(u));
+          } catch {}
+          return u;
+        }
+      } catch {}
+    }
+
     try {
       const stored = localStorage.getItem('mannat_active_user');
       if (stored) {
@@ -96,16 +112,7 @@ export const authService = {
       }
     } catch {}
 
-    if (!isSupabaseConfigured()) {
-      return null;
-    }
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      return user as UserSession | null;
-    } catch {
-      return null;
-    }
+    return null;
   },
 
   // Sign Out
@@ -141,9 +148,22 @@ export const authService = {
     if (!isSupabaseConfigured()) {
       return { data: { subscription: { unsubscribe: () => {} } } };
     }
-    return supabase.auth.onAuthStateChange((_event, session) => {
+    return supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        callback(session.user as UserSession);
+        const u: UserSession = {
+          id: session.user.id,
+          email: session.user.email,
+          user_metadata: session.user.user_metadata,
+        };
+        try {
+          localStorage.setItem('mannat_active_user', JSON.stringify(u));
+        } catch {}
+        callback(u);
+      } else if (event === 'SIGNED_OUT') {
+        try {
+          localStorage.removeItem('mannat_active_user');
+        } catch {}
+        callback(null);
       }
     });
   }

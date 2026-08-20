@@ -67,13 +67,6 @@ export function App() {
 
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
   useEffect(() => {
-    // Clear any stale OAuth hash or query fragments from previous Google redirects
-    if (typeof window !== 'undefined' && (window.location.hash || window.location.search)) {
-      if (window.location.hash.includes('error') || window.location.hash.includes('access_token') || window.location.search.includes('error')) {
-        window.history.replaceState(null, '', window.location.pathname);
-      }
-    }
-
     async function loadBackendData() {
       try {
         const liveProfiles = await profileService.getProfiles();
@@ -81,7 +74,9 @@ export function App() {
           setProfiles(liveProfiles);
         }
         const activeUser = await authService.getCurrentUser();
-        setCurrentUser(activeUser);
+        if (activeUser) {
+          setCurrentUser(activeUser);
+        }
       } catch {
         setProfiles(MOCK_PROFILES);
       }
@@ -89,7 +84,18 @@ export function App() {
     loadBackendData();
 
     const { data: authListener } = authService.onAuthStateChange((user) => {
-      setCurrentUser(user);
+      if (user) {
+        setCurrentUser(user);
+        setCurrentView('profile');
+        triggerToast(`Welcome back, ${user.user_metadata?.full_name || user.email?.split('@')[0] || 'Member'}! ✨`, 'sparkle');
+        
+        // Clean URL hash after successful session capture
+        if (typeof window !== 'undefined' && window.location.hash) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      } else {
+        setCurrentUser(null);
+      }
     });
 
     return () => {
