@@ -11,7 +11,6 @@ import {
   Lock, 
   CheckCircle2, 
   FileText,
-  Settings,
   RefreshCw
 } from 'lucide-react';
 import type { UserSession } from '../services/authService';
@@ -28,7 +27,6 @@ interface ProfileScreenProps {
   onOpenOnboarding: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
-  onOpenAdmin: () => void;
   onResetAllData: () => void;
 }
 
@@ -43,7 +41,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenOnboarding,
   onOpenAuth,
   onLogout,
-  onOpenAdmin,
   onResetAllData
 }) => {
   const displayName = currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'Member Candidate';
@@ -228,27 +225,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-[#888888]" />
-            </button>
-
-            {/* Admin Command Center */}
-            <button
-              type="button"
-              onClick={onOpenAdmin}
-              className="w-full p-4 flex items-center justify-between hover:bg-[#111111] hover:text-white transition-colors text-left cursor-pointer group bg-[#111111]/5"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-2xl bg-[#111111] text-[#B89552] border border-[#B89552]/30 group-hover:bg-[#B89552] group-hover:text-[#111111]">
-                  <Settings className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <h4 className="text-xs font-bold text-[#111111] group-hover:text-white">Admin Command Center</h4>
-                    <span className="text-[9px] font-black text-black bg-[#B89552] px-1.5 py-0.5 rounded-full">ADMIN</span>
-                  </div>
-                  <p className="text-[11px] text-[#777777] group-hover:text-gray-300">Curate candidates, verify vouches, analytics & re-seed</p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#888888] group-hover:text-white" />
             </button>
           </div>
         </div>

@@ -16,9 +16,8 @@ import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { ProfileScreen } from './components/ProfileScreen';
-import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
-import { Home, Heart, Eye, Sparkles, User, Crown } from 'lucide-react';
+import { Home, Heart, Eye, Sparkles, User } from 'lucide-react';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
@@ -30,7 +29,7 @@ export function App() {
       return null;
     }
   });
-  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile' | 'admin'>(() => {
+  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile'>(() => {
     try {
       const stored = localStorage.getItem('mannat_active_user');
       return stored ? 'home' : 'auth';
@@ -202,21 +201,6 @@ export function App() {
     setCurrentView('home');
   };
 
-  if (currentView === 'admin') {
-    return (
-      <div className="min-h-screen bg-[#F4EFE6]">
-        <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
-        <AdminDashboard
-          profiles={profiles}
-          onUpdateProfiles={(updated) => setProfiles(updated)}
-          onBackToApp={() => setCurrentView('home')}
-          onResetAllData={handleResetAllData}
-          onTriggerToast={triggerToast}
-        />
-      </div>
-    );
-  }
-
   return (
     <div className={`min-h-screen bg-[#FBF9F4] text-[#111111] flex flex-col items-center justify-start p-0 font-sans select-none relative overflow-x-hidden ${isParentView ? 'text-lg font-bold' : ''}`}>
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
@@ -225,22 +209,13 @@ export function App() {
       <div className="w-full max-w-md mx-auto flex-1 min-h-screen bg-[#FBF9F4] flex flex-col relative">
         
         {/* App Header Inside The App Frame */}
-        <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-5 py-3.5 z-40 sticky top-0 shadow-xs flex items-center justify-between">
+        <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-5 py-4 z-40 sticky top-0 shadow-xs flex items-center justify-center">
           <button
             type="button"
             onClick={() => setCurrentView('home')}
             className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight hover:opacity-80 transition-opacity cursor-pointer leading-none"
           >
             mannat
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setCurrentView('admin')}
-            className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-[#111111] text-[#B89552] border border-[#B89552]/40 hover:bg-[#B89552] hover:text-[#111111] transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
-          >
-            <Crown className="w-3.5 h-3.5 text-[#B89552]" />
-            <span>Admin</span>
           </button>
         </header>
 
@@ -352,7 +327,6 @@ export function App() {
                 onOpenOnboarding={() => setCurrentView('onboarding')}
                 onOpenAuth={() => setCurrentView('auth')}
                 onLogout={handleLogout}
-                onOpenAdmin={() => setCurrentView('admin')}
                 onResetAllData={handleResetAllData}
               />
             )}
