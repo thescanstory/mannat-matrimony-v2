@@ -118,6 +118,7 @@ export const authService = {
   signOut: async () => {
     try {
       localStorage.removeItem('mannat_active_user');
+      localStorage.removeItem('mannat_demo_user');
     } catch {}
     if (isSupabaseConfigured()) {
       try {
@@ -125,6 +126,20 @@ export const authService = {
       } catch {}
     }
     return { error: null };
+  },
+
+  // Completely Reset / Wipe All Local Data & Caches
+  clearAllData: async () => {
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch {}
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.auth.signOut();
+      } catch {}
+    }
+    return { success: true };
   },
 
   // Auth State Change Listener

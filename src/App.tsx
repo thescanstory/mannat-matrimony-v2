@@ -16,13 +16,14 @@ import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { ProfileScreen } from './components/ProfileScreen';
+import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
 import { Home, Heart, Eye, Sparkles, User } from 'lucide-react';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
-  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile'>('home');
+  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile' | 'admin'>('home');
   const [shareProfile, setShareProfile] = useState<Profile | null>(null);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -53,6 +54,15 @@ export function App() {
       setCurrentUser(null);
       triggerToast('Logged out', 'success');
     }
+  };
+
+  const handleResetAllData = async () => {
+    await authService.clearAllData();
+    setCurrentUser(null);
+    setProfiles(MOCK_PROFILES);
+    setActiveFilters(null);
+    setCurrentView('home');
+    triggerToast('All test data & sessions wiped clean! ✨', 'sparkle');
   };
 
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
@@ -165,6 +175,21 @@ export function App() {
     setCurrentView('home');
   };
 
+  if (currentView === 'admin') {
+    return (
+      <div className="min-h-screen bg-[#F4EFE6]">
+        <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
+        <AdminDashboard
+          profiles={profiles}
+          onUpdateProfiles={(updated) => setProfiles(updated)}
+          onBackToApp={() => setCurrentView('home')}
+          onResetAllData={handleResetAllData}
+          onTriggerToast={triggerToast}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen bg-[#FBF9F4] text-[#111111] flex flex-col items-center justify-start p-0 font-sans select-none relative overflow-x-hidden ${isParentView ? 'text-lg font-bold' : ''}`}>
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
@@ -204,11 +229,11 @@ export function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentView}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="w-full h-full"
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.15 }}
+            className="w-full flex-1 flex flex-col"
           >
             {/* Onboarding View */}
             {currentView === 'onboarding' && (
@@ -291,6 +316,8 @@ export function App() {
                 onOpenOnboarding={() => setCurrentView('onboarding')}
                 onOpenAuth={() => setCurrentView('auth')}
                 onLogout={handleLogout}
+                onOpenAdmin={() => setCurrentView('admin')}
+                onResetAllData={handleResetAllData}
               />
             )}
           </motion.div>

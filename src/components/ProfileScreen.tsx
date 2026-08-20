@@ -10,7 +10,9 @@ import {
   ChevronRight, 
   Lock, 
   CheckCircle2, 
-  FileText 
+  FileText,
+  Settings,
+  RefreshCw
 } from 'lucide-react';
 import type { UserSession } from '../services/authService';
 import type { PrivacySettings } from '../types';
@@ -26,6 +28,8 @@ interface ProfileScreenProps {
   onOpenOnboarding: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
+  onOpenAdmin: () => void;
+  onResetAllData: () => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -38,7 +42,9 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenAiMatchmaker,
   onOpenOnboarding,
   onOpenAuth,
-  onLogout
+  onLogout,
+  onOpenAdmin,
+  onResetAllData
 }) => {
   const displayName = currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'Member Candidate';
   const email = currentUser?.email || 'Not signed in';
@@ -223,7 +229,46 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
               <ChevronRight className="w-4 h-4 text-[#888888]" />
             </button>
+
+            {/* Admin Command Center */}
+            <button
+              type="button"
+              onClick={onOpenAdmin}
+              className="w-full p-4 flex items-center justify-between hover:bg-[#111111] hover:text-white transition-colors text-left cursor-pointer group bg-[#111111]/5"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-2xl bg-[#111111] text-[#B89552] border border-[#B89552]/30 group-hover:bg-[#B89552] group-hover:text-[#111111]">
+                  <Settings className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <h4 className="text-xs font-bold text-[#111111] group-hover:text-white">Admin Command Center</h4>
+                    <span className="text-[9px] font-black text-black bg-[#B89552] px-1.5 py-0.5 rounded-full">ADMIN</span>
+                  </div>
+                  <p className="text-[11px] text-[#777777] group-hover:text-gray-300">Curate candidates, verify vouches, analytics & re-seed</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#888888] group-hover:text-white" />
+            </button>
           </div>
+        </div>
+
+        {/* Developer / Testing Data Reset Section */}
+        <div className="p-4 rounded-3xl bg-rose-50/60 border border-rose-200/70 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-[10px] font-black text-rose-800 uppercase tracking-wider block">
+              Testing & Session Utilities
+            </span>
+            <p className="text-[11px] text-rose-700">Wipe all active logins and start fresh unauthenticated</p>
+          </div>
+          <button
+            type="button"
+            onClick={onResetAllData}
+            className="px-3.5 py-2 rounded-full bg-white border border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs shrink-0 active:scale-95"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Reset Data</span>
+          </button>
         </div>
       </div>
     </div>
