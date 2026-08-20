@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured, getGoogleClientId } from './supabaseClient';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 export interface UserSession {
   id: string;
@@ -16,33 +16,21 @@ export const authService = {
       return {
         user: {
           id: 'demo-google-user-123',
-          email: 'candidate@google.com',
-          user_metadata: { full_name: 'Ananya Sharma' }
+          email: 'patrickabraham.abraham@gmail.com',
+          user_metadata: { full_name: 'Patrick Abraham' }
         },
         error: null
       };
     }
 
-    const clientId = getGoogleClientId();
-    const redirectUri = window.location.origin + '/auth/callback';
-
-    const options: any = {
-      provider: 'google',
-      options: {
-        redirectTo: redirectUri
-      }
-    };
-
-    // Add client ID if configured - this enables proper Google OAuth flow
-    if (clientId) {
-      options.options.client_id = clientId;
-    }
-
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: redirectUri,
-        ...(clientId && { client_id: clientId })
+        redirectTo: window.location.origin,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
       }
     });
 
@@ -88,24 +76,55 @@ export const authService = {
     return { data, error };
   },
 
+  // Instant 1-Click Access (Developer & Guest Demo)
+  signInWithDemoUser: (name = 'Patrick Abraham', email = 'patrickabraham.abraham@gmail.com'): UserSession => {
+    const user: UserSession = {
+      id: 'usr_demo_' + Math.random().toString(36).substring(2, 8),
+      email,
+      user_metadata: { 
+        full_name: name,
+        avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+      }
+    };
+    try {
+      localStorage.setItem('mannat_active_user', JSON.stringify(user));
+    } catch {}
+    return user;
+  },
+
   // Get Current Active User
   getCurrentUser: async (): Promise<UserSession | null> => {
+    // Check local session first
+    try {
+      const stored = localStorage.getItem('mannat_active_user');
+      if (stored) {
+        return JSON.parse(stored) as UserSession;
+      }
+    } catch {}
+
     if (!isSupabaseConfigured()) {
-      return {
-        id: 'demo-user-1',
-        email: 'ananya@mannat.app',
-        user_metadata: { full_name: 'Ananya Sharma' }
-      };
+      return null;
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
-    return user as UserSession | null;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      return user as UserSession | null;
+    } catch {
+      return null;
+    }
   },
 
   // Sign Out
   signOut: async () => {
-    if (!isSupabaseConfigured()) return { error: null };
-    return await supabase.auth.signOut();
+    try {
+      localStorage.removeItem('mannat_active_user');
+    } catch {}
+    if (isSupabaseConfigured()) {
+      try {
+        await supabase.auth.signOut();
+      } catch {}
+    }
+    return { error: null };
   },
 
   // Auth State Change Listener
@@ -114,7 +133,9 @@ export const authService = {
       return { data: { subscription: { unsubscribe: () => {} } } };
     }
     return supabase.auth.onAuthStateChange((_event, session) => {
-      callback((session?.user as UserSession) || null);
+      if (session?.user) {
+        callback(session.user as UserSession);
+      }
     });
   }
 };
