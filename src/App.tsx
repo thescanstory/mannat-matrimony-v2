@@ -22,8 +22,22 @@ import { Home, Heart, Eye, Sparkles, User } from 'lucide-react';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
-  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
-  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile' | 'admin'>('home');
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(() => {
+    try {
+      const stored = localStorage.getItem('mannat_active_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [currentView, setCurrentView] = useState<'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile' | 'admin'>(() => {
+    try {
+      const stored = localStorage.getItem('mannat_active_user');
+      return stored ? 'home' : 'auth';
+    } catch {
+      return 'auth';
+    }
+  });
   const [shareProfile, setShareProfile] = useState<Profile | null>(null);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
