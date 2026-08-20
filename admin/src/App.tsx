@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Crown, 
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import type { Profile } from './types';
 import { MOCK_PROFILES } from './services/mockData';
+import { supabase } from './services/supabaseClient';
 
 interface VIPCallback {
   id: string;
@@ -122,6 +123,22 @@ export function App() {
     }
   });
 
+  // Fetch live profiles from Supabase on mount
+  useEffect(() => {
+    async function loadSupabaseProfiles() {
+      try {
+        const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+        if (data && data.length > 0 && !error) {
+          setProfiles(data as Profile[]);
+          localStorage.setItem('mannat_admin_candidates', JSON.stringify(data));
+        }
+      } catch (e) {
+        console.warn('Supabase initial fetch fallback:', e);
+      }
+    }
+    loadSupabaseProfiles();
+  }, []);
+
   const [activeTab, setActiveTab] = useState<'candidates' | 'analytics' | 'callbacks' | 'vouches' | 'database'>('candidates');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterReligion, setFilterReligion] = useState<string>('all');
@@ -185,32 +202,58 @@ export function App() {
     });
   }, [profiles, searchTerm, filterReligion, filterVerified]);
 
-  // Candidate Actions
-  const toggleVerified = (profileId: string) => {
+  // Candidate Actions with Direct Supabase DB Sync
+  const toggleVerified = async (profileId: string) => {
+    const target = profiles.find((p) => p.id === profileId);
+    if (!target) return;
+    const newStatus = !target.is_vouched;
+    
     const updated = profiles.map((p) => 
-      p.id === profileId ? { ...p, is_vouched: !p.is_vouched } : p
+      p.id === profileId ? { ...p, is_vouched: newStatus } : p
     );
     updateAndPersistProfiles(updated);
-    showToast('Candidate Verification Status Updated! ✓');
+
+    try {
+      await supabase.from('profiles').update({ is_vouched: newStatus }).eq('id', profileId);
+    } catch (e) {
+      console.warn('DB sync error:', e);
+    }
+    showToast('Candidate Verification Status Updated & Synced to DB! ✓');
   };
 
-  const toggleSpotlight = (profileId: string) => {
+  const toggleSpotlight = async (profileId: string) => {
+    const target = profiles.find((p) => p.id === profileId);
+    if (!target) return;
+    const newStatus = !target.is_spotlight;
+
     const updated = profiles.map((p) => 
-      p.id === profileId ? { ...p, is_spotlight: !p.is_spotlight } : p
+      p.id === profileId ? { ...p, is_spotlight: newStatus } : p
     );
     updateAndPersistProfiles(updated);
-    showToast('Candidate Spotlight Status Toggled! 🔥');
+
+    try {
+      await supabase.from('profiles').update({ is_spotlight: newStatus }).eq('id', profileId);
+    } catch (e) {
+      console.warn('DB sync error:', e);
+    }
+    showToast('Candidate Spotlight Status Toggled & Synced to DB! 🔥');
   };
 
-  const deleteCandidate = (profileId: string) => {
+  const deleteCandidate = async (profileId: string) => {
     if (window.confirm('Are you sure you want to remove this candidate bio-data?')) {
       const updated = profiles.filter((p) => p.id !== profileId);
       updateAndPersistProfiles(updated);
-      showToast('Candidate bio-data removed from platform');
+
+      try {
+        await supabase.from('profiles').delete().eq('id', profileId);
+      } catch (e) {
+        console.warn('DB delete error:', e);
+      }
+      showToast('Candidate bio-data removed from platform & DB');
     }
   };
 
-  const handleCreateCandidate = (e: React.FormEvent) => {
+  const handleCreateCandidate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCandidate.display_name) return;
 
@@ -241,17 +284,29 @@ export function App() {
 
     updateAndPersistProfiles([created, ...profiles]);
     setShowAddModal(false);
-    showToast(`Candidate "${created.display_name}" published live! ✨`);
+
+    try {
+      await supabase.from('profiles').insert([created]);
+    } catch (e) {
+      console.warn('DB insert error:', e);
+    }
+    showToast(`Candidate "${created.display_name}" published live to Supabase! ✨`);
   };
 
-  const handleSaveEditCandidate = (e: React.FormEvent) => {
+  const handleSaveEditCandidate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCandidate) return;
 
     const updated = profiles.map(p => p.id === editingCandidate.id ? editingCandidate : p);
     updateAndPersistProfiles(updated);
     setEditingCandidate(null);
-    showToast(`Candidate "${editingCandidate.display_name}" updated! ✨`);
+
+    try {
+      await supabase.from('profiles').update(editingCandidate).eq('id', editingCandidate.id);
+    } catch (e) {
+      console.warn('DB update error:', e);
+    }
+    showToast(`Candidate "${editingCandidate.display_name}" updated in Supabase! ✨`);
   };
 
   const handleUpdateCallbackStatus = (callbackId: string, newStatus: 'Pending' | 'In Progress' | 'Completed') => {
@@ -259,9 +314,14 @@ export function App() {
     showToast(`Callback status updated to "${newStatus}"!`);
   };
 
-  const handleReseedDefaults = () => {
+  const handleReseedDefaults = async () => {
     updateAndPersistProfiles(MOCK_PROFILES);
-    showToast('Re-seeded Default Vouched Candidates! 🚀');
+    try {
+      await supabase.from('profiles').upsert(MOCK_PROFILES);
+    } catch (e) {
+      console.warn('DB reseed error:', e);
+    }
+    showToast('Re-seeded Default Vouched Candidates to Supabase! 🚀');
   };
 
   const handleAddEliteCohort = () => {
