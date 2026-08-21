@@ -117,21 +117,36 @@ const INITIAL_MATCHMAKERS: MatchmakerCurator[] = [
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(() => {
     try {
+      const isDeleted = localStorage.getItem('mannat_admin_deleted');
+      if (isDeleted === 'true') {
+        return [];
+      }
       const stored = localStorage.getItem('mannat_admin_candidates');
-      return stored ? JSON.parse(stored) : MOCK_PROFILES;
-    } catch {
+      if (stored !== null) {
+        return JSON.parse(stored);
+      }
       return MOCK_PROFILES;
+    } catch {
+      return [];
     }
   });
 
   // Fetch live profiles from Supabase on mount
   useEffect(() => {
     async function loadSupabaseProfiles() {
+      const isDeleted = localStorage.getItem('mannat_admin_deleted');
+      if (isDeleted === 'true') {
+        return;
+      }
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-        if (data && data.length > 0 && !error) {
-          setProfiles(data as Profile[]);
-          localStorage.setItem('mannat_admin_candidates', JSON.stringify(data));
+        if (data && !error) {
+          if (data.length > 0) {
+            setProfiles(data as Profile[]);
+            localStorage.setItem('mannat_admin_candidates', JSON.stringify(data));
+          } else if (localStorage.getItem('mannat_admin_candidates') === null) {
+            setProfiles([]);
+          }
         }
       } catch (e) {
         console.warn('Supabase initial fetch fallback:', e);
@@ -320,10 +335,10 @@ export function App() {
   const handleDeleteAllData = async () => {
     setProfiles([]);
     setCallbacks([]);
-    updateAndPersistProfiles([]);
     try {
-      localStorage.removeItem('mannat_admin_candidates');
-      localStorage.removeItem('mannat_profiles');
+      localStorage.setItem('mannat_admin_deleted', 'true');
+      localStorage.setItem('mannat_admin_candidates', JSON.stringify([]));
+      localStorage.setItem('mannat_profiles', JSON.stringify([]));
       localStorage.removeItem('mannat_active_user');
       localStorage.removeItem('mannat_intro_dismissed');
       localStorage.removeItem('mannat_privacy_settings');
@@ -343,7 +358,12 @@ export function App() {
   };
 
   const handleDeleteAllUsers = async () => {
+    setProfiles([]);
+    setCallbacks([]);
     try {
+      localStorage.setItem('mannat_admin_deleted', 'true');
+      localStorage.setItem('mannat_admin_candidates', JSON.stringify([]));
+      localStorage.setItem('mannat_profiles', JSON.stringify([]));
       localStorage.removeItem('mannat_active_user');
       localStorage.removeItem('mannat_intro_dismissed');
       localStorage.removeItem('mannat_privacy_settings');
@@ -361,16 +381,18 @@ export function App() {
     }
 
     try {
+      await supabase.from('profiles').delete().neq('id', '');
       await supabase.from('callback_requests').delete().neq('id', '');
     } catch (e) {
       console.warn('DB user callback purge:', e);
     }
 
     setShowDeleteAllUsersConfirm(false);
-    showToast('👥 All registered user accounts, active logins & session tokens permanently deleted!');
+    showToast('👥 All registered users & candidate bio-data permanently deleted!');
   };
 
   const handleReseedDefaults = async () => {
+    localStorage.removeItem('mannat_admin_deleted');
     updateAndPersistProfiles(MOCK_PROFILES);
     try {
       await supabase.from('profiles').upsert(MOCK_PROFILES);
@@ -666,90 +688,122 @@ export function App() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              {filteredCandidates.map((candidate) => (
-                <div
-                  key={candidate.id}
-                  className="bg-white rounded-3xl border border-[#E8E1D5] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs hover:border-[#B89552] transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={candidate.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
-                      alt={candidate.display_name}
-                      className="w-16 h-16 rounded-2xl object-cover border border-[#E8E1D5] shrink-0"
-                    />
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="text-base font-extrabold text-[#111111]">
-                          {candidate.display_name} · {candidate.age}
-                        </h4>
-                        {candidate.is_vouched && (
-                          <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            VOUCHED
-                          </span>
-                        )}
-                        {candidate.is_spotlight && (
-                          <span className="text-[10px] font-black text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                            BOOSTED
-                          </span>
-                        )}
+            {filteredCandidates.length === 0 ? (
+              <div className="bg-white rounded-3xl border border-[#E8E1D5] p-12 text-center space-y-4 shadow-xs">
+                <div className="w-16 h-16 rounded-full bg-[#F4EFE6] text-[#B89552] flex items-center justify-center mx-auto shadow-inner">
+                  <Users className="w-8 h-8" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-[#111111]">Database is Empty (0 Candidates / Users)</h4>
+                  <p className="text-xs text-gray-500 max-w-md mx-auto mt-1 leading-relaxed">
+                    All candidate bio-data, user profiles, and session accounts have been permanently wiped clean.
+                  </p>
+                </div>
+                <div className="pt-2 flex items-center justify-center gap-3 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(true)}
+                    className="px-5 py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold transition-all cursor-pointer shadow-xs inline-flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add New Candidate</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleReseedDefaults}
+                    className="px-5 py-2.5 rounded-xl border border-[#E8E1D5] bg-[#FBF9F4] hover:bg-[#E8E1D5]/60 text-[#111111] text-xs font-bold transition-all cursor-pointer shadow-xs inline-flex items-center gap-2"
+                  >
+                    <RefreshCw className="w-4 h-4 text-[#B89552]" />
+                    <span>Restore Default Profiles</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredCandidates.map((candidate) => (
+                  <div
+                    key={candidate.id}
+                    className="bg-white rounded-3xl border border-[#E8E1D5] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs hover:border-[#B89552] transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={candidate.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+                        alt={candidate.display_name}
+                        className="w-16 h-16 rounded-2xl object-cover border border-[#E8E1D5] shrink-0"
+                      />
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-base font-extrabold text-[#111111]">
+                            {candidate.display_name} · {candidate.age}
+                          </h4>
+                          {candidate.is_vouched && (
+                            <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              VOUCHED
+                            </span>
+                          )}
+                          {candidate.is_spotlight && (
+                            <span className="text-[10px] font-black text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                              BOOSTED
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-600 font-medium mt-0.5">
+                          {candidate.occupation} {candidate.company_name && `@ ${candidate.company_name}`}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {candidate.city} • {candidate.religion} {candidate.community && `(${candidate.community})`} • {candidate.salary_bracket}
+                        </p>
                       </div>
-                      <p className="text-xs text-gray-600 font-medium mt-0.5">
-                        {candidate.occupation} {candidate.company_name && `@ ${candidate.company_name}`}
-                      </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        {candidate.city} • {candidate.religion} {candidate.community && `(${candidate.community})`} • {candidate.salary_bracket}
-                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
+                      <button
+                        type="button"
+                        onClick={() => setEditingCandidate(candidate)}
+                        className="px-3.5 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-gray-600" />
+                        <span>Edit</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleVerified(candidate.id)}
+                        className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                          candidate.is_vouched
+                            ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                            : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>{candidate.is_vouched ? 'Verified ✓' : 'Unverified'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleSpotlight(candidate.id)}
+                        className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                          candidate.is_spotlight
+                            ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
+                            : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        }`}
+                      >
+                        <Flame className="w-3.5 h-3.5 text-amber-500" />
+                        <span>{candidate.is_spotlight ? 'Boosted' : 'Spotlight'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => deleteCandidate(candidate.id)}
+                        className="p-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
-                    <button
-                      type="button"
-                      onClick={() => setEditingCandidate(candidate)}
-                      className="px-3.5 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      <Edit3 className="w-3.5 h-3.5 text-gray-600" />
-                      <span>Edit</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleVerified(candidate.id)}
-                      className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                        candidate.is_vouched
-                          ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-                          : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      <span>{candidate.is_vouched ? 'Verified ✓' : 'Unverified'}</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleSpotlight(candidate.id)}
-                      className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                        candidate.is_spotlight
-                          ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
-                          : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      <Flame className="w-3.5 h-3.5 text-amber-500" />
-                      <span>{candidate.is_spotlight ? 'Boosted' : 'Spotlight'}</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => deleteCandidate(candidate.id)}
-                      className="p-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
