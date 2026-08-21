@@ -132,9 +132,11 @@ export function App() {
     try {
       await authService.signOut();
       setCurrentUser(null);
+      setCurrentView('auth');
       triggerToast('Logged out successfully', 'success');
     } catch {
       setCurrentUser(null);
+      setCurrentView('auth');
       triggerToast('Logged out', 'success');
     }
   };
@@ -160,7 +162,7 @@ export function App() {
     const { data: authListener } = authService.onAuthStateChange((user) => {
       if (user) {
         setCurrentUser(user);
-        setCurrentView('profile');
+        setCurrentView('home');
         triggerToast(`Welcome back, ${user.user_metadata?.full_name || user.email?.split('@')[0] || 'Member'}! ✨`, 'sparkle');
         
         // Clean URL hash after successful session capture
@@ -392,7 +394,7 @@ export function App() {
                       const u = await authService.getCurrentUser();
                       setCurrentUser(u);
                     }
-                    navigateTo('profile');
+                    navigateTo('home');
                     triggerToast('Signed in successfully! ✨', 'sparkle');
                   }} 
                 />
