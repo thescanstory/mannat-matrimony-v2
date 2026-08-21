@@ -9,7 +9,7 @@ export interface UserSession {
   };
 }
 
-export const GOOGLE_CLIENT_ID = '953419391945-pb3f0afso7h4dj2b9ni3mo14m08qip87.apps.googleusercontent.com';
+export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '53450733585-uj6ltrdggai2146p321tb0ok27fjhi52.apps.googleusercontent.com';
 
 export const authService = {
   // Exchange Google ID Token with Supabase
