@@ -12,19 +12,76 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  // 1-Click Real Google OAuth Sign-In (Forces Account Chooser)
+  // 1-Click Real Google OAuth Sign-In (Dual-Mode: GIS Token Exchange + OAuth Redirect)
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      // Clear any stale local keys before initiating fresh OAuth
       localStorage.removeItem('mannat_active_user');
+
+      // 1. Try Google Identity Services SDK Popup first (Bypasses redirect URI origin issues)
+      if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
+        const GOOGLE_CLIENT_ID = '53450733585-uj6ltrdggai2146p321tb0ok27fjhi52.apps.googleusercontent.com';
+        (window as any).google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: async (response: any) => {
+            if (response?.credential) {
+              try {
+                // Decode Google JWT
+                const base64Url = response.credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(
+                  atob(base64)
+                    .split('')
+                    .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join('')
+                );
+                const payload = JSON.parse(jsonPayload);
+                const user: UserSession = {
+                  id: 'usr_' + payload.sub,
+                  email: payload.email,
+                  user_metadata: {
+                    full_name: payload.name,
+                    avatar_url: payload.picture
+                  }
+                };
+                localStorage.setItem('mannat_active_user', JSON.stringify(user));
+                setLoading(false);
+                onLoginSuccess(user);
+                return;
+              } catch (e) {
+                console.warn('GIS token decode fallback:', e);
+              }
+            }
+          }
+        });
+
+        // Trigger prompt
+        (window as any).google.accounts.id.prompt((notification: any) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            // Fallback to Supabase OAuth redirect if prompt skipped
+            supabase.auth.signInWithOAuth({
+              provider: 'google',
+              options: {
+                redirectTo: window.location.origin,
+                queryParams: {
+                  access_type: 'offline',
+                  prompt: 'select_account'
+                }
+              }
+            });
+          }
+        });
+        return;
+      }
+
+      // 2. Direct Supabase OAuth
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: window.location.origin,
           queryParams: {
             access_type: 'offline',
-            prompt: 'select_account' // Forces Google Account Picker so it never re-uses old session without user action
+            prompt: 'select_account'
           }
         }
       });
