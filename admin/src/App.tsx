@@ -144,6 +144,7 @@ export function App() {
   const [filterReligion, setFilterReligion] = useState<string>('all');
   const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Profile | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -312,6 +313,31 @@ export function App() {
   const handleUpdateCallbackStatus = (callbackId: string, newStatus: 'Pending' | 'In Progress' | 'Completed') => {
     setCallbacks(prev => prev.map(c => c.id === callbackId ? { ...c, status: newStatus } : c));
     showToast(`Callback status updated to "${newStatus}"!`);
+  };
+
+  const handleDeleteAllData = async () => {
+    setProfiles([]);
+    setCallbacks([]);
+    updateAndPersistProfiles([]);
+    try {
+      localStorage.removeItem('mannat_admin_candidates');
+      localStorage.removeItem('mannat_profiles');
+      localStorage.removeItem('mannat_active_user');
+      localStorage.removeItem('mannat_intro_dismissed');
+      localStorage.removeItem('mannat_privacy_settings');
+      localStorage.removeItem('mannat_favorites');
+      sessionStorage.clear();
+    } catch (e) {
+      console.error(e);
+    }
+    try {
+      await supabase.from('profiles').delete().neq('id', '');
+      await supabase.from('callback_requests').delete().neq('id', '');
+    } catch (e) {
+      console.warn('DB purge error:', e);
+    }
+    setShowDeleteAllConfirm(false);
+    showToast('🗑️ All candidate bio-data, session caches & records permanently deleted!');
   };
 
   const handleReseedDefaults = async () => {
@@ -582,10 +608,20 @@ export function App() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(true)}
-                  className="px-5 py-3 rounded-2xl bg-[#111111] text-white hover:bg-[#B89552] text-xs font-extrabold flex items-center gap-2 transition-all cursor-pointer shrink-0 shadow-xs"
+                  className="px-4 py-3 rounded-2xl bg-[#111111] text-white hover:bg-[#B89552] text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Candidate</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteAllConfirm(true)}
+                  className="px-4 py-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
+                  title="Wipe & Delete All Platform Data"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete All Data</span>
                 </button>
               </div>
             </div>
@@ -881,6 +917,27 @@ export function App() {
                   <p className="text-[11px] text-gray-500 mt-1">Download backup of all active candidate bio-data</p>
                 </button>
               </div>
+
+              {/* Danger Zone: Delete All Data */}
+              <div className="p-5 rounded-2xl border border-rose-200 bg-rose-50/60 flex items-center justify-between flex-wrap gap-4 mt-2">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Trash2 className="w-5 h-5 text-rose-600" />
+                    <h4 className="text-sm font-bold text-rose-900">Purge & Delete All Data</h4>
+                  </div>
+                  <p className="text-xs text-rose-700 max-w-md">
+                    Permanently deletes all candidate bio-data, matchmaker vouches, callback logs, and local browser testing caches.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteAllConfirm(true)}
+                  className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-black transition-all cursor-pointer shadow-sm flex items-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete All Data</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1166,6 +1223,44 @@ export function App() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE ALL DATA MODAL */}
+      {showDeleteAllConfirm && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 border border-rose-200 shadow-2xl text-center">
+            <div className="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
+              <Trash2 className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-[#111111]">Delete All Candidates & Data?</h3>
+              <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                This action is permanent. All candidate bio-data, mock datasets, callback logs, and session storage will be wiped clean.
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-left text-[11px] text-amber-800 flex items-center gap-2">
+              <RefreshCw className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Tip: You can re-seed sample verified candidates anytime using the "Re-seed Default Profiles" tool.</span>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteAllConfirm(false)}
+                className="px-5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-50 active:scale-95 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAllData}
+                className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-black cursor-pointer shadow-md flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Yes, Delete All Data</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

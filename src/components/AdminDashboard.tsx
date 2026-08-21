@@ -523,6 +523,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <Plus className="w-4 h-4" />
                   <span>Add Candidate</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowResetConfirm(true)}
+                  className="px-4 py-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-600 hover:text-white text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
+                  title="Wipe & Delete All Platform Data"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete All Data</span>
+                </button>
               </div>
             </div>
 
