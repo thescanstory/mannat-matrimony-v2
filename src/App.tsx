@@ -16,11 +16,10 @@ import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { ProfileScreen } from './components/ProfileScreen';
-import { AdminDashboard } from './components/AdminDashboard';
 import { Toast } from './components/Toast';
 import { Home, Heart, Eye, Sparkles, User, ArrowLeft, SlidersHorizontal } from 'lucide-react';
 
-type ViewType = 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile' | 'admin';
+type ViewType = 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile';
 
 export function App() {
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
@@ -34,17 +33,6 @@ export function App() {
   });
   const [currentView, setCurrentView] = useState<ViewType>(() => {
     try {
-      if (typeof window !== 'undefined') {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (
-          urlParams.get('view') === 'admin' || 
-          urlParams.get('admin') === 'true' || 
-          window.location.pathname.startsWith('/admin') ||
-          window.location.hash.includes('admin')
-        ) {
-          return 'admin';
-        }
-      }
       const stored = localStorage.getItem('mannat_active_user');
       return stored ? 'home' : 'auth';
     } catch {
@@ -126,16 +114,6 @@ export function App() {
       setCurrentUser(null);
       triggerToast('Logged out', 'success');
     }
-  };
-
-  const handleResetAllData = async () => {
-    await authService.clearAllData();
-    localStorage.removeItem('mannat_intro_dismissed');
-    setCurrentUser(null);
-    setProfiles(MOCK_PROFILES);
-    setActiveFilters(null);
-    setCurrentView('auth');
-    triggerToast('All test data & sessions wiped clean! Please sign in.', 'sparkle');
   };
 
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
@@ -445,25 +423,7 @@ export function App() {
                   onOpenAiMatchmaker={() => setShowAiModal(true)}
                   onOpenOnboarding={() => navigateTo('onboarding')}
                   onOpenAuth={() => navigateTo('auth')}
-                  onOpenAdmin={() => navigateTo('admin')}
                   onLogout={handleLogout}
-                  onResetAllData={handleResetAllData}
-                />
-              )}
-
-              {/* Admin Command Center View */}
-              {currentView === 'admin' && (
-                <AdminDashboard
-                  profiles={profiles}
-                  onUpdateProfiles={(updated) => {
-                    setProfiles(updated);
-                    try {
-                      localStorage.setItem('mannat_profiles', JSON.stringify(updated));
-                    } catch {}
-                  }}
-                  onBackToApp={() => navigateTo('home')}
-                  onTriggerToast={(msg, type) => triggerToast(msg, type)}
-                  onResetAllData={handleResetAllData}
                 />
               )}
             </motion.div>
