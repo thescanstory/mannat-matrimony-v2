@@ -16,12 +16,25 @@ import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { ProfileScreen } from './components/ProfileScreen';
+import { App as AdminPortal } from '../admin/src/App';
 import { Toast } from './components/Toast';
 import { Home, Heart, Eye, Sparkles, User, ArrowLeft, SlidersHorizontal } from 'lucide-react';
 
 type ViewType = 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile';
 
 export function App() {
+  // Check if accessing dedicated Admin URL route (/admin, ?admin=true, ?view=admin, #admin)
+  const isAdminRoute = typeof window !== 'undefined' && (
+    window.location.pathname.startsWith('/admin') ||
+    window.location.search.includes('admin') ||
+    window.location.search.includes('view=admin') ||
+    window.location.hash.includes('admin')
+  );
+
+  if (isAdminRoute) {
+    return <AdminPortal />;
+  }
+
   const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(() => {
     try {
