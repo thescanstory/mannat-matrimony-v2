@@ -388,17 +388,23 @@ export function App() {
       localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(allIds));
       localStorage.setItem('mannat_admin_candidates', JSON.stringify([]));
       localStorage.setItem('mannat_profiles', JSON.stringify([]));
+      localStorage.setItem('mannat_custom_profiles', JSON.stringify([]));
       localStorage.removeItem('mannat_active_user');
       localStorage.removeItem('mannat_intro_dismissed');
       localStorage.removeItem('mannat_privacy_settings');
       localStorage.removeItem('mannat_favorites');
+      localStorage.removeItem('mannat_sent_waves');
+      localStorage.removeItem('mannat_accepted_connections');
+      localStorage.removeItem('mannat_received_connections');
+      localStorage.removeItem('mannat_unlocked_ids');
+      localStorage.removeItem('mannat_callbacks');
       sessionStorage.clear();
     } catch (e) {
       console.error(e);
     }
     try {
-      await supabase.from('profiles').delete().neq('id', '');
-      await supabase.from('callback_requests').delete().neq('id', '');
+      await supabase.from('profiles').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('callback_requests').delete().neq('id', '00000000-0000-0000-0000-000000000000');
     } catch (e) {
       console.warn('DB purge error:', e);
     }
@@ -415,10 +421,16 @@ export function App() {
       localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(allIds));
       localStorage.setItem('mannat_admin_candidates', JSON.stringify([]));
       localStorage.setItem('mannat_profiles', JSON.stringify([]));
+      localStorage.setItem('mannat_custom_profiles', JSON.stringify([]));
       localStorage.removeItem('mannat_active_user');
       localStorage.removeItem('mannat_intro_dismissed');
       localStorage.removeItem('mannat_privacy_settings');
       localStorage.removeItem('mannat_favorites');
+      localStorage.removeItem('mannat_sent_waves');
+      localStorage.removeItem('mannat_accepted_connections');
+      localStorage.removeItem('mannat_received_connections');
+      localStorage.removeItem('mannat_unlocked_ids');
+      localStorage.removeItem('mannat_callbacks');
       
       // Clear any stored Supabase session tokens
       for (let i = 0; i < localStorage.length; i++) {
@@ -430,14 +442,12 @@ export function App() {
     } catch (e) {
       console.error(e);
     }
-
     try {
-      await supabase.from('profiles').delete().neq('id', '');
-      await supabase.from('callback_requests').delete().neq('id', '');
+      await supabase.from('profiles').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('callback_requests').delete().neq('id', '00000000-0000-0000-0000-000000000000');
     } catch (e) {
       console.warn('DB user callback purge:', e);
     }
-
     setShowDeleteAllUsersConfirm(false);
     showToast('👥 All registered users & candidate bio-data permanently deleted!');
   };
