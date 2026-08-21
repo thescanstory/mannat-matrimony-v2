@@ -387,6 +387,7 @@ export function App() {
               {/* Auth View */}
               {currentView === 'auth' && (
                 <AuthScreen 
+                  onOpenOnboarding={() => navigateTo('onboarding')}
                   onLoginSuccess={async (user) => {
                     if (user) {
                       setCurrentUser(user);
