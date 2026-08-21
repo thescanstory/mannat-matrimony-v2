@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, SlidersHorizontal, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
@@ -49,8 +49,6 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       console.error(e);
     }
   };
-
-  // Card stays until user swipes left, seamlessly unlocking the profile feed
 
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
@@ -133,18 +131,18 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     }
   };
 
-  // Detailed profile view with interactive controls
+  // Detailed profile view with luxury editorial layout
   if (selectedDetailProfile) {
     const p = selectedDetailProfile;
     const isBioExpanded = expandedBios[p.id] ?? false;
 
     return (
-      <div className="min-h-screen bg-[#FBF9F4] text-[#111111] max-w-md mx-auto flex flex-col justify-between pb-24 select-none relative font-sans">
+      <div className="min-h-screen bg-[#FAF8F5] text-[#161412] max-w-md mx-auto flex flex-col justify-between pb-24 select-none relative font-sans">
         <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
         {/* Full Screen Edge-to-Edge Vertical Video Hero */}
         <div
-          className="relative w-full h-[580px] bg-[#111111] overflow-hidden cursor-pointer"
+          className="relative w-full h-[580px] bg-[#161412] overflow-hidden cursor-pointer"
           onClick={() => handleVideoTap(p.id)}
           onDoubleClick={(e) => handleDoubleTapVideo(p.id, e)}
         >
@@ -167,7 +165,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 exit={{ scale: 2, opacity: 0 }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
               >
-                <Heart className="w-24 h-24 text-[#B89552] fill-[#B89552] drop-shadow-2xl" />
+                <Heart className="w-24 h-24 text-[#C5A059] fill-[#C5A059] drop-shadow-2xl" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -181,7 +179,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             </div>
           )}
 
-          {/* Video Overlay */}
+          {/* Video Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/40 pointer-events-none" />
 
           {/* Top Floating Header Controls */}
@@ -189,9 +187,9 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             <button
               type="button"
               onClick={() => setSelectedDetailProfile(null)}
-              className="w-10 h-10 rounded-full bg-[#FBF9F4]/90 backdrop-blur-xl border border-[#E8E1D5] flex items-center justify-center text-[#111111] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#EADBCE] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5 text-[#C5A059]" />
             </button>
 
             <div className="flex items-center gap-2">
@@ -201,20 +199,20 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   e.stopPropagation();
                   setIsMuted(!isMuted);
                 }}
-                className="w-10 h-10 rounded-full bg-[#FBF9F4]/90 backdrop-blur-xl border border-[#E8E1D5] flex items-center justify-center text-[#111111] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#EADBCE] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
               >
-                {isMuted ? <VolumeX className="w-5 h-5 text-gray-700" /> : <Volume2 className="w-5 h-5 text-[#B89552]" />}
+                {isMuted ? <VolumeX className="w-4 h-4 text-[#7E776F]" /> : <Volume2 className="w-4 h-4 text-[#C5A059]" />}
               </button>
               <button
                 type="button"
                 onClick={(e) => toggleLike(p.id, e)}
                 className={`w-10 h-10 rounded-full backdrop-blur-xl border flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
                   likedProfiles[p.id]
-                    ? 'bg-[#B89552] border-[#B89552] text-white shadow-md'
-                    : 'bg-[#FBF9F4]/90 border-[#E8E1D5] text-[#111111] hover:bg-white'
+                    ? 'bg-[#C5A059] border-[#C5A059] text-white shadow-md'
+                    : 'bg-white/90 border-[#EADBCE] text-[#161412] hover:bg-white'
                 }`}
               >
-                <Heart className={`w-5 h-5 ${likedProfiles[p.id] ? 'fill-white' : ''}`} />
+                <Heart className={`w-4 h-4 ${likedProfiles[p.id] ? 'fill-white' : 'text-[#C5A059]'}`} />
               </button>
               <button
                 type="button"
@@ -222,69 +220,77 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   e.stopPropagation();
                   onOpenSharePortal(p);
                 }}
-                className="w-10 h-10 rounded-full bg-[#FBF9F4]/90 backdrop-blur-xl border border-[#E8E1D5] flex items-center justify-center text-[#111111] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#EADBCE] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
               >
-                <Share2 className="w-5 h-5 text-[#111111]" />
+                <Share2 className="w-4 h-4 text-[#161412]" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Profile Details Sheet */}
-        <div className="p-6 bg-[#FBF9F4] text-[#111111] rounded-t-[36px] -mt-8 relative z-20 space-y-5 border-t border-[#E8E1D5]">
+        <div className="p-6 bg-[#FAF8F5] text-[#161412] rounded-t-[36px] -mt-8 relative z-20 space-y-5 border-t border-[#EADBCE] shadow-2xl">
           <div className="flex items-center justify-between">
-            <span className="font-instrument text-2xl lowercase text-[#B89552]">mannat</span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-[#F4EFE6] px-3 py-1 rounded-full border border-[#E8E1D5]">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+              <span className="font-instrument text-2xl lowercase text-[#C5A059]">mannat</span>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] bg-[#F6F2E9] px-3.5 py-1.5 rounded-full border border-[#EADBCE] flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3 text-[#C5A059]" />
               {p.compatibility_score}% MUTUAL MATCH
             </span>
           </div>
 
           <div>
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-serif-editorial font-bold text-[#111111] tracking-tight flex items-center gap-2">
+              <h1 className="text-3xl font-serif-editorial font-bold text-[#161412] tracking-tight flex items-center gap-2">
                 <span>{p.display_name}</span>
-                <span className="text-[#B89552] font-sans font-extrabold text-xl">· {p.age}</span>
+                <span className="text-[#C5A059] font-sans font-extrabold text-xl">· {p.age}</span>
               </h1>
               {p.is_vouched && (
-                <span className="text-xs font-black text-[#B89552] bg-[#F4EFE6] px-3.5 py-1.5 rounded-full border border-[#E8E1D5] flex items-center gap-1.5 shadow-sm">
-                  <ShieldCheck className="w-4 h-4 text-[#B89552]" />
+                <span className="text-xs font-black text-[#C5A059] bg-[#F6F2E9] px-3.5 py-1.5 rounded-full border border-[#EADBCE] flex items-center gap-1.5 shadow-xs">
+                  <ShieldCheck className="w-4 h-4 text-[#C5A059]" />
                   <span>Vouched</span>
                 </span>
               )}
             </div>
 
-            <p className="text-xs text-[#777777] font-bold mt-1 flex items-center gap-2">
-              <span>{p.height || "5'6\""}</span>
-              <span>•</span>
-              <span>{p.religion}</span>
-              <span>•</span>
-              <span className="text-[#111111] font-extrabold">{p.occupation}</span>
-            </p>
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <span className="text-xs text-[#7E776F] font-bold bg-[#F6F2E9] px-2.5 py-1 rounded-md border border-[#EADBCE]">
+                📏 {p.height || "5'6\""}
+              </span>
+              <span className="text-xs text-[#7E776F] font-bold bg-[#F6F2E9] px-2.5 py-1 rounded-md border border-[#EADBCE]">
+                🙏 {p.religion} {p.sub_community ? `· ${p.sub_community}` : ''}
+              </span>
+              <span className="text-xs text-[#161412] font-extrabold bg-[#F6F2E9] px-2.5 py-1 rounded-md border border-[#EADBCE]">
+                💼 {p.occupation}
+              </span>
+            </div>
           </div>
 
           {/* Contact Details Paywall Card */}
-          <div className="p-4 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] flex items-center justify-between shadow-sm">
+          <div className="p-4 rounded-2xl bg-white border border-[#EADBCE] flex items-center justify-between shadow-xs">
             <div className="space-y-0.5">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#B89552] block">
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#C5A059] block">
                 VERIFIED CONTACT NUMBER
               </span>
-              <span className="text-xs font-mono font-bold text-gray-500 blur-xs select-none">
+              <span className="text-xs font-mono font-bold text-[#7E776F] blur-xs select-none">
                 +91 98765 *****
               </span>
             </div>
             <button
               type="button"
               onClick={onOpenPaywall}
-              className="px-4 py-2 rounded-full bg-[#111111] text-white text-xs font-extrabold flex items-center gap-1.5 shadow hover:bg-[#B89552] transition-colors cursor-pointer"
+              className="px-4 py-2.5 rounded-full bg-[#161412] hover:bg-[#C5A059] text-white text-xs font-extrabold flex items-center gap-1.5 shadow transition-all cursor-pointer"
             >
-              <Lock className="w-3.5 h-3.5 text-[#B89552]" />
+              <Lock className="w-3.5 h-3.5 text-[#DFBE7E]" />
               <span>Unlock Phone</span>
             </button>
           </div>
 
           {/* 3 Small Picture Placeholders Below Video */}
           <div className="space-y-2">
-            <span className="text-[11px] font-black uppercase tracking-widest text-[#B89552] flex items-center gap-1.5">
+            <span className="text-[11px] font-black uppercase tracking-widest text-[#C5A059] flex items-center gap-1.5">
               <ImageIcon className="w-3.5 h-3.5" />
               <span>Photo Gallery (3 Pictures)</span>
             </span>
@@ -298,7 +304,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   key={idx}
                   type="button"
                   onClick={() => setSelectedPhotoPreview(photoUrl)}
-                  className="aspect-square rounded-2xl overflow-hidden border border-[#E8E1D5] bg-[#F4EFE6] hover:opacity-90 active:scale-95 transition-all shadow-sm group cursor-pointer relative"
+                  className="aspect-square rounded-2xl overflow-hidden border border-[#EADBCE] bg-[#F6F2E9] hover:opacity-90 active:scale-95 transition-all shadow-xs group cursor-pointer relative"
                 >
                   <img
                     src={photoUrl}
@@ -311,25 +317,25 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
           </div>
 
           {/* Collapsible Profile Description Dropdown */}
-          <div className="border-t border-[#E8E1D5] pt-3">
+          <div className="border-t border-[#EADBCE] pt-3">
             <button
               type="button"
               onClick={(e) => toggleBioDropdown(p.id, e)}
-              className="w-full py-3 px-4 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] flex items-center justify-between text-xs font-extrabold text-[#111111] hover:bg-[#E8E1D5] transition-all cursor-pointer"
+              className="w-full py-3 px-4 rounded-2xl bg-white border border-[#EADBCE] flex items-center justify-between text-xs font-extrabold text-[#161412] hover:bg-[#F6F2E9] transition-all cursor-pointer shadow-xs"
             >
               <div className="flex items-center gap-2">
                 <span className="font-serif-editorial text-sm">About & Bio Description</span>
               </div>
-              {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#B89552]" /> : <ChevronDown className="w-4 h-4 text-[#777777]" />}
+              {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#C5A059]" /> : <ChevronDown className="w-4 h-4 text-[#7E776F]" />}
             </button>
 
             {isBioExpanded && (
-              <div className="mt-3 p-4 rounded-2xl bg-white border border-[#E8E1D5] space-y-3 animate-fadeIn shadow-sm">
+              <div className="mt-3 p-4 rounded-2xl bg-white border border-[#EADBCE] space-y-3 animate-fadeIn shadow-xs">
                 <div>
-                  <span className="text-[10px] uppercase font-black tracking-wider text-[#B89552] block mb-1">
+                  <span className="text-[10px] uppercase font-black tracking-wider text-[#C5A059] block mb-1">
                     Personal Bio
                   </span>
-                  <p className="text-xs text-[#555555] font-medium leading-relaxed">
+                  <p className="text-xs text-[#55504A] font-medium leading-relaxed">
                     {p.bio_text || 'No bio text provided yet.'}
                   </p>
                 </div>
@@ -342,7 +348,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             <button
               type="button"
               onClick={() => setConnectModalProfile(p)}
-              className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs tracking-wider uppercase shadow-md hover:bg-[#B89552] active:scale-98 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 px-6 rounded-full btn-vara-gold text-white font-extrabold text-xs tracking-wider uppercase shadow-md active:scale-98 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Connect Now</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -355,30 +361,30 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
   // Home Dashboard Feed
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] max-w-md mx-auto flex flex-col justify-between pb-28 select-none font-sans relative">
+    <div className="min-h-screen bg-[#FAF8F5] text-[#161412] max-w-md mx-auto flex flex-col justify-between pb-28 select-none font-sans relative">
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
       {/* Interactive Connect Action Sheet Modal */}
       <AnimatePresence>
         {connectModalProfile && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
             <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
-              className="w-full max-w-sm bg-[#FBF9F4] rounded-3xl p-6 border border-[#E8E1D5] shadow-2xl space-y-5 text-[#111111]"
+              className="w-full max-w-sm bg-[#FAF8F5] rounded-3xl p-6 border border-[#EADBCE] shadow-2xl space-y-5 text-[#161412]"
             >
-              <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+              <div className="flex items-center justify-between border-b border-[#EADBCE] pb-3">
                 <div>
-                  <span className="font-instrument text-2xl lowercase text-[#B89552] block">mannat</span>
-                  <h3 className="text-lg font-serif-editorial font-bold text-[#111111]">
+                  <span className="font-instrument text-2xl lowercase text-[#C5A059] block leading-none">mannat</span>
+                  <h3 className="text-lg font-serif-editorial font-bold text-[#161412] mt-1">
                     Connect with {connectModalProfile.display_name}
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setConnectModalProfile(null)}
-                  className="p-2 rounded-full hover:bg-[#F4EFE6] text-gray-400 cursor-pointer"
+                  className="p-2 rounded-full hover:bg-[#F6F2E9] text-[#7E776F] cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -388,9 +394,9 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 <button
                   type="button"
                   onClick={() => handleSendWave(connectModalProfile)}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-[#161412] hover:bg-[#C5A059] text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 text-[#DFBE7E]" />
                   <span>Send Interest Wave 👋</span>
                 </button>
 
@@ -400,18 +406,18 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                     setConnectModalProfile(null);
                     onOpenSharePortal(connectModalProfile);
                   }}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] hover:bg-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#EADBCE] hover:bg-[#F6F2E9] text-[#161412] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
                 >
-                  <MessageCircle className="w-4 h-4 text-[#B89552]" />
+                  <MessageCircle className="w-4 h-4 text-[#C5A059]" />
                   <span>View Family Bio-data Portal</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleRequestCallback(connectModalProfile)}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] hover:bg-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#EADBCE] hover:bg-[#F6F2E9] text-[#161412] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
                 >
-                  <PhoneCall className="w-4 h-4 text-[#B89552]" />
+                  <PhoneCall className="w-4 h-4 text-[#C5A059]" />
                   <span>Request Parent Callback</span>
                 </button>
               </div>
@@ -422,7 +428,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
       {/* Photo Preview Modal */}
       {selectedPhotoPreview && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-4">
           <button
             type="button"
             onClick={() => setSelectedPhotoPreview(null)}
@@ -437,7 +443,6 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
           />
         </div>
       )}
-
 
       {/* Hero Banner (First-time Login / Introductory Slide-Out to Left) */}
       <AnimatePresence>
@@ -466,32 +471,33 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
               }
             }}
             onClick={dismissIntroBanner}
-            className="p-5 overflow-hidden cursor-grab active:cursor-grabbing"
+            className="p-4 overflow-hidden cursor-grab active:cursor-grabbing"
           >
-            <div className="bg-[#F4EFE6] rounded-[28px] p-6 text-[#111111] text-left space-y-4 relative overflow-hidden border border-[#E8E1D5] shadow-md hover:border-[#B89552] transition-colors">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-white px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block shadow-xs">
+            <div className="bg-gradient-to-br from-white to-[#F6F2E9] rounded-[28px] p-6 text-[#161412] text-left space-y-4 relative overflow-hidden border border-[#EADBCE] shadow-md hover:border-[#C5A059] transition-colors">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] bg-[#FAF8F5] px-3.5 py-1 rounded-full border border-[#EADBCE] inline-flex items-center gap-1 shadow-xs">
+                <Sparkles className="w-3 h-3 text-[#C5A059]" />
                 INTENTION-FIRST MATCHMAKING
               </span>
 
-              <h3 className="text-2xl sm:text-3xl font-serif-editorial font-bold tracking-tight leading-tight text-[#111111]">
+              <h3 className="text-2xl sm:text-3xl font-serif-editorial font-bold tracking-tight leading-tight text-[#161412]">
                 Curated, vetted & intention-first.
               </h3>
 
-              <p className="text-xs text-[#666666] max-w-xs leading-relaxed font-medium">
+              <p className="text-xs text-[#55504A] max-w-xs leading-relaxed font-medium">
                 Explore verified vertical video profiles of partners seeking marriage.
               </p>
 
               {/* Animated Swipe Left Gesture Cue */}
-              <div className="pt-3 border-t border-[#E8E1D5] flex items-center justify-between">
+              <div className="pt-3 border-t border-[#EADBCE] flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <motion.div
                     animate={{ x: [0, -8, 0] }}
                     transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
-                    className="w-7 h-7 rounded-full bg-[#111111] text-[#B89552] flex items-center justify-center shadow-xs"
+                    className="w-7 h-7 rounded-full bg-[#161412] text-[#DFBE7E] flex items-center justify-center shadow-xs"
                   >
-                    <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                    <ArrowLeft className="w-4 h-4 text-[#DFBE7E]" />
                   </motion.div>
-                  <span className="text-xs font-black uppercase tracking-wider text-[#111111]">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#161412]">
                     Swipe left to view profiles
                   </span>
                 </div>
@@ -499,7 +505,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 <motion.span 
                   animate={{ opacity: [0.4, 1, 0.4] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
-                  className="text-[10px] text-[#B89552] font-black uppercase tracking-widest"
+                  className="text-[10px] text-[#C5A059] font-black uppercase tracking-widest"
                 >
                   ← SWIPE
                 </motion.span>
@@ -510,19 +516,19 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       </AnimatePresence>
 
       {/* Recommended Vertical Video Profiles List */}
-      <div className="px-4 space-y-4 flex-1 pt-2">
+      <div className="px-4 space-y-4 flex-1 pt-1">
         <div className="flex items-center justify-between px-1">
-          <span className="text-[11px] font-black uppercase tracking-widest text-[#B89552] flex items-center gap-1.5 bg-[#F4EFE6] px-3 py-1 rounded-full border border-[#E8E1D5]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[11px] font-black uppercase tracking-widest text-[#C5A059] flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-[#EADBCE] shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Verified Intros ({profiles.length})
           </span>
 
           <button
             type="button"
             onClick={onOpenFilters}
-            className="text-[11px] font-black uppercase tracking-wider text-[#777777] hover:text-[#111111] flex items-center gap-1 bg-[#F4EFE6] px-3 py-1 rounded-full border border-[#E8E1D5] hover:border-[#B89552] transition-colors cursor-pointer"
+            className="text-[11px] font-black uppercase tracking-wider text-[#7E776F] hover:text-[#161412] flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-[#EADBCE] hover:border-[#C5A059] transition-colors cursor-pointer shadow-xs"
           >
-            <SlidersHorizontal className="w-3 h-3 text-[#B89552]" />
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#C5A059]" />
             <span>Refine</span>
           </button>
         </div>
@@ -537,14 +543,14 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
               <div
                 key={profile.id}
                 onClick={() => setSelectedDetailProfile(profile)}
-                className={`bg-white rounded-[32px] overflow-hidden border shadow-sm cursor-pointer hover:shadow-xl transition-all duration-300 group p-3 space-y-3 relative ${
-                  isSpotlight ? 'border-2 border-[#B89552] shadow-xl ring-2 ring-[#B89552]/20' : 'border-[#E8E1D5]'
+                className={`bg-white rounded-[32px] overflow-hidden border shadow-sm cursor-pointer hover:shadow-xl transition-all duration-300 group p-3.5 space-y-3 relative ${
+                  isSpotlight ? 'border-2 border-[#C5A059] gold-shadow-md ring-2 ring-[#C5A059]/20' : 'border-[#EADBCE]'
                 }`}
               >
                 {/* Spotlight Badge Header */}
                 {isSpotlight && (
-                  <div className="bg-[#B89552] text-white text-[10px] font-black uppercase tracking-widest py-1 px-4 text-center rounded-full shadow-sm flex items-center justify-center gap-1">
-                    <Star className="w-3 h-3 fill-white" />
+                  <div className="bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white text-[10px] font-black uppercase tracking-widest py-1.5 px-4 text-center rounded-full shadow-sm flex items-center justify-center gap-1">
+                    <Star className="w-3.5 h-3.5 fill-white" />
                     <span>MANNAT SPOTLIGHT BOOSTED (TOP OF FEED)</span>
                   </div>
                 )}
@@ -577,7 +583,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                         exit={{ scale: 2, opacity: 0 }}
                         className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
                       >
-                        <Heart className="w-24 h-24 text-[#B89552] fill-[#B89552] drop-shadow-2xl" />
+                        <Heart className="w-24 h-24 text-[#DFBE7E] fill-[#DFBE7E] drop-shadow-2xl" />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -602,11 +608,11 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                         e.stopPropagation();
                         setShowMatchScoreTooltip(showMatchScoreTooltip === profile.id ? null : profile.id);
                       }}
-                      className="bg-[#FBF9F4]/95 backdrop-blur-xl px-3.5 py-1.5 rounded-full text-xs font-extrabold text-[#B89552] shadow-md border border-[#E8E1D5] flex items-center gap-1.5 cursor-pointer hover:bg-white transition-colors"
+                      className="bg-white/95 backdrop-blur-xl px-3.5 py-1.5 rounded-full text-xs font-black text-[#C5A059] shadow-md border border-[#EADBCE] flex items-center gap-1.5 cursor-pointer hover:bg-white transition-colors"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#B89552]" />
-                      <span>{profile.compatibility_score}% Match · You match each other</span>
-                      <Info className="w-3 h-3 text-[#B89552] ml-0.5" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>{profile.compatibility_score}% Match</span>
+                      <Info className="w-3 h-3 text-[#7E776F] ml-0.5" />
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -618,7 +624,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                         }}
                         className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-md hover:bg-black/60 active:scale-95 transition-all cursor-pointer"
                       >
-                        {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-[#B89552]" />}
+                        {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-[#DFBE7E]" />}
                       </button>
 
                       <button
@@ -626,11 +632,11 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                         onClick={(e) => toggleLike(profile.id, e)}
                         className={`w-10 h-10 rounded-full backdrop-blur-xl border flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
                           likedProfiles[profile.id]
-                            ? 'bg-[#B89552] border-[#B89552] text-white'
-                            : 'bg-[#FBF9F4]/90 border-[#E8E1D5] text-[#111111] hover:bg-white'
+                            ? 'bg-[#C5A059] border-[#C5A059] text-white'
+                            : 'bg-white/90 border-[#EADBCE] text-[#161412] hover:bg-white'
                         }`}
                       >
-                        <Heart className={`w-4 h-4 ${likedProfiles[profile.id] ? 'fill-white' : ''}`} />
+                        <Heart className={`w-4 h-4 ${likedProfiles[profile.id] ? 'fill-white' : 'text-[#C5A059]'}`} />
                       </button>
                     </div>
                   </div>
@@ -639,10 +645,10 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   {showMatchScoreTooltip === profile.id && (
                     <div
                       onClick={(e) => e.stopPropagation()}
-                      className="absolute top-14 left-4 right-4 z-40 bg-[#111111] text-white p-4 rounded-2xl border border-[#B89552]/40 shadow-2xl space-y-2 text-xs animate-fadeIn"
+                      className="absolute top-14 left-4 right-4 z-40 bg-[#161412] text-white p-4 rounded-2xl border border-[#C5A059]/40 shadow-2xl space-y-2 text-xs animate-fadeIn"
                     >
                       <div className="flex items-center justify-between pb-1 border-b border-gray-700">
-                        <span className="font-serif-editorial text-sm font-bold text-[#B89552]">eMatchMaker 2-Way Score</span>
+                        <span className="font-serif-editorial text-sm font-bold text-[#DFBE7E]">eMatchMaker 2-Way Score</span>
                         <button type="button" onClick={() => setShowMatchScoreTooltip(null)} className="text-gray-400">
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -668,14 +674,18 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                           {profile.display_name} · {profile.age}
                         </h4>
                         {profile.is_vouched && (
-                          <span className="text-[10px] font-black text-[#B89552] bg-[#FBF9F4] px-2.5 py-0.5 rounded-full border border-[#E8E1D5]">
+                          <span className="text-[10px] font-black text-[#C5A059] bg-white px-2.5 py-0.5 rounded-full border border-[#EADBCE]">
                             Vouched
                           </span>
                         )}
                       </div>
 
-                      <p className="text-xs text-gray-200 font-semibold drop-shadow-sm">
-                        {profile.height || "5'6\""} • {profile.religion} • <span className="text-white font-bold">{profile.occupation}</span>
+                      <p className="text-xs text-gray-200 font-semibold drop-shadow-sm flex items-center gap-1.5">
+                        <span>{profile.height || "5'6\""}</span>
+                        <span>•</span>
+                        <span>{profile.religion}</span>
+                        <span>•</span>
+                        <span className="text-white font-bold">{profile.occupation}</span>
                       </p>
                       <p className="text-[11px] text-gray-300 font-medium">📍 {profile.city}, India</p>
                     </div>
@@ -686,10 +696,11 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                         e.stopPropagation();
                         setConnectModalProfile(profile);
                       }}
-                      className="w-full py-3.5 px-6 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+                      className="w-full py-3.5 px-6 rounded-2xl bg-white hover:bg-[#F6F2E9] text-[#161412] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-lg border border-[#EADBCE] cursor-pointer"
                     >
-                      <span>Connect Now</span>
-                      <ArrowUpRight className="w-4 h-4" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+                      <span>Connect & View Details</span>
+                      <ArrowUpRight className="w-4 h-4 text-[#C5A059]" />
                     </button>
                   </div>
                 </div>
@@ -697,11 +708,11 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 {/* 3 Small Picture Placeholders Below Video */}
                 <div className="space-y-1.5 pt-1">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] flex items-center gap-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] flex items-center gap-1">
                       <ImageIcon className="w-3 h-3" />
                       <span>Photos (3)</span>
                     </span>
-                    <span className="text-[10px] text-[#777777] font-semibold">Click to preview</span>
+                    <span className="text-[10px] text-[#7E776F] font-semibold">Click to preview</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     {(profile.photos || [
@@ -715,7 +726,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                           e.stopPropagation();
                           setSelectedPhotoPreview(photoUrl);
                         }}
-                        className="aspect-square rounded-xl overflow-hidden border border-[#E8E1D5] bg-[#F4EFE6] hover:opacity-90 active:scale-95 transition-all shadow-sm relative group cursor-pointer"
+                        className="aspect-square rounded-xl overflow-hidden border border-[#EADBCE] bg-[#F6F2E9] hover:opacity-90 active:scale-95 transition-all shadow-xs relative group cursor-pointer"
                       >
                         <img
                           src={photoUrl}
@@ -732,22 +743,22 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   <button
                     type="button"
                     onClick={(e) => toggleBioDropdown(profile.id, e)}
-                    className="w-full py-2.5 px-3.5 rounded-xl bg-[#F4EFE6] border border-[#E8E1D5] flex items-center justify-between text-xs font-extrabold text-[#111111] hover:bg-[#E8E1D5] transition-all cursor-pointer"
+                    className="w-full py-2.5 px-3.5 rounded-xl bg-[#F6F2E9] border border-[#EADBCE] flex items-center justify-between text-xs font-extrabold text-[#161412] hover:bg-[#EADBCE]/50 transition-all cursor-pointer"
                   >
                     <span className="font-serif-editorial text-sm">About & Bio Description</span>
-                    {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#B89552]" /> : <ChevronDown className="w-4 h-4 text-[#777777]" />}
+                    {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#C5A059]" /> : <ChevronDown className="w-4 h-4 text-[#7E776F]" />}
                   </button>
 
                   {isBioExpanded && (
                     <div
                       onClick={(e) => e.stopPropagation()}
-                      className="mt-2 p-3.5 rounded-xl bg-[#FBF9F4] border border-[#E8E1D5] space-y-2.5 text-left shadow-inner animate-fadeIn"
+                      className="mt-2 p-3.5 rounded-xl bg-white border border-[#EADBCE] space-y-2.5 text-left shadow-xs animate-fadeIn"
                     >
                       <div>
-                        <span className="text-[10px] uppercase font-black tracking-wider text-[#B89552] block mb-0.5">
+                        <span className="text-[10px] uppercase font-black tracking-wider text-[#C5A059] block mb-0.5">
                           Personal Bio
                         </span>
-                        <p className="text-xs text-[#555555] font-medium leading-relaxed">
+                        <p className="text-xs text-[#55504A] font-medium leading-relaxed">
                           {profile.bio_text || 'Design lead by day, classical dancer by weekend. Looking for an empathetic, ambitious partner.'}
                         </p>
                       </div>

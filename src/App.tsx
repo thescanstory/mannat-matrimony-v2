@@ -275,41 +275,49 @@ export function App() {
       {/* Main Responsive Mobile App Container */}
       <div className="w-full max-w-md mx-auto flex-1 min-h-screen bg-[#FBF9F4] flex flex-col relative">
         
-        {/* App Header with Back Button, Brand Logo, and Filter Button */}
-        <header className="w-full bg-[#FBF9F4] border-b border-[#E8E1D5] px-4 py-3.5 z-40 sticky top-0 shadow-xs flex items-center justify-between">
-          <div className="w-14 flex items-center justify-start">
+        {/* Luxury App Header with Back Button, Brand Logo, and Filter Button */}
+        <header className="w-full bg-[#FAF8F5]/90 backdrop-blur-xl border-b border-[#EADBCE]/80 px-4 py-3 z-40 sticky top-0 shadow-xs flex items-center justify-between">
+          <div className="w-16 flex items-center justify-start">
             {currentView !== 'home' && currentView !== 'auth' && (
               <button
                 type="button"
                 onClick={goBack}
-                className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
+                className="flex items-center gap-1 text-xs font-bold text-[#161412] hover:text-[#C5A059] transition-all px-2.5 py-1.5 rounded-full bg-[#F6F2E9] border border-[#EADBCE] hover:border-[#C5A059] active:scale-95 cursor-pointer shadow-xs"
                 title="Go Back"
               >
-                <ArrowLeft className="w-4 h-4 text-[#B89552]" />
-                <span>Back</span>
+                <ArrowLeft className="w-3.5 h-3.5 text-[#C5A059]" />
+                <span className="text-[11px] font-extrabold">Back</span>
               </button>
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={() => navigateTo('home')}
-            className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight hover:opacity-80 transition-opacity cursor-pointer leading-none text-center"
-          >
-            mannat
-          </button>
+          <div className="flex flex-col items-center">
+            <button
+              type="button"
+              onClick={() => navigateTo('home')}
+              className="group flex items-center gap-1.5 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#C5A059] group-hover:rotate-12 transition-transform" />
+              <span className="font-instrument text-3xl lowercase text-[#161412] tracking-tight group-hover:text-[#C5A059] transition-colors leading-none">
+                mannat
+              </span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-[#C5A059] bg-[#F6F2E9] px-2 py-0.5 rounded-full border border-[#EADBCE]">
+                Private
+              </span>
+            </button>
+          </div>
 
-          <div className="w-14 flex items-center justify-end">
+          <div className="w-16 flex items-center justify-end">
             {currentView === 'home' && (
               <button
                 type="button"
                 onClick={() => setShowFiltersModal(true)}
-                className="p-2 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] hover:border-[#B89552] text-[#111111] hover:text-[#B89552] transition-all shadow-xs active:scale-95 cursor-pointer relative"
+                className="p-2 rounded-full bg-[#F6F2E9] border border-[#EADBCE] hover:border-[#C5A059] text-[#161412] hover:text-[#C5A059] transition-all shadow-xs active:scale-95 cursor-pointer relative"
                 title="Filter Profiles"
               >
-                <SlidersHorizontal className="w-3.5 h-3.5 text-[#B89552]" />
+                <SlidersHorizontal className="w-3.5 h-3.5 text-[#C5A059]" />
                 {activeFilters && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#B89552] ring-2 ring-white" />
+                  <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-[#C5A059] ring-2 ring-white animate-pulse" />
                 )}
               </button>
             )}
@@ -318,14 +326,14 @@ export function App() {
 
         {/* Parent View Header Bar Banner */}
         {isParentView && (
-          <div className="w-full bg-[#111111] text-white px-4 py-2 text-center text-xs font-black uppercase tracking-widest flex items-center justify-between z-30 border-b border-[#B89552] shrink-0">
+          <div className="w-full bg-[#161412] text-white px-4 py-2 text-center text-xs font-black uppercase tracking-widest flex items-center justify-between z-30 border-b border-[#C5A059] shrink-0">
             <div className="flex items-center gap-2 mx-auto">
               <span>👨‍👩‍👧 PARENT VIEW MODE (BIO-DATA FOCUS)</span>
             </div>
             <button
               type="button"
               onClick={() => setIsParentView(false)}
-              className="text-[11px] bg-[#B89552] text-white px-3 py-1 rounded-full cursor-pointer hover:bg-white hover:text-[#111111] transition-colors"
+              className="text-[11px] bg-[#C5A059] text-white px-3 py-1 rounded-full cursor-pointer hover:bg-white hover:text-[#161412] transition-colors"
             >
               Exit
             </button>
@@ -333,7 +341,7 @@ export function App() {
         )}
 
         {/* Main Content Area with Smooth Slide Animations */}
-        <main className="w-full flex-1 relative pb-20 overflow-x-hidden">
+        <main className="w-full flex-1 relative pb-24 overflow-x-hidden">
           <AnimatePresence mode="wait" custom={slideDirection}>
             <motion.div
               key={currentView}
@@ -474,60 +482,69 @@ export function App() {
         onSelectCandidate={handleOpenSharePortal}
       />
 
-      {/* Modern Floating Bottom Dock Navigation Bar */}
+      {/* Ultra-Luxury Frosted Floating Bottom Dock Navigation Bar */}
       {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass-dock-vara rounded-full z-50 px-4 py-2.5 flex items-center justify-around shadow-xl border border-[#E8E1D5]">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass-dock-vara rounded-full z-50 px-3 py-2 flex items-center justify-around shadow-xl border border-[#EADBCE]/90">
           <button
             type="button"
             onClick={() => navigateTo('home')}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
-              currentView === 'home' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-full transition-all cursor-pointer ${
+              currentView === 'home' 
+                ? 'text-[#C5A059] bg-[#FAF8F5] shadow-xs scale-105 font-bold' 
+                : 'text-[#7E776F] hover:text-[#161412] font-semibold'
             }`}
           >
-            <Home className="w-5 h-5" />
-            <span>Home</span>
+            <Home className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight">Discover</span>
           </button>
 
           <button
             type="button"
             onClick={() => navigateTo('for-you')}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
-              currentView === 'for-you' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-full transition-all cursor-pointer ${
+              currentView === 'for-you' 
+                ? 'text-[#C5A059] bg-[#FAF8F5] shadow-xs scale-105 font-bold' 
+                : 'text-[#7E776F] hover:text-[#161412] font-semibold'
             }`}
           >
-            <Eye className="w-5 h-5" />
-            <span>For You</span>
+            <Eye className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight">For You</span>
           </button>
 
+          {/* Special AI Match Center Action Button */}
           <button
             type="button"
             onClick={() => setShowAiModal(true)}
-            className="flex flex-col items-center gap-0.5 text-[10px] font-black text-[#B89552] hover:text-[#9A7B3E] transition-all cursor-pointer"
+            className="flex flex-col items-center gap-1 py-1 px-3.5 rounded-full bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
-            <Sparkles className="w-5 h-5" />
-            <span>AI Match</span>
+            <Sparkles className="w-4 h-4 fill-white" />
+            <span className="text-[10px] font-black tracking-tight uppercase">AI Match</span>
           </button>
 
           <button
             type="button"
             onClick={() => navigateTo('connections')}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
-              currentView === 'connections' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-full transition-all cursor-pointer ${
+              currentView === 'connections' 
+                ? 'text-[#C5A059] bg-[#FAF8F5] shadow-xs scale-105 font-bold' 
+                : 'text-[#7E776F] hover:text-[#161412] font-semibold'
             }`}
           >
-            <Heart className="w-5 h-5" />
-            <span>Connections</span>
+            <Heart className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight">Matches</span>
           </button>
 
           <button
             type="button"
             onClick={() => navigateTo('profile')}
-            className={`flex flex-col items-center gap-0.5 text-[10px] font-black transition-all cursor-pointer ${
-              currentView === 'profile' ? 'text-[#B89552] scale-105' : 'text-[#777777] hover:text-[#111111]'
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-full transition-all cursor-pointer ${
+              currentView === 'profile' 
+                ? 'text-[#C5A059] bg-[#FAF8F5] shadow-xs scale-105 font-bold' 
+                : 'text-[#7E776F] hover:text-[#161412] font-semibold'
             }`}
           >
-            <User className="w-5 h-5" />
-            <span>Profile</span>
+            <User className="w-4 h-4" />
+            <span className="text-[10px] tracking-tight">Profile</span>
           </button>
         </div>
       )}

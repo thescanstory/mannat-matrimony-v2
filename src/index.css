@@ -2,18 +2,21 @@
 
 @layer base {
   :root {
-    --vara-bg: #FBF9F4;
-    --vara-card: #F4EFE6;
-    --vara-card-border: #E8E1D5;
-    --vara-gold: #B89552;
-    --vara-gold-dark: #967639;
-    --vara-dark: #111111;
-    --vara-muted: #777777;
+    --vara-bg: #FAF8F5;
+    --vara-card: #FFFFFF;
+    --vara-card-soft: #F6F2E9;
+    --vara-card-border: #EADBCE;
+    --vara-gold: #C5A059;
+    --vara-gold-light: #DFBE7E;
+    --vara-gold-dark: #9A783A;
+    --vara-dark: #161412;
+    --vara-espresso: #322D28;
+    --vara-muted: #7E776F;
   }
 
   body {
-    background: #FBF9F4;
-    color: #111111;
+    background: #FAF8F5;
+    color: #161412;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
@@ -23,7 +26,7 @@
   h1, h2, h3, .font-serif-editorial {
     font-family: 'Cormorant Garamond', 'Instrument Serif', Georgia, serif;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
 
   .font-instrument {
@@ -31,60 +34,117 @@
   }
 }
 
-/* Vara Editorial Utilities */
+/* Luxury Editorial Color & Component Utilities */
 .bg-vara-linen {
-  background-color: #FBF9F4;
+  background-color: #FAF8F5;
 }
 
 .bg-vara-tile {
-  background-color: #F4EFE6;
+  background-color: #F6F2E9;
 }
 
 .border-vara-tile {
-  border-color: #E8E1D5;
+  border-color: #EADBCE;
 }
 
 .text-vara-gold {
-  color: #B89552;
+  color: #C5A059;
 }
 
 .bg-vara-gold {
-  background-color: #B89552;
+  background-color: #C5A059;
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #E2C58A 0%, #C5A059 50%, #9A783A 100%);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #C5A059 50%, #9A783A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gold-subtle {
+  border-color: rgba(197, 160, 89, 0.35);
+}
+
+.gold-shadow-sm {
+  box-shadow: 0 4px 20px -4px rgba(197, 160, 89, 0.22);
+}
+
+.gold-shadow-md {
+  box-shadow: 0 10px 30px -8px rgba(197, 160, 89, 0.32);
+}
+
+.gold-shadow-glow {
+  box-shadow: 0 0 25px rgba(197, 160, 89, 0.35);
 }
 
 .btn-vara-primary {
-  background-color: #111111;
+  background-color: #161412;
   color: #FFFFFF;
   font-weight: 700;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(22, 20, 18, 0.15);
 }
 .btn-vara-primary:hover {
-  background-color: #B89552;
+  background: linear-gradient(135deg, #E2C58A 0%, #C5A059 100%);
+  color: #161412;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.35);
+}
+.btn-vara-primary:active {
+  transform: translateY(0px) scale(0.98);
 }
 
 .btn-vara-gold {
-  background-color: #B89552;
+  background: linear-gradient(135deg, #DFBE7E 0%, #C5A059 60%, #9A783A 100%);
   color: #FFFFFF;
   font-weight: 700;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 20px -4px rgba(197, 160, 89, 0.4);
 }
 .btn-vara-gold:hover {
-  background-color: #967639;
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px -4px rgba(197, 160, 89, 0.55);
+}
+.btn-vara-gold:active {
+  transform: translateY(0px) scale(0.98);
 }
 
 .phone-vara-bezel {
-  border: 10px solid #242220;
+  border: 10px solid #201D1A;
   box-shadow: 
-    0 25px 75px -15px rgba(184, 149, 82, 0.15),
-    0 15px 35px -10px rgba(0, 0, 0, 0.08),
-    inset 0 0 0 2px rgba(184, 149, 82, 0.3);
+    0 30px 85px -15px rgba(197, 160, 89, 0.18),
+    0 15px 35px -10px rgba(22, 20, 18, 0.10),
+    inset 0 0 0 2px rgba(226, 197, 138, 0.35);
 }
 
 .glass-dock-vara {
-  background: rgba(251, 249, 244, 0.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(232, 225, 213, 0.9);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(234, 219, 206, 0.85);
+  box-shadow: 
+    0 16px 40px -10px rgba(45, 38, 30, 0.14),
+    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+}
+
+.glass-capsule-light {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(234, 219, 206, 0.7);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(234, 219, 206, 0.8);
+  box-shadow: 0 12px 36px -8px rgba(35, 30, 24, 0.06);
 }
 
 /* Custom scrollbar */
