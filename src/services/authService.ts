@@ -23,55 +23,42 @@ export const authService = {
     });
   },
 
-  // 1-Click Google OAuth Sign In
-  signInWithGoogle: () => {
-    const redirectUri = encodeURIComponent('https://qexwbaykwguoigkaqiwa.supabase.co/auth/v1/callback');
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=consent`;
-    window.location.href = googleAuthUrl;
-    return { data: null, error: null };
+  // 1-Click Google OAuth Sign In (Forces Account Chooser)
+  signInWithGoogle: async () => {
+    return await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'select_account'
+        }
+      }
+    });
   },
 
   // 1-Click Apple OAuth Sign In
   signInWithApple: async () => {
-    if (!isSupabaseConfigured()) {
-      return {
-        user: {
-          id: 'demo-apple-user-456',
-          email: 'candidate@apple.id',
-          user_metadata: { full_name: 'Ananya Sharma' }
-        },
-        error: null
-      };
-    }
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    return await supabase.auth.signInWithOAuth({
       provider: 'apple',
       options: {
         redirectTo: window.location.origin
       }
     });
-
-    return { data, error };
   },
 
   // Passwordless Email Magic Link
   signInWithEmailMagicLink: async (email: string) => {
-    if (!isSupabaseConfigured()) {
-      return { data: { message: 'Demo magic link sent!' }, error: null };
-    }
-
-    const { data, error } = await supabase.auth.signInWithOtp({
+    return await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: window.location.origin
       }
     });
-
-    return { data, error };
   },
 
-  // Instant 1-Click Access (Developer & Guest Demo)
-  signInWithDemoUser: (name = 'Patrick Abraham', email = 'patrickabraham.abraham@gmail.com'): UserSession => {
+  // Instant Guest Demo User Access
+  signInWithDemoUser: (name = 'Guest Candidate', email = 'guest@mannat.vip'): UserSession => {
     const user: UserSession = {
       id: 'usr_demo_' + Math.random().toString(36).substring(2, 8),
       email,
