@@ -118,8 +118,14 @@ ALTER TABLE public.chats ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public Read Access for Profiles" ON public.profiles;
 CREATE POLICY "Public Read Access for Profiles" ON public.profiles FOR SELECT USING (true);
 
-DROP POLICY IF EXISTS "Users Manage Own Profile" ON public.profiles;
-CREATE POLICY "Users Manage Own Profile" ON public.profiles FOR ALL USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Allow public insert profiles" ON public.profiles;
+CREATE POLICY "Allow public insert profiles" ON public.profiles FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public update profiles" ON public.profiles;
+CREATE POLICY "Allow public update profiles" ON public.profiles FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Allow public delete profiles" ON public.profiles;
+CREATE POLICY "Allow public delete profiles" ON public.profiles FOR DELETE USING (true);
 
 -- Privacy Settings Policy
 DROP POLICY IF EXISTS "Users Manage Own Privacy" ON public.privacy_settings;
@@ -132,8 +138,17 @@ DROP POLICY IF EXISTS "Allow public read vouches" ON public.creator_vouches;
 CREATE POLICY "Allow public read vouches" ON public.creator_vouches FOR SELECT USING (true);
 
 -- Callback Requests Policy
-DROP POLICY IF EXISTS "Callback Requests Owner" ON public.callback_requests;
-CREATE POLICY "Callback Requests Owner" ON public.callback_requests FOR ALL USING (auth.uid() = requester_id);
+DROP POLICY IF EXISTS "Allow public read callbacks" ON public.callback_requests;
+CREATE POLICY "Allow public read callbacks" ON public.callback_requests FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public insert callbacks" ON public.callback_requests;
+CREATE POLICY "Allow public insert callbacks" ON public.callback_requests FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public update callbacks" ON public.callback_requests;
+CREATE POLICY "Allow public update callbacks" ON public.callback_requests FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Allow public delete callbacks" ON public.callback_requests;
+CREATE POLICY "Allow public delete callbacks" ON public.callback_requests FOR DELETE USING (true);
 
 -- Subscriptions Policy
 DROP POLICY IF EXISTS "Subscriptions Owner" ON public.subscriptions;

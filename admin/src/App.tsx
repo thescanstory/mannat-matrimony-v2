@@ -136,17 +136,16 @@ export function App() {
     async function loadSupabaseProfiles() {
       const isDeleted = localStorage.getItem('mannat_admin_deleted');
       if (isDeleted === 'true') {
+        setProfiles([]);
         return;
       }
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
         if (data && !error) {
-          if (data.length > 0) {
-            setProfiles(data as Profile[]);
-            localStorage.setItem('mannat_admin_candidates', JSON.stringify(data));
-          } else if (localStorage.getItem('mannat_admin_candidates') === null) {
-            setProfiles([]);
-          }
+          const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
+          const activeData = (data as Profile[]).filter(d => !deletedIds.includes(d.id));
+          setProfiles(activeData);
+          localStorage.setItem('mannat_admin_candidates', JSON.stringify(activeData));
         }
       } catch (e) {
         console.warn('Supabase initial fetch fallback:', e);
@@ -263,6 +262,14 @@ export function App() {
       updateAndPersistProfiles(updated);
 
       try {
+        const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
+        if (!deletedIds.includes(profileId)) {
+          deletedIds.push(profileId);
+          localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(deletedIds));
+        }
+      } catch {}
+
+      try {
         await supabase.from('profiles').delete().eq('id', profileId);
       } catch (e) {
         console.warn('DB delete error:', e);
@@ -300,6 +307,7 @@ export function App() {
       photos: newCandidate.photos
     };
 
+    localStorage.removeItem('mannat_admin_deleted');
     updateAndPersistProfiles([created, ...profiles]);
     setShowAddModal(false);
 
@@ -333,10 +341,12 @@ export function App() {
   };
 
   const handleDeleteAllData = async () => {
+    const allIds = profiles.map(p => p.id);
     setProfiles([]);
     setCallbacks([]);
     try {
       localStorage.setItem('mannat_admin_deleted', 'true');
+      localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(allIds));
       localStorage.setItem('mannat_admin_candidates', JSON.stringify([]));
       localStorage.setItem('mannat_profiles', JSON.stringify([]));
       localStorage.removeItem('mannat_active_user');
@@ -358,10 +368,12 @@ export function App() {
   };
 
   const handleDeleteAllUsers = async () => {
+    const allIds = profiles.map(p => p.id);
     setProfiles([]);
     setCallbacks([]);
     try {
       localStorage.setItem('mannat_admin_deleted', 'true');
+      localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(allIds));
       localStorage.setItem('mannat_admin_candidates', JSON.stringify([]));
       localStorage.setItem('mannat_profiles', JSON.stringify([]));
       localStorage.removeItem('mannat_active_user');
@@ -393,6 +405,7 @@ export function App() {
 
   const handleReseedDefaults = async () => {
     localStorage.removeItem('mannat_admin_deleted');
+    localStorage.removeItem('mannat_admin_deleted_ids');
     updateAndPersistProfiles(MOCK_PROFILES);
     try {
       await supabase.from('profiles').upsert(MOCK_PROFILES);
