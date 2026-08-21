@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && cd admin && npm install && npm run build && cd .. && rm -rf dist/admin && cp -r admin/dist dist/admin",
+    "build": "tsc -b && vite build",
     "build:ios": "tsc -b && vite build && cap sync ios",
     "cap:sync": "cap sync",
     "cap:open:ios": "cap open ios",
