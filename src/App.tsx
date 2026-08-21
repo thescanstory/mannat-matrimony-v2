@@ -36,7 +36,12 @@ export function App() {
     try {
       if (typeof window !== 'undefined') {
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('view') === 'admin' || urlParams.get('admin') === 'true' || window.location.pathname.startsWith('/admin')) {
+        if (
+          urlParams.get('view') === 'admin' || 
+          urlParams.get('admin') === 'true' || 
+          window.location.pathname.startsWith('/admin') ||
+          window.location.hash.includes('admin')
+        ) {
           return 'admin';
         }
       }
