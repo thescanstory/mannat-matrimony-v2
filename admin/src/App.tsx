@@ -131,9 +131,9 @@ export function App() {
     }
   });
 
-  // Fetch live profiles from Supabase on mount
+  // Fetch live profiles and callback requests from Supabase on mount
   useEffect(() => {
-    async function loadSupabaseProfiles() {
+    async function loadSupabaseData() {
       const isDeleted = localStorage.getItem('mannat_admin_deleted');
       if (isDeleted === 'true') {
         setProfiles([]);
@@ -147,11 +147,37 @@ export function App() {
           setProfiles(activeData);
           localStorage.setItem('mannat_admin_candidates', JSON.stringify(activeData));
         }
+
+        // Fetch live callback requests from Supabase
+        const { data: cbData, error: cbErr } = await supabase.from('callback_requests').select('*').order('created_at', { ascending: false });
+        if (cbData && !cbErr && cbData.length > 0) {
+          const statusMap: Record<string, 'Pending' | 'In Progress' | 'Completed'> = {
+            pending: 'Pending',
+            in_progress: 'In Progress',
+            completed: 'Completed',
+            wave_sent: 'Pending',
+            callback_requested: 'Pending'
+          };
+          const mapped: VIPCallback[] = cbData.map((cb: any) => {
+            const matchedProfile = data?.find((p: any) => p.id === cb.target_profile_id);
+            return {
+              id: cb.id,
+              requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
+              requester_phone: cb.requester_phone || '+91 98201 44521',
+              target_candidate_name: matchedProfile ? `${matchedProfile.display_name} (${matchedProfile.age})` : `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
+              requested_time: cb.created_at ? new Date(cb.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Today',
+              managed_by: cb.status === 'wave_sent' ? 'Candidate' : 'Parent',
+              status: statusMap[cb.status] || 'Pending',
+              notes: cb.status === 'wave_sent' ? 'Interest wave sent via feed.' : 'Requested confidential callback with family.'
+            };
+          });
+          setCallbacks(mapped);
+        }
       } catch (e) {
         console.warn('Supabase initial fetch fallback:', e);
       }
     }
-    loadSupabaseProfiles();
+    loadSupabaseData();
   }, []);
 
   const [activeTab, setActiveTab] = useState<'candidates' | 'analytics' | 'callbacks' | 'vouches' | 'database'>('candidates');
