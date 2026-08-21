@@ -420,7 +420,7 @@ export function App() {
 
         <div className="flex items-center gap-3">
           <a
-            href="https://mannat-matrimony-v2-ivory.vercel.app"
+            href="https://mannat-matrimony-v2.vercel.app"
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 rounded-full bg-[#B89552] text-[#111111] hover:bg-white text-xs font-extrabold transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
