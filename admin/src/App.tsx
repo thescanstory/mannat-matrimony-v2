@@ -257,25 +257,23 @@ export function App() {
   };
 
   const deleteCandidate = async (profileId: string) => {
-    if (window.confirm('Are you sure you want to remove this candidate bio-data?')) {
-      const updated = profiles.filter((p) => p.id !== profileId);
-      updateAndPersistProfiles(updated);
+    const updated = profiles.filter((p) => p.id !== profileId);
+    updateAndPersistProfiles(updated);
 
-      try {
-        const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
-        if (!deletedIds.includes(profileId)) {
-          deletedIds.push(profileId);
-          localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(deletedIds));
-        }
-      } catch {}
-
-      try {
-        await supabase.from('profiles').delete().eq('id', profileId);
-      } catch (e) {
-        console.warn('DB delete error:', e);
+    try {
+      const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
+      if (!deletedIds.includes(profileId)) {
+        deletedIds.push(profileId);
+        localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(deletedIds));
       }
-      showToast('Candidate bio-data removed from platform & DB');
+    } catch {}
+
+    try {
+      await supabase.from('profiles').delete().eq('id', profileId);
+    } catch (e) {
+      console.warn('DB delete error:', e);
     }
+    showToast('Candidate bio-data removed from platform & DB');
   };
 
   const handleCreateCandidate = async (e: React.FormEvent) => {
