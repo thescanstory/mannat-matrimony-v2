@@ -280,9 +280,17 @@ export function App() {
     e.preventDefault();
     if (!newCandidate.display_name) return;
 
+    const validId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          const r = (Math.random() * 16) | 0,
+            v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
+
     const created: Profile = {
-      id: 'cand_' + Math.random().toString(36).substring(2, 9),
-      user_id: 'usr_' + Math.random().toString(36).substring(2, 9),
+      id: validId,
+      user_id: validId,
       display_name: newCandidate.display_name,
       age: Number(newCandidate.age),
       marital_status: 'Never Married',
@@ -333,8 +341,15 @@ export function App() {
     showToast(`Candidate "${editingCandidate.display_name}" updated in Supabase! ✨`);
   };
 
-  const handleUpdateCallbackStatus = (callbackId: string, newStatus: 'Pending' | 'In Progress' | 'Completed') => {
+  const handleUpdateCallbackStatus = async (callbackId: string, newStatus: 'Pending' | 'In Progress' | 'Completed') => {
     setCallbacks(prev => prev.map(c => c.id === callbackId ? { ...c, status: newStatus } : c));
+    try {
+      if (callbackId.includes('-')) {
+        await supabase.from('callback_requests').update({ status: newStatus.toLowerCase().replace(' ', '_') }).eq('id', callbackId);
+      }
+    } catch (e) {
+      console.warn('DB callback update error:', e);
+    }
     showToast(`Callback status updated to "${newStatus}"!`);
   };
 

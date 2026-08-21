@@ -21,7 +21,14 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   onOpenPaywall
 }) => {
   const [selectedDetailProfile, setSelectedDetailProfile] = useState<Profile | null>(null);
-  const [likedProfiles, setLikedProfiles] = useState<Record<string, boolean>>({});
+  const [likedProfiles, setLikedProfiles] = useState<Record<string, boolean>>(() => {
+    try {
+      const stored = localStorage.getItem('mannat_favorites');
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  });
   const [expandedBios, setExpandedBios] = useState<Record<string, boolean>>({});
   const [selectedPhotoPreview, setSelectedPhotoPreview] = useState<string | null>(null);
   const [connectModalProfile, setConnectModalProfile] = useState<Profile | null>(null);
@@ -61,9 +68,17 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   const toggleLike = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     const isLiked = !likedProfiles[id];
-    setLikedProfiles((prev) => ({ ...prev, [id]: isLiked }));
+    const updated = { ...likedProfiles, [id]: isLiked };
+    setLikedProfiles(updated);
+    try {
+      localStorage.setItem('mannat_favorites', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('Error saving favorites:', err);
+    }
     if (isLiked) {
       triggerToast('Added to your Saved Favorites! 💕', 'heart');
+    } else {
+      triggerToast('Removed from Saved Favorites', 'success');
     }
   };
 
@@ -83,7 +98,13 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   const handleDoubleTapVideo = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setDoubleTapHeart((prev) => ({ ...prev, [id]: true }));
-    setLikedProfiles((prev) => ({ ...prev, [id]: true }));
+    const updated = { ...likedProfiles, [id]: true };
+    setLikedProfiles(updated);
+    try {
+      localStorage.setItem('mannat_favorites', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('Error saving favorites:', err);
+    }
     triggerToast('Added to your Favorites! 💕', 'heart');
     setTimeout(() => {
       setDoubleTapHeart((prev) => ({ ...prev, [id]: false }));
@@ -95,11 +116,22 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     setExpandedBios((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Log Interest Wave to Supabase Database
+  // Log Interest Wave to Supabase Database & Persistent Storage
   const handleSendWave = async (targetProfile: Profile) => {
     setConnectModalProfile(null);
     try {
-      if (isSupabaseConfigured()) {
+      const stored = localStorage.getItem('mannat_sent_waves');
+      const list: Profile[] = stored ? JSON.parse(stored) : [];
+      if (!list.some(p => p.id === targetProfile.id)) {
+        list.unshift(targetProfile);
+        localStorage.setItem('mannat_sent_waves', JSON.stringify(list));
+      }
+    } catch (e) {
+      console.warn('Local wave save error:', e);
+    }
+
+    try {
+      if (isSupabaseConfigured() && targetProfile.id.includes('-') && targetProfile.id.length >= 32) {
         await supabase.from('callback_requests').insert([
           {
             target_profile_id: targetProfile.id,
@@ -107,17 +139,32 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
           }
         ]);
       }
-      triggerToast(`Interest Wave Sent to ${targetProfile.display_name}! 👋`, 'sparkle');
-    } catch {
-      triggerToast(`Interest Wave Sent to ${targetProfile.display_name}! 👋`, 'sparkle');
+    } catch (e) {
+      console.warn('Supabase wave insert fallback:', e);
     }
+    triggerToast(`Interest Wave Sent to ${targetProfile.display_name}! 👋`, 'sparkle');
   };
 
-  // Log Parent Callback Request to Supabase Database
+  // Log Parent Callback Request to Supabase Database & Persistent Storage
   const handleRequestCallback = async (targetProfile: Profile) => {
     setConnectModalProfile(null);
     try {
-      if (isSupabaseConfigured()) {
+      const stored = localStorage.getItem('mannat_callbacks');
+      const list: any[] = stored ? JSON.parse(stored) : [];
+      list.unshift({
+        id: `cb_${Date.now()}`,
+        candidate_name: targetProfile.display_name,
+        candidate_id: targetProfile.id,
+        status: 'Pending',
+        created_at: 'Just now'
+      });
+      localStorage.setItem('mannat_callbacks', JSON.stringify(list));
+    } catch (e) {
+      console.warn('Local callback save error:', e);
+    }
+
+    try {
+      if (isSupabaseConfigured() && targetProfile.id.includes('-') && targetProfile.id.length >= 32) {
         await supabase.from('callback_requests').insert([
           {
             target_profile_id: targetProfile.id,
@@ -125,10 +172,10 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
           }
         ]);
       }
-      triggerToast(`Parent Callback Request Logged for ${targetProfile.display_name}! 📞`, 'success');
-    } catch {
-      triggerToast(`Parent Callback Request Logged for ${targetProfile.display_name}! 📞`, 'success');
+    } catch (e) {
+      console.warn('Supabase callback insert fallback:', e);
     }
+    triggerToast(`Parent Callback Request Logged for ${targetProfile.display_name}! 📞`, 'success');
   };
 
   // Detailed profile view with luxury editorial layout

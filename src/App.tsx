@@ -244,9 +244,20 @@ export function App() {
   }, [profiles, activeFilters]);
 
   const handleUnlockSuccess = (profileId: string) => {
+    try {
+      const stored = localStorage.getItem('mannat_unlocked_ids');
+      const list: string[] = stored ? JSON.parse(stored) : [];
+      if (!list.includes(profileId)) {
+        list.push(profileId);
+        localStorage.setItem('mannat_unlocked_ids', JSON.stringify(list));
+      }
+    } catch (e) {
+      console.warn('Error persisting unlock state:', e);
+    }
     setProfiles((prev) =>
       prev.map((p) => (p.id === profileId ? { ...p, is_unlocked: true } : p))
     );
+    triggerToast('🔓 Bio-Data Unlocked! Full details now accessible.', 'sparkle');
   };
 
   const handleOpenSharePortal = (profile: Profile) => {

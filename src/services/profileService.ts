@@ -4,6 +4,17 @@ import type { Profile } from '../types';
 
 const LOCAL_STORAGE_PROFILES_KEY = 'mannat_custom_profiles';
 
+export function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 export const profileService = {
   // Fetch All Candidate Profiles
   getProfiles: async (): Promise<Profile[]> => {
@@ -21,8 +32,20 @@ export const profileService = {
       return [];
     }
 
+    const unlockedIds: string[] = typeof window !== 'undefined'
+      ? JSON.parse(localStorage.getItem('mannat_unlocked_ids') || '[]')
+      : [];
+
+    const applyUnlocks = (list: Profile[]): Profile[] => {
+      return list.map(p => ({
+        ...p,
+        is_unlocked: p.is_unlocked || unlockedIds.includes(p.id)
+      }));
+    };
+
     if (!isSupabaseConfigured()) {
-      return customProfiles.length > 0 ? customProfiles : MOCK_PROFILES;
+      const base = customProfiles.length > 0 ? customProfiles : MOCK_PROFILES;
+      return applyUnlocks(base);
     }
 
     try {
@@ -32,7 +55,7 @@ export const profileService = {
         .order('created_at', { ascending: false });
 
       if (error) {
-        return customProfiles.length > 0 ? customProfiles : [];
+        return applyUnlocks(customProfiles.length > 0 ? customProfiles : []);
       }
 
       if (data) {
@@ -42,7 +65,7 @@ export const profileService = {
         const activeData = (data as Profile[]).filter(d => !deletedIds.includes(d.id));
         const combined = [...customProfiles, ...activeData];
         const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
-        return unique;
+        return applyUnlocks(unique);
       }
 
       return [];
@@ -53,9 +76,14 @@ export const profileService = {
 
   // Create a new Candidate Profile
   createProfile: async (profileData: Partial<Profile>): Promise<Profile> => {
+    const validId = profileData.id && profileData.id.includes('-') && profileData.id.length >= 32
+      ? profileData.id
+      : generateUUID();
+
     const newProfile: Profile = {
-      id: profileData.id || `profile-${Date.now()}`,
-      user_id: profileData.user_id || 'demo-user',
+      ...profileData,
+      id: validId,
+      user_id: profileData.user_id || validId,
       display_name: profileData.display_name || 'New Member',
       age: profileData.age || 26,
       height: profileData.height || "5'7\"",
@@ -88,8 +116,7 @@ export const profileService = {
         net_worth: '₹5Cr - ₹10Cr',
         private_clubs: 'City Golf & Country Club',
         second_home: true
-      },
-      ...profileData
+      }
     };
 
     // Save to localStorage for instant offline/demo persistence
@@ -102,7 +129,7 @@ export const profileService = {
       console.warn('Could not cache profile locally:', e);
     }
 
-    // Try saving to Supabase if connected
+    // Save to Supabase with valid UUID
     if (isSupabaseConfigured()) {
       try {
         await supabase.from('profiles').insert([{

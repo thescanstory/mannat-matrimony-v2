@@ -25,16 +25,53 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   const [toastType, setToastType] = useState<'success' | 'heart' | 'sparkle'>('success');
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
 
-  // Dynamic state for connections
-  const [acceptedList, setAcceptedList] = useState<Profile[]>([]);
-  const [sentList, setSentList] = useState<Profile[]>([]);
-  const [receivedList, setReceivedList] = useState<Profile[]>([]);
+  // Dynamic state for connections loaded from persistence and live data
+  const [acceptedList, setAcceptedList] = useState<Profile[]>(() => {
+    try {
+      const stored = localStorage.getItem('mannat_accepted_connections');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [];
+  });
+
+  const [sentList, setSentList] = useState<Profile[]>(() => {
+    try {
+      const stored = localStorage.getItem('mannat_sent_waves');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [];
+  });
+
+  const [receivedList, setReceivedList] = useState<Profile[]>(() => {
+    try {
+      const stored = localStorage.getItem('mannat_received_connections');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [];
+  });
 
   useEffect(() => {
     if (profiles && profiles.length > 0) {
-      setAcceptedList(profiles.slice(0, 2));
-      setSentList(profiles.slice(2, 4));
-      setReceivedList(profiles.slice(4, 6).length > 0 ? profiles.slice(4, 6) : profiles.slice(0, 1));
+      // If user has no existing state, initialize healthy defaults and persist
+      const savedAccepted = localStorage.getItem('mannat_accepted_connections');
+      const savedSent = localStorage.getItem('mannat_sent_waves');
+      const savedReceived = localStorage.getItem('mannat_received_connections');
+
+      if (!savedAccepted && profiles.length >= 1) {
+        const initAccepted = profiles.slice(0, 1);
+        setAcceptedList(initAccepted);
+        try { localStorage.setItem('mannat_accepted_connections', JSON.stringify(initAccepted)); } catch {}
+      }
+      if (!savedSent && profiles.length >= 3) {
+        const initSent = profiles.slice(1, 3);
+        setSentList(initSent);
+        try { localStorage.setItem('mannat_sent_waves', JSON.stringify(initSent)); } catch {}
+      }
+      if (!savedReceived && profiles.length >= 4) {
+        const initReceived = profiles.slice(3, 5);
+        setReceivedList(initReceived);
+        try { localStorage.setItem('mannat_received_connections', JSON.stringify(initReceived)); } catch {}
+      }
     }
   }, [profiles]);
 
@@ -106,8 +143,16 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
 
   const handleAcceptReceived = (profile: Profile, e: React.MouseEvent) => {
     e.stopPropagation();
-    setReceivedList((prev) => prev.filter((p) => p.id !== profile.id));
-    setAcceptedList((prev) => [profile, ...prev]);
+    const newReceived = receivedList.filter((p) => p.id !== profile.id);
+    const newAccepted = [profile, ...acceptedList.filter(p => p.id !== profile.id)];
+    setReceivedList(newReceived);
+    setAcceptedList(newAccepted);
+    try {
+      localStorage.setItem('mannat_received_connections', JSON.stringify(newReceived));
+      localStorage.setItem('mannat_accepted_connections', JSON.stringify(newAccepted));
+    } catch (err) {
+      console.warn('Persistence error:', err);
+    }
     setActiveTab('Accepted');
     setActiveChatProfile(profile);
     triggerToast(`Accepted wave from ${profile.display_name}! 💬`, 'sparkle');
@@ -115,8 +160,26 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
 
   const handleDeclineReceived = (profile: Profile, e: React.MouseEvent) => {
     e.stopPropagation();
-    setReceivedList((prev) => prev.filter((p) => p.id !== profile.id));
+    const newReceived = receivedList.filter((p) => p.id !== profile.id);
+    setReceivedList(newReceived);
+    try {
+      localStorage.setItem('mannat_received_connections', JSON.stringify(newReceived));
+    } catch (err) {
+      console.warn('Persistence error:', err);
+    }
     triggerToast(`Declined wave from ${profile.display_name}`, 'success');
+  };
+
+  const handleCancelSent = (profile: Profile, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newSent = sentList.filter((p) => p.id !== profile.id);
+    setSentList(newSent);
+    try {
+      localStorage.setItem('mannat_sent_waves', JSON.stringify(newSent));
+    } catch (err) {
+      console.warn('Persistence error:', err);
+    }
+    triggerToast(`Cancelled wave to ${profile.display_name}`, 'success');
   };
 
   return (
@@ -263,6 +326,15 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     <p className="text-xs text-[#777777] font-semibold mt-0.5">
                       {profile.age}yrs • {profile.occupation} • {profile.city}
                     </p>
+                  </div>
+                  <div className="pt-1">
+                    <button
+                      type="button"
+                      onClick={(e) => handleCancelSent(profile, e)}
+                      className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-98"
+                    >
+                      Withdraw Interest Wave
+                    </button>
                   </div>
                 </div>
               ))
