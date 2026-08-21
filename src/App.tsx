@@ -23,19 +23,29 @@ import { Home, Heart, Eye, Sparkles, User, ArrowLeft, SlidersHorizontal } from '
 type ViewType = 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile';
 
 export function App() {
-  // Check if accessing dedicated Admin URL route (/admin, ?admin=true, ?view=admin, #admin)
+  // Check if accessing dedicated Admin URL route (/admin, ?admin=true, ?view=admin, #admin, or admin domain)
   const isAdminRoute = typeof window !== 'undefined' && (
     window.location.pathname.startsWith('/admin') ||
     window.location.search.includes('admin') ||
     window.location.search.includes('view=admin') ||
-    window.location.hash.includes('admin')
+    window.location.hash.includes('admin') ||
+    window.location.hostname.includes('admin')
   );
 
   if (isAdminRoute) {
     return <AdminPortal />;
   }
 
-  const [profiles, setProfiles] = useState<Profile[]>(MOCK_PROFILES);
+  const [profiles, setProfiles] = useState<Profile[]>(() => {
+    try {
+      if (typeof window !== 'undefined' && localStorage.getItem('mannat_admin_deleted') === 'true') {
+        return [];
+      }
+      return MOCK_PROFILES;
+    } catch {
+      return [];
+    }
+  });
   const [currentUser, setCurrentUser] = useState<UserSession | null>(() => {
     try {
       const stored = localStorage.getItem('mannat_active_user');

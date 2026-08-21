@@ -17,8 +17,12 @@ export const profileService = {
       console.warn('Could not read local profiles:', e);
     }
 
+    if (typeof window !== 'undefined' && localStorage.getItem('mannat_admin_deleted') === 'true') {
+      return [];
+    }
+
     if (!isSupabaseConfigured()) {
-      return [...customProfiles, ...MOCK_PROFILES];
+      return customProfiles.length > 0 ? customProfiles : MOCK_PROFILES;
     }
 
     try {
@@ -27,16 +31,23 @@ export const profileService = {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error || !data || data.length === 0) {
-        return [...customProfiles, ...MOCK_PROFILES];
+      if (error) {
+        return customProfiles.length > 0 ? customProfiles : [];
       }
 
-      // Merge custom profiles if any aren't in Supabase yet
-      const combined = [...customProfiles, ...(data as Profile[])];
-      const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
-      return unique.length > 0 ? unique : MOCK_PROFILES;
+      if (data) {
+        const deletedIds: string[] = typeof window !== 'undefined' 
+          ? JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]')
+          : [];
+        const activeData = (data as Profile[]).filter(d => !deletedIds.includes(d.id));
+        const combined = [...customProfiles, ...activeData];
+        const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
+        return unique;
+      }
+
+      return [];
     } catch {
-      return [...customProfiles, ...MOCK_PROFILES];
+      return [];
     }
   },
 
