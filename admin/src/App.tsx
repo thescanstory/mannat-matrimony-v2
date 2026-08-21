@@ -15,7 +15,8 @@ import {
   Calendar, 
   Edit3, 
   TrendingUp, 
-  ExternalLink 
+  ExternalLink,
+  UserX 
 } from 'lucide-react';
 import type { Profile } from './types';
 import { MOCK_PROFILES } from './services/mockData';
@@ -145,6 +146,7 @@ export function App() {
   const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
+  const [showDeleteAllUsersConfirm, setShowDeleteAllUsersConfirm] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Profile | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -338,6 +340,34 @@ export function App() {
     }
     setShowDeleteAllConfirm(false);
     showToast('🗑️ All candidate bio-data, session caches & records permanently deleted!');
+  };
+
+  const handleDeleteAllUsers = async () => {
+    try {
+      localStorage.removeItem('mannat_active_user');
+      localStorage.removeItem('mannat_intro_dismissed');
+      localStorage.removeItem('mannat_privacy_settings');
+      localStorage.removeItem('mannat_favorites');
+      
+      // Clear any stored Supabase session tokens
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith('sb-') || key.includes('auth-token') || key.includes('supabase.auth'))) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    try {
+      await supabase.from('callback_requests').delete().neq('id', '');
+    } catch (e) {
+      console.warn('DB user callback purge:', e);
+    }
+
+    setShowDeleteAllUsersConfirm(false);
+    showToast('👥 All registered user accounts, active logins & session tokens permanently deleted!');
   };
 
   const handleReseedDefaults = async () => {
@@ -612,6 +642,16 @@ export function App() {
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add Candidate</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteAllUsersConfirm(true)}
+                  className="px-4 py-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 hover:bg-red-700 hover:text-white text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
+                  title="Delete All Registered Users & Accounts"
+                >
+                  <UserX className="w-4 h-4" />
+                  <span>Delete All Users</span>
                 </button>
 
                 <button
@@ -918,12 +958,33 @@ export function App() {
                 </button>
               </div>
 
+              {/* Danger Zone: Delete All Users */}
+              <div className="p-5 rounded-2xl border border-red-200 bg-red-50/60 flex items-center justify-between flex-wrap gap-4 mt-2">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <UserX className="w-5 h-5 text-red-600" />
+                    <h4 className="text-sm font-bold text-red-900">Purge & Delete All Users</h4>
+                  </div>
+                  <p className="text-xs text-red-700 max-w-md">
+                    Permanently deletes all registered user accounts, OAuth logins, user-submitted profiles, and active session tokens.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteAllUsersConfirm(true)}
+                  className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs font-black transition-all cursor-pointer shadow-sm flex items-center gap-2"
+                >
+                  <UserX className="w-4 h-4" />
+                  <span>Delete All Users</span>
+                </button>
+              </div>
+
               {/* Danger Zone: Delete All Data */}
-              <div className="p-5 rounded-2xl border border-rose-200 bg-rose-50/60 flex items-center justify-between flex-wrap gap-4 mt-2">
+              <div className="p-5 rounded-2xl border border-rose-200 bg-rose-50/60 flex items-center justify-between flex-wrap gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <Trash2 className="w-5 h-5 text-rose-600" />
-                    <h4 className="text-sm font-bold text-rose-900">Purge & Delete All Data</h4>
+                    <h4 className="text-sm font-bold text-rose-900">Purge & Delete All Platform Data</h4>
                   </div>
                   <p className="text-xs text-rose-700 max-w-md">
                     Permanently deletes all candidate bio-data, matchmaker vouches, callback logs, and local browser testing caches.
@@ -1259,6 +1320,40 @@ export function App() {
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Yes, Delete All Data</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM DELETE ALL USERS MODAL */}
+      {showDeleteAllUsersConfirm && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 border border-red-200 shadow-2xl text-center">
+            <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto shadow-inner">
+              <UserX className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-[#111111]">Delete All Users & Accounts?</h3>
+              <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+                This will permanently delete all registered user accounts, active login sessions, user-submitted profiles, and authentication tokens.
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteAllUsersConfirm(false)}
+                className="px-5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-50 active:scale-95 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAllUsers}
+                className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs font-black cursor-pointer shadow-md flex items-center gap-2"
+              >
+                <UserX className="w-4 h-4" />
+                <span>Yes, Delete All Users</span>
               </button>
             </div>
           </div>
