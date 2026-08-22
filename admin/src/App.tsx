@@ -113,22 +113,44 @@ const INITIAL_MATCHMAKERS: MatchmakerCurator[] = [
   }
 ];
 
-export function App() {
-  const [profiles, setProfiles] = useState<Profile[]>(() => {
-    try {
-      const isDeleted = localStorage.getItem('mannat_admin_deleted');
-      if (isDeleted === 'true') {
-        return [];
-      }
-      const stored = localStorage.getItem('mannat_admin_candidates');
-      if (stored !== null) {
-        return JSON.parse(stored);
-      }
-      return MOCK_PROFILES;
-    } catch {
+function getInitialProfiles(): Profile[] {
+  try {
+    const isDeleted = localStorage.getItem('mannat_admin_deleted');
+    if (isDeleted === 'true') {
       return [];
     }
-  });
+    const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
+    const customStored = localStorage.getItem('mannat_custom_profiles');
+    const customList: Profile[] = customStored ? JSON.parse(customStored) : [];
+    
+    const adminStored = localStorage.getItem('mannat_admin_candidates');
+    const adminList: Profile[] = adminStored ? JSON.parse(adminStored) : [];
+
+    const profileMap = new Map<string, Profile>();
+    
+    // 1. Defaults as base
+    MOCK_PROFILES.forEach(p => {
+      if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
+    });
+    
+    // 2. Admin created candidates
+    adminList.forEach(p => {
+      if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
+    });
+
+    // 3. User onboarding profiles with highest precedence
+    customList.forEach(p => {
+      if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
+    });
+
+    return Array.from(profileMap.values());
+  } catch {
+    return MOCK_PROFILES;
+  }
+}
+
+export function App() {
+  const [profiles, setProfiles] = useState<Profile[]>(() => getInitialProfiles());
 
   const [activeTab, setActiveTab] = useState<'candidates' | 'callbacks' | 'vouches' | 'database'>('candidates');
   const [searchTerm, setSearchTerm] = useState('');
@@ -154,12 +176,29 @@ export function App() {
       }
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-        if (data && !error) {
-          const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
-          const activeData = (data as Profile[]).filter(d => !deletedIds.includes(d.id));
-          setProfiles(activeData);
-          localStorage.setItem('mannat_admin_candidates', JSON.stringify(activeData));
+        const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
+        
+        // Start with all local candidate records
+        const localProfiles = getInitialProfiles();
+        const profileMap = new Map<string, Profile>();
+        
+        localProfiles.forEach(p => {
+          if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
+        });
+
+        // Merge Supabase profiles without overwriting newly created local profiles
+        if (data && !error && data.length > 0) {
+          (data as Profile[]).forEach(d => {
+            if (!deletedIds.includes(d.id)) {
+              profileMap.set(d.id, { ...(profileMap.get(d.id) || {}), ...d });
+            }
+          });
         }
+
+        const merged = Array.from(profileMap.values());
+        setProfiles(merged);
+        localStorage.setItem('mannat_admin_candidates', JSON.stringify(merged));
+        localStorage.setItem('mannat_custom_profiles', JSON.stringify(merged));
 
         // Fetch live callback requests from Supabase
         const { data: cbData, error: cbErr } = await supabase.from('callback_requests').select('*').order('created_at', { ascending: false });
@@ -172,7 +211,7 @@ export function App() {
             callback_requested: 'Pending'
           };
           const mapped: VIPCallback[] = cbData.map((cb: any) => {
-            const matchedProfile = data?.find((p: any) => p.id === cb.target_profile_id);
+            const matchedProfile = merged.find((p: any) => p.id === cb.target_profile_id);
             return {
               id: cb.id,
               requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
@@ -221,6 +260,8 @@ export function App() {
     setProfiles(updated);
     try {
       localStorage.setItem('mannat_admin_candidates', JSON.stringify(updated));
+      localStorage.setItem('mannat_custom_profiles', JSON.stringify(updated));
+      localStorage.setItem('mannat_profiles', JSON.stringify(updated));
     } catch (e) {
       console.error(e);
     }
