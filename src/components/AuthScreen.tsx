@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Sparkles, UserPlus, ArrowRight, User, Mail, LogIn, Trash2 } from 'lucide-react';
+import { ShieldCheck, UserPlus, ArrowRight, User, Mail, LogIn, Trash2 } from 'lucide-react';
 import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
 
@@ -173,30 +173,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenOn
           <div className="flex-1 h-px bg-[#E8E1D5]" />
         </div>
 
-        {/* 1-Click Guest & Google Options */}
-        <div className="space-y-2">
-          <button
-            type="button"
-            disabled={loading}
-            onClick={() => {
-              setLoading(true);
-              const user = authService.signInWithDemoUser('Verified Candidate', 'member@mannat.vip');
-              setTimeout(() => {
-                setLoading(false);
-                onLoginSuccess(user);
-              }, 100);
-            }}
-            className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-amber-50/50 active:scale-98 text-xs font-extrabold text-[#111111] border border-[#E8E1D5] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
-          >
-            <Sparkles className="w-4 h-4 text-[#B89552]" />
-            <span>1-Click VIP Demo Access</span>
-          </button>
-
+        {/* Google Sign In Option */}
+        <div>
           <button
             type="button"
             disabled={loading}
             onClick={handleGoogleSignIn}
-            className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-gray-50 active:scale-98 text-xs font-bold text-[#555555] border border-[#E8E1D5] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
+            className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-gray-50 active:scale-98 text-xs font-bold text-[#555555] border border-[#E8E1D5] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
           >
             <span>Continue with Google Account</span>
           </button>
