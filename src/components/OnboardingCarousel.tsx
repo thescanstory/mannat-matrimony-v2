@@ -38,6 +38,31 @@ interface OnboardingCarouselProps {
   onCancel?: () => void;
 }
 
+// Standard Heights in both Feet/Inches and Centimeters
+export const HEIGHT_OPTIONS = [
+  '4\'10" (147 cm)',
+  '4\'11" (150 cm)',
+  '5\'0" (152 cm)',
+  '5\'1" (155 cm)',
+  '5\'2" (157 cm)',
+  '5\'3" (160 cm)',
+  '5\'4" (163 cm)',
+  '5\'5" (165 cm)',
+  '5\'6" (168 cm)',
+  '5\'7" (170 cm)',
+  '5\'8" (173 cm)',
+  '5\'9" (175 cm)',
+  '5\'10" (178 cm)',
+  '5\'11" (180 cm)',
+  '6\'0" (183 cm)',
+  '6\'1" (185 cm)',
+  '6\'2" (188 cm)',
+  '6\'3" (190 cm)',
+  '6\'4" (193 cm)',
+  '6\'5" (196 cm)',
+  '6\'6"+ (198+ cm)'
+];
+
 // Strictly High-Quality Indian Couple Photography
 const INDIAN_COUPLE_PHOTOS = [
   'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=80', // Indian Wedding Couple
@@ -285,7 +310,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
 
     if (step === 5) {
       if (!salaryBracket) {
-        setErrorMsg('Salary bracket is mandatory.');
+        setErrorMsg('Annual Income bracket is mandatory.');
         return false;
       }
       if (!financialStance) {
@@ -705,19 +730,23 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4">
-                        Height <span className="text-red-500">*</span>:
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
+                        Height (ft/in & cm) <span className="text-red-500">*</span>:
                       </label>
                       <div className="relative flex items-center">
-                        <Ruler className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="text"
+                        <Ruler className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+                        <select
                           value={height}
                           onChange={(e) => setHeight(e.target.value)}
-                          placeholder="e.g. 5'7&quot;"
-                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                          className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
                           required
-                        />
+                        >
+                          <option value="">Select Height</option>
+                          {HEIGHT_OPTIONS.map((h) => (
+                            <option key={h} value={h}>{h}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
                     </div>
                   </div>
@@ -909,7 +938,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
 
                 <div className="space-y-3 pt-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Annual Salary Bracket <span className="text-red-500">*</span>:
+                    Annual Income Bracket <span className="text-red-500">*</span>:
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {['₹5L - ₹10L', '₹10L - ₹15L', '₹15L - ₹25L', '₹25L - ₹35L', '₹35L - ₹50L', '₹50L+ HNI'].map((sal) => (
@@ -1220,7 +1249,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                       <span className="font-extrabold text-[#111111]">{financialStance}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[#777777] font-bold">Salary Bracket:</span>
+                      <span className="text-[#777777] font-bold">Annual Income:</span>
                       <span className="font-extrabold text-[#111111]">{salaryBracket}</span>
                     </div>
                     <div className="flex items-center justify-between">

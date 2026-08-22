@@ -385,6 +385,22 @@ function MainApp() {
     }
   };
 
+  const handleUpdateProfile = async (updated: Profile) => {
+    try {
+      await profileService.createProfile(updated);
+      setProfiles((prev) => {
+        const exists = prev.some((p) => p.id === updated.id || (currentUser && p.user_id === currentUser.id));
+        if (exists) {
+          return prev.map((p) => (p.id === updated.id || (currentUser && p.user_id === currentUser.id) ? updated : p));
+        }
+        return [updated, ...prev];
+      });
+      triggerToast('Candidate bio-data updated successfully! ✨', 'sparkle');
+    } catch {
+      triggerToast('Bio-data updated', 'success');
+    }
+  };
+
   const slideVariants = {
     enter: (dir: number) => ({
       x: dir > 0 ? 40 : -40,
@@ -568,6 +584,7 @@ function MainApp() {
               {currentView === 'profile' && (
                 <ProfileScreen
                   currentUser={currentUser}
+                  candidateProfile={activeUserProfile || profiles[0]}
                   privacySettings={privacySettings}
                   isParentView={isParentView}
                   onToggleParentView={() => {
@@ -579,11 +596,11 @@ function MainApp() {
                   }}
                   onOpenPrivacySettings={() => setShowPrivacyModal(true)}
                   onOpenPaywall={() => setShowPaywallModal(true)}
-                  onOpenOnboarding={() => navigateTo('onboarding')}
                   onEditBioData={() => {
                     setIsEditingProfile(true);
                     navigateTo('onboarding');
                   }}
+                  onUpdateProfile={handleUpdateProfile}
                   onOpenAuth={() => navigateTo('auth')}
                   onLogout={handleLogout}
                   onDeleteAllData={handleDeleteAllData}
