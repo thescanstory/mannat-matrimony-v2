@@ -82,6 +82,19 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     }
   };
 
+  const toggleSound = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    Object.values(videoRefs.current).forEach((v) => {
+      if (v) {
+        v.muted = nextMuted;
+        v.volume = 1.0;
+      }
+    });
+    triggerToast(nextMuted ? 'Sound Muted 🔇' : 'Sound Enabled 🔊', 'sparkle');
+  };
+
   const handleVideoTap = (id: string) => {
     const videoEl = videoRefs.current[id];
     if (videoEl) {
@@ -242,11 +255,9 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMuted(!isMuted);
-                }}
+                onClick={toggleSound}
                 className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#EADBCE] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+                title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
               >
                 {isMuted ? <VolumeX className="w-4 h-4 text-[#7E776F]" /> : <Volume2 className="w-4 h-4 text-[#C5A059]" />}
               </button>
@@ -665,11 +676,9 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsMuted(!isMuted);
-                        }}
-                        className="w-10 h-10 rounded-full bg-black/40 backdrop-blur-xl border border-white/30 flex items-center justify-center text-white shadow-md hover:bg-black/60 active:scale-95 transition-all cursor-pointer"
+                        onClick={toggleSound}
+                        className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white shadow-md hover:bg-black/70 active:scale-95 transition-all cursor-pointer"
+                        title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
                       >
                         {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-[#DFBE7E]" />}
                       </button>

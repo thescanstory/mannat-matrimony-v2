@@ -1,10 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Check, User, ArrowRight, ArrowLeft, Upload, Video, ShieldCheck, Sparkles } from 'lucide-react';
+import { Check, User, ArrowRight, ArrowLeft, Upload, ShieldCheck, Sparkles, Camera, Square, X, Volume2 } from 'lucide-react';
 import type { Profile } from '../types';
 import { profileService } from '../services/profileService';
-
 import type { UserSession } from '../services/authService';
 
 interface OnboardingCarouselProps {
@@ -54,11 +53,24 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
     'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4'
   );
 
-  const photoInputRef = useRef<HTMLInputElement | null>(null);
-  const videoInputRef = useRef<HTMLInputElement | null>(null);
+  // Live In-Browser Video Recording State
+  const [isRecordingModalOpen, setIsRecordingModalOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const liveVideoRef = useRef<HTMLVideoElement | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  // Hidden File & Camera Input Refs
+  const photoFileInputRef = useRef<HTMLInputElement | null>(null);
+  const photoCameraInputRef = useRef<HTMLInputElement | null>(null);
+  const videoFileInputRef = useRef<HTMLInputElement | null>(null);
+  const videoCameraInputRef = useRef<HTMLInputElement | null>(null);
 
   const totalSteps = 10;
 
+  // Handle Photo Selection (Gallery / Files / Camera)
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newPhotoUrls: string[] = [];
@@ -67,11 +79,12 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         newPhotoUrls.push(url);
       });
       if (newPhotoUrls.length > 0) {
-        setPhotos(newPhotoUrls);
+        setPhotos(prev => [...newPhotoUrls, ...prev].slice(0, 3));
       }
     }
   };
 
+  // Handle Video Selection (Gallery / Files / Camera)
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -79,6 +92,84 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
       setVideoUrl(url);
     }
   };
+
+  // Start Live Webcam Stream for In-Browser Recording
+  const openWebcamRecorder = async () => {
+    try {
+      setIsRecordingModalOpen(true);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 1280 } },
+        audio: true
+      });
+      streamRef.current = stream;
+      if (liveVideoRef.current) {
+        liveVideoRef.current.srcObject = stream;
+        liveVideoRef.current.play();
+      }
+    } catch (err) {
+      console.warn('Webcam stream error, falling back to camera input:', err);
+      videoCameraInputRef.current?.click();
+      setIsRecordingModalOpen(false);
+    }
+  };
+
+  const startLiveRecording = () => {
+    if (!streamRef.current) return;
+    recordedChunksRef.current = [];
+    try {
+      const recorder = new MediaRecorder(streamRef.current);
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          recordedChunksRef.current.push(e.data);
+        }
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(recordedChunksRef.current, { type: 'video/mp4' });
+        const recordedUrl = URL.createObjectURL(blob);
+        setVideoUrl(recordedUrl);
+        closeWebcamRecorder();
+      };
+      recorder.start();
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+      setRecordingSeconds(0);
+    } catch (e) {
+      console.error('Recording error:', e);
+    }
+  };
+
+  const stopLiveRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const closeWebcamRecorder = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setIsRecording(false);
+    setIsRecordingModalOpen(false);
+  };
+
+  // Timer for 30s Recording Limit
+  useEffect(() => {
+    let timer: any;
+    if (isRecording) {
+      timer = setInterval(() => {
+        setRecordingSeconds(prev => {
+          if (prev >= 29) {
+            stopLiveRecording();
+            return 30;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isRecording]);
 
   const handleFinish = async () => {
     setIsSubmitting(true);
@@ -102,7 +193,15 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         bio_video_url: videoUrl,
         family_background: `${familyType} family with ${familyValues.toLowerCase()} values. Settled in ${city || 'Mumbai'}.`,
         marriage_expectations: `Looking for a compatible partner who appreciates ${financialStance.toLowerCase()} financial goals and family harmony.`,
-        bio_text: `Hi! I am a ${occupation || 'Professional'} based in ${city || 'Mumbai'}. Value deep mutual respect, family values, and progressive growth.`
+        bio_text: `Hi! I am a ${occupation || 'Professional'} based in ${city || 'Mumbai'}. Value deep mutual respect, family values, and progressive growth.`,
+        lifestyle_details: {
+          net_worth: salaryBracket.includes('50L') ? '₹10Cr+' : '₹5Cr - ₹10Cr',
+          private_clubs: 'City Golf & Country Club',
+          second_home: true
+        },
+        horoscope: {
+          manglik: 'No'
+        }
       });
 
       if (currentUser?.email) {
@@ -148,7 +247,6 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
   const currentCouplePhoto = INDIAN_COUPLE_PHOTOS[(step - 1) % INDIAN_COUPLE_PHOTOS.length];
 
-  // Framer Motion Variants for Smooth Slide & Scale
   const slideVariants: Variants = {
     initial: (dir: number) => ({
       x: dir > 0 ? 60 : -60,
@@ -177,9 +275,9 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
   return (
     <div className="min-h-screen bg-[#FBF9F4] flex flex-col justify-between p-4 sm:p-6 w-full max-w-lg mx-auto relative select-none text-[#111111] font-sans overflow-hidden">
-      {/* Hidden File Inputs */}
+      {/* Hidden File & Camera Inputs */}
       <input
-        ref={photoInputRef}
+        ref={photoFileInputRef}
         type="file"
         accept="image/*"
         multiple
@@ -187,9 +285,25 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         className="hidden"
       />
       <input
-        ref={videoInputRef}
+        ref={photoCameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="user"
+        onChange={handlePhotoUpload}
+        className="hidden"
+      />
+      <input
+        ref={videoFileInputRef}
         type="file"
         accept="video/*"
+        onChange={handleVideoUpload}
+        className="hidden"
+      />
+      <input
+        ref={videoCameraInputRef}
+        type="file"
+        accept="video/*"
+        capture="user"
         onChange={handleVideoUpload}
         className="hidden"
       />
@@ -299,27 +413,25 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                       <span className="text-sm font-extrabold block">Woman</span>
                     </motion.button>
                   </div>
-                </div>
 
-                <div className="space-y-2 pt-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Profile Created By:
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] pt-2">
+                    Profile is managed by:
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { id: 'self', label: 'Myself' },
-                      { id: 'parent', label: 'Parent / Guardian' },
-                      { id: 'sibling', label: 'Sibling / Relative' }
+                      { id: 'self', label: 'Self Candidate' },
+                      { id: 'parent', label: 'Parent' },
+                      { id: 'sibling', label: 'Sibling' }
                     ].map((mgr) => (
                       <motion.button
                         key={mgr.id}
-                        whileTap={{ scale: 0.95 }}
+                        whileTap={{ scale: 0.96 }}
                         type="button"
                         onClick={() => setManagedBy(mgr.id as any)}
-                        className={`py-3 px-2 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${
+                        className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${
                           managedBy === mgr.id
-                            ? 'bg-[#111111] text-white border-[#111111] shadow-sm'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
+                            ? 'bg-[#111111] text-white border-[#111111]'
+                            : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
                         }`}
                       >
                         {mgr.label}
@@ -330,170 +442,166 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 2: Name, Age, Height & City */}
+            {/* Step 2: Name, Age, Height */}
             {step === 2 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 2: BASIC DETAILS
+                  STEP 2: CANDIDATE VITALS
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  What is your name and age?
+                  Personal Details & Vitals
                 </h1>
 
                 <div className="space-y-3 pt-2">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                      Full Display Name
+                      Full Candidate Name:
                     </label>
                     <input
                       type="text"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder="e.g. Ananya Sharma"
-                      className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                      placeholder={gender === 'woman' ? 'e.g. Ananya Sharma' : 'e.g. Rohan Malhotra'}
+                      className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Age (Years)
+                        Age (Years):
                       </label>
                       <input
                         type="number"
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
                         placeholder="e.g. 27"
-                        className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Height
+                        Height:
                       </label>
                       <input
                         type="text"
                         value={height}
                         onChange={(e) => setHeight(e.target.value)}
-                        placeholder="e.g. 5'6&quot;"
-                        className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        placeholder="e.g. 5'7&quot;"
+                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                      Current City / Location
-                    </label>
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="e.g. Mumbai, Delhi NCR, Bangalore, London"
-                      className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                    />
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Step 3: Religion & Sub-Community */}
+            {/* Step 3: Location, Religion & Sub-community */}
             {step === 3 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
                   STEP 3: CULTURAL ROOTS
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Religion & Sub-Community
-                </h1>
-
-                <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Select Religion:
-                  </label>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian'].map((rel) => (
-                      <motion.button
-                        key={rel}
-                        whileTap={{ scale: 0.95 }}
-                        type="button"
-                        onClick={() => setReligion(rel)}
-                        className={`px-4 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer backdrop-blur-md ${
-                          religion === rel
-                            ? 'bg-[#111111] text-white shadow-sm'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border border-[#E8E1D5]'
-                        }`}
-                      >
-                        {rel}
-                      </motion.button>
-                    ))}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                      Sub-Community / Caste / Gotra
-                    </label>
-                    <input
-                      type="text"
-                      value={subCommunity}
-                      onChange={(e) => setSubCommunity(e.target.value)}
-                      placeholder="e.g. Kanyakubja Brahmin, Kayastha, Agarwal, Khatri"
-                      className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Education & Career */}
-            {step === 4 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 4: CAREER & EDUCATION
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Professional Background
+                  Location & Background
                 </h1>
 
                 <div className="space-y-3 pt-2">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                      Highest Education Degree
+                      Settled City:
                     </label>
                     <input
                       type="text"
-                      value={education}
-                      onChange={(e) => setEducation(e.target.value)}
-                      placeholder="e.g. B.Tech IIT Bombay, MBA IIM, MS Stanford"
-                      className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder="e.g. Mumbai / Bangalore / Delhi NCR"
+                      className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Occupation / Role
+                        Religion:
+                      </label>
+                      <select
+                        value={religion}
+                        onChange={(e) => setReligion(e.target.value)}
+                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer"
+                      >
+                        {['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Parsi'].map((rel) => (
+                          <option key={rel} value={rel}>{rel}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                        Sub-Community / Caste:
+                      </label>
+                      <input
+                        type="text"
+                        value={subCommunity}
+                        onChange={(e) => setSubCommunity(e.target.value)}
+                        placeholder="e.g. Brahmin, Khatri, Arora"
+                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Education & Profession */}
+            {step === 4 && (
+              <div className="space-y-4">
+                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
+                  STEP 4: CAREER & EDUCATION
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                  Career, Education & Role
+                </h1>
+
+                <div className="space-y-3 pt-2">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                      Highest Education:
+                    </label>
+                    <input
+                      type="text"
+                      value={education}
+                      onChange={(e) => setEducation(e.target.value)}
+                      placeholder="e.g. MBA / B.Tech / MS / MD"
+                      className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                        Profession / Role:
                       </label>
                       <input
                         type="text"
                         value={occupation}
                         onChange={(e) => setOccupation(e.target.value)}
-                        placeholder="e.g. Product Designer / Doctor"
-                        className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        placeholder="e.g. Product Manager, Doctor"
+                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Company / Organization
+                        Company / Firm:
                       </label>
                       <input
                         type="text"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="e.g. Google / AI Startup / Self-employed"
-                        className="w-full p-3.5 rounded-xl bg-white border border-[#E8E1D5] text-sm font-semibold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        placeholder="e.g. Google, McKinsey"
+                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                       />
                     </div>
                   </div>
@@ -653,7 +761,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 8: Upload 3 Candidate Photos */}
+            {/* Step 8: Upload / Shoot 3 Candidate Photos */}
             {step === 8 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
@@ -663,15 +771,16 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   Add 3 profile photos.
                 </h1>
                 <p className="text-xs text-[#777777] font-medium leading-relaxed">
-                  Discretion guaranteed. Select or upload 3 clear pictures for your verified bio-data portal.
+                  Shoot directly with your camera or upload from your gallery.
                 </p>
 
+                {/* Photo Previews */}
                 <div className="grid grid-cols-3 gap-2.5 pt-2">
                   {photos.map((url, idx) => (
                     <motion.div
                       key={idx}
                       whileHover={{ scale: 1.04 }}
-                      className="relative aspect-square rounded-2xl overflow-hidden border-2 border-[#B89552] bg-[#F4EFE6] shadow-sm"
+                      className="relative aspect-square rounded-2xl overflow-hidden border-2 border-[#B89552] bg-[#F4EFE6] shadow-sm group"
                     >
                       <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
                       <span className="absolute bottom-1 right-1 bg-[#111111] text-[#B89552] text-[9px] font-black px-1.5 py-0.5 rounded-md">
@@ -681,17 +790,25 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   ))}
                 </div>
 
-                <div
-                  onClick={() => photoInputRef.current?.click()}
-                  className="p-4 rounded-2xl bg-[#F4EFE6]/95 border border-[#E8E1D5] flex items-center justify-between cursor-pointer hover:bg-[#E8E1D5] transition-colors backdrop-blur-md shadow-xs active:scale-98"
-                >
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#111111]">
-                    <Upload className="w-4 h-4 text-[#B89552]" />
-                    <span>Upload custom photos from device</span>
-                  </div>
-                  <span className="text-[10px] text-[#B89552] font-black uppercase bg-white px-3 py-1 rounded-full border border-[#E8E1D5] shadow-xs">
-                    Browse Files
-                  </span>
+                {/* Dual Options: Camera Shoot & Gallery Upload */}
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => photoCameraInputRef.current?.click()}
+                    className="p-4 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md active:scale-95"
+                  >
+                    <Camera className="w-5 h-5 text-[#B89552]" />
+                    <span className="text-xs font-extrabold">Use Camera to Shoot</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => photoFileInputRef.current?.click()}
+                    className="p-4 rounded-2xl bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] border border-[#E8E1D5] flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all shadow-xs active:scale-95"
+                  >
+                    <Upload className="w-5 h-5 text-[#B89552]" />
+                    <span className="text-xs font-extrabold">Upload from Gallery</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -706,31 +823,42 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   Add a 30s Video Intro.
                 </h1>
                 <p className="text-xs text-[#777777] font-medium leading-relaxed">
-                  Vertical videos build 10x higher trust. Introduce your values, personality, and expectations.
+                  Vertical videos with authentic voice build 10x higher trust.
                 </p>
 
-                <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[300px] bg-black border-2 border-[#B89552] mx-auto shadow-md">
+                {/* Video Player Preview with Sound Support */}
+                <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[260px] bg-black border-2 border-[#B89552] mx-auto shadow-md">
                   <video
                     src={videoUrl}
                     controls
+                    playsInline
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-2 right-2 bg-[#B89552] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow">
-                    30s Intro Preview
+                  <div className="absolute top-2 right-2 bg-[#B89552] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1">
+                    <Volume2 className="w-3 h-3" />
+                    <span>Sound Active</span>
                   </div>
                 </div>
 
-                <div
-                  onClick={() => videoInputRef.current?.click()}
-                  className="p-3.5 rounded-2xl bg-[#F4EFE6]/95 border border-[#E8E1D5] flex items-center justify-between text-xs font-bold backdrop-blur-md cursor-pointer hover:bg-[#E8E1D5] transition-colors shadow-xs active:scale-98"
-                >
-                  <div className="flex items-center gap-2 text-[#111111]">
-                    <Video className="w-4 h-4 text-[#B89552]" />
-                    <span>Upload 30s video stream from device</span>
-                  </div>
-                  <span className="text-[10px] font-black text-[#B89552] uppercase bg-white px-3 py-1 rounded-full border border-[#E8E1D5] shadow-xs">
-                    Choose Video
-                  </span>
+                {/* Dual Options: Camera Shoot & Video File Upload */}
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={openWebcamRecorder}
+                    className="p-3.5 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1 cursor-pointer transition-all shadow-md active:scale-95"
+                  >
+                    <Camera className="w-5 h-5 text-[#B89552]" />
+                    <span className="text-xs font-extrabold">Use Camera to Shoot</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => videoFileInputRef.current?.click()}
+                    className="p-3.5 rounded-2xl bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] border border-[#E8E1D5] flex flex-col items-center justify-center gap-1 cursor-pointer transition-all shadow-xs active:scale-95"
+                  >
+                    <Upload className="w-5 h-5 text-[#B89552]" />
+                    <span className="text-xs font-extrabold">Upload Video File</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -758,62 +886,136 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   </div>
 
                   <div>
-                    <span className="text-[10px] font-black uppercase text-[#777777]">GENERATED PERSONA</span>
-                    <h2 className="text-2xl font-serif-editorial font-bold text-[#111111]">
-                      {getGeneratedPersonaTitle()}
-                    </h2>
-                    <p className="text-xs text-[#555555] mt-1 font-medium leading-relaxed">
-                      {displayName || 'Ananya Sharma'}, {age || '27'}yrs • {religion} ({subCommunity || 'Brahmin'}) • {occupation || 'Professional'} at {companyName || 'Global Enterprise'} • {city || 'Mumbai'}.
+                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">
+                      {displayName.trim() || (gender === 'woman' ? 'Ananya Sharma' : 'Rohan Malhotra')}, {age || '27'}
+                    </h3>
+                    <p className="text-xs text-[#777777] font-semibold">
+                      {occupation || 'Professional'} · {city || 'Mumbai'} · {religion} {subCommunity ? `(${subCommunity})` : ''}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-[#E8E1D5]">
-                    <div>
-                      <span className="text-[#777777] block text-[10px]">Financial Stance</span>
-                      <span className="font-bold text-[#111111]">{financialStance}</span>
+                  <div className="p-3.5 rounded-2xl bg-white border border-[#E8E1D5] space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#777777] font-bold">Persona Match:</span>
+                      <span className="font-extrabold text-[#B89552]">{getGeneratedPersonaTitle()}</span>
                     </div>
-                    <div>
-                      <span className="text-[#777777] block text-[10px]">Family Values</span>
-                      <span className="font-bold text-[#111111]">{familyValues}</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#777777] font-bold">Financial Stance:</span>
+                      <span className="font-extrabold text-[#111111]">{financialStance}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#777777] font-bold">Salary Bracket:</span>
+                      <span className="font-extrabold text-[#111111]">{salaryBracket}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#777777] font-bold">Diet:</span>
+                      <span className="font-extrabold text-[#111111]">{diet}</span>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-[#E8E1D5] flex items-center justify-between text-xs text-emerald-700 font-bold">
-                    <span>✓ 3 Photos & 30s Video Ready</span>
-                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <div className="flex items-center gap-2 text-[11px] text-emerald-800 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>BlurShield privacy applied & bio-data verified.</span>
                   </div>
                 </motion.div>
               </div>
             )}
-
-            {/* CONTINUE & BACK BUTTON BAR DIRECTLY BELOW FORM CONTENT */}
-            <div className="pt-4 flex items-center gap-3">
-              {step > 1 ? (
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  type="button"
-                  onClick={handlePrev}
-                  className="py-3.5 px-5 rounded-full bg-[#F4EFE6]/95 backdrop-blur-md text-[#111111] font-extrabold text-xs uppercase tracking-wider hover:bg-[#E8E1D5] border border-[#E8E1D5] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-1 shadow-xs"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back</span>
-                </motion.button>
-              ) : null}
-
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                whileHover={{ scale: 1.01 }}
-                type="button"
-                disabled={isSubmitting}
-                onClick={handleNext}
-                className="flex-1 py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider shadow-md hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <span>{step === totalSteps ? (isSubmitting ? 'Saving Profile...' : 'Save & Enter Mannat Feed') : 'Continue'}</span>
-                <ArrowRight className="w-4 h-4 text-[#B89552]" />
-              </motion.button>
-            </div>
           </motion.div>
         </AnimatePresence>
+      </div>
+
+      {/* Live Camera Recording Modal */}
+      {isRecordingModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-[#161412] rounded-3xl p-5 text-white border border-[#B89552] space-y-4 shadow-2xl relative">
+            <button
+              type="button"
+              onClick={closeWebcamRecorder}
+              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <h3 className="text-base font-serif-editorial font-bold text-center text-[#DFBE7E]">
+              Record 30s Video Intro
+            </h3>
+
+            {/* Live Camera Viewfinder */}
+            <div className="relative aspect-[9/14] max-h-[380px] w-full bg-black rounded-2xl overflow-hidden border border-white/20">
+              <video
+                ref={liveVideoRef}
+                autoPlay
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+
+              {/* Recording Indicator & Timer */}
+              {isRecording && (
+                <div className="absolute top-3 left-3 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full flex items-center gap-1.5 animate-pulse shadow">
+                  <span className="w-2 h-2 rounded-full bg-white" />
+                  <span>REC {30 - recordingSeconds}s remaining</span>
+                </div>
+              )}
+            </div>
+
+            {/* Camera Controls */}
+            <div className="flex items-center justify-center gap-4 pt-1">
+              {!isRecording ? (
+                <button
+                  type="button"
+                  onClick={startLiveRecording}
+                  className="py-3 px-6 rounded-full bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs font-extrabold flex items-center gap-2 cursor-pointer shadow-lg"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span>Start Recording (30s)</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={stopLiveRecording}
+                  className="py-3 px-6 rounded-full bg-white hover:bg-gray-200 active:scale-95 text-red-600 text-xs font-extrabold flex items-center gap-2 cursor-pointer shadow-lg"
+                >
+                  <Square className="w-4 h-4 fill-red-600" />
+                  <span>Stop & Save Video</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation Buttons */}
+      <div className="pt-3 z-20 flex items-center gap-3 relative">
+        {step > 1 && (
+          <button
+            type="button"
+            onClick={handlePrev}
+            className="py-3.5 px-5 rounded-2xl bg-[#F4EFE6]/95 border border-[#E8E1D5] hover:bg-[#E8E1D5] text-xs font-bold text-[#111111] flex items-center gap-1 transition-all cursor-pointer backdrop-blur-md active:scale-95"
+          >
+            <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+            <span>Back</span>
+          </button>
+        )}
+
+        <button
+          type="button"
+          disabled={isSubmitting}
+          onClick={handleNext}
+          className="flex-1 py-4 px-6 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-xs font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg active:scale-98"
+        >
+          {step === totalSteps ? (
+            <>
+              <Sparkles className="w-4 h-4 text-[#B89552]" />
+              <span>{isSubmitting ? 'Creating Bio-Data...' : 'Complete & Enter Mannat'}</span>
+            </>
+          ) : (
+            <>
+              <span>Continue</span>
+              <ArrowRight className="w-4 h-4 text-[#B89552]" />
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

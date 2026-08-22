@@ -162,8 +162,17 @@ export const profileService = {
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
       const list: Profile[] = stored ? JSON.parse(stored) : [];
-      list.unshift(newProfile);
-      localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(list));
+      // Replace existing if id matches, or unshift
+      const filtered = list.filter(p => p.id !== newProfile.id && p.user_id !== newProfile.user_id);
+      filtered.unshift(newProfile);
+      localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(filtered));
+
+      // Also register in admin candidates list
+      const adminStored = localStorage.getItem('mannat_admin_candidates');
+      const adminList = adminStored ? JSON.parse(adminStored) : [];
+      const filteredAdmin = adminList.filter((p: Profile) => p.id !== newProfile.id);
+      filteredAdmin.unshift(newProfile);
+      localStorage.setItem('mannat_admin_candidates', JSON.stringify(filteredAdmin));
     } catch (e) {
       console.warn('Could not cache profile locally:', e);
     }
@@ -171,8 +180,9 @@ export const profileService = {
     // Save to Supabase with valid UUID
     if (isSupabaseConfigured()) {
       try {
-        await supabase.from('profiles').insert([{
+        await supabase.from('profiles').upsert([{
           id: newProfile.id,
+          user_id: newProfile.user_id,
           display_name: newProfile.display_name,
           age: newProfile.age,
           height: newProfile.height,
@@ -183,13 +193,18 @@ export const profileService = {
           occupation: newProfile.occupation,
           company_name: newProfile.company_name,
           education: newProfile.education,
+          salary_bracket: newProfile.salary_bracket,
+          diet: newProfile.diet,
+          family_background: newProfile.family_background,
+          marriage_expectations: newProfile.marriage_expectations,
           bio_text: newProfile.bio_text,
           bio_video_url: newProfile.bio_video_url,
           photos: newProfile.photos,
           managed_by: newProfile.managed_by,
           compatibility_score: newProfile.compatibility_score,
           gun_milan_score: newProfile.gun_milan_score,
-          lifestyle_details: newProfile.lifestyle_details
+          lifestyle_details: newProfile.lifestyle_details,
+          horoscope: newProfile.horoscope
         }]);
       } catch (e) {
         console.warn('Supabase profile insertion fallback:', e);
