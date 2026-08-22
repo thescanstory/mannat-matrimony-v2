@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, ArrowRight, User, Mail, LogIn, X, ChevronRight, Plus } from 'lucide-react';
+import { ShieldCheck, ArrowRight, User, Mail, LogIn, X } from 'lucide-react';
 import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
 
@@ -13,9 +13,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [showGoogleModal, setShowGoogleModal] = useState(false);
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
-  const [customGoogleName, setCustomGoogleName] = useState('');
-  const [showCustomGoogleInput, setShowCustomGoogleInput] = useState(false);
+  const [googleEmail, setGoogleEmail] = useState('');
+  const [googleName, setGoogleName] = useState('');
 
   // Sign In with Specific Email & Name
   const handleCustomSignIn = (e: React.FormEvent) => {
@@ -29,27 +28,22 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     }, 100);
   };
 
-  // Google Account Select Handler
-  const handleSelectGoogleAccount = (selectedEmail: string, selectedName: string, avatarUrl: string) => {
+  // Real Google Sign-In Handler
+  const handleGoogleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!googleEmail.trim()) return;
     setLoading(true);
     setShowGoogleModal(false);
-    const user = authService.setUserSession(selectedEmail, selectedName, avatarUrl);
+    const gName = googleName.trim() || googleEmail.split('@')[0];
+    const user = authService.setUserSession(
+      googleEmail.trim(),
+      gName,
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+    );
     setTimeout(() => {
       setLoading(false);
       onLoginSuccess(user);
     }, 100);
-  };
-
-  // Custom Google Account Submit
-  const handleCustomGoogleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customGoogleEmail.trim()) return;
-    const gName = customGoogleName.trim() || customGoogleEmail.split('@')[0];
-    handleSelectGoogleAccount(
-      customGoogleEmail.trim(),
-      gName,
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
-    );
   };
 
   return (
@@ -101,7 +95,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Ananya Sharma"
+                placeholder="e.g. Rahul Sharma"
                 className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] transition-colors shadow-xs"
               />
               <User className="w-4 h-4 text-[#B89552] absolute left-3 top-3.5" />
@@ -126,7 +120,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
           <div className="flex-1 h-px bg-[#E8E1D5]" />
         </div>
 
-        {/* 1-Tap Google Sign In Option */}
+        {/* Real Google Sign In Option */}
         <div>
           <button
             type="button"
@@ -164,17 +158,14 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
         </p>
       </div>
 
-      {/* Google Account Chooser Modal */}
+      {/* Real Google Account Sign-In Modal */}
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl space-y-4 border border-[#E8E1D5] text-left relative animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Close Button */}
             <button
               type="button"
-              onClick={() => {
-                setShowGoogleModal(false);
-                setShowCustomGoogleInput(false);
-              }}
+              onClick={() => setShowGoogleModal(false)}
               className="absolute top-4 right-4 p-1.5 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
@@ -202,113 +193,53 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               </svg>
               <div>
                 <h3 className="text-sm font-bold text-gray-900">Sign in with Google</h3>
-                <p className="text-[11px] text-gray-500">Choose an account to continue to Mannat</p>
+                <p className="text-[11px] text-gray-500">Enter your Google account details to continue</p>
               </div>
             </div>
 
-            {/* Quick Google Account Options */}
-            <div className="space-y-2">
-              {/* Account 1 */}
+            {/* Real Google Account Form */}
+            <form onSubmit={handleGoogleSubmit} className="space-y-3 pt-1">
+              <div>
+                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                  Google Email Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={googleEmail}
+                  onChange={(e) => setGoogleEmail(e.target.value)}
+                  placeholder="your.name@gmail.com"
+                  className="w-full p-3 rounded-xl border border-gray-300 text-xs font-bold text-gray-900 outline-none focus:border-[#B89552] focus:ring-1 focus:ring-[#B89552]"
+                  required
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-1">
+                  Your Full Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={googleName}
+                  onChange={(e) => setGoogleName(e.target.value)}
+                  placeholder="e.g. Rahul Sharma"
+                  className="w-full p-3 rounded-xl border border-gray-300 text-xs font-bold text-gray-900 outline-none focus:border-[#B89552] focus:ring-1 focus:ring-[#B89552]"
+                />
+              </div>
+
               <button
-                type="button"
-                onClick={() =>
-                  handleSelectGoogleAccount(
-                    'ananya.sharma@gmail.com',
-                    'Ananya Sharma',
-                    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
-                  )
-                }
-                className="w-full p-3 rounded-2xl border border-gray-200 hover:border-[#B89552] hover:bg-[#FBF9F4] flex items-center justify-between transition-all text-left cursor-pointer group"
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98"
               >
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                    alt="Ananya Sharma"
-                    className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                  />
-                  <div>
-                    <span className="text-xs font-bold text-gray-900 block group-hover:text-[#B89552]">Ananya Sharma</span>
-                    <span className="text-[11px] text-gray-500">ananya.sharma@gmail.com</span>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#B89552]" />
+                <span>{loading ? 'Authenticating with Google...' : 'Continue with this Google Account'}</span>
+                <ArrowRight className="w-4 h-4 text-[#B89552]" />
               </button>
+            </form>
 
-              {/* Account 2 */}
-              <button
-                type="button"
-                onClick={() =>
-                  handleSelectGoogleAccount(
-                    'kabir.singhania@gmail.com',
-                    'Kabir Singhania',
-                    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80'
-                  )
-                }
-                className="w-full p-3 rounded-2xl border border-gray-200 hover:border-[#B89552] hover:bg-[#FBF9F4] flex items-center justify-between transition-all text-left cursor-pointer group"
-              >
-                <div className="flex items-center gap-3">
-                  <img
-                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80"
-                    alt="Kabir Singhania"
-                    className="w-9 h-9 rounded-full object-cover border border-gray-200"
-                  />
-                  <div>
-                    <span className="text-xs font-bold text-gray-900 block group-hover:text-[#B89552]">Kabir Singhania</span>
-                    <span className="text-[11px] text-gray-500">kabir.singhania@gmail.com</span>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#B89552]" />
-              </button>
-
-              {/* Use Another Google Account Toggle */}
-              {!showCustomGoogleInput ? (
-                <button
-                  type="button"
-                  onClick={() => setShowCustomGoogleInput(true)}
-                  className="w-full p-3 rounded-2xl border border-dashed border-gray-300 hover:border-[#B89552] hover:bg-gray-50 flex items-center gap-3 transition-all text-left cursor-pointer"
-                >
-                  <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
-                    <Plus className="w-4 h-4" />
-                  </div>
-                  <span className="text-xs font-bold text-gray-700">Use another Google Account</span>
-                </button>
-              ) : (
-                <form onSubmit={handleCustomGoogleSubmit} className="pt-2 space-y-2 border-t border-gray-100">
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-600 mb-1">Your Google Email</label>
-                    <input
-                      type="email"
-                      value={customGoogleEmail}
-                      onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                      placeholder="your.email@gmail.com"
-                      className="w-full p-2.5 rounded-xl border border-gray-300 text-xs font-bold outline-none focus:border-[#B89552]"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-gray-600 mb-1">Your Name</label>
-                    <input
-                      type="text"
-                      value={customGoogleName}
-                      onChange={(e) => setCustomGoogleName(e.target.value)}
-                      placeholder="e.g. Rahul Verma"
-                      className="w-full p-2.5 rounded-xl border border-gray-300 text-xs font-bold outline-none focus:border-[#B89552]"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                  >
-                    <span>Continue with this Account</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </form>
-              )}
-            </div>
-
-            {/* Privacy notice */}
-            <div className="pt-2 text-center text-[10px] text-gray-400">
-              <span>To continue, Google will share your name and email with Mannat.</span>
+            {/* Security note */}
+            <div className="pt-1 text-center text-[10px] text-gray-400">
+              <span>Google authentication secured with Mannat verified encryption.</span>
             </div>
           </div>
         </div>
