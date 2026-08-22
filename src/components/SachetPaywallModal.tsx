@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle2, ShieldCheck, Zap, ArrowRight, Apple } from 'lucide-react';
+import { X, CheckCircle2, ShieldCheck, Zap, ArrowRight, Apple, ArrowLeft } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { Profile } from '../types';
 import { paymentService } from '../services/paymentService';
@@ -76,20 +76,31 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-gray-800">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center">
-                <Zap className="w-4 h-4 text-amber-300" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-base text-white">Sachet Paywall</h3>
-                <p className="text-xs text-amber-400/80 font-medium">Instant Single Profile Unlock</p>
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex items-center gap-1 text-xs font-bold text-gray-300 hover:text-white bg-gray-800/80 hover:bg-gray-700 px-3 py-1.5 rounded-full border border-gray-700 cursor-pointer transition-all active:scale-95"
+                title="Go Back"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-amber-400" />
+                <span>Back</span>
+              </button>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-amber-300" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm text-white">Sachet Unlock</h3>
+                  <p className="text-[10px] text-amber-400/80 font-medium">Instant Single Profile</p>
+                </div>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full bg-gray-800/80 text-gray-400 hover:text-white cursor-pointer"
+              className="p-1.5 rounded-full bg-gray-800/80 text-gray-400 hover:text-white cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 

@@ -167,7 +167,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-extrabold text-[#111111] hover:text-[#B89552] bg-[#F4EFE6] hover:bg-[#E8E1D5] px-3.5 py-1.5 rounded-full border border-[#E8E1D5] transition-all active:scale-95 cursor-pointer shadow-xs"
                 title="Go Back"
               >
                 <ArrowLeft className="w-4 h-4 text-[#B89552]" />
@@ -301,8 +301,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             </div>
           </div>
 
-          {/* Sticky Subscribe Button */}
-          <div className="p-5 border-t border-[#E8E1D5] bg-[#FBF9F4] sticky bottom-0 z-20 shadow-lg space-y-2">
+          {/* Sticky Subscribe & Back Button */}
+          <div className="p-5 border-t border-[#E8E1D5] bg-[#FBF9F4] sticky bottom-0 z-20 shadow-lg space-y-2.5">
             <button
               type="button"
               disabled={upgrading}
@@ -311,6 +311,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             >
               <Apple className="w-4 h-4 text-white" />
               <span>{upgrading ? 'Processing StoreKit...' : `Subscribe via Apple Pay`}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full py-2.5 px-4 rounded-full bg-transparent hover:bg-[#F4EFE6] text-[#777777] hover:text-[#111111] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Go Back / Maybe Later</span>
             </button>
           </div>
 
