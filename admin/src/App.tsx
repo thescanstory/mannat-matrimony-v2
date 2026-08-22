@@ -703,10 +703,16 @@ export function App() {
                 >
                   <option value="all">All Faiths</option>
                   <option value="Hindu">Hindu</option>
-                  <option value="Sikh">Sikh</option>
-                  <option value="Jain">Jain</option>
                   <option value="Muslim">Muslim</option>
+                  <option value="Sikh">Sikh</option>
                   <option value="Christian">Christian</option>
+                  <option value="Jain">Jain</option>
+                  <option value="Parsi">Parsi</option>
+                  <option value="Atheist">Atheist</option>
+                  <option value="Agnostic">Agnostic</option>
+                  <option value="Spiritual">Spiritual</option>
+                  <option value="Buddhist">Buddhist</option>
+                  <option value="Jewish">Jewish</option>
                 </select>
 
                 <select
@@ -809,11 +815,17 @@ export function App() {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-600 font-medium mt-0.5">
+                        <p className="text-xs text-gray-700 font-medium mt-0.5">
                           {candidate.occupation} {candidate.company_name && `@ ${candidate.company_name}`}
                         </p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          {candidate.city} • {candidate.religion} {candidate.community && `(${candidate.community})`} • {candidate.salary_bracket}
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          📍 {candidate.city} • 🕉️ {candidate.religion} {candidate.sub_community || candidate.community ? `(${candidate.sub_community || candidate.community})` : ''} • 📏 {candidate.height || "5'9\""} • 💰 {candidate.salary_bracket}
+                        </p>
+                        <p className="text-[11px] text-gray-500 mt-0.5 flex items-center gap-2 flex-wrap">
+                          {candidate.education && <span>🎓 {candidate.education}</span>}
+                          {candidate.diet && <span>🥗 {candidate.diet}</span>}
+                          {candidate.managed_by && <span>👤 Managed: {candidate.managed_by}</span>}
+                          {candidate.bio_video_url && <span className="text-[#B89552] font-bold">🎬 Video Bio Attached</span>}
                         </p>
                       </div>
                     </div>
@@ -1369,6 +1381,79 @@ export function App() {
                     type="text"
                     value={editingCandidate.salary_bracket}
                     onChange={(e) => setEditingCandidate({ ...editingCandidate, salary_bracket: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-700 mb-1">Height (e.g. 5'9" / 175 cm)</label>
+                  <input
+                    type="text"
+                    value={editingCandidate.height || ''}
+                    onChange={(e) => setEditingCandidate({ ...editingCandidate, height: e.target.value })}
+                    placeholder="e.g. 5'9&quot; (175 cm)"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-700 mb-1">Community / Caste</label>
+                  <input
+                    type="text"
+                    value={editingCandidate.sub_community || editingCandidate.community || ''}
+                    onChange={(e) => setEditingCandidate({ ...editingCandidate, sub_community: e.target.value, community: e.target.value })}
+                    placeholder="e.g. Brahmin, Khatri"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-700 mb-1">Company / Business</label>
+                  <input
+                    type="text"
+                    value={editingCandidate.company_name || ''}
+                    onChange={(e) => setEditingCandidate({ ...editingCandidate, company_name: e.target.value })}
+                    placeholder="e.g. Google India"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-700 mb-1">Education / Degree</label>
+                  <input
+                    type="text"
+                    value={editingCandidate.education || ''}
+                    onChange={(e) => setEditingCandidate({ ...editingCandidate, education: e.target.value })}
+                    placeholder="e.g. MBA - IIM Ahmedabad"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-700 mb-1">Diet</label>
+                  <select
+                    value={editingCandidate.diet || 'Veg'}
+                    onChange={(e) => setEditingCandidate({ ...editingCandidate, diet: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none cursor-pointer"
+                  >
+                    <option value="Veg">Veg</option>
+                    <option value="Non-Veg">Non-Veg</option>
+                    <option value="Eggetarian">Eggetarian</option>
+                    <option value="Vegan">Vegan</option>
+                    <option value="Jain">Jain</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase text-gray-700 mb-1">Video Intro Clip URL</label>
+                  <input
+                    type="url"
+                    value={editingCandidate.bio_video_url || ''}
+                    onChange={(e) => setEditingCandidate({ ...editingCandidate, bio_video_url: e.target.value })}
+                    placeholder="https://..."
                     className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none"
                   />
                 </div>
