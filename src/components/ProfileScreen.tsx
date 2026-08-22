@@ -10,9 +10,7 @@ import {
   ChevronRight, 
   Lock, 
   CheckCircle2, 
-  FileText,
   Edit3,
-  Users,
   Check,
   Mail
 } from 'lucide-react';
@@ -28,7 +26,7 @@ interface ProfileScreenProps {
   onOpenPrivacySettings: () => void;
   onOpenPaywall: () => void;
   onOpenAiMatchmaker: () => void;
-  onOpenOnboarding: () => void;
+  onOpenOnboarding?: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
   onUpdateUser?: (updated: UserSession) => void;
@@ -42,7 +40,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenPrivacySettings,
   onOpenPaywall,
   onOpenAiMatchmaker,
-  onOpenOnboarding,
   onOpenAuth,
   onLogout,
   onUpdateUser
@@ -111,26 +108,16 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
 
           {/* Auth Action Buttons */}
-          <div className="mt-5 pt-4 border-t border-[#E8E1D5] flex items-center gap-2">
+          <div className="mt-5 pt-4 border-t border-[#E8E1D5]">
             {currentUser ? (
-              <>
-                <button
-                  type="button"
-                  onClick={onOpenAuth}
-                  className="flex-1 py-2.5 px-3 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer border border-[#E8E1D5] active:scale-98"
-                >
-                  <Users className="w-3.5 h-3.5 text-[#B89552]" />
-                  <span>Switch Account</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  className="flex-1 py-2.5 px-3 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer border border-rose-200 active:scale-98"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Log Out</span>
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={onLogout}
+                className="w-full py-2.5 px-4 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer border border-rose-200 active:scale-98"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Log Out of Account</span>
+              </button>
             ) : (
               <button
                 type="button"
@@ -138,7 +125,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 className="w-full py-2.5 px-4 rounded-full bg-[#111111] hover:bg-[#B89552] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
               >
                 <LogIn className="w-4 h-4 text-[#B89552]" />
-                <span>Sign In / Create Account</span>
+                <span>Sign In to Account</span>
               </button>
             )}
           </div>
@@ -247,24 +234,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <div>
                   <h4 className="text-xs font-bold text-[#111111]">AI Matchmaker Assistant</h4>
                   <p className="text-[11px] text-[#777777]">Get personalized compatibility scoring & introductions</p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#888888]" />
-            </button>
-
-            {/* Create / Edit Bio-data */}
-            <button
-              type="button"
-              onClick={onOpenOnboarding}
-              className="w-full p-4 flex items-center justify-between hover:bg-[#F4EFE6] transition-colors text-left cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#111111]">Create / Edit Bio-data</h4>
-                  <p className="text-[11px] text-[#777777]">Update background, astrological chart & family details</p>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-[#888888]" />
