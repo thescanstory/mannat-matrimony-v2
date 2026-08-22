@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Check, User, ArrowRight, ArrowLeft, Upload, ShieldCheck, Sparkles, Camera, Square, X, Volume2 } from 'lucide-react';
+import { Check, User, ArrowRight, ArrowLeft, Upload, ShieldCheck, Sparkles, Camera, Square, X, Volume2, AlertCircle } from 'lucide-react';
 import type { Profile } from '../types';
 import { profileService } from '../services/profileService';
 import type { UserSession } from '../services/authService';
@@ -24,8 +24,9 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Form State to build persona - all fields editable with clear placeholders
+  // Form State to build persona - all fields mandatory
   const [gender, setGender] = useState<'man' | 'woman'>('woman');
   const [managedBy, setManagedBy] = useState<'self' | 'parent' | 'sibling'>('self');
   const [displayName, setDisplayName] = useState(currentUser?.user_metadata?.full_name || '');
@@ -69,6 +70,11 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   const videoCameraInputRef = useRef<HTMLInputElement | null>(null);
 
   const totalSteps = 10;
+
+  // Clear validation error whenever user modifies inputs
+  useEffect(() => {
+    setErrorMsg(null);
+  }, [step, displayName, age, height, city, subCommunity, education, occupation, companyName]);
 
   // Handle Photo Selection (Gallery / Files / Camera)
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,29 +177,137 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
     return () => clearInterval(timer);
   }, [isRecording]);
 
+  // Mandatory Field Validation per Step
+  const validateCurrentStep = (): boolean => {
+    setErrorMsg(null);
+
+    if (step === 1) {
+      if (!gender) {
+        setErrorMsg('Please select whether candidate is a Man or Woman.');
+        return false;
+      }
+      if (!managedBy) {
+        setErrorMsg('Please select who is managing this profile.');
+        return false;
+      }
+    }
+
+    if (step === 2) {
+      if (!displayName.trim()) {
+        setErrorMsg('Full candidate name is mandatory.');
+        return false;
+      }
+      if (!age || parseInt(age, 10) < 18 || parseInt(age, 10) > 80) {
+        setErrorMsg('Age is mandatory (must be between 18 and 80).');
+        return false;
+      }
+      if (!height.trim()) {
+        setErrorMsg('Height is mandatory (e.g. 5\'7").');
+        return false;
+      }
+    }
+
+    if (step === 3) {
+      if (!city.trim()) {
+        setErrorMsg('Settled city is mandatory.');
+        return false;
+      }
+      if (!religion) {
+        setErrorMsg('Religion is mandatory.');
+        return false;
+      }
+      if (!subCommunity.trim()) {
+        setErrorMsg('Sub-community or caste is mandatory (e.g. Brahmin, Khatri, Agarwal).');
+        return false;
+      }
+    }
+
+    if (step === 4) {
+      if (!education.trim()) {
+        setErrorMsg('Highest education is mandatory (e.g. MBA, B.Tech, MS).');
+        return false;
+      }
+      if (!occupation.trim()) {
+        setErrorMsg('Current profession / role is mandatory.');
+        return false;
+      }
+      if (!companyName.trim()) {
+        setErrorMsg('Company or firm name is mandatory.');
+        return false;
+      }
+    }
+
+    if (step === 5) {
+      if (!salaryBracket) {
+        setErrorMsg('Salary bracket is mandatory.');
+        return false;
+      }
+      if (!financialStance) {
+        setErrorMsg('Financial preference is mandatory.');
+        return false;
+      }
+    }
+
+    if (step === 6) {
+      if (!diet) {
+        setErrorMsg('Diet preference is mandatory.');
+        return false;
+      }
+    }
+
+    if (step === 7) {
+      if (!familyType) {
+        setErrorMsg('Family type is mandatory (Nuclear or Joint).');
+        return false;
+      }
+      if (!familyValues) {
+        setErrorMsg('Family values are mandatory.');
+        return false;
+      }
+    }
+
+    if (step === 8) {
+      if (!photos || photos.length < 3) {
+        setErrorMsg('3 profile photos are mandatory for bio-data verification.');
+        return false;
+      }
+    }
+
+    if (step === 9) {
+      if (!videoUrl) {
+        setErrorMsg('30-second video intro is mandatory.');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleFinish = async () => {
+    if (!validateCurrentStep()) return;
+
     setIsSubmitting(true);
     try {
       const createdProfile = await profileService.createProfile({
         user_id: currentUser?.id,
-        display_name: displayName.trim() || currentUser?.user_metadata?.full_name || (gender === 'woman' ? 'Ananya Sharma' : 'Rohan Malhotra'),
-        age: age ? parseInt(age, 10) : 27,
-        height: height || "5'7\"",
-        city: city.trim() || 'Mumbai',
-        religion: religion || 'Hindu',
+        display_name: displayName.trim(),
+        age: parseInt(age, 10),
+        height: height.trim(),
+        city: city.trim(),
+        religion: religion,
         community: religion === 'Hindu' ? 'North Indian' : religion,
-        sub_community: subCommunity.trim() || 'Brahmin',
-        education: education.trim() || 'B.Tech / MBA',
-        occupation: occupation.trim() || 'Software Engineer',
-        company_name: companyName.trim() || 'Tech Enterprise',
+        sub_community: subCommunity.trim(),
+        education: education.trim(),
+        occupation: occupation.trim(),
+        company_name: companyName.trim(),
         salary_bracket: salaryBracket,
         diet: diet,
         managed_by: managedBy === 'sibling' ? 'self' : managedBy,
         photos: photos,
         bio_video_url: videoUrl,
-        family_background: `${familyType} family with ${familyValues.toLowerCase()} values. Settled in ${city || 'Mumbai'}.`,
+        family_background: `${familyType} family with ${familyValues.toLowerCase()} values. Settled in ${city}.`,
         marriage_expectations: `Looking for a compatible partner who appreciates ${financialStance.toLowerCase()} financial goals and family harmony.`,
-        bio_text: `Hi! I am a ${occupation || 'Professional'} based in ${city || 'Mumbai'}. Value deep mutual respect, family values, and progressive growth.`,
+        bio_text: `Hi! I am a ${occupation} based in ${city}. Value deep mutual respect, family values, and progressive growth.`,
         lifestyle_details: {
           net_worth: salaryBracket.includes('50L') ? '₹10Cr+' : '₹5Cr - ₹10Cr',
           private_clubs: 'City Golf & Country Club',
@@ -220,6 +334,9 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   };
 
   const handleNext = () => {
+    if (!validateCurrentStep()) {
+      return;
+    }
     if (step < totalSteps) {
       setDirection(1);
       setStep(step + 1);
@@ -229,6 +346,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   };
 
   const handlePrev = () => {
+    setErrorMsg(null);
     if (step > 1) {
       setDirection(-1);
       setStep(step - 1);
@@ -338,13 +456,9 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               STEP {step} OF {totalSteps}
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => onComplete()}
-            className="text-xs font-bold text-[#777777] hover:text-[#111111] bg-[#F4EFE6]/95 backdrop-blur-md px-4 py-1.5 rounded-full border border-[#E8E1D5] transition-all cursor-pointer shadow-xs active:scale-95"
-          >
-            Skip
-          </button>
+          <span className="text-[10px] font-black text-[#B89552] uppercase bg-[#F4EFE6]/90 px-3 py-1 rounded-full border border-[#E8E1D5]">
+            MANDATORY FIELDS
+          </span>
         </div>
 
         {/* Animated Progress Bar */}
@@ -374,7 +488,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 1 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 1: IDENTITY & CREATOR
+                  STEP 1: IDENTITY & CREATOR *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Who is seeking a life partner?
@@ -382,7 +496,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                 <div className="space-y-3 pt-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    I am a:
+                    I am a: <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <motion.button
@@ -415,7 +529,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   </div>
 
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] pt-2">
-                    Profile is managed by:
+                    Profile is managed by: <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
@@ -446,7 +560,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 2 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 2: CANDIDATE VITALS
+                  STEP 2: CANDIDATE VITALS *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Personal Details & Vitals
@@ -455,7 +569,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                 <div className="space-y-3 pt-2">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                      Full Candidate Name:
+                      Full Candidate Name <span className="text-red-500">*</span>:
                     </label>
                     <input
                       type="text"
@@ -463,26 +577,30 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                       onChange={(e) => setDisplayName(e.target.value)}
                       placeholder={gender === 'woman' ? 'e.g. Ananya Sharma' : 'e.g. Rohan Malhotra'}
                       className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                      required
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Age (Years):
+                        Age (Years) <span className="text-red-500">*</span>:
                       </label>
                       <input
                         type="number"
+                        min="18"
+                        max="80"
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
                         placeholder="e.g. 27"
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Height:
+                        Height <span className="text-red-500">*</span>:
                       </label>
                       <input
                         type="text"
@@ -490,6 +608,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                         onChange={(e) => setHeight(e.target.value)}
                         placeholder="e.g. 5'7&quot;"
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
                       />
                     </div>
                   </div>
@@ -501,7 +620,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 3 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 3: CULTURAL ROOTS
+                  STEP 3: CULTURAL ROOTS *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Location & Background
@@ -510,7 +629,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                 <div className="space-y-3 pt-2">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                      Settled City:
+                      Settled City <span className="text-red-500">*</span>:
                     </label>
                     <input
                       type="text"
@@ -518,18 +637,20 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                       onChange={(e) => setCity(e.target.value)}
                       placeholder="e.g. Mumbai / Bangalore / Delhi NCR"
                       className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                      required
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Religion:
+                        Religion <span className="text-red-500">*</span>:
                       </label>
                       <select
                         value={religion}
                         onChange={(e) => setReligion(e.target.value)}
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer"
+                        required
                       >
                         {['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Parsi'].map((rel) => (
                           <option key={rel} value={rel}>{rel}</option>
@@ -539,14 +660,15 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Sub-Community / Caste:
+                        Sub-Community / Caste <span className="text-red-500">*</span>:
                       </label>
                       <input
                         type="text"
                         value={subCommunity}
                         onChange={(e) => setSubCommunity(e.target.value)}
-                        placeholder="e.g. Brahmin, Khatri, Arora"
+                        placeholder="e.g. Brahmin, Khatri, Arora, Agarwal"
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
                       />
                     </div>
                   </div>
@@ -558,7 +680,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 4 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 4: CAREER & EDUCATION
+                  STEP 4: CAREER & EDUCATION *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Career, Education & Role
@@ -567,41 +689,44 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                 <div className="space-y-3 pt-2">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                      Highest Education:
+                      Highest Education <span className="text-red-500">*</span>:
                     </label>
                     <input
                       type="text"
                       value={education}
                       onChange={(e) => setEducation(e.target.value)}
-                      placeholder="e.g. MBA / B.Tech / MS / MD"
+                      placeholder="e.g. MBA / B.Tech / MS / MD / CA"
                       className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                      required
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Profession / Role:
+                        Profession / Role <span className="text-red-500">*</span>:
                       </label>
                       <input
                         type="text"
                         value={occupation}
                         onChange={(e) => setOccupation(e.target.value)}
-                        placeholder="e.g. Product Manager, Doctor"
+                        placeholder="e.g. Product Manager, Doctor, Founder"
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
                       />
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Company / Firm:
+                        Company / Firm <span className="text-red-500">*</span>:
                       </label>
                       <input
                         type="text"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="e.g. Google, McKinsey"
+                        placeholder="e.g. Google, McKinsey, Enterprise"
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
                       />
                     </div>
                   </div>
@@ -613,7 +738,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 5 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 5: FINANCIAL HARMONY
+                  STEP 5: FINANCIAL HARMONY *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Income & Money Values
@@ -621,7 +746,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                 <div className="space-y-3 pt-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Annual Salary Bracket:
+                    Annual Salary Bracket <span className="text-red-500">*</span>:
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     {['₹15L - ₹25L', '₹25L - ₹35L', '₹35L - ₹50L', '₹50L+ HNI'].map((sal) => (
@@ -642,7 +767,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   </div>
 
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] pt-2">
-                    Financial Management Preference:
+                    Financial Management Preference <span className="text-red-500">*</span>:
                   </label>
                   <div className="space-y-2">
                     {[
@@ -674,7 +799,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 6 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 6: LIFESTYLE & DIET
+                  STEP 6: LIFESTYLE & DIET *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Diet & Daily Habits
@@ -682,7 +807,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                 <div className="space-y-3 pt-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Diet Preference:
+                    Diet Preference <span className="text-red-500">*</span>:
                   </label>
                   <div className="flex items-center gap-2 flex-wrap">
                     {['Veg', 'Eggetarian', 'Non-Veg', 'Vegan', 'Jain Veg'].map((d) => (
@@ -709,7 +834,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 7 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 7: FAMILY & VALUES
+                  STEP 7: FAMILY & VALUES *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Family Background & Values
@@ -717,7 +842,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                 <div className="space-y-3 pt-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Family Type:
+                    Family Type <span className="text-red-500">*</span>:
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     {['Nuclear', 'Joint Family'].map((fam) => (
@@ -738,7 +863,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   </div>
 
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] pt-2">
-                    Family Values:
+                    Family Values <span className="text-red-500">*</span>:
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {['Traditional', 'Moderate', 'Progressive'].map((val) => (
@@ -765,13 +890,13 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 8 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 8: PHOTO GALLERY (3 REQUIRED)
+                  STEP 8: PHOTO GALLERY (3 REQUIRED) *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Add 3 profile photos.
                 </h1>
                 <p className="text-xs text-[#777777] font-medium leading-relaxed">
-                  Shoot directly with your camera or upload from your gallery.
+                  Shoot directly with camera or upload 3 clear pictures for bio-data verification.
                 </p>
 
                 {/* Photo Previews */}
@@ -817,7 +942,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 9 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 9: 30-SEC VIDEO INTRO
+                  STEP 9: 30-SEC VIDEO INTRO *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Add a 30s Video Intro.
@@ -887,10 +1012,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                   <div>
                     <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">
-                      {displayName.trim() || (gender === 'woman' ? 'Ananya Sharma' : 'Rohan Malhotra')}, {age || '27'}
+                      {displayName}, {age}
                     </h3>
                     <p className="text-xs text-[#777777] font-semibold">
-                      {occupation || 'Professional'} · {city || 'Mumbai'} · {religion} {subCommunity ? `(${subCommunity})` : ''}
+                      {occupation} · {city} · {religion} ({subCommunity})
                     </p>
                   </div>
 
@@ -915,7 +1040,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                   <div className="flex items-center gap-2 text-[11px] text-emerald-800 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
                     <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>BlurShield privacy applied & bio-data verified.</span>
+                    <span>BlurShield privacy applied & verified bio-data ready.</span>
                   </div>
                 </motion.div>
               </div>
@@ -923,6 +1048,18 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Mandatory Validation Error Alert */}
+      {errorMsg && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="z-30 mb-2 p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-2 shadow-xs"
+        >
+          <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+          <span>{errorMsg}</span>
+        </motion.div>
+      )}
 
       {/* Live Camera Recording Modal */}
       {isRecordingModalOpen && (
@@ -986,7 +1123,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
       )}
 
       {/* Navigation Buttons */}
-      <div className="pt-3 z-20 flex items-center gap-3 relative">
+      <div className="pt-2 z-20 flex items-center gap-3 relative">
         {step > 1 && (
           <button
             type="button"
