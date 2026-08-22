@@ -36,6 +36,10 @@ export function App() {
     return <AdminPortal />;
   }
 
+  return <MainApp />;
+}
+
+function MainApp() {
   const [profiles, setProfiles] = useState<Profile[]>(() => {
     try {
       if (typeof window !== 'undefined' && localStorage.getItem('mannat_admin_deleted') === 'true') {

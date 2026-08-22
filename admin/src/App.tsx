@@ -131,6 +131,20 @@ export function App() {
     }
   });
 
+  const [activeTab, setActiveTab] = useState<'candidates' | 'analytics' | 'callbacks' | 'vouches' | 'database'>('candidates');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterReligion, setFilterReligion] = useState<string>('all');
+  const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
+  const [showDeleteAllUsersConfirm, setShowDeleteAllUsersConfirm] = useState(false);
+  const [editingCandidate, setEditingCandidate] = useState<Profile | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // VIP Callbacks & Matchmakers State
+  const [callbacks, setCallbacks] = useState<VIPCallback[]>(INITIAL_CALLBACKS);
+  const [matchmakers] = useState<MatchmakerCurator[]>(INITIAL_MATCHMAKERS);
+
   // Fetch live profiles and callback requests from Supabase on mount
   useEffect(() => {
     async function loadSupabaseData() {
@@ -179,20 +193,6 @@ export function App() {
     }
     loadSupabaseData();
   }, []);
-
-  const [activeTab, setActiveTab] = useState<'candidates' | 'analytics' | 'callbacks' | 'vouches' | 'database'>('candidates');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterReligion, setFilterReligion] = useState<string>('all');
-  const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
-  const [showDeleteAllUsersConfirm, setShowDeleteAllUsersConfirm] = useState(false);
-  const [editingCandidate, setEditingCandidate] = useState<Profile | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // VIP Callbacks & Matchmakers State
-  const [callbacks, setCallbacks] = useState<VIPCallback[]>(INITIAL_CALLBACKS);
-  const [matchmakers] = useState<MatchmakerCurator[]>(INITIAL_MATCHMAKERS);
 
   // New Candidate Form State
   const [newCandidate, setNewCandidate] = useState({
