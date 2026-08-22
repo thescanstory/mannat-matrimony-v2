@@ -288,11 +288,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
         {/* Profile Details Sheet */}
         <div className="p-6 bg-[#FAF8F5] text-[#161412] rounded-t-[36px] -mt-8 relative z-20 space-y-5 border-t border-[#EADBCE] shadow-2xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span className="font-instrument text-2xl lowercase text-[#C5A059]">mannat</span>
-            </div>
+          <div className="flex items-center justify-end">
             <span className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] bg-[#F6F2E9] px-3.5 py-1.5 rounded-full border border-[#EADBCE] flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3 text-[#C5A059]" />
               {p.compatibility_score}% MUTUAL MATCH
