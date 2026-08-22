@@ -465,6 +465,10 @@ function MainApp() {
                   onOpenOnboarding={() => navigateTo('onboarding')}
                   onOpenAuth={() => navigateTo('auth')}
                   onLogout={handleLogout}
+                  onUpdateUser={(updated) => {
+                    setCurrentUser(updated);
+                    triggerToast('Profile account updated! ✨', 'sparkle');
+                  }}
                 />
               )}
             </motion.div>

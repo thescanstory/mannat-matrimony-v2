@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ShieldCheck, 
   Crown, 
@@ -10,8 +10,13 @@ import {
   ChevronRight, 
   Lock, 
   CheckCircle2, 
-  FileText
+  FileText,
+  Edit3,
+  Users,
+  Check,
+  Mail
 } from 'lucide-react';
+import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
 import type { PrivacySettings } from '../types';
 
@@ -26,6 +31,7 @@ interface ProfileScreenProps {
   onOpenOnboarding: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
+  onUpdateUser?: (updated: UserSession) => void;
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({
@@ -38,10 +44,25 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenAiMatchmaker,
   onOpenOnboarding,
   onOpenAuth,
-  onLogout
+  onLogout,
+  onUpdateUser
 }) => {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editName, setEditName] = useState(currentUser?.user_metadata?.full_name || '');
+  const [editEmail, setEditEmail] = useState(currentUser?.email || '');
+
   const displayName = currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'Member Candidate';
   const email = currentUser?.email || 'Not signed in';
+
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editEmail.trim()) return;
+    const updated = authService.setUserSession(editEmail, editName, currentUser?.user_metadata?.avatar_url);
+    if (onUpdateUser) {
+      onUpdateUser(updated);
+    }
+    setShowEditModal(false);
+  };
 
   return (
     <div className="w-full min-h-screen bg-[#FBF9F4] text-[#111111] pb-28 select-none font-sans">
@@ -72,19 +93,44 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
               <p className="text-xs text-[#777777] truncate">{email}</p>
             </div>
-          </div>
 
-          {/* Auth Action */}
-          <div className="mt-5 pt-4 border-t border-[#E8E1D5] flex items-center justify-between">
-            {currentUser ? (
+            {currentUser && (
               <button
                 type="button"
-                onClick={onLogout}
-                className="w-full py-2.5 px-4 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer border border-rose-200 active:scale-98"
+                onClick={() => {
+                  setEditName(currentUser.user_metadata?.full_name || '');
+                  setEditEmail(currentUser.email || '');
+                  setShowEditModal(true);
+                }}
+                className="p-2 rounded-full hover:bg-[#F4EFE6] text-[#B89552] border border-[#E8E1D5] transition-all cursor-pointer"
+                title="Edit Name & Email"
               >
-                <LogOut className="w-4 h-4" />
-                <span>Log Out of Account</span>
+                <Edit3 className="w-4 h-4" />
               </button>
+            )}
+          </div>
+
+          {/* Auth Action Buttons */}
+          <div className="mt-5 pt-4 border-t border-[#E8E1D5] flex items-center gap-2">
+            {currentUser ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onOpenAuth}
+                  className="flex-1 py-2.5 px-3 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer border border-[#E8E1D5] active:scale-98"
+                >
+                  <Users className="w-3.5 h-3.5 text-[#B89552]" />
+                  <span>Switch Account</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="flex-1 py-2.5 px-3 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer border border-rose-200 active:scale-98"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Log Out</span>
+                </button>
+              </>
             ) : (
               <button
                 type="button"
@@ -226,6 +272,68 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Edit Account Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-[#FBF9F4] rounded-3xl p-6 border border-[#E8E1D5] shadow-2xl space-y-4 text-left">
+            <h3 className="text-base font-serif-editorial font-bold text-[#111111]">
+              Edit Account Identity
+            </h3>
+            <form onSubmit={handleSaveProfile} className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    placeholder="e.g. Ananya Sharma"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
+                  />
+                  <User className="w-4 h-4 text-[#B89552] absolute left-3 top-3" />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#111111] mb-1">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
+                    required
+                  />
+                  <Mail className="w-4 h-4 text-[#B89552] absolute left-3 top-3" />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#555555] text-xs font-bold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
