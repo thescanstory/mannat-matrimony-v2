@@ -63,15 +63,6 @@ export const HEIGHT_OPTIONS = [
   '6\'6"+ (198+ cm)'
 ];
 
-// Strictly High-Quality Indian Couple Photography
-const INDIAN_COUPLE_PHOTOS = [
-  'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=80', // Indian Wedding Couple
-  'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=80', // Traditional Royal Couple
-  'https://images.unsplash.com/photo-1609234656388-0ff363383899?auto=format&fit=crop&w=1000&q=80', // Traditional Indian Bride & Groom
-  'https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1000&q=80', // Smiling Indian Couple
-  'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=80'  // Elegant Celebration Couple
-];
-
 export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ 
   onComplete, 
   currentUser,
@@ -450,8 +441,6 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
     return 'Empathetic Ambitious Builder';
   };
 
-  const currentCouplePhoto = INDIAN_COUPLE_PHOTOS[(step - 1) % INDIAN_COUPLE_PHOTOS.length];
-
   const slideVariants: Variants = {
     initial: (dir: number) => ({
       x: dir > 0 ? 60 : -60,
@@ -512,27 +501,6 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         onChange={handleVideoUpload}
         className="hidden"
       />
-
-      {/* Background Image Layer */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentCouplePhoto}
-          initial={{ opacity: 0, scale: 1.08 }}
-          animate={{ opacity: 0.25, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.04 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="absolute inset-0 z-0 pointer-events-none"
-        >
-          <img
-            src={currentCouplePhoto}
-            alt="Indian Couple Background"
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Light Overlay Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#FBF9F4]/95 via-[#FBF9F4]/80 to-[#FBF9F4]/98 z-0 pointer-events-none" />
 
       {/* Top Header - Single Clean Logo & Sleek Progress Bar, Zero Extra Buttons */}
       <div className="pt-1 z-20 space-y-2 relative">
@@ -700,18 +668,14 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                       </label>
                       <div className="relative flex items-center">
                         <Ruler className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                        <select
+                        <input
+                          type="text"
                           value={height}
                           onChange={(e) => setHeight(e.target.value)}
-                          className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
+                          placeholder="e.g. 5'9&quot; (175 cm)"
+                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                           required
-                        >
-                          <option value="">Select Height</option>
-                          {HEIGHT_OPTIONS.map((h) => (
-                            <option key={h} value={h}>{h}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        />
                       </div>
                     </div>
                   </div>
@@ -760,7 +724,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                           className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
                           required
                         >
-                          {['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Parsi'].map((rel) => (
+                          {['Hindu', 'Muslim', 'Sikh', 'Christian', 'Jain', 'Parsi', 'Atheist', 'Agnostic', 'Spiritual', 'Buddhist', 'Jewish', 'Other'].map((rel) => (
                             <option key={rel} value={rel}>{rel}</option>
                           ))}
                         </select>

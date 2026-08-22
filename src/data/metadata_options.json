@@ -1,5 +1,5 @@
 {
-  "religions": ["Hindu", "Muslim", "Sikh", "Christian", "Jain", "Parsi", "Buddhist", "Jewish", "No Religion"],
+  "religions": ["Hindu", "Muslim", "Sikh", "Christian", "Jain", "Parsi", "Atheist", "Agnostic", "Spiritual", "Buddhist", "Jewish"],
   "mother_tongues": ["Hindi", "English", "Punjabi", "Marathi", "Telugu", "Tamil", "Bengali", "Gujarati", "Kannada", "Malayalam"],
   "diet_types": ["Veg", "Non-Veg", "Eggetarian", "Vegan", "Jain"],
   "marital_status": ["Never Married", "Divorced", "Widowed", "Awaiting Divorce"],

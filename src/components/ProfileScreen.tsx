@@ -27,7 +27,6 @@ import {
 import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
 import type { Profile, PrivacySettings } from '../types';
-import { HEIGHT_OPTIONS } from './OnboardingCarousel';
 
 interface ProfileScreenProps {
   currentUser: UserSession | null;
@@ -326,15 +325,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
                     <div>
                       <label className="block text-[10px] font-bold uppercase text-[#777777] mb-1">Height (ft/in & cm)</label>
-                      <select
+                      <input
+                        type="text"
                         value={editHeight}
                         onChange={(e) => setEditHeight(e.target.value)}
-                        className="w-full p-2.5 rounded-xl bg-white border border-[#E8E1D5] font-bold text-[#111111] outline-none focus:border-[#B89552] cursor-pointer"
-                      >
-                        {HEIGHT_OPTIONS.map(h => (
-                          <option key={h} value={h}>{h}</option>
-                        ))}
-                      </select>
+                        placeholder="e.g. 5'9&quot; (175 cm)"
+                        className="w-full p-2.5 rounded-xl bg-white border border-[#E8E1D5] font-bold text-[#111111] outline-none focus:border-[#B89552]"
+                      />
                     </div>
                   </div>
 
@@ -430,7 +427,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                         onChange={(e) => setReligion(e.target.value)}
                         className="w-full p-2.5 rounded-xl bg-white border border-[#E8E1D5] font-bold text-[#111111] outline-none focus:border-[#B89552] cursor-pointer"
                       >
-                        {['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Parsi'].map((rel) => (
+                        {['Hindu', 'Muslim', 'Sikh', 'Christian', 'Jain', 'Parsi', 'Atheist', 'Agnostic', 'Spiritual', 'Buddhist', 'Jewish', 'Other'].map((rel) => (
                           <option key={rel} value={rel}>{rel}</option>
                         ))}
                       </select>
