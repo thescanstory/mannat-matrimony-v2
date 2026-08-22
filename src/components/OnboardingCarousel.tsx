@@ -1,7 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Check, User, ArrowRight, ArrowLeft, Upload, ShieldCheck, Sparkles, Camera, Square, X, Volume2, AlertCircle, Trash2, Plus, Briefcase } from 'lucide-react';
+import { 
+  Check, 
+  User, 
+  ArrowRight, 
+  ArrowLeft, 
+  Upload, 
+  ShieldCheck, 
+  Sparkles, 
+  Camera, 
+  Square, 
+  X, 
+  Volume2, 
+  AlertCircle, 
+  Trash2, 
+  Plus, 
+  Briefcase,
+  MapPin,
+  Compass,
+  Users,
+  ChevronDown,
+  GraduationCap,
+  Building2,
+  Calendar,
+  Ruler
+} from 'lucide-react';
 import type { Profile } from '../types';
 import { profileService } from '../services/profileService';
 import type { UserSession } from '../services/authService';
@@ -583,55 +607,64 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                 <div className="space-y-3 pt-2">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
                       Full Candidate Name <span className="text-red-500">*</span>:
                     </label>
-                    <input
-                      type="text"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder="Enter candidate full name"
-                      className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                      required
-                    />
+                    <div className="relative flex items-center">
+                      <User className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input
+                        type="text"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        placeholder="Enter candidate full name"
+                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4">
                         Age (Years) <span className="text-red-500">*</span>:
                       </label>
-                      <input
-                        type="number"
-                        min="18"
-                        max="80"
-                        value={age}
-                        onChange={(e) => setAge(e.target.value)}
-                        placeholder="e.g. 27"
-                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        required
-                      />
+                      <div className="relative flex items-center">
+                        <Calendar className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="number"
+                          min="18"
+                          max="80"
+                          value={age}
+                          onChange={(e) => setAge(e.target.value)}
+                          placeholder="e.g. 27"
+                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4">
                         Height <span className="text-red-500">*</span>:
                       </label>
-                      <input
-                        type="text"
-                        value={height}
-                        onChange={(e) => setHeight(e.target.value)}
-                        placeholder="e.g. 5'7&quot;"
-                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        required
-                      />
+                      <div className="relative flex items-center">
+                        <Ruler className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={height}
+                          onChange={(e) => setHeight(e.target.value)}
+                          placeholder="e.g. 5'7&quot;"
+                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Step 3: Location, Religion & Sub-community */}
+            {/* Step 3: Location, Religion & Sub-community (Pixel-Perfect Alignment) */}
             {step === 3 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
@@ -641,49 +674,59 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   Location & Background
                 </h1>
 
-                <div className="space-y-3 pt-2">
+                <div className="space-y-3.5 pt-2">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
                       Settled City <span className="text-red-500">*</span>:
                     </label>
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="e.g. Mumbai / Bangalore / Delhi NCR"
-                      className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                      required
-                    />
+                    <div className="relative flex items-center">
+                      <MapPin className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="e.g. Mumbai / Bangalore / Delhi NCR"
+                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
                         Religion <span className="text-red-500">*</span>:
                       </label>
-                      <select
-                        value={religion}
-                        onChange={(e) => setReligion(e.target.value)}
-                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer"
-                        required
-                      >
-                        {['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Parsi'].map((rel) => (
-                          <option key={rel} value={rel}>{rel}</option>
-                        ))}
-                      </select>
+                      <div className="relative flex items-center">
+                        <Compass className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+                        <select
+                          value={religion}
+                          onChange={(e) => setReligion(e.target.value)}
+                          className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
+                          required
+                        >
+                          {['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Parsi'].map((rel) => (
+                            <option key={rel} value={rel}>{rel}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Sub-Community / Caste (Optional):
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
+                        Community / Caste:
                       </label>
-                      <input
-                        type="text"
-                        value={subCommunity}
-                        onChange={(e) => setSubCommunity(e.target.value)}
-                        placeholder="e.g. Brahmin, Khatri (Optional)"
-                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                      />
+                      <div className="relative flex items-center">
+                        <Users className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={subCommunity}
+                          onChange={(e) => setSubCommunity(e.target.value)}
+                          placeholder="e.g. Brahmin (Opt)"
+                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -700,7 +743,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   Education & Profession
                 </h1>
 
-                <div className="space-y-3 pt-2">
+                <div className="space-y-3.5 pt-2">
                   {/* Salaried vs Self Employed Selector */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
@@ -711,7 +754,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                         whileTap={{ scale: 0.96 }}
                         type="button"
                         onClick={() => setEmploymentType('Salaried')}
-                        className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
                           employmentType === 'Salaried'
                             ? 'bg-[#111111] text-white border-[#111111] font-bold shadow-sm'
                             : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
@@ -725,59 +768,68 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                         whileTap={{ scale: 0.96 }}
                         type="button"
                         onClick={() => setEmploymentType('Self-Employed / Business')}
-                        className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
                           employmentType === 'Self-Employed / Business'
                             ? 'bg-[#111111] text-white border-[#111111] font-bold shadow-sm'
                             : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
                         }`}
                       >
                         <Sparkles className="w-4 h-4 text-[#B89552]" />
-                        <span className="text-xs font-extrabold">Self-Employed / Business</span>
+                        <span className="text-xs font-extrabold truncate">Self-Employed</span>
                       </motion.button>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
                       Highest Education <span className="text-red-500">*</span>:
                     </label>
-                    <input
-                      type="text"
-                      value={education}
-                      onChange={(e) => setEducation(e.target.value)}
-                      placeholder="e.g. MBA / B.Tech / MS / MD / CA"
-                      className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                      required
-                    />
+                    <div className="relative flex items-center">
+                      <GraduationCap className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input
+                        type="text"
+                        value={education}
+                        onChange={(e) => setEducation(e.target.value)}
+                        placeholder="e.g. MBA / B.Tech / MS / MD / CA"
+                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
                         Profession / Role <span className="text-red-500">*</span>:
                       </label>
-                      <input
-                        type="text"
-                        value={occupation}
-                        onChange={(e) => setOccupation(e.target.value)}
-                        placeholder="e.g. Software Engineer, Doctor, Founder"
-                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        required
-                      />
+                      <div className="relative flex items-center">
+                        <Briefcase className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={occupation}
+                          onChange={(e) => setOccupation(e.target.value)}
+                          placeholder="e.g. Engineer"
+                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        {employmentType === 'Salaried' ? 'Company / Employer *' : 'Business / Firm Name *'}:
+                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
+                        {employmentType === 'Salaried' ? 'Company *' : 'Business *'}:
                       </label>
-                      <input
-                        type="text"
-                        value={companyName}
-                        onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder={employmentType === 'Salaried' ? 'e.g. Google, McKinsey' : 'e.g. Own Consultancy / Enterprise'}
-                        className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        required
-                      />
+                      <div className="relative flex items-center">
+                        <Building2 className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={companyName}
+                          onChange={(e) => setCompanyName(e.target.value)}
+                          placeholder={employmentType === 'Salaried' ? 'e.g. Google' : 'e.g. Firm Name'}
+                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
