@@ -16,6 +16,45 @@ export function generateUUID(): string {
 }
 
 export const profileService = {
+  // Check if user has an existing completed profile / bio-data
+  hasExistingProfile: async (userId?: string, email?: string): Promise<boolean> => {
+    if (!userId && !email) return false;
+    
+    // 1. Check local completed onboardings
+    try {
+      if (email && localStorage.getItem('mannat_onboarded_' + email.toLowerCase()) === 'true') {
+        return true;
+      }
+      if (userId && localStorage.getItem('mannat_onboarded_' + userId) === 'true') {
+        return true;
+      }
+      const customProfilesStr = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
+      if (customProfilesStr) {
+        const customProfiles: Profile[] = JSON.parse(customProfilesStr);
+        const match = customProfiles.some(p => (userId && p.user_id === userId) || (userId && p.id === userId));
+        if (match) return true;
+      }
+    } catch {}
+
+    // 2. Check Supabase DB
+    if (isSupabaseConfigured() && userId) {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id')
+          .or(`id.eq.${userId},user_id.eq.${userId}`)
+          .limit(1);
+        if (data && data.length > 0 && !error) {
+          if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
+          localStorage.setItem('mannat_onboarded_' + userId, 'true');
+          return true;
+        }
+      } catch {}
+    }
+
+    return false;
+  },
+
   // Fetch All Candidate Profiles
   getProfiles: async (): Promise<Profile[]> => {
     let customProfiles: Profile[] = [];

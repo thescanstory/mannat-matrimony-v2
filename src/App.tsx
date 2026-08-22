@@ -163,15 +163,23 @@ function MainApp() {
     }
     loadBackendData();
 
-    const { data: authListener } = authService.onAuthStateChange((user) => {
+    const { data: authListener } = authService.onAuthStateChange(async (user) => {
       if (user) {
         setCurrentUser(user);
-        setCurrentView('home');
-        triggerToast(`Welcome back, ${user.user_metadata?.full_name || user.email?.split('@')[0] || 'Member'}! ✨`, 'sparkle');
         
         // Clean URL hash after successful session capture
         if (typeof window !== 'undefined' && window.location.hash) {
           window.history.replaceState(null, '', window.location.pathname);
+        }
+
+        // Check if existing profile or new account
+        const isExisting = await profileService.hasExistingProfile(user.id, user.email);
+        if (isExisting) {
+          setCurrentView('home');
+          triggerToast(`Welcome back, ${user.user_metadata?.full_name || user.email?.split('@')[0] || 'Member'}! ✨`, 'sparkle');
+        } else {
+          setCurrentView('onboarding');
+          triggerToast(`Welcome to Mannat, ${user.user_metadata?.full_name || 'Member'}! Please complete your bio-data ✨`, 'sparkle');
         }
       } else {
         setCurrentUser(null);
@@ -382,7 +390,10 @@ function MainApp() {
             >
               {/* Onboarding View */}
               {currentView === 'onboarding' && (
-                <OnboardingCarousel onComplete={handleProfileCreated} />
+                <OnboardingCarousel 
+                  onComplete={handleProfileCreated} 
+                  currentUser={currentUser}
+                />
               )}
 
               {/* Auth View */}
@@ -390,14 +401,20 @@ function MainApp() {
                 <AuthScreen 
                   onOpenOnboarding={() => navigateTo('onboarding')}
                   onLoginSuccess={async (user) => {
-                    if (user) {
-                      setCurrentUser(user);
+                    const activeUser = user || await authService.getCurrentUser();
+                    if (activeUser) {
+                      setCurrentUser(activeUser);
+                      const isExisting = await profileService.hasExistingProfile(activeUser.id, activeUser.email);
+                      if (isExisting) {
+                        navigateTo('home');
+                        triggerToast(`Welcome back, ${activeUser.user_metadata?.full_name || activeUser.email?.split('@')[0] || 'Member'}! ✨`, 'sparkle');
+                      } else {
+                        navigateTo('onboarding');
+                        triggerToast(`Welcome! Please complete your candidate bio-data ✨`, 'sparkle');
+                      }
                     } else {
-                      const u = await authService.getCurrentUser();
-                      setCurrentUser(u);
+                      navigateTo('home');
                     }
-                    navigateTo('home');
-                    triggerToast('Signed in successfully! ✨', 'sparkle');
                   }} 
                 />
               )}

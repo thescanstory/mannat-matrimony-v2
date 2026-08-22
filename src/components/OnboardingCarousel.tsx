@@ -5,8 +5,11 @@ import { Check, User, ArrowRight, ArrowLeft, Upload, Video, ShieldCheck, Sparkle
 import type { Profile } from '../types';
 import { profileService } from '../services/profileService';
 
+import type { UserSession } from '../services/authService';
+
 interface OnboardingCarouselProps {
   onComplete: (newProfile?: Profile) => void;
+  currentUser?: UserSession | null;
 }
 
 // Strictly High-Quality Indian Couple Photography
@@ -18,7 +21,7 @@ const INDIAN_COUPLE_PHOTOS = [
   'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=80'  // Elegant Celebration Couple
 ];
 
-export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComplete }) => {
+export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComplete, currentUser }) => {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +29,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   // Form State to build persona - all fields editable with clear placeholders
   const [gender, setGender] = useState<'man' | 'woman'>('woman');
   const [managedBy, setManagedBy] = useState<'self' | 'parent' | 'sibling'>('self');
-  const [displayName, setDisplayName] = useState('');
+  const [displayName, setDisplayName] = useState(currentUser?.user_metadata?.full_name || '');
   const [age, setAge] = useState('');
   const [height, setHeight] = useState('');
   const [city, setCity] = useState('');
@@ -43,7 +46,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
   // Step 8 & 9 Media Upload State
   const [photos, setPhotos] = useState<string[]>([
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+    currentUser?.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
     'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
     'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
   ]);
@@ -81,7 +84,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
     setIsSubmitting(true);
     try {
       const createdProfile = await profileService.createProfile({
-        display_name: displayName.trim() || (gender === 'woman' ? 'Ananya Sharma' : 'Rohan Malhotra'),
+        user_id: currentUser?.id,
+        display_name: displayName.trim() || currentUser?.user_metadata?.full_name || (gender === 'woman' ? 'Ananya Sharma' : 'Rohan Malhotra'),
         age: age ? parseInt(age, 10) : 27,
         height: height || "5'7\"",
         city: city.trim() || 'Mumbai',
@@ -100,6 +104,13 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         marriage_expectations: `Looking for a compatible partner who appreciates ${financialStance.toLowerCase()} financial goals and family harmony.`,
         bio_text: `Hi! I am a ${occupation || 'Professional'} based in ${city || 'Mumbai'}. Value deep mutual respect, family values, and progressive growth.`
       });
+
+      if (currentUser?.email) {
+        localStorage.setItem('mannat_onboarded_' + currentUser.email.toLowerCase(), 'true');
+      }
+      if (currentUser?.id) {
+        localStorage.setItem('mannat_onboarded_' + currentUser.id, 'true');
+      }
 
       onComplete(createdProfile);
     } catch {
