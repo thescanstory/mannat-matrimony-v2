@@ -24,7 +24,7 @@ export const authService = {
     });
   },
 
-  // 1-Click Google OAuth Sign In (Forces Account Chooser)
+  // 1-Click Google OAuth Sign In
   signInWithGoogle: async () => {
     localStorage.removeItem('mannat_logged_out');
     const redirectUrl = typeof window !== 'undefined' && window.location.origin
@@ -32,16 +32,21 @@ export const authService = {
       : 'https://mannat-matrimony-v2-ivory.vercel.app';
 
     try {
-      return await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'select_account'
-          }
+          skipBrowserRedirect: true
         }
       });
+      if (error) {
+        console.error('Google OAuth error:', error);
+        throw error;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+      return { data, error: null };
     } catch (err) {
       console.warn('Google OAuth error:', err);
       return { data: null, error: err as any };
