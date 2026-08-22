@@ -1183,8 +1183,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                   transition={{ type: 'spring', stiffness: 220, damping: 20 }}
                   className="bg-[#F4EFE6]/95 border-2 border-[#B89552] rounded-3xl p-6 space-y-4 shadow-xl text-left backdrop-blur-md"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-instrument text-2xl lowercase text-[#B89552]">mannat</span>
+                  <div className="flex items-center justify-end">
                     <span className="text-[10px] font-black uppercase tracking-wider bg-[#111111] text-white px-3 py-1 rounded-full flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-[#B89552]" />
                       <span>98% MQS MATCH SCORE</span>

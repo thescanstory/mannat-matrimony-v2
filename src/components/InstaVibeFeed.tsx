@@ -429,12 +429,9 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
               className="w-full max-w-sm bg-[#FAF8F5] rounded-3xl p-6 border border-[#EADBCE] shadow-2xl space-y-5 text-[#161412]"
             >
               <div className="flex items-center justify-between border-b border-[#EADBCE] pb-3">
-                <div>
-                  <span className="font-instrument text-2xl lowercase text-[#C5A059] block leading-none">mannat</span>
-                  <h3 className="text-lg font-serif-editorial font-bold text-[#161412] mt-1">
-                    Connect with {connectModalProfile.display_name}
-                  </h3>
-                </div>
+                <h3 className="text-lg font-serif-editorial font-bold text-[#161412]">
+                  Connect with {connectModalProfile.display_name}
+                </h3>
                 <button
                   type="button"
                   onClick={() => setConnectModalProfile(null)}
