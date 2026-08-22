@@ -14,7 +14,6 @@ import {
   Download, 
   Calendar, 
   Edit3, 
-  TrendingUp, 
   ExternalLink,
   UserX 
 } from 'lucide-react';
@@ -131,7 +130,7 @@ export function App() {
     }
   });
 
-  const [activeTab, setActiveTab] = useState<'candidates' | 'analytics' | 'callbacks' | 'vouches' | 'database'>('candidates');
+  const [activeTab, setActiveTab] = useState<'candidates' | 'callbacks' | 'vouches' | 'database'>('candidates');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterReligion, setFilterReligion] = useState<string>('all');
   const [filterVerified, setFilterVerified] = useState<'all' | 'verified' | 'unverified'>('all');
@@ -572,8 +571,8 @@ export function App() {
       </header>
 
       <div className="max-w-6xl mx-auto p-4 sm:p-8 space-y-6">
-        {/* KPI Analytics Summary Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
+        {/* KPI Analytics Summary Cards (Candidates, Verification, Boost, VIP Concierge) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           <div className="bg-white p-5 rounded-3xl border border-[#E8E1D5] shadow-xs">
             <div className="flex items-center justify-between text-gray-400 mb-1">
               <span className="text-[10px] font-bold uppercase tracking-wider">Candidates</span>
@@ -617,17 +616,6 @@ export function App() {
             </div>
             <span className="text-[10px] text-sky-700 font-bold">Calls Pending</span>
           </div>
-
-          <div className="bg-white p-5 rounded-3xl border border-[#E8E1D5] shadow-xs col-span-2 sm:col-span-1">
-            <div className="flex items-center justify-between text-gray-400 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider">Monthly MRR</span>
-              <Crown className="w-4 h-4 text-purple-600" />
-            </div>
-            <div className="text-2xl font-serif-editorial font-bold text-[#111111]">
-              ₹1,45,000
-            </div>
-            <span className="text-[10px] text-purple-700 font-bold">42 Gold Subscribers</span>
-          </div>
         </div>
 
         {/* Navigation Tabs */}
@@ -659,15 +647,6 @@ export function App() {
             }`}
           >
             Matchmaker Vouches ({matchmakers.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('analytics')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer shrink-0 ${
-              activeTab === 'analytics' ? 'bg-[#111111] text-white shadow-xs' : 'bg-white text-[#111111] hover:bg-[#E8E1D5]'
-            }`}
-          >
-            Revenue & Metrics
           </button>
           <button
             type="button"
@@ -1003,49 +982,7 @@ export function App() {
           </div>
         )}
 
-        {/* TAB 4: REVENUE & SUBSCRIPTION ANALYTICS */}
-        {activeTab === 'analytics' && (
-          <div className="space-y-4">
-            <div className="bg-white p-6 rounded-3xl border border-[#E8E1D5] shadow-xs space-y-5">
-              <div>
-                <h3 className="text-lg font-bold text-[#111111]">Monetization & Conversion Funnel</h3>
-                <p className="text-xs text-gray-500">Live platform subscription revenue and contact direct unlock metrics</p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-5 rounded-2xl bg-amber-50/50 border border-amber-200">
-                  <span className="text-[10px] font-bold text-[#8C6D32] uppercase tracking-wider block">Gold Membership</span>
-                  <div className="text-2xl font-serif-editorial font-bold text-[#111111] mt-1">₹2,999 / mo</div>
-                  <p className="text-xs text-gray-600 mt-1">42 Active Subscribers (₹1,25,958)</p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-purple-50/50 border border-purple-200">
-                  <span className="text-[10px] font-bold text-purple-800 uppercase tracking-wider block">Platinum Concierge</span>
-                  <div className="text-2xl font-serif-editorial font-bold text-[#111111] mt-1">₹9,999 / mo</div>
-                  <p className="text-xs text-gray-600 mt-1">18 VIP Families (₹1,79,982)</p>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200">
-                  <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">1-Click Bio-data Unlocks</span>
-                  <div className="text-2xl font-serif-editorial font-bold text-[#111111] mt-1">₹499 / unlock</div>
-                  <p className="text-xs text-gray-600 mt-1">146 Unlocks this month (₹72,854)</p>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#FBF9F4] border border-[#E8E1D5] flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <TrendingUp className="w-10 h-10 text-[#B89552]" />
-                  <div>
-                    <h4 className="text-sm font-bold text-[#111111]">Platform Engagement Health: Exceptional</h4>
-                    <p className="text-xs text-gray-500">Average profile view duration: 4m 12s • Match request acceptance rate: 68%</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 5: DATABASE & SEEDING UTILITIES */}
+        {/* TAB 4: DATABASE & SEEDING UTILITIES */}
         {activeTab === 'database' && (
           <div className="space-y-4">
             <div className="bg-white p-6 rounded-3xl border border-[#E8E1D5] shadow-xs space-y-5">
