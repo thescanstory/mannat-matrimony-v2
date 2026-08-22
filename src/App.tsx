@@ -115,6 +115,7 @@ function MainApp() {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showPaywallModal, setShowPaywallModal] = useState(false);
   const [isParentView, setIsParentView] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterCriteria | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'heart' | 'sparkle'>('success');
@@ -123,6 +124,22 @@ function MainApp() {
     profile_visibility: 'visible_in_discovery',
     financial_privacy: 'show_verified_badge'
   });
+
+  // Determine active logged-in user profile
+  const activeUserProfile = useMemo(() => {
+    if (!currentUser) return null;
+    const found = profiles.find((p) => p.user_id === currentUser.id || p.id === currentUser.id);
+    if (found) return found;
+
+    try {
+      const stored = localStorage.getItem('mannat_custom_profiles');
+      if (stored) {
+        const list: Profile[] = JSON.parse(stored);
+        if (list.length > 0) return list[0];
+      }
+    } catch {}
+    return null;
+  }, [currentUser, profiles]);
 
   const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {
     setToastMessage(msg);
@@ -350,10 +367,22 @@ function MainApp() {
 
   const handleProfileCreated = (newProfile?: Profile) => {
     if (newProfile) {
-      setProfiles((prev) => [newProfile, ...prev]);
-      triggerToast(`🎉 Profile for ${newProfile.display_name} created & added to feed!`, 'sparkle');
+      setProfiles((prev) => {
+        const exists = prev.some((p) => p.id === newProfile.id || (currentUser && p.user_id === currentUser.id));
+        if (exists) {
+          return prev.map((p) => (p.id === newProfile.id || (currentUser && p.user_id === currentUser.id) ? newProfile : p));
+        }
+        return [newProfile, ...prev];
+      });
     }
-    navigateTo('home');
+    if (isEditingProfile) {
+      setIsEditingProfile(false);
+      navigateTo('profile');
+      triggerToast('Bio-data & persona updated successfully! ✨', 'sparkle');
+    } else {
+      navigateTo('home');
+      triggerToast(newProfile ? `🎉 Profile for ${newProfile.display_name} created & added to feed!` : 'Welcome to Mannat ✨', 'sparkle');
+    }
   };
 
   const slideVariants = {
@@ -457,11 +486,17 @@ function MainApp() {
               transition={{ duration: 0.2, ease: [0.25, 1, 0.5, 1] }}
               className="w-full flex-1 flex flex-col"
             >
-              {/* Onboarding View */}
+              {/* Onboarding & Edit Profile View */}
               {currentView === 'onboarding' && (
                 <OnboardingCarousel 
                   onComplete={handleProfileCreated} 
                   currentUser={currentUser}
+                  initialData={isEditingProfile ? activeUserProfile : null}
+                  isEditing={isEditingProfile}
+                  onCancel={() => {
+                    setIsEditingProfile(false);
+                    navigateTo('profile');
+                  }}
                 />
               )}
 
@@ -545,6 +580,10 @@ function MainApp() {
                   onOpenPrivacySettings={() => setShowPrivacyModal(true)}
                   onOpenPaywall={() => setShowPaywallModal(true)}
                   onOpenOnboarding={() => navigateTo('onboarding')}
+                  onEditBioData={() => {
+                    setIsEditingProfile(true);
+                    navigateTo('onboarding');
+                  }}
                   onOpenAuth={() => navigateTo('auth')}
                   onLogout={handleLogout}
                   onDeleteAllData={handleDeleteAllData}

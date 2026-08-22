@@ -27,6 +27,7 @@ interface ProfileScreenProps {
   onOpenPrivacySettings: () => void;
   onOpenPaywall: () => void;
   onOpenOnboarding?: () => void;
+  onEditBioData?: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
   onDeleteAllData?: () => void;
@@ -40,6 +41,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onToggleParentView,
   onOpenPrivacySettings,
   onOpenPaywall,
+  onEditBioData,
   onOpenAuth,
   onLogout,
   onDeleteAllData,
@@ -116,8 +118,19 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             )}
           </div>
 
-          {/* Auth Action Buttons */}
-          <div className="mt-5 pt-4 border-t border-[#E8E1D5]">
+          {/* Auth & Bio-Data Action Buttons */}
+          <div className="mt-5 pt-4 border-t border-[#E8E1D5] space-y-2">
+            {currentUser && onEditBioData && (
+              <button
+                type="button"
+                onClick={onEditBioData}
+                className="w-full py-3 px-4 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98"
+              >
+                <Edit3 className="w-4 h-4 text-[#B89552]" />
+                <span>Edit Bio-Data & Onboarding Details</span>
+              </button>
+            )}
+
             {currentUser ? (
               <button
                 type="button"

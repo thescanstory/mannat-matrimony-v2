@@ -33,6 +33,9 @@ import type { UserSession } from '../services/authService';
 interface OnboardingCarouselProps {
   onComplete: (newProfile?: Profile) => void;
   currentUser?: UserSession | null;
+  initialData?: Profile | null;
+  isEditing?: boolean;
+  onCancel?: () => void;
 }
 
 // Strictly High-Quality Indian Couple Photography
@@ -44,35 +47,55 @@ const INDIAN_COUPLE_PHOTOS = [
   'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=80'  // Elegant Celebration Couple
 ];
 
-export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComplete, currentUser }) => {
+export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ 
+  onComplete, 
+  currentUser,
+  initialData,
+  isEditing = false,
+  onCancel
+}) => {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Form State to build persona - all placeholders empty by default
-  const [gender, setGender] = useState<'man' | 'woman'>('woman');
-  const [managedBy, setManagedBy] = useState<'self' | 'parent' | 'sibling'>('self');
-  const [displayName, setDisplayName] = useState(currentUser?.user_metadata?.full_name || '');
-  const [age, setAge] = useState('');
-  const [height, setHeight] = useState('');
-  const [city, setCity] = useState('');
-  const [religion, setReligion] = useState('Hindu');
-  const [subCommunity, setSubCommunity] = useState('');
-  const [education, setEducation] = useState('');
-  const [employmentType, setEmploymentType] = useState<'Salaried' | 'Self-Employed / Business'>('Salaried');
-  const [occupation, setOccupation] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [salaryBracket, setSalaryBracket] = useState('₹10L - ₹15L');
+  // Parse existing occupation / employment type if editing
+  const rawOccupation = initialData?.occupation || '';
+  const initialEmploymentType: 'Salaried' | 'Self-Employed / Business' = 
+    rawOccupation.includes('Self-Employed') || rawOccupation.includes('Business')
+      ? 'Self-Employed / Business'
+      : 'Salaried';
+  const cleanOccupation = rawOccupation.replace(/\s*\((Salaried|Self-Employed \/ Business|Self-Employed|Business)\)/i, '');
+
+  // Form State to build persona - populated from initialData if editing
+  const [gender, setGender] = useState<'man' | 'woman'>(
+    initialData?.gender === 'female' ? 'woman' : initialData?.gender === 'male' ? 'man' : 'woman'
+  );
+  const [managedBy, setManagedBy] = useState<'self' | 'parent' | 'sibling'>(
+    (initialData?.managed_by as any) || 'self'
+  );
+  const [displayName, setDisplayName] = useState(
+    initialData?.display_name || currentUser?.user_metadata?.full_name || ''
+  );
+  const [age, setAge] = useState(initialData?.age ? String(initialData.age) : '');
+  const [height, setHeight] = useState(initialData?.height || '');
+  const [city, setCity] = useState(initialData?.city || '');
+  const [religion, setReligion] = useState(initialData?.religion || 'Hindu');
+  const [subCommunity, setSubCommunity] = useState(initialData?.sub_community || '');
+  const [education, setEducation] = useState(initialData?.education || '');
+  const [employmentType, setEmploymentType] = useState<'Salaried' | 'Self-Employed / Business'>(initialEmploymentType);
+  const [occupation, setOccupation] = useState(cleanOccupation);
+  const [companyName, setCompanyName] = useState(initialData?.company_name || '');
+  const [salaryBracket, setSalaryBracket] = useState(initialData?.salary_bracket || '₹10L - ₹15L');
   const [financialStance, setFinancialStance] = useState('Hybrid Balance');
-  const [diet, setDiet] = useState('Veg');
+  const [diet, setDiet] = useState(initialData?.diet || 'Veg');
   const [familyType, setFamilyType] = useState('Nuclear');
   const [familyValues, setFamilyValues] = useState('Moderate');
 
-  // Step 8 & 9 Media Upload State - EMPTY by default so user chooses up to 3 images
-  const [photos, setPhotos] = useState<string[]>([]);
+  // Step 8 & 9 Media Upload State
+  const [photos, setPhotos] = useState<string[]>(initialData?.photos || []);
   const [videoUrl, setVideoUrl] = useState<string>(
-    'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4'
+    initialData?.bio_video_url || 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4'
   );
 
   // Live In-Browser Video Recording State
@@ -239,7 +262,6 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         setErrorMsg('Religion is mandatory.');
         return false;
       }
-      // Sub-community is NOT mandatory
     }
 
     if (step === 4) {
@@ -324,7 +346,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
       const finalPhotos = photos.length > 0 ? photos : defaultGallery;
 
       const createdProfile = await profileService.createProfile({
-        user_id: currentUser?.id,
+        id: initialData?.id,
+        user_id: currentUser?.id || initialData?.user_id,
         display_name: displayName.trim(),
         gender: standardGender,
         age: parseInt(age, 10),
@@ -486,8 +509,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
       {/* Light Overlay Gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#FBF9F4]/95 via-[#FBF9F4]/80 to-[#FBF9F4]/98 z-0 pointer-events-none" />
 
-      {/* Top Header */}
-      <div className="pt-2 z-20 space-y-3 relative">
+      {/* Top Header with Quick Action Buttons */}
+      <div className="pt-2 z-20 space-y-2.5 relative">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight">mannat</span>
@@ -495,9 +518,47 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               STEP {step} OF {totalSteps}
             </span>
           </div>
-          <span className="text-[10px] font-black text-[#B89552] uppercase bg-[#F4EFE6]/90 px-3 py-1 rounded-full border border-[#E8E1D5]">
-            MANDATORY BIO-DATA
-          </span>
+
+          <div className="flex items-center gap-2">
+            {isEditing && (
+              <button
+                type="button"
+                onClick={() => (onCancel ? onCancel() : onComplete())}
+                className="text-[10px] font-black uppercase text-[#777777] hover:text-[#111111] bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-all cursor-pointer shadow-xs"
+              >
+                Cancel
+              </button>
+            )}
+            <span className="text-[10px] font-black text-[#B89552] uppercase bg-[#F4EFE6]/90 px-3 py-1 rounded-full border border-[#E8E1D5]">
+              {isEditing ? 'EDIT BIO-DATA' : 'MANDATORY BIO-DATA'}
+            </span>
+          </div>
+        </div>
+
+        {/* Top Quick Navigation Bar: Top Continue & Back Action */}
+        <div className="flex items-center justify-between gap-2 pt-0.5">
+          {step > 1 ? (
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="py-1.5 px-3.5 rounded-full bg-white hover:bg-[#F4EFE6] text-[11px] font-extrabold text-[#111111] border border-[#E8E1D5] flex items-center gap-1 transition-all cursor-pointer active:scale-95 shadow-xs"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-[#B89552]" />
+              <span>Back</span>
+            </button>
+          ) : (
+            <div />
+          )}
+
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={handleNext}
+            className="py-1.5 px-4 rounded-full bg-[#111111] hover:bg-[#B89552] text-[11px] font-extrabold text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-95 ml-auto"
+          >
+            <span>{step === totalSteps ? (isEditing ? 'Save Bio-Data' : 'Finish') : 'Continue'}</span>
+            <ArrowRight className="w-3.5 h-3.5 text-[#B89552]" />
+          </button>
         </div>
 
         {/* Animated Progress Bar */}
@@ -664,7 +725,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 3: Location, Religion & Sub-community (Pixel-Perfect Alignment) */}
+            {/* Step 3: Location, Religion & Sub-community */}
             {step === 3 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
@@ -836,7 +897,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 5: Income & Financial Stance (5-10L, 10-15L, etc.) */}
+            {/* Step 5: Income & Financial Stance */}
             {step === 5 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
@@ -988,7 +1049,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 8: Upload / Shoot Up to 3 Photos (Empty Placeholders by default) */}
+            {/* Step 8: Upload / Shoot Up to 3 Photos */}
             {step === 8 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
@@ -1001,7 +1062,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   Shoot directly with your camera or select up to 3 pictures from your gallery.
                 </p>
 
-                {/* 3 Interactive Photo Slots (Empty Placeholders initially) */}
+                {/* 3 Interactive Photo Slots */}
                 <div className="grid grid-cols-3 gap-2.5 pt-2">
                   {[0, 1, 2].map((slotIdx) => {
                     const photoUrl = photos[slotIdx];
@@ -1118,7 +1179,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 10 && (
               <div className="space-y-4 text-center">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  MANNAT PERSONA PROFILE GENERATED
+                  MANNAT PERSONA PROFILE {isEditing ? 'UPDATED' : 'GENERATED'}
                 </span>
 
                 {/* Generated Persona Badge Card */}
@@ -1252,7 +1313,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         </div>
       )}
 
-      {/* Navigation Buttons */}
+      {/* Bottom Navigation Buttons */}
       <div className="pt-2 z-20 flex items-center gap-3 relative">
         {step > 1 && (
           <button
@@ -1274,7 +1335,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
           {step === totalSteps ? (
             <>
               <Sparkles className="w-4 h-4 text-[#B89552]" />
-              <span>{isSubmitting ? 'Creating Bio-Data...' : 'Complete & Enter Mannat'}</span>
+              <span>{isSubmitting ? 'Saving Bio-Data...' : isEditing ? 'Save & Update Bio-Data' : 'Complete & Enter Mannat'}</span>
             </>
           ) : (
             <>
