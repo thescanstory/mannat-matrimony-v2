@@ -143,6 +143,24 @@ function MainApp() {
     }
   };
 
+  const handleDeleteAllData = async () => {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+        localStorage.setItem('mannat_logged_out', 'true');
+      }
+      await authService.signOut();
+      setCurrentUser(null);
+      setProfiles(MOCK_PROFILES);
+      setActiveFilters(null);
+      setCurrentView('auth');
+      triggerToast('All candidate profile data and session reset. 🗑️', 'success');
+    } catch {
+      setCurrentUser(null);
+      setCurrentView('auth');
+    }
+  };
+
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
   useEffect(() => {
     async function loadBackendData() {
@@ -529,6 +547,7 @@ function MainApp() {
                   onOpenOnboarding={() => navigateTo('onboarding')}
                   onOpenAuth={() => navigateTo('auth')}
                   onLogout={handleLogout}
+                  onDeleteAllData={handleDeleteAllData}
                   onUpdateUser={(updated) => {
                     setCurrentUser(updated);
                     triggerToast('Profile account updated! ✨', 'sparkle');

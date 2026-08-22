@@ -11,7 +11,9 @@ import {
   CheckCircle2, 
   Edit3,
   Check,
-  Mail
+  Mail,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
@@ -27,6 +29,7 @@ interface ProfileScreenProps {
   onOpenOnboarding?: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
+  onDeleteAllData?: () => void;
   onUpdateUser?: (updated: UserSession) => void;
 }
 
@@ -39,9 +42,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onOpenPaywall,
   onOpenAuth,
   onLogout,
+  onDeleteAllData,
   onUpdateUser
 }) => {
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [editName, setEditName] = useState(currentUser?.user_metadata?.full_name || '');
   const [editEmail, setEditEmail] = useState(currentUser?.email || '');
 
@@ -56,6 +61,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       onUpdateUser(updated);
     }
     setShowEditModal(false);
+  };
+
+  const handleConfirmDeleteAll = () => {
+    setShowDeleteConfirmModal(false);
+    if (onDeleteAllData) {
+      onDeleteAllData();
+    }
   };
 
   return (
@@ -219,6 +231,33 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Danger Zone: Delete All Profile Data */}
+        <div className="space-y-2 pt-2">
+          <span className="text-[10px] font-black uppercase tracking-wider text-rose-700 px-1 block">
+            Account Management & Data Reset
+          </span>
+          <div className="bg-white rounded-3xl border border-rose-200 p-4 shadow-xs">
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1">
+                <h4 className="text-xs font-bold text-rose-700 flex items-center gap-1.5">
+                  <Trash2 className="w-4 h-4 text-rose-600" />
+                  <span>Delete All Profile Data</span>
+                </h4>
+                <p className="text-[11px] text-[#777777] leading-relaxed">
+                  Permanently erase your bio-data, candidate persona, photos, video intro, and wave history.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirmModal(true)}
+                className="py-2 px-3.5 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-extrabold transition-all cursor-pointer shadow-sm shrink-0"
+              >
+                Delete Data
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Edit Account Modal */}
@@ -279,6 +318,44 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirmModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-white rounded-3xl p-6 border border-rose-200 shadow-2xl space-y-4 text-left">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+
+            <div className="text-center space-y-1.5">
+              <h3 className="text-base font-serif-editorial font-bold text-[#111111]">
+                Delete All Profile Data?
+              </h3>
+              <p className="text-xs text-[#777777] leading-relaxed">
+                This will permanently erase your verified bio-data, photos, intro video, saved matches, and account session. This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirmModal(false)}
+                className="flex-1 py-3 rounded-2xl bg-gray-100 hover:bg-gray-200 text-[#555555] text-xs font-bold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteAll}
+                className="flex-1 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-95"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Yes, Delete All</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
