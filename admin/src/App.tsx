@@ -122,26 +122,28 @@ function getInitialProfiles(): Profile[] {
     const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
     const customStored = localStorage.getItem('mannat_custom_profiles');
     const customList: Profile[] = customStored ? JSON.parse(customStored) : [];
-    
+
     const adminStored = localStorage.getItem('mannat_admin_candidates');
     const adminList: Profile[] = adminStored ? JSON.parse(adminStored) : [];
 
     const profileMap = new Map<string, Profile>();
-    
-    // 1. Defaults as base
-    MOCK_PROFILES.forEach(p => {
-      if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
-    });
-    
-    // 2. Admin created candidates
+
+    // 1. Admin created candidates (highest precedence)
     adminList.forEach(p => {
       if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
     });
 
-    // 3. User onboarding profiles with highest precedence
+    // 2. User onboarding profiles (next precedence)
     customList.forEach(p => {
       if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
     });
+
+    // 3. Add demo/mock profiles only if no real profiles exist
+    if (profileMap.size === 0) {
+      MOCK_PROFILES.forEach(p => {
+        if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
+      });
+    }
 
     return Array.from(profileMap.values());
   } catch {
@@ -384,7 +386,7 @@ export function App() {
     setShowAddModal(false);
 
     try {
-      await supabase.from('profiles').insert([created]);
+      await supabase.from('profiles').upsert([created]);
     } catch (e) {
       console.warn('DB insert error:', e);
     }
