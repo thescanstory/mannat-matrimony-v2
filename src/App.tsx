@@ -14,7 +14,6 @@ import { FamilySharePortal } from './components/FamilySharePortal';
 import { PrivacySettingsModal } from './components/PrivacySettingsModal';
 import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
-import { AiMatchmakerModal } from './components/AiMatchmakerModal';
 import { ProfileScreen } from './components/ProfileScreen';
 import { App as AdminPortal } from '../admin/src/App';
 import { Toast } from './components/Toast';
@@ -115,7 +114,6 @@ function MainApp() {
   const [showFiltersModal, setShowFiltersModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showPaywallModal, setShowPaywallModal] = useState(false);
-  const [showAiModal, setShowAiModal] = useState(false);
   const [isParentView, setIsParentView] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterCriteria | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -193,11 +191,64 @@ function MainApp() {
     };
   }, []);
 
-  // Compute dynamic filtered profiles based on active filters
+  // Compute dynamic filtered profiles based on user gender (opposite gender only) & active filters
   const filteredProfiles = useMemo(() => {
-    if (!activeFilters) return profiles;
+    // 1. Determine active user gender and profile id
+    let userGender: string | null = null;
+    let userProfileId: string | null = null;
 
-    const filtered = profiles.filter((p) => {
+    if (currentUser) {
+      const myProfile = profiles.find(
+        (p) => p.user_id === currentUser.id || p.id === currentUser.id
+      );
+      if (myProfile) {
+        userGender = myProfile.gender || null;
+        userProfileId = myProfile.id;
+      }
+    }
+
+    if (!userGender && typeof window !== 'undefined') {
+      try {
+        const storedGender = localStorage.getItem('mannat_user_gender');
+        if (storedGender) userGender = storedGender;
+
+        const storedCustom = localStorage.getItem('mannat_custom_profiles');
+        if (storedCustom) {
+          const list: Profile[] = JSON.parse(storedCustom);
+          if (list.length > 0) {
+            if (!userGender && list[0].gender) userGender = list[0].gender;
+            if (!userProfileId) userProfileId = list[0].id;
+          }
+        }
+      } catch {}
+    }
+
+    // 2. Filter profiles by opposite gender & exclude self
+    const genderFiltered = profiles.filter((p) => {
+      // Hide user's own profile
+      if (currentUser && (p.user_id === currentUser.id || p.id === currentUser.id)) {
+        return false;
+      }
+      if (userProfileId && p.id === userProfileId) {
+        return false;
+      }
+
+      // If user is male/man, ONLY show females/women
+      if (userGender === 'male' || userGender === 'man') {
+        return p.gender === 'female';
+      }
+
+      // If user is female/woman, ONLY show males/men
+      if (userGender === 'female' || userGender === 'woman') {
+        return p.gender === 'male';
+      }
+
+      return true;
+    });
+
+    if (!activeFilters) return genderFiltered;
+
+    const filtered = genderFiltered.filter((p) => {
       // 1. Age Range
       if (p.age < activeFilters.ageMin || p.age > activeFilters.ageMax) {
         return false;
@@ -254,8 +305,8 @@ function MainApp() {
       return true;
     });
 
-    return filtered.length > 0 ? filtered : profiles;
-  }, [profiles, activeFilters]);
+    return filtered.length > 0 ? filtered : genderFiltered;
+  }, [profiles, activeFilters, currentUser]);
 
   const handleUnlockSuccess = (profileId: string) => {
     try {
@@ -475,7 +526,6 @@ function MainApp() {
                   }}
                   onOpenPrivacySettings={() => setShowPrivacyModal(true)}
                   onOpenPaywall={() => setShowPaywallModal(true)}
-                  onOpenAiMatchmaker={() => setShowAiModal(true)}
                   onOpenOnboarding={() => navigateTo('onboarding')}
                   onOpenAuth={() => navigateTo('auth')}
                   onLogout={handleLogout}
@@ -523,13 +573,6 @@ function MainApp() {
         onSelectTier={(tier) => triggerToast(`Upgraded to Mannat ${tier.toUpperCase()} Membership! 👑`, 'sparkle')}
       />
 
-      <AiMatchmakerModal
-        isOpen={showAiModal}
-        onClose={() => setShowAiModal(false)}
-        profiles={profiles}
-        onSelectCandidate={handleOpenSharePortal}
-      />
-
       {/* Ultra-Luxury Frosted Floating Bottom Dock Navigation Bar */}
       {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass-dock-vara rounded-full z-50 px-3 py-2 flex items-center justify-around shadow-xl border border-[#EADBCE]/90">
@@ -557,16 +600,6 @@ function MainApp() {
           >
             <Eye className="w-4 h-4" />
             <span className="text-[10px] tracking-tight">For You</span>
-          </button>
-
-          {/* Special AI Match Center Action Button */}
-          <button
-            type="button"
-            onClick={() => setShowAiModal(true)}
-            className="flex flex-col items-center gap-1 py-1 px-3.5 rounded-full bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
-          >
-            <Sparkles className="w-4 h-4 fill-white" />
-            <span className="text-[10px] font-black tracking-tight uppercase">AI Match</span>
           </button>
 
           <button

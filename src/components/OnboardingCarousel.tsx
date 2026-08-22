@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { Check, User, ArrowRight, ArrowLeft, Upload, ShieldCheck, Sparkles, Camera, Square, X, Volume2, AlertCircle } from 'lucide-react';
+import { Check, User, ArrowRight, ArrowLeft, Upload, ShieldCheck, Sparkles, Camera, Square, X, Volume2, AlertCircle, Trash2, Plus, Briefcase } from 'lucide-react';
 import type { Profile } from '../types';
 import { profileService } from '../services/profileService';
 import type { UserSession } from '../services/authService';
@@ -26,7 +26,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Form State to build persona - all fields mandatory
+  // Form State to build persona - all placeholders empty by default
   const [gender, setGender] = useState<'man' | 'woman'>('woman');
   const [managedBy, setManagedBy] = useState<'self' | 'parent' | 'sibling'>('self');
   const [displayName, setDisplayName] = useState(currentUser?.user_metadata?.full_name || '');
@@ -36,20 +36,17 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   const [religion, setReligion] = useState('Hindu');
   const [subCommunity, setSubCommunity] = useState('');
   const [education, setEducation] = useState('');
+  const [employmentType, setEmploymentType] = useState<'Salaried' | 'Self-Employed / Business'>('Salaried');
   const [occupation, setOccupation] = useState('');
   const [companyName, setCompanyName] = useState('');
-  const [salaryBracket, setSalaryBracket] = useState('₹25L - ₹35L / yr');
+  const [salaryBracket, setSalaryBracket] = useState('₹10L - ₹15L');
   const [financialStance, setFinancialStance] = useState('Hybrid Balance');
   const [diet, setDiet] = useState('Veg');
   const [familyType, setFamilyType] = useState('Nuclear');
   const [familyValues, setFamilyValues] = useState('Moderate');
 
-  // Step 8 & 9 Media Upload State
-  const [photos, setPhotos] = useState<string[]>([
-    currentUser?.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
-  ]);
+  // Step 8 & 9 Media Upload State - EMPTY by default so user chooses up to 3 images
+  const [photos, setPhotos] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState<string>(
     'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4'
   );
@@ -74,20 +71,22 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
   // Clear validation error whenever user modifies inputs
   useEffect(() => {
     setErrorMsg(null);
-  }, [step, displayName, age, height, city, subCommunity, education, occupation, companyName]);
+  }, [step, displayName, age, height, city, education, occupation, companyName, employmentType, salaryBracket, photos]);
 
   // Handle Photo Selection (Gallery / Files / Camera)
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newPhotoUrls: string[] = [];
-      Array.from(e.target.files).slice(0, 3).forEach((file) => {
+      Array.from(e.target.files).forEach((file) => {
         const url = URL.createObjectURL(file);
         newPhotoUrls.push(url);
       });
-      if (newPhotoUrls.length > 0) {
-        setPhotos(prev => [...newPhotoUrls, ...prev].slice(0, 3));
-      }
+      setPhotos(prev => [...prev, ...newPhotoUrls].slice(0, 3));
     }
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
   // Handle Video Selection (Gallery / Files / Camera)
@@ -216,10 +215,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         setErrorMsg('Religion is mandatory.');
         return false;
       }
-      if (!subCommunity.trim()) {
-        setErrorMsg('Sub-community or caste is mandatory (e.g. Brahmin, Khatri, Agarwal).');
-        return false;
-      }
+      // Sub-community is NOT mandatory
     }
 
     if (step === 4) {
@@ -227,12 +223,16 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
         setErrorMsg('Highest education is mandatory (e.g. MBA, B.Tech, MS).');
         return false;
       }
+      if (!employmentType) {
+        setErrorMsg('Please select if salaried or self-employed / business.');
+        return false;
+      }
       if (!occupation.trim()) {
         setErrorMsg('Current profession / role is mandatory.');
         return false;
       }
       if (!companyName.trim()) {
-        setErrorMsg('Company or firm name is mandatory.');
+        setErrorMsg('Company or business name is mandatory.');
         return false;
       }
     }
@@ -267,8 +267,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
     }
 
     if (step === 8) {
-      if (!photos || photos.length < 3) {
-        setErrorMsg('3 profile photos are mandatory for bio-data verification.');
+      if (!photos || photos.length === 0) {
+        setErrorMsg('Please upload or shoot at least 1 to 3 profile photos.');
         return false;
       }
     }
@@ -287,27 +287,39 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
     if (!validateCurrentStep()) return;
 
     setIsSubmitting(true);
+    const standardGender = gender === 'man' ? 'male' : 'female';
     try {
+      const defaultGallery = [
+        gender === 'woman' 
+          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
+          : 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
+      ];
+
+      const finalPhotos = photos.length > 0 ? photos : defaultGallery;
+
       const createdProfile = await profileService.createProfile({
         user_id: currentUser?.id,
         display_name: displayName.trim(),
+        gender: standardGender,
         age: parseInt(age, 10),
         height: height.trim(),
         city: city.trim(),
         religion: religion,
         community: religion === 'Hindu' ? 'North Indian' : religion,
-        sub_community: subCommunity.trim(),
+        sub_community: subCommunity.trim() || undefined,
         education: education.trim(),
-        occupation: occupation.trim(),
+        occupation: `${occupation.trim()} (${employmentType})`,
         company_name: companyName.trim(),
         salary_bracket: salaryBracket,
         diet: diet,
         managed_by: managedBy === 'sibling' ? 'self' : managedBy,
-        photos: photos,
+        photos: finalPhotos,
         bio_video_url: videoUrl,
         family_background: `${familyType} family with ${familyValues.toLowerCase()} values. Settled in ${city}.`,
         marriage_expectations: `Looking for a compatible partner who appreciates ${financialStance.toLowerCase()} financial goals and family harmony.`,
-        bio_text: `Hi! I am a ${occupation} based in ${city}. Value deep mutual respect, family values, and progressive growth.`,
+        bio_text: `Hi! I am a ${occupation} (${employmentType}) based in ${city}. Value deep mutual respect, family values, and progressive growth.`,
         lifestyle_details: {
           net_worth: salaryBracket.includes('50L') ? '₹10Cr+' : '₹5Cr - ₹10Cr',
           private_clubs: 'City Golf & Country Club',
@@ -317,6 +329,9 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
           manglik: 'No'
         }
       });
+
+      // Save user gender so discover feed filters strictly
+      localStorage.setItem('mannat_user_gender', standardGender);
 
       if (currentUser?.email) {
         localStorage.setItem('mannat_onboarded_' + currentUser.email.toLowerCase(), 'true');
@@ -457,7 +472,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             </span>
           </div>
           <span className="text-[10px] font-black text-[#B89552] uppercase bg-[#F4EFE6]/90 px-3 py-1 rounded-full border border-[#E8E1D5]">
-            MANDATORY FIELDS
+            MANDATORY BIO-DATA
           </span>
         </div>
 
@@ -575,7 +590,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                       type="text"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder={gender === 'woman' ? 'e.g. Ananya Sharma' : 'e.g. Rohan Malhotra'}
+                      placeholder="Enter candidate full name"
                       className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                       required
                     />
@@ -620,7 +635,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
             {step === 3 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 3: CULTURAL ROOTS *
+                  STEP 3: CULTURAL ROOTS
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
                   Location & Background
@@ -660,15 +675,14 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Sub-Community / Caste <span className="text-red-500">*</span>:
+                        Sub-Community / Caste (Optional):
                       </label>
                       <input
                         type="text"
                         value={subCommunity}
                         onChange={(e) => setSubCommunity(e.target.value)}
-                        placeholder="e.g. Brahmin, Khatri, Arora, Agarwal"
+                        placeholder="e.g. Brahmin, Khatri (Optional)"
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        required
                       />
                     </div>
                   </div>
@@ -676,17 +690,53 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 4: Education & Profession */}
+            {/* Step 4: Education & Profession (Salaried vs Self-Employed) */}
             {step === 4 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 4: CAREER & EDUCATION *
+                  STEP 4: CAREER & EMPLOYMENT *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Career, Education & Role
+                  Education & Profession
                 </h1>
 
                 <div className="space-y-3 pt-2">
+                  {/* Salaried vs Self Employed Selector */}
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
+                      Employment Type <span className="text-red-500">*</span>:
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        type="button"
+                        onClick={() => setEmploymentType('Salaried')}
+                        className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                          employmentType === 'Salaried'
+                            ? 'bg-[#111111] text-white border-[#111111] font-bold shadow-sm'
+                            : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
+                        }`}
+                      >
+                        <Briefcase className="w-4 h-4 text-[#B89552]" />
+                        <span className="text-xs font-extrabold">Salaried</span>
+                      </motion.button>
+
+                      <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        type="button"
+                        onClick={() => setEmploymentType('Self-Employed / Business')}
+                        className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                          employmentType === 'Self-Employed / Business'
+                            ? 'bg-[#111111] text-white border-[#111111] font-bold shadow-sm'
+                            : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
+                        }`}
+                      >
+                        <Sparkles className="w-4 h-4 text-[#B89552]" />
+                        <span className="text-xs font-extrabold">Self-Employed / Business</span>
+                      </motion.button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
                       Highest Education <span className="text-red-500">*</span>:
@@ -710,7 +760,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                         type="text"
                         value={occupation}
                         onChange={(e) => setOccupation(e.target.value)}
-                        placeholder="e.g. Product Manager, Doctor, Founder"
+                        placeholder="e.g. Software Engineer, Doctor, Founder"
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                         required
                       />
@@ -718,13 +768,13 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1">
-                        Company / Firm <span className="text-red-500">*</span>:
+                        {employmentType === 'Salaried' ? 'Company / Employer *' : 'Business / Firm Name *'}:
                       </label>
                       <input
                         type="text"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
-                        placeholder="e.g. Google, McKinsey, Enterprise"
+                        placeholder={employmentType === 'Salaried' ? 'e.g. Google, McKinsey' : 'e.g. Own Consultancy / Enterprise'}
                         className="w-full p-3.5 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
                         required
                       />
@@ -734,7 +784,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 5: Income & Financial Stance */}
+            {/* Step 5: Income & Financial Stance (5-10L, 10-15L, etc.) */}
             {step === 5 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
@@ -748,8 +798,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
                     Annual Salary Bracket <span className="text-red-500">*</span>:
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['₹15L - ₹25L', '₹25L - ₹35L', '₹35L - ₹50L', '₹50L+ HNI'].map((sal) => (
+                  <div className="grid grid-cols-3 gap-2">
+                    {['₹5L - ₹10L', '₹10L - ₹15L', '₹15L - ₹25L', '₹25L - ₹35L', '₹35L - ₹50L', '₹50L+ HNI'].map((sal) => (
                       <motion.button
                         key={sal}
                         whileTap={{ scale: 0.95 }}
@@ -757,7 +807,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                         onClick={() => setSalaryBracket(sal)}
                         className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${
                           salaryBracket === sal
-                            ? 'bg-[#111111] text-white border-[#111111]'
+                            ? 'bg-[#111111] text-white border-[#111111] shadow-sm'
                             : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
                         }`}
                       >
@@ -886,33 +936,57 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
               </div>
             )}
 
-            {/* Step 8: Upload / Shoot 3 Candidate Photos */}
+            {/* Step 8: Upload / Shoot Up to 3 Photos (Empty Placeholders by default) */}
             {step === 8 && (
               <div className="space-y-4">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 8: PHOTO GALLERY (3 REQUIRED) *
+                  STEP 8: PHOTO GALLERY (UP TO 3 IMAGES) *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Add 3 profile photos.
+                  Choose up to 3 photos.
                 </h1>
                 <p className="text-xs text-[#777777] font-medium leading-relaxed">
-                  Shoot directly with camera or upload 3 clear pictures for bio-data verification.
+                  Shoot directly with your camera or select up to 3 pictures from your gallery.
                 </p>
 
-                {/* Photo Previews */}
+                {/* 3 Interactive Photo Slots (Empty Placeholders initially) */}
                 <div className="grid grid-cols-3 gap-2.5 pt-2">
-                  {photos.map((url, idx) => (
-                    <motion.div
-                      key={idx}
-                      whileHover={{ scale: 1.04 }}
-                      className="relative aspect-square rounded-2xl overflow-hidden border-2 border-[#B89552] bg-[#F4EFE6] shadow-sm group"
-                    >
-                      <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
-                      <span className="absolute bottom-1 right-1 bg-[#111111] text-[#B89552] text-[9px] font-black px-1.5 py-0.5 rounded-md">
-                        ✓ #{idx + 1}
-                      </span>
-                    </motion.div>
-                  ))}
+                  {[0, 1, 2].map((slotIdx) => {
+                    const photoUrl = photos[slotIdx];
+                    return (
+                      <div key={slotIdx} className="relative aspect-square">
+                        {photoUrl ? (
+                          <motion.div
+                            whileHover={{ scale: 1.03 }}
+                            className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-[#B89552] bg-[#F4EFE6] shadow-sm group"
+                          >
+                            <img src={photoUrl} alt={`Photo ${slotIdx + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePhoto(slotIdx)}
+                              className="absolute top-1 right-1 p-1 rounded-full bg-black/70 hover:bg-red-600 text-white transition-colors cursor-pointer"
+                              title="Remove Photo"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                            <span className="absolute bottom-1 right-1 bg-[#111111] text-[#B89552] text-[9px] font-black px-1.5 py-0.5 rounded-md">
+                              #{slotIdx + 1}
+                            </span>
+                          </motion.div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => photoFileInputRef.current?.click()}
+                            className="w-full h-full rounded-2xl border-2 border-dashed border-[#B89552]/50 hover:border-[#B89552] bg-white hover:bg-[#F4EFE6]/50 flex flex-col items-center justify-center gap-1 text-[#777777] transition-all cursor-pointer active:scale-95"
+                          >
+                            <Plus className="w-5 h-5 text-[#B89552]" />
+                            <span className="text-[10px] font-extrabold text-[#111111]">Photo #{slotIdx + 1}</span>
+                            <span className="text-[8px] text-[#999999]">Tap to add</span>
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Dual Options: Camera Shoot & Gallery Upload */}
@@ -1015,11 +1089,15 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ onComple
                       {displayName}, {age}
                     </h3>
                     <p className="text-xs text-[#777777] font-semibold">
-                      {occupation} · {city} · {religion} ({subCommunity})
+                      {occupation} ({employmentType}) · {city} · {religion} {subCommunity ? `(${subCommunity})` : ''}
                     </p>
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-white border border-[#E8E1D5] space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#777777] font-bold">Employment:</span>
+                      <span className="font-extrabold text-[#111111]">{employmentType} · {companyName}</span>
+                    </div>
                     <div className="flex items-center justify-between">
                       <span className="text-[#777777] font-bold">Persona Match:</span>
                       <span className="font-extrabold text-[#B89552]">{getGeneratedPersonaTitle()}</span>

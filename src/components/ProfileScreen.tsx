@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   ShieldCheck, 
   Crown, 
-  Sparkles, 
   UserCheck, 
   LogOut, 
   LogIn, 
@@ -25,7 +24,6 @@ interface ProfileScreenProps {
   onToggleParentView: () => void;
   onOpenPrivacySettings: () => void;
   onOpenPaywall: () => void;
-  onOpenAiMatchmaker: () => void;
   onOpenOnboarding?: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
@@ -39,7 +37,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   onToggleParentView,
   onOpenPrivacySettings,
   onOpenPaywall,
-  onOpenAiMatchmaker,
   onOpenAuth,
   onLogout,
   onUpdateUser
@@ -220,24 +217,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 {isParentView ? 'ON' : 'OFF'}
               </button>
             </div>
-
-            {/* AI Matchmaker Trigger */}
-            <button
-              type="button"
-              onClick={onOpenAiMatchmaker}
-              className="w-full p-4 flex items-center justify-between hover:bg-[#F4EFE6] transition-colors text-left cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-2xl bg-purple-50 text-purple-600 border border-purple-200">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#111111]">AI Matchmaker Assistant</h4>
-                  <p className="text-[11px] text-[#777777]">Get personalized compatibility scoring & introductions</p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#888888]" />
-            </button>
           </div>
         </div>
       </div>
