@@ -180,6 +180,46 @@ function MainApp() {
 
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
   useEffect(() => {
+    // Handle Direct Google OAuth 2.0 Return (via #access_token=...)
+    async function checkGoogleOAuthReturn() {
+      if (typeof window !== 'undefined' && window.location.hash) {
+        const hash = window.location.hash;
+        if (hash.includes('access_token=')) {
+          const params = new URLSearchParams(hash.substring(1));
+          const accessToken = params.get('access_token');
+          if (accessToken) {
+            try {
+              const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${accessToken}` }
+              });
+              const gUser = await res.json();
+              if (gUser && gUser.email) {
+                window.history.replaceState(null, '', window.location.pathname);
+                const user = authService.setUserSession(
+                  gUser.email,
+                  gUser.name || gUser.given_name || gUser.email.split('@')[0],
+                  gUser.picture
+                );
+                setCurrentUser(user);
+                const isExisting = await profileService.hasExistingProfile(user.id, user.email);
+                if (isExisting) {
+                  setCurrentView('home');
+                  triggerToast(`Welcome back, ${user.user_metadata?.full_name || 'Member'}! ✨`, 'sparkle');
+                } else {
+                  setCurrentView('onboarding');
+                  triggerToast(`Welcome! Please complete your candidate bio-data ✨`, 'sparkle');
+                }
+                return;
+              }
+            } catch (err) {
+              console.warn('Google userinfo fetch error:', err);
+            }
+          }
+        }
+      }
+    }
+    checkGoogleOAuthReturn();
+
     async function loadBackendData() {
       try {
         const liveProfiles = await profileService.getProfiles();

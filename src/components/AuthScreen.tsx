@@ -103,16 +103,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     }, 100);
   };
 
-  // Fallback Google Sign In
+  // Direct Google Sign In
   const handleGoogleSignInFallback = async () => {
     setLoading(true);
-    if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
-      try {
-        (window as any).google.accounts.id.prompt();
-        setLoading(false);
-        return;
-      } catch {}
-    }
     try {
       await authService.signInWithGoogle();
     } catch {

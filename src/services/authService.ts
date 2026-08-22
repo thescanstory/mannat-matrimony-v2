@@ -24,33 +24,19 @@ export const authService = {
     });
   },
 
-  // 1-Click Google OAuth Sign In
+  // Direct 1-Click Google OAuth 2.0 (Direct to Google, 100% Safari Compatible)
   signInWithGoogle: async () => {
     localStorage.removeItem('mannat_logged_out');
-    const redirectUrl = typeof window !== 'undefined' && window.location.origin
+    const origin = typeof window !== 'undefined' && window.location.origin
       ? window.location.origin
       : 'https://mannat-matrimony-v2-ivory.vercel.app';
 
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl,
-          skipBrowserRedirect: true
-        }
-      });
-      if (error) {
-        console.error('Google OAuth error:', error);
-        throw error;
-      }
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-      return { data, error: null };
-    } catch (err) {
-      console.warn('Google OAuth error:', err);
-      return { data: null, error: err as any };
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(origin)}&response_type=token&scope=email%20profile%20openid&prompt=select_account`;
+
+    if (typeof window !== 'undefined') {
+      window.location.href = googleAuthUrl;
     }
+    return { data: null, error: null };
   },
 
   // 1-Click Apple OAuth Sign In
