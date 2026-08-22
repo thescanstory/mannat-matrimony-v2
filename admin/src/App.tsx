@@ -378,7 +378,8 @@ export function App() {
       company_name: newCandidate.company_name,
       family_background: 'Reputed cultural family based in ' + newCandidate.city,
       marriage_expectations: 'Looking for a thoughtful partner with shared family values.',
-      photos: newCandidate.photos
+      photos: newCandidate.photos,
+      created_at: new Date().toISOString()
     };
 
     localStorage.removeItem('mannat_admin_deleted');
@@ -824,8 +825,11 @@ export function App() {
                       <div>
                         <div className="flex items-center gap-2 flex-wrap">
                           <h4 className="text-base font-extrabold text-[#111111]">
-                            {candidate.display_name} · {candidate.age}
-                          </h4>
+                              {candidate.display_name} · {candidate.age}
+                            </h4>
+                            <p className="candidate-timestamp text-xs text-gray-500">
+                              Created: {candidate.created_at ? new Date(candidate.created_at).toLocaleString() : '—'}
+                            </p>
                           {candidate.is_vouched && (
                             <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                               VOUCHED
