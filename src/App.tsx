@@ -331,9 +331,6 @@ function MainApp() {
               <span className="font-instrument text-3xl lowercase text-[#161412] tracking-tight group-hover:text-[#C5A059] transition-colors leading-none">
                 mannat
               </span>
-              <span className="text-[9px] font-black uppercase tracking-widest text-[#C5A059] bg-[#F6F2E9] px-2 py-0.5 rounded-full border border-[#EADBCE]">
-                Private
-              </span>
             </button>
           </div>
 
