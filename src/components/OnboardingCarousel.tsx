@@ -534,60 +534,25 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       {/* Light Overlay Gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#FBF9F4]/95 via-[#FBF9F4]/80 to-[#FBF9F4]/98 z-0 pointer-events-none" />
 
-      {/* Top Header with Quick Action Buttons */}
-      <div className="pt-2 z-20 space-y-2.5 relative">
+      {/* Top Header - Single Clean Logo & Sleek Progress Bar, Zero Extra Buttons */}
+      <div className="pt-1 z-20 space-y-2 relative">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight">mannat</span>
-            <span className="text-[10px] font-black text-[#B89552] bg-[#F4EFE6]/95 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-[#E8E1D5] shadow-xs">
-              STEP {step} OF {totalSteps}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {isEditing && (
-              <button
-                type="button"
-                onClick={() => (onCancel ? onCancel() : onComplete())}
-                className="text-[10px] font-black uppercase text-[#777777] hover:text-[#111111] bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-all cursor-pointer shadow-xs"
-              >
-                Cancel
-              </button>
-            )}
-            <span className="text-[10px] font-black text-[#B89552] uppercase bg-[#F4EFE6]/90 px-3 py-1 rounded-full border border-[#E8E1D5]">
-              {isEditing ? 'EDIT BIO-DATA' : 'MANDATORY BIO-DATA'}
-            </span>
-          </div>
-        </div>
-
-        {/* Top Quick Navigation Bar: Top Continue & Back Action */}
-        <div className="flex items-center justify-between gap-2 pt-0.5">
-          {step > 1 ? (
+          <span className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight">
+            mannat
+          </span>
+          {isEditing && (
             <button
               type="button"
-              onClick={handlePrev}
-              className="py-1.5 px-3.5 rounded-full bg-white hover:bg-[#F4EFE6] text-[11px] font-extrabold text-[#111111] border border-[#E8E1D5] flex items-center gap-1 transition-all cursor-pointer active:scale-95 shadow-xs"
+              onClick={() => (onCancel ? onCancel() : onComplete())}
+              className="text-[10px] font-black uppercase text-[#777777] hover:text-[#111111] bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-all cursor-pointer shadow-xs"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-[#B89552]" />
-              <span>Back</span>
+              Cancel
             </button>
-          ) : (
-            <div />
           )}
-
-          <button
-            type="button"
-            disabled={isSubmitting}
-            onClick={handleNext}
-            className="py-1.5 px-4 rounded-full bg-[#111111] hover:bg-[#B89552] text-[11px] font-extrabold text-white flex items-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-95 ml-auto"
-          >
-            <span>{step === totalSteps ? (isEditing ? 'Save Bio-Data' : 'Finish') : 'Continue'}</span>
-            <ArrowRight className="w-3.5 h-3.5 text-[#B89552]" />
-          </button>
         </div>
 
         {/* Animated Progress Bar */}
-        <div className="w-full h-1.5 bg-[#E8E1D5] rounded-full overflow-hidden shadow-inner">
+        <div className="w-full h-1 bg-[#E8E1D5] rounded-full overflow-hidden shadow-inner">
           <motion.div
             className="h-full bg-[#B89552] rounded-full"
             initial={{ width: 0 }}
@@ -597,8 +562,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         </div>
       </div>
 
-      {/* Step Content Container */}
-      <div className="my-auto py-4 z-20 flex-1 flex flex-col justify-center relative">
+      {/* Step Content Container - Aligned for Mobile without Dead Space */}
+      <div className="py-2 z-20 flex-1 flex flex-col justify-start relative">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={step}
