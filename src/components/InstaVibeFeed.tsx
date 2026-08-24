@@ -232,7 +232,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
           {/* Pause Badge */}
           {pausedVideos[p.id] && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none z-30">
+            <div className="absolute inset-0 bg-[#2D2824]/40 flex items-center justify-center pointer-events-none z-30">
               <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl">
                 <Play className="w-8 h-8 fill-white ml-1" />
               </div>
@@ -349,11 +349,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
               <span>Photo Gallery (3 Pictures)</span>
             </span>
             <div className="grid grid-cols-3 gap-2.5">
-              {(p.photos || [
-                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-                'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-                'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80'
-              ]).map((photoUrl, idx) => (
+              {(p.photos || []).map((photoUrl, idx) => (
                 <button
                   key={idx}
                   type="button"
@@ -421,7 +417,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       {/* Interactive Connect Action Sheet Modal */}
       <AnimatePresence>
         {connectModalProfile && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-[#2D2824]/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
             <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -479,7 +475,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
       {/* Photo Preview Modal */}
       {selectedPhotoPreview && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#2D2824]/85 backdrop-blur-md flex flex-col items-center justify-center p-4">
           <button
             type="button"
             onClick={() => setSelectedPhotoPreview(null)}
@@ -608,7 +604,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
                 {/* Full-bleed Tall Vertical 9:16 / h-[480px] Video Stream */}
                 <div
-                  className="relative w-full h-[480px] bg-black rounded-[24px] overflow-hidden cursor-pointer"
+                  className="relative w-full h-[480px] bg-[#2D2824] rounded-[24px] overflow-hidden cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleVideoTap(profile.id);
@@ -641,7 +637,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
                   {/* Pause Overlay Indicator */}
                   {pausedVideos[profile.id] && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none z-30">
+                    <div className="absolute inset-0 bg-[#2D2824]/40 flex items-center justify-center pointer-events-none z-30">
                       <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl">
                         <Play className="w-8 h-8 fill-white ml-1" />
                       </div>
@@ -670,7 +666,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                       <button
                         type="button"
                         onClick={toggleSound}
-                        className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white shadow-md hover:bg-black/70 active:scale-95 transition-all cursor-pointer"
+                        className="w-10 h-10 rounded-full bg-[#2D2824]/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white shadow-md hover:bg-[#2D2824]/70 active:scale-95 transition-all cursor-pointer"
                         title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
                       >
                         {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-[#DFBE7E]" />}
@@ -764,11 +760,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                     <span className="text-[10px] text-[#7E776F] font-semibold">Click to preview</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    {(profile.photos || [
-                      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-                      'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-                      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80'
-                    ]).map((photoUrl, idx) => (
+                    {(profile.photos || []).map((photoUrl, idx) => (
                       <div
                         key={idx}
                         onClick={(e) => {

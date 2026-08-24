@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ShieldCheck, Share2, Volume2, VolumeX, Award, ExternalLink, ArrowLeft, QrCode } from 'lucide-react';
+import { NudgeBanner } from './NudgeBanner';
 import type { Profile } from '../types';
 import { FamilyCallModal } from './FamilyCallModal';
 
@@ -129,21 +130,19 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
         </div>
 
         {/* Schedule Family Conference Call Banner */}
-        <div className="bg-[#111111] text-white p-4 rounded-2xl space-y-2 flex items-center justify-between shadow-md">
-          <div className="space-y-0.5">
-            <span className="text-[10px] font-black text-[#B89552] uppercase tracking-wider block">
-              FAMILY CONFERENCE ROOM
-            </span>
-            <span className="text-xs font-bold block">Schedule Parent Intro Call</span>
-          </div>
+        <NudgeBanner
+          title="FAMILY CONFERENCE ROOM"
+          subtitle="Schedule Parent Intro Call"
+          className="bg-[#2D2824] text-white p-4 rounded-2xl shadow-md"
+          onClick={() => setShowCallModal(true)}
+        >
           <button
             type="button"
-            onClick={() => setShowCallModal(true)}
             className="px-4 py-2 rounded-full bg-[#B89552] text-white text-xs font-extrabold uppercase hover:bg-white hover:text-[#111111] transition-all cursor-pointer shadow-xs"
           >
             Schedule Call
           </button>
-        </div>
+        </NudgeBanner>
 
         {scheduledSuccessMsg && (
           <div className="p-3 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold rounded-xl text-center">
@@ -166,12 +165,12 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
               </span>
             </div>
 
-            <div className="relative rounded-xl overflow-hidden aspect-video bg-black border border-gray-200">
+            <div className="relative rounded-xl overflow-hidden aspect-video bg-[#2D2824] border border-gray-200">
               <video
                 src={profile.creator_vouch.vouch_video_url}
                 controls
                 className="w-full h-full object-cover"
-                poster="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80"
+                poster=""
               />
             </div>
 
@@ -228,7 +227,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile, o
               type="button"
               onClick={toggleVoicePlayback}
               className={`w-10 h-10 rounded-full flex items-center justify-center shadow-xs transition-colors cursor-pointer ${
-                isPlayingAudio ? 'bg-amber-600 text-white animate-pulse' : 'bg-[#111111] text-white hover:bg-[#B89552]'
+                isPlayingAudio ? 'bg-amber-600 text-white animate-pulse' : 'bg-[#2D2824] text-white hover:bg-[#B89552]'
               }`}
             >
               {isPlayingAudio ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 text-white" />}

@@ -3,18 +3,7 @@ import { X, RotateCcw, Check, Sparkles, Globe, Star, ArrowLeft } from 'lucide-re
 import metadataOptions from '../data/metadata_options.json';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { FilterCriteria } from '../types';
-
-export const DEFAULT_FILTERS: FilterCriteria = {
-  ageMin: 22,
-  ageMax: 35,
-  selectedReligion: ['Hindu'],
-  selectedSubCommunity: ['Brahmin', 'Kayastha'],
-  manglikPref: "Doesn't Matter",
-  gunMilanMin: 24,
-  locationIntent: ['Open to Relocate to US', 'Only Same City'],
-  selectedNetWorth: ['₹5Cr - ₹10Cr'],
-  secondHomePref: false
-};
+import { DEFAULT_FILTERS } from '../data/filterDefaults';
 
 interface SearchFiltersModalProps {
   isOpen: boolean;
@@ -56,7 +45,6 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
     initialFilters?.secondHomePref ?? DEFAULT_FILTERS.secondHomePref
   );
 
-  // Sync state if initialFilters change
   useEffect(() => {
     if (initialFilters) {
       setAgeMin(initialFilters.ageMin);
@@ -117,7 +105,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-50 bg-[#2D2824]/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -168,7 +156,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
               onClick={() => setActiveTab('basic')}
               className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                 activeTab === 'basic'
-                  ? 'bg-[#111111] text-white shadow-sm'
+                  ? 'bg-[#2D2824] text-white shadow-sm'
                   : 'text-[#777777] hover:text-[#111111]'
               }`}
             >
@@ -179,7 +167,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
               onClick={() => setActiveTab('horoscope')}
               className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                 activeTab === 'horoscope'
-                  ? 'bg-[#111111] text-white shadow-sm'
+                  ? 'bg-[#2D2824] text-white shadow-sm'
                   : 'text-[#777777] hover:text-[#111111]'
               }`}
             >
@@ -190,7 +178,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
               onClick={() => setActiveTab('lifestyle')}
               className={`flex-1 py-2 rounded-xl transition-all cursor-pointer ${
                 activeTab === 'lifestyle'
-                  ? 'bg-[#111111] text-white shadow-sm'
+                  ? 'bg-[#2D2824] text-white shadow-sm'
                   : 'text-[#777777] hover:text-[#111111]'
               }`}
             >
@@ -217,7 +205,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                           onClick={() => toggleSelection(selectedReligion, rel, setSelectedReligion)}
                           className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#111111] text-white shadow-md border border-[#111111]'
+                              ? 'bg-[#2D2824] text-white shadow-md border border-[#111111]'
                               : 'bg-[#F4EFE6] text-[#555555] border border-[#E8E1D5] hover:bg-[#E8E1D5]'
                           }`}
                         >
@@ -244,7 +232,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                           onClick={() => toggleSelection(selectedSubCommunity, sub, setSelectedSubCommunity)}
                           className={`px-3.5 py-2 rounded-2xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#111111] text-white shadow-md border border-[#111111]'
+                              ? 'bg-[#2D2824] text-white shadow-md border border-[#111111]'
                               : 'bg-[#F4EFE6] text-[#555555] border border-[#E8E1D5] hover:bg-[#E8E1D5]'
                           }`}
                         >
@@ -322,7 +310,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                         onClick={() => setManglikPref(m)}
                         className={`py-3 px-2 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${
                           manglikPref === m
-                            ? 'bg-[#111111] text-white shadow-md'
+                            ? 'bg-[#2D2824] text-white shadow-md'
                             : 'bg-[#F4EFE6] text-[#555555] border border-[#E8E1D5] hover:bg-[#E8E1D5]'
                         }`}
                       >
@@ -368,7 +356,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                           onClick={() => toggleSelection(locationIntent, loc, setLocationIntent)}
                           className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#111111] text-white shadow-md border border-[#111111]'
+                              ? 'bg-[#2D2824] text-white shadow-md border border-[#111111]'
                               : 'bg-[#F4EFE6] text-[#555555] border border-[#E8E1D5] hover:bg-[#E8E1D5]'
                           }`}
                         >
@@ -399,7 +387,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                           onClick={() => toggleSelection(selectedNetWorth, nw, setSelectedNetWorth)}
                           className={`p-3.5 rounded-2xl border text-xs font-extrabold transition-all cursor-pointer flex items-center justify-between ${
                             isSelected
-                              ? 'bg-[#111111] text-white border-[#111111] shadow-md'
+                              ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                               : 'bg-[#F4EFE6] text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                           }`}
                         >
@@ -421,7 +409,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                     type="button"
                     onClick={() => setSecondHomePref(!secondHomePref)}
                     className={`px-4 py-2 rounded-full text-xs font-black transition-all cursor-pointer ${
-                      secondHomePref ? 'bg-[#111111] text-white' : 'bg-white text-gray-400 border border-[#E8E1D5]'
+                      secondHomePref ? 'bg-[#2D2824] text-white' : 'bg-white text-gray-400 border border-[#E8E1D5]'
                     }`}
                   >
                     {secondHomePref ? 'Yes Required' : 'Doesn\'t Matter'}
@@ -436,7 +424,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
             <button
               type="button"
               onClick={handleApplyClick}
-              className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-[#B89552]" />
               <span>Show Matched Intros</span>

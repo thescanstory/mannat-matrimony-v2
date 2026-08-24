@@ -67,7 +67,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-50 bg-[#2D2824]/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -142,7 +142,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                     onClick={() => setPhotoPrivacy(opt.id as any)}
                     className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
                       photoPrivacy === opt.id
-                        ? 'bg-[#111111] text-white border-[#111111] shadow-md'
+                        ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                         : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                     }`}
                   >
@@ -186,7 +186,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                     onClick={() => setProfileVisibility(opt.id as any)}
                     className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
                       profileVisibility === opt.id
-                        ? 'bg-[#111111] text-white border-[#111111] shadow-md'
+                        ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                         : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                     }`}
                   >
@@ -230,7 +230,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                     onClick={() => setFinancialPrivacy(opt.id as any)}
                     className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
                       financialPrivacy === opt.id
-                        ? 'bg-[#111111] text-white border-[#111111] shadow-md'
+                        ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                         : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                     }`}
                   >
@@ -306,7 +306,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
               type="button"
               disabled={saving}
               onClick={handleSave}
-              className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-[#B89552]" />
               <span>{saving ? 'Saving to Database...' : 'Save Privacy Controls'}</span>

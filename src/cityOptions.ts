@@ -1,0 +1,35 @@
+// Shared list of popular cities for the Settled City selector.
+// Used by the Onboarding form and the Profile edit screen.
+// 'Other' is handled as a special option that reveals a free-text input.
+export const CITY_OPTIONS: string[] = [
+  'Mumbai',
+  'Delhi NCR',
+  'New Delhi',
+  'Gurugram',
+  'Noida',
+  'Bangalore',
+  'Chennai',
+  'Hyderabad',
+  'Kolkata',
+  'Pune',
+  'Ahmedabad',
+  'Jaipur',
+  'Lucknow',
+  'Chandigarh',
+  'Kochi',
+  'Surat',
+  'Indore',
+  'Bhopal',
+  'Nagpur',
+  'Vadodara',
+  'Goa',
+  'Dubai',
+  'Abu Dhabi',
+  'London',
+  'Singapore',
+  'New York City',
+  'New Jersey',
+  'Toronto',
+  'Melbourne',
+  'Sydney'
+];

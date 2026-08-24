@@ -75,7 +75,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-50 bg-[#2D2824]/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -96,7 +96,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
             <button
               type="button"
               onClick={isCallActive ? endLiveWebRTCCall : onClose}
-              className="p-2 rounded-full hover:bg-[#F4EFE6] text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+              className="p-2 rounded-full hover:bg-[#F4EFE6] text-[#7E776F] hover:text-[#111111] transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -110,7 +110,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                 onClick={() => setActiveTab('instant')}
                 className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
                   activeTab === 'instant'
-                    ? 'bg-[#111111] text-white shadow-xs'
+                    ? 'bg-[#2D2824] text-white shadow-xs'
                     : 'bg-[#F4EFE6] text-[#777777] hover:text-[#111111]'
                 }`}
               >
@@ -121,7 +121,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                 onClick={() => setActiveTab('schedule')}
                 className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
                   activeTab === 'schedule'
-                    ? 'bg-[#111111] text-white shadow-xs'
+                    ? 'bg-[#2D2824] text-white shadow-xs'
                     : 'bg-[#F4EFE6] text-[#777777] hover:text-[#111111]'
                 }`}
               >
@@ -135,20 +135,20 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
             {isCallActive ? (
               /* Live WebRTC Call Screen */
               <div className="space-y-4">
-                <div className="relative rounded-3xl overflow-hidden aspect-[4/3] bg-black shadow-lg border border-gray-800">
+                <div className="relative rounded-3xl overflow-hidden aspect-[4/3] bg-[#2D2824] shadow-lg border border-[#2D2824]">
                   {/* Remote Candidate Stream */}
                   <img
-                    src={targetProfile.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'}
+                    src={targetProfile.photos?.[0] || ''}
                     alt={targetProfile.display_name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-[11px] font-bold flex items-center gap-1.5">
+                  <div className="absolute top-3 left-3 bg-[#2D2824]/60 backdrop-blur-md px-3 py-1 rounded-full text-white text-[11px] font-bold flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span>{targetProfile.display_name} • Connected</span>
                   </div>
 
                   {/* Local WebRTC Camera Inset */}
-                  <div className="absolute bottom-3 right-3 w-24 h-32 rounded-2xl overflow-hidden border-2 border-white shadow-xl bg-gray-900">
+                  <div className="absolute bottom-3 right-3 w-24 h-32 rounded-2xl overflow-hidden border-2 border-white shadow-xl bg-[#2D2824]">
                     {!isVideoOff ? (
                       <video
                         ref={videoRef}
@@ -158,7 +158,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                         className="w-full h-full object-cover mirror"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-800 text-gray-400 text-xs font-bold">
+                      <div className="w-full h-full flex items-center justify-center bg-[#2D2824] text-[#7E776F] text-xs font-bold">
                         Cam Off
                       </div>
                     )}
@@ -223,7 +223,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                     <div className="text-center">
                       <div className="w-16 h-16 rounded-full border-2 border-[#B89552] overflow-hidden mx-auto shadow-md">
                         <img
-                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
+                          src=""
                           alt="Your Family"
                           className="w-full h-full object-cover"
                         />
@@ -231,14 +231,14 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                       <span className="text-[11px] font-bold text-[#111111] block mt-1">You</span>
                     </div>
 
-                    <div className="w-8 h-8 rounded-full bg-[#111111] text-white flex items-center justify-center text-xs font-black">
+                    <div className="w-8 h-8 rounded-full bg-[#2D2824] text-white flex items-center justify-center text-xs font-black">
                       +
                     </div>
 
                     <div className="text-center">
                       <div className="w-16 h-16 rounded-full border-2 border-[#B89552] overflow-hidden mx-auto shadow-md">
                         <img
-                          src={targetProfile.photos?.[0] || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'}
+                          src={targetProfile.photos?.[0] || ''}
                           alt={targetProfile.display_name}
                           className="w-full h-full object-cover"
                         />
@@ -255,7 +255,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                 <button
                   type="button"
                   onClick={startLiveWebRTCCall}
-                  className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 text-[#B89552]" />
                   <span>Start Instant In-App Video Call</span>
@@ -290,7 +290,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                         onClick={() => setSelectedTime(slot)}
                         className={`py-3 px-2 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${
                           selectedTime === slot
-                            ? 'bg-[#111111] text-white shadow-sm'
+                            ? 'bg-[#2D2824] text-white shadow-sm'
                             : 'bg-[#F4EFE6] text-[#555555] border border-[#E8E1D5] hover:bg-[#E8E1D5]'
                         }`}
                       >
@@ -304,7 +304,7 @@ export const FamilyCallModal: React.FC<FamilyCallModalProps> = ({
                   <button
                     type="button"
                     onClick={handleConfirmSchedule}
-                    className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Video className="w-4 h-4 text-[#B89552]" />
                     <span>Confirm & Generate Google Meet Link</span>

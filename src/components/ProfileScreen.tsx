@@ -1,32 +1,33 @@
 import React, { useState, useRef } from 'react';
-import { 
-  ShieldCheck, 
-  Crown, 
-  UserCheck, 
-  LogOut, 
-  LogIn, 
-  User, 
-  ChevronRight, 
-  ChevronDown, 
-  Lock, 
-  CheckCircle2, 
-  Edit3, 
-  Check, 
-  Mail, 
-  Trash2, 
-  AlertTriangle, 
-  MapPin, 
-  Briefcase, 
-  Wallet, 
-  Sparkles, 
-  Utensils, 
-  Home, 
-  Camera, 
-  Upload 
+import {
+  ShieldCheck,
+  UserCheck,
+  LogOut,
+  LogIn,
+  User,
+  ChevronRight,
+  ChevronDown,
+  Lock,
+  CheckCircle2,
+  Edit3,
+  Check,
+  Mail,
+  Trash2,
+  AlertTriangle,
+  MapPin,
+  Briefcase,
+  Wallet,
+  Sparkles,
+  Utensils,
+  Home,
+  Camera,
+  Upload
 } from 'lucide-react';
+import { NudgeBanner } from './NudgeBanner';
 import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
 import type { Profile, PrivacySettings } from '../types';
+import { CITY_OPTIONS } from '../cityOptions';
 
 interface ProfileScreenProps {
   currentUser: UserSession | null;
@@ -81,22 +82,15 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   
   const [editEmploymentType, setEmploymentType] = useState<'Salaried' | 'Self-Employed / Business'>(initialEmpType);
   const [editOccupation, setOccupation] = useState(cleanOcc);
-  const [editCompany, setCompany] = useState(candidateProfile?.company_name || 'Tech Enterprise');
-  const [editIncomeBracket, setIncomeBracket] = useState(candidateProfile?.salary_bracket || '₹15L - ₹25L');
-  const [editFinancialStance, setFinancialStance] = useState('Hybrid Balance');
-  const [editDiet, setDiet] = useState(candidateProfile?.diet || 'Veg');
-  const [editFamilyType, setFamilyType] = useState('Nuclear');
-  const [editFamilyValues, setFamilyValues] = useState('Moderate');
+  const [editCompany, setCompany] = useState(candidateProfile?.company_name || '');
+  const [editIncomeBracket, setIncomeBracket] = useState(candidateProfile?.salary_bracket || '');
+  const [editFinancialStance, setFinancialStance] = useState('');
+  const [editDiet, setDiet] = useState(candidateProfile?.diet || '');
+  const [editFamilyType, setFamilyType] = useState('');
+  const [editFamilyValues, setFamilyValues] = useState('');
 
-  const [editPhotos, setEditPhotos] = useState<string[]>(
-    candidateProfile?.photos || [
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80'
-    ]
-  );
-  const [editVideoUrl, setEditVideoUrl] = useState<string>(
-    candidateProfile?.bio_video_url || 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4'
-  );
+  const [editPhotos, setEditPhotos] = useState<string[]>(candidateProfile?.photos || []);
+  const [editVideoUrl, setEditVideoUrl] = useState<string>(candidateProfile?.bio_video_url || '');
 
   const photoInputRef = useRef<HTMLInputElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
@@ -232,7 +226,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 type="button"
                 onClick={onEditBioData}
-                className="w-full py-3 px-4 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98"
+                className="w-full py-3 px-4 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98"
               >
                 <Sparkles className="w-4 h-4 text-[#B89552]" />
                 <span>Launch Full Step-by-Step Bio-Data Wizard</span>
@@ -252,7 +246,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 type="button"
                 onClick={onOpenAuth}
-                className="w-full py-2.5 px-4 rounded-full bg-[#111111] hover:bg-[#B89552] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
+                className="w-full py-2.5 px-4 rounded-full bg-[#2D2824] hover:bg-[#B89552] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
               >
                 <LogIn className="w-4 h-4 text-[#B89552]" />
                 <span>Sign In to Account</span>
@@ -342,14 +336,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                         <button
                           type="button"
                           onClick={() => setEditGender('male')}
-                          className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${editGender === 'male' ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                          className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${editGender === 'male' ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                         >
                           Man
                         </button>
                         <button
                           type="button"
                           onClick={() => setEditGender('female')}
-                          className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${editGender === 'female' ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                          className={`py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${editGender === 'female' ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                         >
                           Woman
                         </button>
@@ -373,7 +367,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveSection}
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
+                    className="w-full py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
                   >
                     <Check className="w-4 h-4 text-[#B89552]" />
                     <span>Save Vitals</span>
@@ -410,13 +404,30 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 <div className="p-4 bg-[#FBF9F4] border-t border-[#E8E1D5] space-y-3 text-xs">
                   <div>
                     <label className="block text-[10px] font-bold uppercase text-[#777777] mb-1">Settled City</label>
-                    <input
-                      type="text"
-                      value={editCity}
-                      onChange={(e) => setEditCity(e.target.value)}
-                      placeholder="e.g. Mumbai, Bangalore"
-                      className="w-full p-2.5 rounded-xl bg-white border border-[#E8E1D5] font-bold text-[#111111] outline-none focus:border-[#B89552]"
-                    />
+                    <div className="relative">
+                      <MapPin className="w-3.5 h-3.5 text-[#B89552] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <select
+                        value={editCity && !CITY_OPTIONS.includes(editCity) ? 'other' : editCity}
+                        onChange={(e) => setEditCity(e.target.value === 'other' ? '' : e.target.value)}
+                        className="w-full p-2.5 pl-9 pr-2 rounded-xl bg-white border border-[#E8E1D5] font-bold text-[#111111] outline-none focus:border-[#B89552] cursor-pointer appearance-none"
+                      >
+                        <option value="" disabled>Select a city</option>
+                        {CITY_OPTIONS.map((cityName) => (
+                          <option key={cityName} value={cityName}>{cityName}</option>
+                        ))}
+                        <option value="other">Other / NRI city</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                    {editCity && !CITY_OPTIONS.includes(editCity) && (
+                      <input
+                        type="text"
+                        value={editCity}
+                        onChange={(e) => setEditCity(e.target.value)}
+                        placeholder="Type your city / NRI location"
+                        className="w-full p-2.5 rounded-xl bg-white border border-[#E8E1D5] font-bold text-[#111111] outline-none focus:border-[#B89552] mt-1.5"
+                      />
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -448,7 +459,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveSection}
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
+                    className="w-full py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
                   >
                     <Check className="w-4 h-4 text-[#B89552]" />
                     <span>Save Cultural Roots</span>
@@ -489,14 +500,14 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                       <button
                         type="button"
                         onClick={() => setEmploymentType('Salaried')}
-                        className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editEmploymentType === 'Salaried' ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                        className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editEmploymentType === 'Salaried' ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                       >
                         Salaried
                       </button>
                       <button
                         type="button"
                         onClick={() => setEmploymentType('Self-Employed / Business')}
-                        className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editEmploymentType === 'Self-Employed / Business' ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                        className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editEmploymentType === 'Self-Employed / Business' ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                       >
                         Self-Employed / Business
                       </button>
@@ -541,7 +552,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveSection}
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
+                    className="w-full py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
                   >
                     <Check className="w-4 h-4 text-[#B89552]" />
                     <span>Save Career Details</span>
@@ -584,7 +595,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                           key={inc}
                           type="button"
                           onClick={() => setIncomeBracket(inc)}
-                          className={`p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${editIncomeBracket === inc ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                          className={`p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${editIncomeBracket === inc ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                         >
                           {inc}
                         </button>
@@ -604,7 +615,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                           key={fin.id}
                           type="button"
                           onClick={() => setFinancialStance(fin.id)}
-                          className={`w-full p-2.5 rounded-xl border text-xs font-bold text-left transition-all cursor-pointer flex items-center justify-between ${editFinancialStance === fin.id ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                          className={`w-full p-2.5 rounded-xl border text-xs font-bold text-left transition-all cursor-pointer flex items-center justify-between ${editFinancialStance === fin.id ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                         >
                           <span>{fin.label}</span>
                           {editFinancialStance === fin.id && <Check className="w-4 h-4 text-[#B89552]" />}
@@ -616,7 +627,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveSection}
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
+                    className="w-full py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
                   >
                     <Check className="w-4 h-4 text-[#B89552]" />
                     <span>Save Income & Finances</span>
@@ -656,7 +667,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                         key={d}
                         type="button"
                         onClick={() => setDiet(d)}
-                        className={`px-3.5 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer ${editDiet === d ? 'bg-[#111111] text-white shadow-sm' : 'bg-white text-[#555555] border border-[#E8E1D5]'}`}
+                        className={`px-3.5 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer ${editDiet === d ? 'bg-[#2D2824] text-white shadow-sm' : 'bg-white text-[#555555] border border-[#E8E1D5]'}`}
                       >
                         {d}
                       </button>
@@ -666,7 +677,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveSection}
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
+                    className="w-full py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
                   >
                     <Check className="w-4 h-4 text-[#B89552]" />
                     <span>Save Diet Preference</span>
@@ -709,7 +720,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                           key={fam}
                           type="button"
                           onClick={() => setFamilyType(fam)}
-                          className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editFamilyType === fam ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                          className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editFamilyType === fam ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                         >
                           {fam}
                         </button>
@@ -725,7 +736,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                           key={val}
                           type="button"
                           onClick={() => setFamilyValues(val)}
-                          className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editFamilyValues === val ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
+                          className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${editFamilyValues === val ? 'bg-[#2D2824] text-white border-[#111111]' : 'bg-white text-[#555555] border-[#E8E1D5]'}`}
                         >
                           {val}
                         </button>
@@ -736,7 +747,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveSection}
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
+                    className="w-full py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
                   >
                     <Check className="w-4 h-4 text-[#B89552]" />
                     <span>Save Family Values</span>
@@ -806,7 +817,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                           <button
                             type="button"
                             onClick={() => setEditPhotos(prev => prev.filter((_, i) => i !== idx))}
-                            className="absolute top-1 right-1 p-1 rounded-full bg-black/70 hover:bg-red-600 text-white cursor-pointer"
+                            className="absolute top-1 right-1 p-1 rounded-full bg-[#2D2824]/70 hover:bg-red-600 text-white cursor-pointer"
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>
@@ -839,7 +850,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                         <span>Replace Video</span>
                       </button>
                     </div>
-                    <div className="relative rounded-2xl overflow-hidden aspect-[9/12] max-h-[180px] bg-black mx-auto">
+                    <div className="relative rounded-2xl overflow-hidden aspect-[9/12] max-h-[180px] bg-[#2D2824] mx-auto">
                       <video src={editVideoUrl} controls playsInline className="w-full h-full object-cover" />
                     </div>
                   </div>
@@ -847,7 +858,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={handleSaveSection}
-                    className="w-full py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
+                    className="w-full py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-98 mt-2"
                   >
                     <Check className="w-4 h-4 text-[#B89552]" />
                     <span>Save Media</span>
@@ -859,25 +870,16 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
         </div>
 
-        {/* Premium Upgrade Banner */}
-        <div 
+<NudgeBanner
+          title="MEMBERSHIP STATUS"
+          subtitle="Mannat Gold Membership"
+          className="bg-gradient-to-br from-[#1A1A1A] to-[#2C261E] text-white border-[#B89552]/40"
           onClick={onOpenPaywall}
-          className="bg-gradient-to-br from-[#1A1A1A] to-[#2C261E] rounded-3xl p-5 text-white border border-[#B89552]/40 shadow-sm cursor-pointer hover:border-[#B89552] transition-all active:scale-98 group"
         >
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Crown className="w-4 h-4 text-[#B89552]" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552]">MEMBERSHIP STATUS</span>
-              </div>
-              <h3 className="text-base font-serif-editorial font-bold text-white">Mannat Gold Membership</h3>
-              <p className="text-xs text-gray-300">Unlock unlimited verified contact direct requests & phone invites</p>
-            </div>
-            <div className="p-2.5 rounded-full bg-[#B89552] text-[#111111] group-hover:scale-105 transition-transform">
-              <ChevronRight className="w-4 h-4 text-white" />
-            </div>
-          </div>
-        </div>
+          <p className="text-xs text-gray-300">
+            Unlock unlimited verified contact direct requests & phone invites
+          </p>
+        </NudgeBanner>
 
         {/* Privacy & Security Section */}
         <div className="space-y-2">
@@ -981,7 +983,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* Edit Account Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#2D2824]/75 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-sm bg-[#FBF9F4] rounded-3xl p-6 border border-[#E8E1D5] shadow-2xl space-y-4 text-left">
             <h3 className="text-base font-serif-editorial font-bold text-[#111111]">
               Edit Account Identity
@@ -996,7 +998,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    placeholder="e.g. Ananya Sharma"
+                                        placeholder="Enter full name"
                     className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552]"
                   />
                   <User className="w-4 h-4 text-[#B89552] absolute left-3 top-3" />
@@ -1030,7 +1032,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#111111] hover:bg-[#B89552] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl bg-[#2D2824] hover:bg-[#B89552] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                 >
                   <Check className="w-4 h-4" />
                   <span>Save Changes</span>
@@ -1043,7 +1045,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirmModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#2D2824]/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-sm bg-white rounded-3xl p-6 border border-rose-200 shadow-2xl space-y-4 text-left">
             <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mx-auto">
               <AlertTriangle className="w-6 h-6" />

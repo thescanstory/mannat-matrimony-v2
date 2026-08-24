@@ -44,74 +44,9 @@ interface MatchmakerCurator {
   status: 'Active' | 'Under Review';
 }
 
-const INITIAL_CALLBACKS: VIPCallback[] = [
-  {
-    id: 'cb_1',
-    requester_name: 'Rajesh & Sunita Sharma (Parents)',
-    requester_phone: '+91 98201 44521',
-    target_candidate_name: 'Ananya Sharma (27)',
-    requested_time: 'Today at 7:30 PM IST',
-    managed_by: 'Parent',
-    status: 'Pending',
-    notes: 'Family seeking horoscope matching & native community verification'
-  },
-  {
-    id: 'cb_2',
-    requester_name: 'Dr. Alok Verma',
-    requester_phone: '+91 97112 88410',
-    target_candidate_name: 'Rohan Verma (29)',
-    requested_time: 'Tomorrow at 11:00 AM IST',
-    managed_by: 'Candidate',
-    status: 'In Progress',
-    notes: 'Inquiring about relocation timeline to Bengaluru / US'
-  },
-  {
-    id: 'cb_3',
-    requester_name: 'Vikramaditya Roy (Self)',
-    requester_phone: '+91 99880 12345',
-    target_candidate_name: 'Priya Nambiar (26)',
-    requested_time: 'Yesterday at 5:00 PM IST',
-    managed_by: 'Candidate',
-    status: 'Completed',
-    notes: 'Matchmaker introduction scheduled on Google Meet'
-  }
-];
+const INITIAL_CALLBACKS: VIPCallback[] = [];
 
-const INITIAL_MATCHMAKERS: MatchmakerCurator[] = [
-  {
-    id: 'mm_1',
-    name: 'Smt. Gayatri Devi',
-    title: 'Senior Matchmaker & Family Counselor',
-    experience_years: 18,
-    rating: 4.9,
-    total_vouches: 420,
-    avatar_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
-    specialization: 'North Indian Elite & Industrialist Families',
-    status: 'Active'
-  },
-  {
-    id: 'mm_2',
-    name: 'Anandi Matchmaking Guild',
-    title: 'Certified Royal Matrimonial Bureau',
-    experience_years: 24,
-    rating: 4.95,
-    total_vouches: 890,
-    avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    specialization: 'High Net-Worth & NRI Lineages (US/UK/Gulf)',
-    status: 'Active'
-  },
-  {
-    id: 'mm_3',
-    name: 'Sanjiv & Meenakshi Iyer',
-    title: 'Heritage South Indian Alliance Advisory',
-    experience_years: 15,
-    rating: 4.85,
-    total_vouches: 310,
-    avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    specialization: 'Tech Founders, IIT/IIM Alumni & Civil Servants',
-    status: 'Active'
-  }
-];
+const INITIAL_MATCHMAKERS: MatchmakerCurator[] = [];
 
 function getInitialProfiles(): Profile[] {
   try {
@@ -234,23 +169,23 @@ export function App() {
     loadSupabaseData();
   }, []);
 
-  // New Candidate Form State
+    // New Candidate Form State (starts blank — no fabricated defaults)
   const [newCandidate, setNewCandidate] = useState({
     display_name: '',
-    age: 27,
-    city: 'Mumbai',
-    religion: 'Hindu',
-    community: 'Brahmin',
-    occupation: 'Senior Product Designer',
-    company_name: 'Tech Corp',
-    salary_bracket: '₹35L - ₹50L',
-    education: 'B.Tech - IIT Bombay',
-    bio_text: 'Passionate about culture, art and mindful living.',
-    photos: ['https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80'],
-    bio_video_url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-at-the-camera-40150-large.mp4',
-    is_vouched: true,
+    age: '' as number | '',
+    city: '',
+    religion: '',
+    community: '',
+    occupation: '',
+    company_name: '',
+    salary_bracket: '',
+    education: '',
+    bio_text: '',
+    photos: [] as string[],
+    bio_video_url: '',
+    is_vouched: false,
     is_spotlight: false,
-    compatibility_score: 96
+    compatibility_score: 0
   });
 
   const showToast = (msg: string) => {
@@ -394,21 +329,27 @@ export function App() {
     showToast(`Candidate "${created.display_name}" published live to Supabase! ✨`);
   };
 
-  const handleSaveEditCandidate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingCandidate) return;
 
-    const updated = profiles.map(p => p.id === editingCandidate.id ? editingCandidate : p);
-    updateAndPersistProfiles(updated);
-    setEditingCandidate(null);
+    const handleSaveEditCandidate = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!editingCandidate) return;
 
-    try {
-      await supabase.from('profiles').update(editingCandidate).eq('id', editingCandidate.id);
-    } catch (e) {
-      console.warn('DB update error:', e);
-    }
-    showToast(`Candidate "${editingCandidate.display_name}" updated in Supabase! ✨`);
-  };
+      // Update local state
+      const updated = profiles.map(p => p.id === editingCandidate.id ? editingCandidate : p);
+      setProfiles(updated);
+      setEditingCandidate(null);
+      setShowAddModal(false);
+      setToastMessage('Candidate saved successfully');
+
+      // Persist changes to Supabase
+      try {
+        await supabase.from('profiles').update(editingCandidate).eq('id', editingCandidate.id);
+      } catch (err) {
+        console.warn('DB update error:', err);
+      }
+      showToast(`Candidate "${editingCandidate.display_name}" updated in Supabase! ✨`);
+    };
+
 
   const handleUpdateCallbackStatus = async (callbackId: string, newStatus: 'Pending' | 'In Progress' | 'Completed') => {
     setCallbacks(prev => prev.map(c => c.id === callbackId ? { ...c, status: newStatus } : c));
@@ -495,72 +436,15 @@ export function App() {
     showToast('👥 All registered users & candidate bio-data permanently deleted!');
   };
 
+    // Demo-data seeding removed — mock profiles are no longer part of the app.
   const handleReseedDefaults = async () => {
-    localStorage.removeItem('mannat_admin_deleted');
-    localStorage.removeItem('mannat_admin_deleted_ids');
-    updateAndPersistProfiles(MOCK_PROFILES);
-    try {
-      await supabase.from('profiles').upsert(MOCK_PROFILES);
-    } catch (e) {
-      console.warn('DB reseed error:', e);
-    }
-    showToast('Re-seeded Default Vouched Candidates to Supabase! 🚀');
+    showToast('Mock data has been permanently removed — nothing to re-seed.');
   };
 
-  const handleAddEliteCohort = () => {
-    const extraElite: Profile[] = [
-      {
-        id: 'cand_elite_1',
-        user_id: 'usr_e1',
-        display_name: 'Dr. Siddharth Sengupta',
-        age: 30,
-        marital_status: 'Never Married',
-        religion: 'Hindu',
-        community: 'Kayastha',
-        city: 'New Delhi & London',
-        salary_bracket: '₹50L - ₹75L',
-        education: 'MD / PhD - Oxford & AIIMS',
-        bio_video_url: 'https://assets.mixkit.co/videos/preview/mixkit-man-dancing-under-the-sun-41315-large.mp4',
-        credits: 10,
-        is_vouched: true,
-        is_spotlight: true,
-        compatibility_score: 97,
-        is_unlocked: true,
-        bio_text: 'Cardiologist & medical researcher. Passionate about classical music and mountain trekking.',
-        occupation: 'Consultant Cardiologist',
-        company_name: 'Max Healthcare',
-        family_background: 'Distinguished civil service and academic lineage.',
-        marriage_expectations: 'Seeking an intellectually curious partner with cultural grounding.',
-        photos: ['https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&auto=format&fit=crop&q=80']
-      },
-      {
-        id: 'cand_elite_2',
-        user_id: 'usr_e2',
-        display_name: 'Meera Chidambaram',
-        age: 28,
-        marital_status: 'Never Married',
-        religion: 'Hindu',
-        community: 'Iyer',
-        city: 'Chennai & Singapore',
-        salary_bracket: '₹60L - ₹80L',
-        education: 'MBA - INSEAD | B.Tech - IIT Madras',
-        bio_video_url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-smiling-at-the-camera-40150-large.mp4',
-        credits: 10,
-        is_vouched: true,
-        is_spotlight: true,
-        compatibility_score: 98,
-        is_unlocked: true,
-        bio_text: 'Principal at Tier-1 Venture Capital fund. Carnatic vocalist and marathon runner.',
-        occupation: 'Venture Capital Principal',
-        company_name: 'Sequoia Capital SG',
-        family_background: 'Traditional Brahmin family with deep values.',
-        marriage_expectations: 'Looking for a warm, ambitious partner.',
-        photos: ['https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&auto=format&fit=crop&q=80']
-      }
-    ];
 
-    updateAndPersistProfiles([...extraElite, ...profiles]);
-    showToast('Added 2 Elite Candidates to Discovery Stream! 👑');
+  // Elite-cohort demo seeding removed — mock data is no longer part of the app.
+  const handleAddEliteCohort = () => {
+    showToast('Demo candidate seeding has been removed. Add real candidates instead.');
   };
 
   const handleExportJSON = () => {
@@ -818,7 +702,7 @@ export function App() {
                   >
                     <div className="flex items-center gap-4">
                       <img
-                        src={candidate.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+                        src={candidate.photos?.[0] || ''}
                         alt={candidate.display_name}
                         className="w-16 h-16 rounded-2xl object-cover border border-[#E8E1D5] shrink-0"
                       />
@@ -1045,8 +929,8 @@ export function App() {
                   className="p-5 rounded-2xl border border-[#E8E1D5] bg-[#FBF9F4] hover:bg-[#E8E1D5]/40 text-left transition-colors cursor-pointer group"
                 >
                   <RefreshCw className="w-6 h-6 text-[#B89552] mb-2 group-hover:rotate-180 transition-transform" />
-                  <h4 className="text-xs font-bold text-[#111111]">Re-seed Default Profiles</h4>
-                  <p className="text-[11px] text-gray-500 mt-1">Restores Ananya, Rohan, Vikramaditya, and Priya</p>
+                                    <h4 className="text-xs font-bold text-[#111111]">Re-seed Default Profiles</h4>
+                  <p className="text-[11px] text-gray-500 mt-1">Disabled — mock data has been removed from the app</p>
                 </button>
 
                 <button
@@ -1055,8 +939,8 @@ export function App() {
                   className="p-5 rounded-2xl border border-amber-200 bg-amber-50/40 hover:bg-amber-50 text-left transition-colors cursor-pointer group"
                 >
                   <Crown className="w-6 h-6 text-[#B89552] mb-2" />
-                  <h4 className="text-xs font-bold text-[#111111]">Add 2 Elite Candidates</h4>
-                  <p className="text-[11px] text-gray-500 mt-1">Seeds Oxford Cardiologist & Sequoia Capital VC</p>
+                  <h4 className="text-xs font-bold text-[#111111]">Add Demo Candidates</h4>
+                  <p className="text-[11px] text-gray-500 mt-1">Disabled — add real candidates instead</p>
                 </button>
 
                 <button
@@ -1488,7 +1372,7 @@ export function App() {
             </div>
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-left text-[11px] text-amber-800 flex items-center gap-2">
               <RefreshCw className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>Tip: You can re-seed sample verified candidates anytime using the "Re-seed Default Profiles" tool.</span>
+                            <span>All mock/sample data has been permanently removed. Only real candidate profiles appear here.</span>
             </div>
             <div className="flex items-center justify-center gap-3 pt-2">
               <button

@@ -81,7 +81,6 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Load chat messages and subscribe when chat modal opens
   useEffect(() => {
     if (!activeChatProfile) {
       setMessages([]);
@@ -246,7 +245,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                   className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer hover:shadow-md transition-all text-left"
                 >
                   {/* Photo Header */}
-                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
+                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-[#2D2824]">
                     <img
                       src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                       alt={profile.display_name}
@@ -287,7 +286,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                         e.stopPropagation();
                         onOpenProfile(profile);
                       }}
-                      className="py-3 px-3 rounded-2xl bg-[#111111] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-gray-800 active:scale-98 transition-all cursor-pointer shadow-xs"
+                      className="py-3 px-3 rounded-2xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-gray-800 active:scale-98 transition-all cursor-pointer shadow-xs"
                     >
                       View Bio-data
                     </button>
@@ -311,7 +310,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                   onClick={() => onOpenProfile(profile)}
                   className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left"
                 >
-                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
+                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-[#2D2824]">
                     <img
                       src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                       alt={profile.display_name}
@@ -355,7 +354,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                   onClick={() => onOpenProfile(profile)}
                   className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left"
                 >
-                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black">
+                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-[#2D2824]">
                     <img
                       src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                       alt={profile.display_name}
@@ -383,7 +382,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     <button
                       type="button"
                       onClick={(e) => handleAcceptReceived(profile, e)}
-                      className="py-3 px-4 rounded-2xl bg-[#111111] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-sm"
+                      className="py-3 px-4 rounded-2xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-sm"
                     >
                       Accept Wave
                     </button>
@@ -398,7 +397,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
       {/* Real-time Interactive Chat Modal */}
       <AnimatePresence>
         {activeChatProfile && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="fixed inset-0 z-50 bg-[#2D2824]/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
             <motion.div
               initial={{ y: '100%', opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -450,7 +449,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     <div
                       className={`max-w-[80%] px-4 py-3 rounded-2xl text-xs leading-relaxed shadow-xs ${
                         msg.is_self
-                          ? 'bg-[#111111] text-white rounded-br-none'
+                          ? 'bg-[#2D2824] text-white rounded-br-none'
                           : 'bg-white text-[#111111] border border-[#E8E1D5] rounded-bl-none'
                       }`}
                     >
@@ -486,7 +485,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || isSending}
-                  className="w-10 h-10 rounded-full bg-[#111111] text-white hover:bg-[#B89552] disabled:opacity-40 transition-colors flex items-center justify-center cursor-pointer shrink-0 shadow-xs"
+                  className="w-10 h-10 rounded-full bg-[#2D2824] text-white hover:bg-[#B89552] disabled:opacity-40 transition-colors flex items-center justify-center cursor-pointer shrink-0 shadow-xs"
                 >
                   <Send className="w-4 h-4" />
                 </button>

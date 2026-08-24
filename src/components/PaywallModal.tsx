@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Check, RefreshCw, ShieldCheck, FileText, Apple, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NudgeBanner } from './NudgeBanner';
 
 import confetti from 'canvas-confetti';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
@@ -97,12 +98,13 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         if (isSupabaseConfigured()) {
           try {
             const { data: userData } = await supabase.auth.getUser();
+            const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
             await supabase.from('subscriptions').insert([
               {
                 user_id: userData?.user?.id,
                 tier: selectedPlan,
                 status: 'active',
-                expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+                expires_at: expiresAt
               }
             ]);
           } catch (e) {
@@ -153,7 +155,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-50 bg-[#2D2824]/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -202,17 +204,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             )}
 
             {/* Banner */}
-            <div className="text-center space-y-1.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552] bg-[#F4EFE6] px-3.5 py-1 rounded-full border border-[#E8E1D5] inline-block">
-                PREMIUM INTRODUCTIONS
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                Unlock direct contact & verified intros.
-              </h2>
-              <p className="text-xs text-[#777777] font-medium leading-relaxed max-w-xs mx-auto">
-                Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.
-              </p>
-            </div>
+            <NudgeBanner
+          title="PREMIUM INTRODUCTIONS"
+          subtitle="Unlock direct contact & verified intros."
+          className="bg-[#F4EFE6] border-[#E8E1D5]"
+        >
+          <p className="text-xs text-[#777777] font-medium leading-relaxed max-w-full">
+            Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.
+          </p>
+        </NudgeBanner>
 
             {/* Plan Selector Grid */}
             <div className="space-y-3">
@@ -225,7 +225,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                     onClick={() => setSelectedPlan(plan.id as any)}
                     className={`p-5 rounded-3xl border transition-all cursor-pointer relative ${
                       isSelected
-                        ? 'bg-[#111111] text-white border-[#111111] shadow-xl scale-[1.01]'
+                        ? 'bg-[#2D2824] text-white border-[#111111] shadow-xl scale-[1.01]'
                         : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                     }`}
                   >
@@ -307,7 +307,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               type="button"
               disabled={upgrading}
               onClick={handleUpgrade}
-              className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <Apple className="w-4 h-4 text-white" />
               <span>{upgrading ? 'Processing StoreKit...' : `Subscribe via Apple Pay`}</span>
@@ -316,7 +316,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-2.5 px-4 rounded-full bg-transparent hover:bg-[#F4EFE6] text-[#777777] hover:text-[#111111] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-full bg-transparent hover:bg-[#F4EFE6] text-[#777777] hover:text-[#2D2824] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Go Back / Maybe Later</span>
@@ -325,13 +325,13 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
           {/* Legal Modal Popup (EULA & Privacy) */}
           {showLegalModal && (
-            <div className="fixed inset-0 z-60 bg-black/80 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-60 bg-[#2D2824]/80 flex items-center justify-center p-4">
               <div className="bg-[#FBF9F4] rounded-3xl p-6 max-w-sm w-full space-y-4 border border-[#E8E1D5] shadow-2xl max-h-[80vh] overflow-y-auto">
                 <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
-                  <h4 className="font-bold text-sm text-[#111111]">
+                  <h4 className="font-bold text-sm text-[#2D2824]">
                     {showLegalModal === 'eula' ? 'Standard Apple EULA & Terms' : 'Mannat Privacy Policy'}
                   </h4>
-                  <button onClick={() => setShowLegalModal(null)} className="p-1 text-gray-400 hover:text-black">
+                  <button onClick={() => setShowLegalModal(null)} className="text-xs text-gray-400 hover:text-[#2D2824]">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -359,7 +359,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowLegalModal(null)}
-                  className="w-full py-2.5 rounded-xl bg-[#111111] text-white text-xs font-bold"
+                  className="w-full py-2.5 rounded-xl bg-[#2D2824] text-white text-xs font-bold"
                 >
                   I Understand
                 </button>

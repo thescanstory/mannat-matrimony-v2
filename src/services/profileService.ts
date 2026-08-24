@@ -1,5 +1,4 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
-import { MOCK_PROFILES } from './mockData';
 import type { Profile } from '../types';
 
 const LOCAL_STORAGE_PROFILES_KEY = 'mannat_custom_profiles';
@@ -19,7 +18,7 @@ export const profileService = {
   // Check if user has an existing completed profile / bio-data
   hasExistingProfile: async (userId?: string, email?: string): Promise<boolean> => {
     if (!userId && !email) return false;
-    
+
     // 1. Check local completed onboardings
     try {
       if (email && localStorage.getItem('mannat_onboarded_' + email.toLowerCase()) === 'true') {
@@ -34,7 +33,7 @@ export const profileService = {
         const match = customProfiles.some(p => (userId && p.user_id === userId) || (userId && p.id === userId));
         if (match) return true;
       }
-    } catch {}
+    } catch { }
 
     // 2. Check Supabase DB
     if (isSupabaseConfigured() && userId) {
@@ -49,7 +48,7 @@ export const profileService = {
           localStorage.setItem('mannat_onboarded_' + userId, 'true');
           return true;
         }
-      } catch {}
+      } catch { }
     }
 
     return false;
@@ -61,7 +60,14 @@ export const profileService = {
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
       if (stored) {
-        customProfiles = JSON.parse(stored);
+        // Purge any legacy seeded/mock entries (ids like prof-*, user_ids like usr-*)
+        const parsed: Profile[] = JSON.parse(stored);
+        customProfiles = parsed.filter(p =>
+          !/^(prof|usr)-/i.test(p.id || '') && !/^(prof|usr)-/i.test(p.user_id || '')
+        );
+        if (customProfiles.length !== parsed.length) {
+          localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(customProfiles));
+        }
       }
     } catch (e) {
       console.warn('Could not read local profiles:', e);
@@ -83,7 +89,7 @@ export const profileService = {
     };
 
     if (!isSupabaseConfigured()) {
-      const base = customProfiles.length > 0 ? customProfiles : MOCK_PROFILES;
+      const base = customProfiles;
       return applyUnlocks(base);
     }
 
@@ -98,7 +104,7 @@ export const profileService = {
       }
 
       if (data) {
-        const deletedIds: string[] = typeof window !== 'undefined' 
+        const deletedIds: string[] = typeof window !== 'undefined'
           ? JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]')
           : [];
         const activeData = (data as Profile[]).filter(d => !deletedIds.includes(d.id));
@@ -123,39 +129,27 @@ export const profileService = {
       ...profileData,
       id: validId,
       user_id: profileData.user_id || validId,
-      display_name: profileData.display_name || 'New Member',
-      age: profileData.age || 26,
-      height: profileData.height || "5'7\"",
-      marital_status: profileData.marital_status || 'Never Married',
-      religion: profileData.religion || 'Hindu',
-      community: profileData.community || 'North Indian',
-      sub_community: profileData.sub_community || 'Brahmin',
-      occupation: profileData.occupation || 'Professional',
-      company_name: profileData.company_name || 'Global Enterprise',
-      education: profileData.education || 'Graduate Degree',
-      city: profileData.city || 'Mumbai',
-      salary_bracket: profileData.salary_bracket || '₹25L - ₹35L / yr',
-      diet: profileData.diet || 'Veg',
-      family_background: profileData.family_background || 'Respectable family settled in metro city with strong traditional values.',
-      marriage_expectations: profileData.marriage_expectations || 'Looking for an ambitious, kind partner with shared cultural grounding.',
-      bio_text: profileData.bio_text || 'Passionate about travel, family traditions, and continuous self-growth.',
-      bio_video_url: profileData.bio_video_url || 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4',
-      photos: profileData.photos && profileData.photos.length > 0 ? profileData.photos : [
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
-      ],
+      display_name: (profileData.display_name || '').trim() || 'Unnamed Member',
+      age: profileData.age || 0,
+      // Required-by-type fields default to blank, never to fabricated values
+      marital_status: profileData.marital_status || '',
+      religion: profileData.religion || '',
+      community: profileData.community || '',
+      city: profileData.city || '',
+      salary_bracket: profileData.salary_bracket || '',
+      occupation: profileData.occupation || '',
+      company_name: profileData.company_name || '',
+      family_background: profileData.family_background || '',
+      marriage_expectations: profileData.marriage_expectations || '',
+      // No fabricated defaults — only what the user actually provided.
+      bio_video_url: profileData.bio_video_url || '',
+      photos: profileData.photos && profileData.photos.length > 0 ? profileData.photos : [],
       credits: 100,
-      is_vouched: true,
+      is_vouched: false,
       is_unlocked: false,
-      compatibility_score: profileData.compatibility_score || 98,
-      gun_milan_score: profileData.gun_milan_score || 32,
-      managed_by: profileData.managed_by || 'self',
-      lifestyle_details: profileData.lifestyle_details || {
-        net_worth: '₹5Cr - ₹10Cr',
-        private_clubs: 'City Golf & Country Club',
-        second_home: true
-      }
+      compatibility_score: profileData.compatibility_score || 0,
+      gun_milan_score: profileData.gun_milan_score || 0,
+      managed_by: profileData.managed_by || 'self'
     };
 
     // Save to localStorage for instant offline/demo persistence

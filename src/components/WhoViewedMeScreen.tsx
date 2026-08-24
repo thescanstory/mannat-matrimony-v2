@@ -20,13 +20,13 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
         <div className="flex items-center gap-2">
           <span className="font-instrument text-3xl lowercase text-[#B89552]">mannat</span>
           <div className="h-4 w-px bg-[#E8E1D5]" />
-          <h1 className="text-xl font-serif-editorial font-bold text-[#111111]">For You & Analytics</h1>
+          <h1 className="text-xl font-serif-editorial font-bold text-[#111111]">For You</h1>
         </div>
 
         <button
           type="button"
           onClick={onOpenPaywall}
-          className="px-3.5 py-1.5 rounded-full bg-[#111111] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer hover:bg-[#B89552] transition-colors"
+          className="px-3.5 py-1.5 rounded-full bg-[#2D2824] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm cursor-pointer hover:bg-[#B89552] transition-colors"
         >
           <Crown className="w-3.5 h-3.5 text-[#B89552]" />
           <span>Gold Member</span>
@@ -55,7 +55,7 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
           <button
             type="button"
             onClick={onOpenPaywall}
-            className="w-full py-4 px-6 rounded-full bg-[#111111] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-[#B89552]" />
             <span>Unlock All 12 Profiles (₹1,999/mo)</span>
@@ -87,7 +87,7 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
                 className="bg-[#F4EFE6] rounded-3xl p-3 border border-[#E8E1D5] shadow-sm relative overflow-hidden space-y-2 cursor-pointer group hover:shadow-md transition-all"
               >
                 {/* Image Container with optional Backdrop Blur */}
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-black">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#2D2824]">
                   <img
                     src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                     alt={profile.display_name}
@@ -98,7 +98,7 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
 
                   {/* Lock Overlay for Free Users */}
                   {isLocked && (
-                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white p-3 text-center backdrop-blur-xs">
+                    <div className="absolute inset-0 bg-[#2D2824]/40 flex flex-col items-center justify-center text-white p-3 text-center backdrop-blur-xs">
                       <div className="w-10 h-10 rounded-full bg-[#B89552] text-white flex items-center justify-center shadow-lg mb-1">
                         <Lock className="w-5 h-5" />
                       </div>

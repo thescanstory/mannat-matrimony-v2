@@ -182,44 +182,6 @@ EXCEPTION
 END $$;
 
 -- ====================================================================
--- SAMPLE SEED DATA INSERTION (OPTIONAL SEED FOR SUPABASE DB)
+-- SAMPLE SEED DATA — REMOVED. Mock/demo users must never be inserted
+-- into the database. All profiles are created by real users only.
 -- ====================================================================
-
-INSERT INTO public.profiles (
-    display_name, age, height, city, religion, community, sub_community,
-    occupation, company_name, education, bio_text, bio_video_url,
-    photos, is_vouched, is_spotlight, compatibility_score, gun_milan_score,
-    lifestyle_details
-) VALUES 
-(
-    'Ananya Sharma', 27, '5''6"', 'Mumbai', 'Hindu', 'Brahmin', 'Kanyakubja Brahmin',
-    'Senior Product Designer', 'Flipkart', 'B.Des NID Ahmedabad',
-    'Design lead by day, classical dancer by weekend. Looking for an empathetic, ambitious partner.',
-    'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4',
-    ARRAY['https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80', 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80', 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'],
-    TRUE, TRUE, 98, 34,
-    '{"net_worth": "₹5Cr - ₹10Cr", "private_clubs": "Willingdon Sports Club", "second_home": true}'::jsonb
-),
-(
-    'Rohan Verma', 29, '5''11"', 'Bengaluru', 'Hindu', 'Kayastha', 'Srivastava Kayastha',
-    'VP Engineering', 'Razorpay', 'B.Tech IIT Bombay',
-    'Building tech platforms and running marathons. Seeking an intellectually curious partner.',
-    'https://assets.mixkit.co/videos/preview/mixkit-man-holding-a-digital-tablet-and-smiling-41133-large.mp4',
-    ARRAY['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80'],
-    TRUE, FALSE, 96, 31,
-    '{"net_worth": "₹15Cr - ₹30Cr", "private_clubs": "Bangalore Club", "second_home": true}'::jsonb
-) ON CONFLICT DO NOTHING;
-
--- Seed data for matches and chats
-INSERT INTO public.matches (user_a_id, user_b_id, match_score)
-SELECT p1.id, p2.id, 95
-FROM public.profiles p1, public.profiles p2
-WHERE p1.id <> p2.id
-LIMIT 5
-ON CONFLICT DO NOTHING;
-
-INSERT INTO public.chats (match_id, sender_id, message)
-SELECT m.id, m.user_a_id, 'Hello! Nice to meet you.'
-FROM public.matches m
-LIMIT 5
-ON CONFLICT DO NOTHING;

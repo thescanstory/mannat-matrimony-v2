@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MOCK_PROFILES } from './services/mockData';
 import { profileService } from './services/profileService';
 import { authService } from './services/authService';
 import type { UserSession } from './services/authService';
@@ -38,13 +37,35 @@ export function App() {
   return <MainApp />;
 }
 
+// One-time cache migration: purge ALL pre-launch cached data (mock/test profiles,
+// stale sessions & onboarding flags) from every visitor's browser exactly once.
+try {
+  const CACHE_FLAG = 'mannat_cache_v3_clean';
+  if (typeof window !== 'undefined' && localStorage.getItem(CACHE_FLAG) !== '1') {
+    [
+      'mannat_custom_profiles',
+      'mannat_admin_candidates',
+      'mannat_profiles',
+      'mannat_admin_deleted',
+      'mannat_admin_deleted_ids',
+      'mannat_unlocked_ids',
+      'mannat_active_user',
+      'mannat_saved_accounts'
+    ].forEach((k) => localStorage.removeItem(k));
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith('mannat_onboarded_'))
+      .forEach((k) => localStorage.removeItem(k));
+    localStorage.setItem(CACHE_FLAG, '1');
+  }
+} catch {}
+
 function MainApp() {
   const [profiles, setProfiles] = useState<Profile[]>(() => {
     try {
       if (typeof window !== 'undefined' && localStorage.getItem('mannat_admin_deleted') === 'true') {
         return [];
       }
-      return MOCK_PROFILES;
+            return [];
     } catch {
       return [];
     }
@@ -167,8 +188,8 @@ function MainApp() {
         localStorage.setItem('mannat_logged_out', 'true');
       }
       await authService.signOut();
-      setCurrentUser(null);
-      setProfiles(MOCK_PROFILES);
+            setCurrentUser(null);
+      setProfiles([]);
       setActiveFilters(null);
       setCurrentView('auth');
       triggerToast('All candidate profile data and session reset. 🗑️', 'success');
@@ -230,8 +251,8 @@ function MainApp() {
         if (activeUser) {
           setCurrentUser(activeUser);
         }
-      } catch {
-        setProfiles(MOCK_PROFILES);
+            } catch {
+        setProfiles([]);
       }
     }
     loadBackendData();

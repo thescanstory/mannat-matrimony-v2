@@ -1,67 +1,16 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import type { ChatMessage, Match } from '../types';
-import { MOCK_PROFILES } from './mockData';
 
-// Fallback in-memory messages for offline/demo operation
-const LOCAL_MESSAGES: Record<string, ChatMessage[]> = {
-  'match-1': [
-    {
-      id: 'msg-1',
-      match_id: 'match-1',
-      sender_id: MOCK_PROFILES[0]?.id || 'p-1',
-      message: 'Hello! I noticed our family values and music preferences align nicely.',
-      sent_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-      is_self: false,
-    },
-    {
-      id: 'msg-2',
-      match_id: 'match-1',
-      sender_id: 'current-user',
-      message: 'Namaste! Yes, glad to connect with you.',
-      sent_at: new Date(Date.now() - 3600000 * 1).toISOString(),
-      is_self: true,
-    }
-  ],
-  'match-2': [
-    {
-      id: 'msg-3',
-      match_id: 'match-2',
-      sender_id: MOCK_PROFILES[1]?.id || 'p-2',
-      message: 'Hi there! Would love to introduce our families for a quick video call.',
-      sent_at: new Date(Date.now() - 7200000).toISOString(),
-      is_self: false,
-    }
-  ]
-};
+// In-memory fallback messages disabled — app uses real chat data only.
+const LOCAL_MESSAGES: Record<string, ChatMessage[]> = {};
 
 export const chatService = {
   /**
    * Retrieves matches for the user (with profile metadata and latest message preview)
    */
-  getMatches: async (userId?: string): Promise<Match[]> => {
+    getMatches: async (_userId?: string): Promise<Match[]> => {
     if (!isSupabaseConfigured()) {
-      return [
-        {
-          id: 'match-1',
-          user_a_id: userId || 'current-user',
-          user_b_id: MOCK_PROFILES[0].id,
-          match_score: 98,
-          created_at: new Date().toISOString(),
-          partner: MOCK_PROFILES[0],
-          last_message: 'Namaste! Yes, glad to connect with you.',
-          last_message_at: '1h ago',
-        },
-        {
-          id: 'match-2',
-          user_a_id: userId || 'current-user',
-          user_b_id: MOCK_PROFILES[1].id,
-          match_score: 96,
-          created_at: new Date().toISOString(),
-          partner: MOCK_PROFILES[1],
-          last_message: 'Hi there! Would love to introduce our families...',
-          last_message_at: '2h ago',
-        }
-      ];
+      return [];
     }
 
     try {
@@ -71,33 +20,12 @@ export const chatService = {
         .order('created_at', { ascending: false });
 
       if (error || !matches || matches.length === 0) {
-        return [
-          {
-            id: 'match-1',
-            user_a_id: userId || 'current-user',
-            user_b_id: MOCK_PROFILES[0].id,
-            match_score: 98,
-            created_at: new Date().toISOString(),
-            partner: MOCK_PROFILES[0],
-            last_message: 'Namaste! Yes, glad to connect with you.',
-            last_message_at: '1h ago',
-          },
-          {
-            id: 'match-2',
-            user_a_id: userId || 'current-user',
-            user_b_id: MOCK_PROFILES[1].id,
-            match_score: 96,
-            created_at: new Date().toISOString(),
-            partner: MOCK_PROFILES[1],
-            last_message: 'Hi there! Would love to introduce our families...',
-            last_message_at: '2h ago',
-          }
-        ];
+        return [];
       }
 
-      // Populate partner profile for each match
-      return matches.map((m, idx) => {
-        const partnerProfile = MOCK_PROFILES[idx % MOCK_PROFILES.length];
+            // Populate partner profile for each match
+      return matches.map((m) => {
+        const partnerProfile = m.partner_profile || null;
         return {
           id: m.id,
           user_a_id: m.user_a_id,
@@ -105,23 +33,12 @@ export const chatService = {
           match_score: m.match_score || 95,
           created_at: m.created_at,
           partner: partnerProfile,
-          last_message: 'Tap to chat with ' + partnerProfile.display_name,
-          last_message_at: 'Just now',
+          last_message: m.last_message || 'No messages yet',
+          last_message_at: m.last_message_at || 'Just now',
         };
       });
     } catch {
-      return [
-        {
-          id: 'match-1',
-          user_a_id: userId || 'current-user',
-          user_b_id: MOCK_PROFILES[0].id,
-          match_score: 98,
-          created_at: new Date().toISOString(),
-          partner: MOCK_PROFILES[0],
-          last_message: 'Namaste! Yes, glad to connect with you.',
-          last_message_at: '1h ago',
-        }
-      ];
+      return [];
     }
   },
 
@@ -140,17 +57,8 @@ export const chatService = {
         .eq('match_id', matchId)
         .order('sent_at', { ascending: true });
 
-      if (error || !data || data.length === 0) {
-        return LOCAL_MESSAGES[matchId] || [
-          {
-            id: `msg-${Date.now()}`,
-            match_id: matchId,
-            sender_id: 'partner',
-            message: 'Hello! I am happy to connect with you on Mannat.',
-            sent_at: new Date().toISOString(),
-            is_self: false,
-          }
-        ];
+            if (error || !data || data.length === 0) {
+        return [];
       }
 
       return data.map((item) => ({

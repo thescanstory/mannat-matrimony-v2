@@ -66,21 +66,21 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#2D2824]/80 backdrop-blur-md">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="w-full max-w-md bg-gradient-to-b from-gray-900 via-black to-gray-950 border border-yellow-500/30 rounded-t-3xl sm:rounded-3xl p-6 text-white shadow-[0_-10px_40px_rgba(255,215,0,0.2)] overflow-hidden"
+          className="w-full max-w-md bg-gradient-to-b from-[#2D2824] via-[#2D2824]/95 to-[#2D2824] border border-[#B89552]/30 rounded-t-3xl sm:rounded-3xl p-6 text-white shadow-[0_-10px_40px_rgba(255,215,0,0.2)] overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-gray-800">
+          <div className="flex items-center justify-between pb-4 border-b border-[#2D2824]">
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex items-center gap-1 text-xs font-bold text-gray-300 hover:text-white bg-gray-800/80 hover:bg-gray-700 px-3 py-1.5 rounded-full border border-gray-700 cursor-pointer transition-all active:scale-95"
+                className="flex items-center gap-1 text-xs font-bold text-[#5C5248] hover:text-white bg-[#2D2824]/80 hover:bg-[#2D2824] px-3 py-1.5 rounded-full border border-[#2D2824] cursor-pointer transition-all active:scale-95"
                 title="Go Back"
               >
                 <ArrowLeft className="w-3.5 h-3.5 text-amber-400" />
@@ -98,7 +98,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-full bg-gray-800/80 text-gray-400 hover:text-white cursor-pointer"
+              className="p-1.5 rounded-full bg-[#2D2824]/80 text-[#7E776F] hover:text-white cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -107,28 +107,28 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
           {!isSuccess ? (
             <div className="mt-5 space-y-5">
               {/* Profile Preview Card */}
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-gray-800/50 border border-gray-700/50">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#2D2824]/50 border border-[#2D2824]/50">
                 <img
-                  src={profile.creator_vouch?.creator_avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'}
+                  src={profile.creator_vouch?.creator_avatar_url || ''}
                   alt={profile.display_name}
                   className="w-14 h-14 rounded-full object-cover border-2 border-amber-400/60"
                 />
                 <div className="flex-1 min-w-0">
                   <h4 className="font-bold text-sm text-white truncate">{profile.display_name}</h4>
-                  <p className="text-xs text-gray-400">{profile.age} yrs • {profile.city}</p>
+                  <p className="text-xs text-[#7E776F]">{profile.age} yrs • {profile.city}</p>
                   <div className="inline-flex items-center gap-1 mt-1 text-[11px] text-amber-300 font-semibold">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Behavioral Match: {profile.compatibility_score}%</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs text-gray-400 line-through">₹199</span>
+                  <span className="text-xs text-[#7E776F] line-through">₹199</span>
                   <div className="text-xl font-black text-amber-300">₹49 / $0.99</div>
                 </div>
               </div>
 
               {/* Benefits Checklist */}
-              <div className="space-y-2 text-xs text-gray-300 bg-black/40 p-3.5 rounded-xl border border-gray-800">
+              <div className="space-y-2 text-xs text-[#5C5248] bg-[#2D2824]/40 p-3.5 rounded-xl border border-[#2D2824]">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" />
                   <span>Reveal Full Name, Company & Specific Salary Bracket</span>
@@ -145,7 +145,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
 
               {/* Payment Method Selector */}
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2.5">
+                <label className="block text-xs font-bold text-[#7E776F] uppercase tracking-wider mb-2.5">
                   Payment Method (In-App Purchase / UPI)
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -161,7 +161,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
                       className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 cursor-pointer ${
                         selectedApp === app.id
                           ? 'border-amber-400 bg-amber-500/20 shadow-[0_0_12px_rgba(255,215,0,0.3)]'
-                          : 'border-gray-800 bg-gray-900/60 hover:border-gray-700'
+                          : 'border-[#2D2824] bg-[#2D2824]/70 hover:border-[#2D2824]'
                       }`}
                     >
                       <span className="text-[11px] font-bold">{app.name}</span>
@@ -190,7 +190,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
               </button>
 
               <div className="text-center text-[11px] text-gray-500 flex items-center justify-center gap-1.5">
-                <Apple className="w-3.5 h-3.5 text-gray-400" />
+                <Apple className="w-3.5 h-3.5 text-[#7E776F]" />
                 <span>Apple StoreKit & 256-bit Encrypted Checkout</span>
               </div>
             </div>

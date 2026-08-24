@@ -91,7 +91,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-5 rounded-2xl bg-[#111111] hover:bg-[#B89552] active:scale-98 text-xs font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mt-1"
+            className="w-full py-3 px-5 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] active:scale-98 text-xs font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mt-1"
           >
             <LogIn className="w-3.5 h-3.5 text-[#B89552]" />
             <span>{loading ? 'Signing in...' : 'Sign In with Email'}</span>

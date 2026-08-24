@@ -17,7 +17,7 @@ export const Toast: React.FC<ToastProps> = ({ message, type = 'success', onClose
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.9 }}
           transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-[90%] w-auto bg-[#111111] text-white px-5 py-3 rounded-full shadow-2xl border border-[#B89552]/40 flex items-center gap-3 backdrop-blur-xl"
+          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-[90%] w-auto bg-[#2D2824] text-white px-5 py-3 rounded-full shadow-2xl border border-[#B89552]/40 flex items-center gap-3 backdrop-blur-xl"
         >
           {type === 'heart' && <Heart className="w-5 h-5 fill-[#B89552] text-[#B89552] animate-bounce" />}
           {type === 'sparkle' && <Sparkles className="w-5 h-5 text-[#B89552] animate-spin" />}

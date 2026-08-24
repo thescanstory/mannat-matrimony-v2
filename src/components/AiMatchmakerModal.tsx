@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Bot, Compass, Award, Star, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { X, Sparkles, Bot, Compass, Star, CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NudgeBanner } from './NudgeBanner';
 import type { Profile } from '../types';
 
 interface AiMatchmakerModalProps {
@@ -49,7 +50,7 @@ export const AiMatchmakerModal: React.FC<AiMatchmakerModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-50 bg-[#2D2824]/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -104,7 +105,7 @@ export const AiMatchmakerModal: React.FC<AiMatchmakerModalProps> = ({
                       onClick={() => runAiAnalysis(p)}
                       className={`p-2 rounded-2xl border transition-all shrink-0 flex items-center gap-2 cursor-pointer ${
                         isSelected
-                          ? 'bg-[#111111] text-white border-[#111111] shadow-md'
+                          ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                           : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                       }`}
                     >
@@ -128,7 +129,7 @@ export const AiMatchmakerModal: React.FC<AiMatchmakerModalProps> = ({
             {/* Analysis State */}
             {analyzing ? (
               <div className="py-12 text-center space-y-4">
-                <div className="w-14 h-14 rounded-full bg-[#111111] text-[#B89552] flex items-center justify-center mx-auto animate-spin">
+                <div className="w-14 h-14 rounded-full bg-[#2D2824] text-[#B89552] flex items-center justify-center mx-auto animate-spin">
                   <Sparkles className="w-7 h-7" />
                 </div>
                 <h4 className="text-base font-bold text-[#111111]">Synthesizing Compatibility Matrix...</h4>
@@ -138,21 +139,13 @@ export const AiMatchmakerModal: React.FC<AiMatchmakerModalProps> = ({
               </div>
             ) : aiReport ? (
               <div className="space-y-4 animate-fadeIn">
-                {/* Score Banner */}
-                <div className="p-4 rounded-3xl bg-gradient-to-r from-[#111111] to-[#242220] text-white border border-[#B89552]/40 shadow-lg flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552]">
-                      AI Synergy Index
-                    </span>
-                    <h4 className="text-xl font-serif-editorial font-bold">
-                      {aiReport.synergyScore}% Alignment
-                    </h4>
-                    <span className="text-[11px] text-gray-300">High Long-term Matrimonial Potential</span>
-                  </div>
-                  <div className="w-12 h-12 rounded-full bg-[#B89552]/20 border border-[#B89552] flex items-center justify-center text-[#B89552]">
-                    <Award className="w-6 h-6" />
-                  </div>
-                </div>
+                <NudgeBanner
+                  title="AI SYNERGY INDEX"
+                  subtitle={`${aiReport?.synergyScore || 0}% Alignment`}
+                  className="bg-gradient-to-r from-[#111111] to-[#242220] text-white border-[#B89552]/40"
+                >
+                  <span className="text-[11px] text-gray-300">High Long-term Matrimonial Potential</span>
+                </NudgeBanner>
 
                 {/* Values & Lifestyle Insights */}
                 <div className="space-y-2.5">
@@ -207,7 +200,7 @@ export const AiMatchmakerModal: React.FC<AiMatchmakerModalProps> = ({
                 <button
                   type="button"
                   onClick={() => runAiAnalysis(selectedCandidate)}
-                  className="px-5 py-2.5 rounded-full bg-[#111111] text-white text-xs font-extrabold hover:bg-[#B89552] transition-colors cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-[#2D2824] text-white text-xs font-extrabold hover:bg-[#B89552] transition-colors cursor-pointer"
                 >
                   Analyze {selectedCandidate.display_name}
                 </button>
@@ -223,7 +216,7 @@ export const AiMatchmakerModal: React.FC<AiMatchmakerModalProps> = ({
                 onSelectCandidate(selectedCandidate);
                 onClose();
               }}
-              className="w-full py-4 px-6 rounded-full bg-[#111111] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>View {selectedCandidate.display_name}'s Family Portal</span>
               <ArrowRight className="w-4 h-4 text-[#B89552]" />

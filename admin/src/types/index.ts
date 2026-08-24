@@ -72,6 +72,7 @@ export interface Profile {
   spotlight_until?: string;
   managed_by?: 'self' | 'parent';
   compatibility_score: number;
+  created_at?: string;
   mqs_score?: number;
   gun_milan_score?: number;
   is_unlocked: boolean;

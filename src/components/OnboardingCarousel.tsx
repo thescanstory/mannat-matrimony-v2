@@ -1,21 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { 
-  Check, 
-  User, 
-  ArrowRight, 
-  ArrowLeft, 
-  Upload, 
-  ShieldCheck, 
-  Sparkles, 
-  Camera, 
-  Square, 
-  X, 
-  Volume2, 
-  AlertCircle, 
-  Trash2, 
-  Plus, 
+import {
+  Check,
+  User,
+  ArrowRight,
+  ArrowLeft,
+  Upload,
+  ShieldCheck,
+  Sparkles,
+  Camera,
+  Square,
+  X,
+  Volume2,
+  AlertCircle,
+  Trash2,
+  Plus,
   Briefcase,
   MapPin,
   Compass,
@@ -29,6 +29,7 @@ import {
 import type { Profile } from '../types';
 import { profileService } from '../services/profileService';
 import type { UserSession } from '../services/authService';
+import { CITY_OPTIONS } from '../cityOptions';
 
 interface OnboardingCarouselProps {
   onComplete: (newProfile?: Profile) => void;
@@ -38,33 +39,9 @@ interface OnboardingCarouselProps {
   onCancel?: () => void;
 }
 
-// Standard Heights in both Feet/Inches and Centimeters
-export const HEIGHT_OPTIONS = [
-  '4\'10" (147 cm)',
-  '4\'11" (150 cm)',
-  '5\'0" (152 cm)',
-  '5\'1" (155 cm)',
-  '5\'2" (157 cm)',
-  '5\'3" (160 cm)',
-  '5\'4" (163 cm)',
-  '5\'5" (165 cm)',
-  '5\'6" (168 cm)',
-  '5\'7" (170 cm)',
-  '5\'8" (173 cm)',
-  '5\'9" (175 cm)',
-  '5\'10" (178 cm)',
-  '5\'11" (180 cm)',
-  '6\'0" (183 cm)',
-  '6\'1" (185 cm)',
-  '6\'2" (188 cm)',
-  '6\'3" (190 cm)',
-  '6\'4" (193 cm)',
-  '6\'5" (196 cm)',
-  '6\'6"+ (198+ cm)'
-];
 
-export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({ 
-  onComplete, 
+export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
+  onComplete,
   currentUser,
   initialData,
   isEditing = false,
@@ -74,44 +51,56 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [objectUrls, setObjectUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    return () => {
+      objectUrls.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [objectUrls]);
 
   // Parse existing occupation / employment type if editing
   const rawOccupation = initialData?.occupation || '';
-  const initialEmploymentType: 'Salaried' | 'Self-Employed / Business' = 
+  const initialEmploymentType: 'Salaried' | 'Self-Employed / Business' =
     rawOccupation.includes('Self-Employed') || rawOccupation.includes('Business')
       ? 'Self-Employed / Business'
       : 'Salaried';
   const cleanOccupation = rawOccupation.replace(/\s*\((Salaried|Self-Employed \/ Business|Self-Employed|Business)\)/i, '');
 
-  // Form State to build persona - populated from initialData if editing
-  const [gender, setGender] = useState<'man' | 'woman'>(
-    initialData?.gender === 'female' ? 'woman' : initialData?.gender === 'male' ? 'man' : 'woman'
+  // Form State to build persona - populated from initialData if editing.
+  // All default values are left empty (no pre-filled data) so new users
+  // make their own choices instead of inheriting hidden presets.
+  const [gender, setGender] = useState<string>(
+    initialData?.gender === 'female' ? 'woman' : initialData?.gender === 'male' ? 'man' : ''
   );
-  const [managedBy, setManagedBy] = useState<'self' | 'parent' | 'sibling'>(
-    (initialData?.managed_by as any) || 'self'
+  const [managedBy, setManagedBy] = useState<string>(
+    (initialData?.managed_by as any) || ''
   );
   const [displayName, setDisplayName] = useState(
-    initialData?.display_name || currentUser?.user_metadata?.full_name || ''
+    initialData?.display_name || ''
   );
   const [age, setAge] = useState(initialData?.age ? String(initialData.age) : '');
   const [height, setHeight] = useState(initialData?.height || '');
   const [city, setCity] = useState(initialData?.city || '');
-  const [religion, setReligion] = useState(initialData?.religion || 'Hindu');
+  const [cityIsOther, setCityIsOther] = useState(
+    Boolean(initialData?.city && !CITY_OPTIONS.includes(initialData.city))
+  );
+  const [religion, setReligion] = useState(initialData?.religion || '');
   const [subCommunity, setSubCommunity] = useState(initialData?.sub_community || '');
   const [education, setEducation] = useState(initialData?.education || '');
-  const [employmentType, setEmploymentType] = useState<'Salaried' | 'Self-Employed / Business'>(initialEmploymentType);
-  const [occupation, setOccupation] = useState(cleanOccupation);
+  const [employmentType, setEmploymentType] = useState<string>(initialData ? initialEmploymentType : '');
+  const [occupation, setOccupation] = useState(initialData ? cleanOccupation : '');
   const [companyName, setCompanyName] = useState(initialData?.company_name || '');
-  const [salaryBracket, setSalaryBracket] = useState(initialData?.salary_bracket || '₹10L - ₹15L');
-  const [financialStance, setFinancialStance] = useState('Hybrid Balance');
-  const [diet, setDiet] = useState(initialData?.diet || 'Veg');
-  const [familyType, setFamilyType] = useState('Nuclear');
-  const [familyValues, setFamilyValues] = useState('Moderate');
+  const [salaryBracket, setSalaryBracket] = useState(initialData?.salary_bracket || '');
+  const [financialStance, setFinancialStance] = useState('');
+  const [diet, setDiet] = useState(initialData?.diet || '');
+  const [familyType, setFamilyType] = useState('');
+  const [familyValues, setFamilyValues] = useState('');
 
   // Step 8 & 9 Media Upload State
   const [photos, setPhotos] = useState<string[]>(initialData?.photos || []);
   const [videoUrl, setVideoUrl] = useState<string>(
-    initialData?.bio_video_url || 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-smiling-at-the-camera-41130-large.mp4'
+    initialData?.bio_video_url || ''
   );
 
   // Live In-Browser Video Recording State
@@ -131,7 +120,6 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
 
   const totalSteps = 10;
 
-  // Clear validation error whenever user modifies inputs
   useEffect(() => {
     setErrorMsg(null);
   }, [step, displayName, age, height, city, education, occupation, companyName, employmentType, salaryBracket, photos]);
@@ -145,6 +133,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         newPhotoUrls.push(url);
       });
       setPhotos(prev => [...prev, ...newPhotoUrls].slice(0, 3));
+      setObjectUrls((prev) => [...prev, ...newPhotoUrls]);
     }
   };
 
@@ -158,6 +147,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       const file = e.target.files[0];
       const url = URL.createObjectURL(file);
       setVideoUrl(url);
+      setObjectUrls((prev) => [...prev, url]);
     }
   };
 
@@ -195,6 +185,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         const blob = new Blob(recordedChunksRef.current, { type: 'video/mp4' });
         const recordedUrl = URL.createObjectURL(blob);
         setVideoUrl(recordedUrl);
+        setObjectUrls((prev) => [...prev, recordedUrl]);
         closeWebcamRecorder();
       };
       recorder.start();
@@ -207,7 +198,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   };
 
   const stopLiveRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
     }
@@ -351,15 +342,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
     setIsSubmitting(true);
     const standardGender = gender === 'man' ? 'male' : 'female';
     try {
-      const defaultGallery = [
-        gender === 'woman' 
-          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'
-          : 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80'
-      ];
-
-      const finalPhotos = photos.length > 0 ? photos : defaultGallery;
+      // No stock photo defaults — only photos the user actually uploaded.
+      const finalPhotos = photos;
 
       const createdProfile = await profileService.createProfile({
         id: initialData?.id,
@@ -377,7 +361,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         company_name: companyName.trim(),
         salary_bracket: salaryBracket,
         diet: diet,
-        managed_by: managedBy === 'sibling' ? 'self' : managedBy,
+        managed_by: (managedBy === 'sibling' ? 'self' : (managedBy || 'self')) as 'self' | 'parent',
         photos: finalPhotos,
         bio_video_url: videoUrl,
         family_background: `${familyType} family with ${familyValues.toLowerCase()} values. Settled in ${city}.`,
@@ -468,7 +452,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F4] flex flex-col justify-between p-4 sm:p-6 w-full max-w-lg mx-auto relative select-none text-[#111111] font-sans overflow-hidden">
+    <div className="min-h-screen bg-[#FBF9F4] flex flex-col p-4 sm:p-6 w-full max-w-lg mx-auto relative select-none text-[#111111] font-sans overflow-hidden">
       {/* Hidden File & Camera Inputs */}
       <input
         ref={photoFileInputRef}
@@ -502,8 +486,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         className="hidden"
       />
 
-      {/* Top Header - Single Clean Logo & Sleek Progress Bar, Zero Extra Buttons */}
-      <div className="pt-1 z-20 space-y-2 relative">
+      {/* Top Header - Clean, no logo or back button */}
+      <div className="pt-1 sticky top-0 z-30 px-4 py-2 bg-[#FBF9F4]">
         <div className="flex items-center justify-between">
           <span className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight">
             mannat
@@ -531,7 +515,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       </div>
 
       {/* Step Content Container - Aligned for Mobile without Dead Space */}
-      <div className="py-2 z-20 flex-1 flex flex-col justify-start relative">
+      <div className="py-2 z-20 flex flex-col justify-start relative">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={step}
@@ -561,11 +545,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                       whileTap={{ scale: 0.96 }}
                       type="button"
                       onClick={() => setGender('man')}
-                      className={`p-4 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${
-                        gender === 'man'
-                          ? 'bg-[#111111] text-white border-[#111111] shadow-md font-bold'
+                      className={`p-4 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'man'
+                          ? 'bg-[#2D2824] text-white border-[#111111] shadow-md font-bold'
                           : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
-                      }`}
+                        }`}
                     >
                       <User className="w-6 h-6 mx-auto mb-1 text-[#B89552]" />
                       <span className="text-sm font-extrabold block">Man</span>
@@ -575,11 +558,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                       whileTap={{ scale: 0.96 }}
                       type="button"
                       onClick={() => setGender('woman')}
-                      className={`p-4 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${
-                        gender === 'woman'
-                          ? 'bg-[#111111] text-white border-[#111111] shadow-md font-bold'
+                      className={`p-4 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'woman'
+                          ? 'bg-[#2D2824] text-white border-[#111111] shadow-md font-bold'
                           : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
-                      }`}
+                        }`}
                     >
                       <User className="w-6 h-6 mx-auto mb-1 text-[#B89552]" />
                       <span className="text-sm font-extrabold block">Woman</span>
@@ -600,11 +582,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.96 }}
                         type="button"
                         onClick={() => setManagedBy(mgr.id as any)}
-                        className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${
-                          managedBy === mgr.id
-                            ? 'bg-[#111111] text-white border-[#111111]'
+                        className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${managedBy === mgr.id
+                            ? 'bg-[#2D2824] text-white border-[#111111]'
                             : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                        }`}
+                          }`}
                       >
                         {mgr.label}
                       </motion.button>
@@ -700,15 +681,41 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                     </label>
                     <div className="relative flex items-center">
                       <MapPin className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      <input
-                        type="text"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="e.g. Mumbai / Bangalore / Delhi NCR"
-                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                      <select
+                        value={cityIsOther || (city && city !== 'Other' && !CITY_OPTIONS.includes(city)) ? 'other' : city}
+                        onChange={(e) => {
+                          if (e.target.value === 'other') {
+                            setCityIsOther(true);
+                            setCity('');
+                          } else {
+                            setCityIsOther(false);
+                            setCity(e.target.value);
+                          }
+                        }}
+                        className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
                         required
-                      />
+                      >
+                        <option value="" disabled>Select a city</option>
+                        {CITY_OPTIONS.map((cityName) => (
+                          <option key={cityName} value={cityName}>{cityName}</option>
+                        ))}
+                        <option value="other">Other / NRI city</option>
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
+                    {(cityIsOther || (city && city !== 'Other' && !CITY_OPTIONS.includes(city))) && (
+                      <div className="relative flex items-center mt-2">
+                        <MapPin className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="Type your city / NRI location"
+                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                          required
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -724,9 +731,19 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                           className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
                           required
                         >
-                          {['Hindu', 'Muslim', 'Sikh', 'Christian', 'Jain', 'Parsi', 'Atheist', 'Agnostic', 'Spiritual', 'Buddhist', 'Jewish', 'Other'].map((rel) => (
-                            <option key={rel} value={rel}>{rel}</option>
-                          ))}
+                          <option value="" disabled>Select religion</option>
+                          <option value="Hindu">Hindu</option>
+                          <option value="Muslim">Muslim</option>
+                          <option value="Sikh">Sikh</option>
+                          <option value="Christian">Christian</option>
+                          <option value="Jain">Jain</option>
+                          <option value="Parsi">Parsi</option>
+                          <option value="Atheist">Atheist</option>
+                          <option value="Agnostic">Agnostic</option>
+                          <option value="Spiritual">Spiritual</option>
+                          <option value="Buddhist">Buddhist</option>
+                          <option value="Jewish">Jewish</option>
+                          <option value="Other">Other</option>
                         </select>
                         <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
@@ -773,11 +790,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.96 }}
                         type="button"
                         onClick={() => setEmploymentType('Salaried')}
-                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                          employmentType === 'Salaried'
-                            ? 'bg-[#111111] text-white border-[#111111] font-bold shadow-sm'
+                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${employmentType === 'Salaried'
+                            ? 'bg-[#2D2824] text-white border-[#111111] font-bold shadow-sm'
                             : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
-                        }`}
+                          }`}
                       >
                         <Briefcase className="w-4 h-4 text-[#B89552]" />
                         <span className="text-xs font-extrabold">Salaried</span>
@@ -787,11 +803,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.96 }}
                         type="button"
                         onClick={() => setEmploymentType('Self-Employed / Business')}
-                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                          employmentType === 'Self-Employed / Business'
-                            ? 'bg-[#111111] text-white border-[#111111] font-bold shadow-sm'
+                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${employmentType === 'Self-Employed / Business'
+                            ? 'bg-[#2D2824] text-white border-[#111111] font-bold shadow-sm'
                             : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
-                        }`}
+                          }`}
                       >
                         <Sparkles className="w-4 h-4 text-[#B89552]" />
                         <span className="text-xs font-extrabold truncate">Self-Employed</span>
@@ -876,11 +891,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.95 }}
                         type="button"
                         onClick={() => setSalaryBracket(sal)}
-                        className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${
-                          salaryBracket === sal
-                            ? 'bg-[#111111] text-white border-[#111111] shadow-sm'
+                        className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${salaryBracket === sal
+                            ? 'bg-[#2D2824] text-white border-[#111111] shadow-sm'
                             : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                        }`}
+                          }`}
                       >
                         {sal}
                       </motion.button>
@@ -901,11 +915,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={() => setFinancialStance(fin.id)}
-                        className={`w-full p-3.5 rounded-xl border text-xs font-bold text-left transition-all cursor-pointer flex items-center justify-between backdrop-blur-md ${
-                          financialStance === fin.id
-                            ? 'bg-[#111111] text-white border-[#111111]'
+                        className={`w-full p-3.5 rounded-xl border text-xs font-bold text-left transition-all cursor-pointer flex items-center justify-between backdrop-blur-md ${financialStance === fin.id
+                            ? 'bg-[#2D2824] text-white border-[#111111]'
                             : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                        }`}
+                          }`}
                       >
                         <span>{fin.label}</span>
                         {financialStance === fin.id && <Check className="w-4 h-4 text-[#B89552]" />}
@@ -937,11 +950,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.95 }}
                         type="button"
                         onClick={() => setDiet(d)}
-                        className={`px-4 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer backdrop-blur-md ${
-                          diet === d
-                            ? 'bg-[#111111] text-white shadow-sm'
+                        className={`px-4 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer backdrop-blur-md ${diet === d
+                            ? 'bg-[#2D2824] text-white shadow-sm'
                             : 'bg-[#F4EFE6]/95 text-[#555555] border border-[#E8E1D5]'
-                        }`}
+                          }`}
                       >
                         {d}
                       </motion.button>
@@ -972,11 +984,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.95 }}
                         type="button"
                         onClick={() => setFamilyType(fam)}
-                        className={`p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${
-                          familyType === fam
-                            ? 'bg-[#111111] text-white border-[#111111]'
+                        className={`p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${familyType === fam
+                            ? 'bg-[#2D2824] text-white border-[#111111]'
                             : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                        }`}
+                          }`}
                       >
                         {fam}
                       </motion.button>
@@ -993,11 +1004,10 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         whileTap={{ scale: 0.95 }}
                         type="button"
                         onClick={() => setFamilyValues(val)}
-                        className={`py-3 px-2 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${
-                          familyValues === val
-                            ? 'bg-[#111111] text-white border-[#111111]'
+                        className={`py-3 px-2 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${familyValues === val
+                            ? 'bg-[#2D2824] text-white border-[#111111]'
                             : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                        }`}
+                          }`}
                       >
                         {val}
                       </motion.button>
@@ -1035,12 +1045,12 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                             <button
                               type="button"
                               onClick={() => handleRemovePhoto(slotIdx)}
-                              className="absolute top-1 right-1 p-1 rounded-full bg-black/70 hover:bg-red-600 text-white transition-colors cursor-pointer"
+                              className="absolute top-1 right-1 p-1 rounded-full bg-[#2D2824]/70 hover:bg-red-600 text-white transition-colors cursor-pointer"
                               title="Remove Photo"
                             >
                               <Trash2 className="w-3 h-3" />
                             </button>
-                            <span className="absolute bottom-1 right-1 bg-[#111111] text-[#B89552] text-[9px] font-black px-1.5 py-0.5 rounded-md">
+                            <span className="absolute bottom-1 right-1 bg-[#2D2824] text-[#B89552] text-[9px] font-black px-1.5 py-0.5 rounded-md">
                               #{slotIdx + 1}
                             </span>
                           </motion.div>
@@ -1065,7 +1075,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                   <button
                     type="button"
                     onClick={() => photoCameraInputRef.current?.click()}
-                    className="p-4 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md active:scale-95"
+                    className="p-4 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md active:scale-95"
                   >
                     <Camera className="w-5 h-5 text-[#B89552]" />
                     <span className="text-xs font-extrabold">Use Camera to Shoot</span>
@@ -1097,17 +1107,27 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                 </p>
 
                 {/* Video Player Preview with Sound Support */}
-                <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[260px] bg-black border-2 border-[#B89552] mx-auto shadow-md">
-                  <video
-                    src={videoUrl}
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 right-2 bg-[#B89552] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1">
-                    <Volume2 className="w-3 h-3" />
-                    <span>Sound Active</span>
-                  </div>
+                <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[260px] bg-[#2D2824] border-2 border-[#B89552] mx-auto shadow-md">
+                  {videoUrl ? (
+                    <>
+                      <video
+                        src={videoUrl}
+                        controls
+                        playsInline
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[#B89552] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1">
+                        <Volume2 className="w-3 h-3" />
+                        <span>Sound Active</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 px-4 text-center">
+                      <Camera className="w-7 h-7 text-[#B89552]" />
+                      <span className="text-xs font-extrabold text-[#111111]">No video yet</span>
+                      <span className="text-[10px] text-[#999999] leading-tight">Record or upload a 30-second intro below to continue.</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Dual Options: Camera Shoot & Video File Upload */}
@@ -1115,7 +1135,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                   <button
                     type="button"
                     onClick={openWebcamRecorder}
-                    className="p-3.5 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1 cursor-pointer transition-all shadow-md active:scale-95"
+                    className="p-3.5 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1 cursor-pointer transition-all shadow-md active:scale-95"
                   >
                     <Camera className="w-5 h-5 text-[#B89552]" />
                     <span className="text-xs font-extrabold">Use Camera to Shoot</span>
@@ -1148,7 +1168,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                   className="bg-[#F4EFE6]/95 border-2 border-[#B89552] rounded-3xl p-6 space-y-4 shadow-xl text-left backdrop-blur-md"
                 >
                   <div className="flex items-center justify-end">
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-[#111111] text-white px-3 py-1 rounded-full flex items-center gap-1">
+                    <span className="text-[10px] font-black uppercase tracking-wider bg-[#2D2824] text-white px-3 py-1 rounded-full flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-[#B89552]" />
                       <span>98% MQS MATCH SCORE</span>
                     </span>
@@ -1211,7 +1231,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
 
       {/* Live Camera Recording Modal */}
       {isRecordingModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-[#2D2824]/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
           <div className="w-full max-w-sm bg-[#161412] rounded-3xl p-5 text-white border border-[#B89552] space-y-4 shadow-2xl relative">
             <button
               type="button"
@@ -1226,7 +1246,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
             </h3>
 
             {/* Live Camera Viewfinder */}
-            <div className="relative aspect-[9/14] max-h-[380px] w-full bg-black rounded-2xl overflow-hidden border border-white/20">
+            <div className="relative aspect-[9/14] max-h-[380px] w-full bg-[#2D2824] rounded-2xl overflow-hidden border border-white/20">
               <video
                 ref={liveVideoRef}
                 autoPlay
@@ -1271,7 +1291,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       )}
 
       {/* Bottom Navigation Buttons */}
-      <div className="pt-2 z-20 flex items-center gap-3 relative">
+      <div className="flex items-center gap-3 bg-white/0 p-2">
         {step > 1 && (
           <button
             type="button"
@@ -1287,7 +1307,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
           type="button"
           disabled={isSubmitting}
           onClick={handleNext}
-          className="flex-1 py-4 px-6 rounded-2xl bg-[#111111] hover:bg-[#B89552] text-xs font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg active:scale-98"
+          className="flex-1 py-5 px-6 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-sm font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg active:scale-98"
         >
           {step === totalSteps ? (
             <>

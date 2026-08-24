@@ -14,7 +14,7 @@ export const MatchMeter: React.FC<MatchMeterProps> = ({ score, size = 68 }) => {
   return (
     <div className="relative flex flex-col items-center justify-center cursor-pointer group">
       <div 
-        className="relative flex items-center justify-center rounded-full bg-black/60 backdrop-blur-md p-1 border border-yellow-500/30 shadow-[0_0_15px_rgba(255,215,0,0.25)] group-hover:scale-105 transition-transform duration-300"
+        className="relative flex items-center justify-center rounded-full bg-[#2D2824]/60 backdrop-blur-md p-1 border border-yellow-500/30 shadow-[0_0_15px_rgba(255,215,0,0.25)] group-hover:scale-105 transition-transform duration-300"
         style={{ width: size, height: size }}
       >
         <svg width={size} height={size} className="transform -rotate-90">
