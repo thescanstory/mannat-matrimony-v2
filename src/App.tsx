@@ -14,11 +14,12 @@ import { PrivacySettingsModal } from './components/PrivacySettingsModal';
 import { PaywallModal } from './components/PaywallModal';
 import { WhoViewedMeScreen } from './components/WhoViewedMeScreen';
 import { ProfileScreen } from './components/ProfileScreen';
+import { SplashScreen } from './components/SplashScreen';
 import { App as AdminPortal } from '../admin/src/App';
 import { Toast } from './components/Toast';
 import { Home, Heart, Eye, Sparkles, User, ArrowLeft, SlidersHorizontal } from 'lucide-react';
 
-type ViewType = 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile';
+type ViewType = 'splash' | 'onboarding' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile';
 
 export function App() {
   // Check if accessing dedicated Admin URL route (/admin, ?admin=true, ?view=admin, #admin, or admin domain)
@@ -81,9 +82,9 @@ function MainApp() {
   const [currentView, setCurrentView] = useState<ViewType>(() => {
     try {
       const stored = localStorage.getItem('mannat_active_user');
-      return stored ? 'home' : 'auth';
+      return stored ? 'splash' : 'splash';
     } catch {
-      return 'auth';
+      return 'splash';
     }
   });
 
@@ -199,6 +200,16 @@ function MainApp() {
     }
   };
 
+  // Handle splash screen completion
+  const handleSplashComplete = useCallback(() => {
+    try {
+      const stored = localStorage.getItem('mannat_active_user');
+      setCurrentView(stored ? 'home' : 'auth');
+    } catch {
+      setCurrentView('auth');
+    }
+  }, []);
+
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
   useEffect(() => {
     // Handle Direct Google OAuth 2.0 Return (via #access_token=...)
@@ -260,7 +271,7 @@ function MainApp() {
     const { data: authListener } = authService.onAuthStateChange(async (user) => {
       if (user) {
         setCurrentUser(user);
-        
+
         // Clean URL hash after successful session capture
         if (typeof window !== 'undefined' && window.location.hash) {
           window.history.replaceState(null, '', window.location.pathname);
@@ -293,7 +304,7 @@ function MainApp() {
     let userGender: string | null = null;
     let userProfileId: string | null = null;
 
-    if (currentUser) {
+    if (currentUser && profiles.length > 0) {
       const myProfile = profiles.find(
         (p) => p.user_id === currentUser.id || p.id === currentUser.id
       );
@@ -329,13 +340,13 @@ function MainApp() {
         return false;
       }
 
-      // If user is male/man, ONLY show females/women
-      if (userGender === 'male' || userGender === 'man') {
+      // If user is male, ONLY show females
+      if (userGender === 'male') {
         return p.gender === 'female';
       }
 
-      // If user is female/woman, ONLY show males/men
-      if (userGender === 'female' || userGender === 'woman') {
+      // If user is female, ONLY show males
+      if (userGender === 'female') {
         return p.gender === 'male';
       }
 
@@ -565,10 +576,15 @@ function MainApp() {
               transition={{ duration: 0.2, ease: [0.25, 1, 0.5, 1] }}
               className="w-full flex-1 flex flex-col"
             >
+              {/* Splash Screen */}
+              {currentView === 'splash' && (
+                <SplashScreen onComplete={handleSplashComplete} />
+              )}
+
               {/* Onboarding & Edit Profile View */}
               {currentView === 'onboarding' && (
-                <OnboardingCarousel 
-                  onComplete={handleProfileCreated} 
+                <OnboardingCarousel
+                  onComplete={handleProfileCreated}
                   currentUser={currentUser}
                   initialData={isEditingProfile ? activeUserProfile : null}
                   isEditing={isEditingProfile}
