@@ -437,15 +437,24 @@ function MainApp() {
     navigateTo('share-portal');
   };
 
-  const handleProfileCreated = (newProfile?: Profile) => {
+  const handleProfileCreated = async (newProfile?: Profile) => {
     if (newProfile) {
-      setProfiles((prev) => {
-        const exists = prev.some((p) => p.id === newProfile.id || (currentUser && p.user_id === currentUser.id));
-        if (exists) {
-          return prev.map((p) => (p.id === newProfile.id || (currentUser && p.user_id === currentUser.id) ? newProfile : p));
+      // Reload all profiles to show newly created profiles from other users
+      try {
+        const liveProfiles = await profileService.getProfiles();
+        if (liveProfiles && liveProfiles.length > 0) {
+          setProfiles(liveProfiles);
         }
-        return [newProfile, ...prev];
-      });
+      } catch {
+        // Fallback: just add the new profile to state
+        setProfiles((prev) => {
+          const exists = prev.some((p) => p.id === newProfile.id || (currentUser && p.user_id === currentUser.id));
+          if (exists) {
+            return prev.map((p) => (p.id === newProfile.id || (currentUser && p.user_id === currentUser.id) ? newProfile : p));
+          }
+          return [newProfile, ...prev];
+        });
+      }
     }
     if (isEditingProfile) {
       setIsEditingProfile(false);
