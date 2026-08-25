@@ -388,7 +388,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       }
 
       onComplete(createdProfile);
-    } catch {
+    } catch (error) {
+      console.error('Profile creation error:', error);
       onComplete();
     } finally {
       setIsSubmitting(false);
@@ -1252,7 +1253,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                 autoPlay
                 muted
                 playsInline
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover scale-x-[-1]"
               />
 
               {/* Recording Indicator & Timer */}

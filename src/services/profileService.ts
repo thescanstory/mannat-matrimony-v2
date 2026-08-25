@@ -146,6 +146,7 @@ export const profileService = {
       photos: profileData.photos && profileData.photos.length > 0 ? profileData.photos : [],
       credits: 100,
       is_vouched: false,
+      is_spotlight: false,
       is_unlocked: false,
       compatibility_score: profileData.compatibility_score || 0,
       gun_milan_score: profileData.gun_milan_score || 0,
@@ -178,6 +179,7 @@ export const profileService = {
           id: newProfile.id,
           user_id: newProfile.user_id,
           display_name: newProfile.display_name,
+          gender: newProfile.gender,
           age: newProfile.age,
           height: newProfile.height,
           city: newProfile.city,
@@ -197,11 +199,14 @@ export const profileService = {
           managed_by: newProfile.managed_by,
           compatibility_score: newProfile.compatibility_score,
           gun_milan_score: newProfile.gun_milan_score,
+          is_vouched: newProfile.is_vouched,
+          is_spotlight: newProfile.is_spotlight,
+          is_unlocked: newProfile.is_unlocked,
           lifestyle_details: newProfile.lifestyle_details,
           horoscope: newProfile.horoscope
         }]);
       } catch (e) {
-        console.warn('Supabase profile insertion fallback:', e);
+        console.warn('Supabase profile insertion error:', e);
       }
     }
 
