@@ -1,5 +1,8 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 
+import { Capacitor } from '@capacitor/core';
+import { SocialLogin } from '@capgo/capacitor-social-login';
+
 export interface UserSession {
   id: string;
   email?: string;
@@ -10,6 +13,26 @@ export interface UserSession {
 }
 
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '53450733585-uj6ltrdggai2146p321tb0ok27fjhi52.apps.googleusercontent.com';
+export const GOOGLE_IOS_CLIENT_ID = import.meta.env.VITE_GOOGLE_IOS_CLIENT_ID || '53450733585-6rk0itt9br119844l5tk2d28hl44787i.apps.googleusercontent.com';
+
+let isSocialLoginInitialized = false;
+const initNativeSocialLogin = async () => {
+  if (isSocialLoginInitialized || !Capacitor.isNativePlatform()) return;
+  try {
+    await SocialLogin.initialize({
+      google: {
+        iOSClientId: GOOGLE_IOS_CLIENT_ID,
+        iOSServerClientId: GOOGLE_CLIENT_ID,
+        webClientId: GOOGLE_CLIENT_ID,
+        mode: 'online',
+      },
+      apple: {},
+    });
+    isSocialLoginInitialized = true;
+  } catch (e) {
+    console.warn('SocialLogin initialization failed:', e);
+  }
+};
 
 export const authService = {
   // Exchange Google ID Token with Supabase
@@ -24,14 +47,62 @@ export const authService = {
     });
   },
 
-  // Direct 1-Click Google OAuth 2.0 (Direct to Google, 100% Safari Compatible)
-  signInWithGoogle: async () => {
+  // 1-Click Google Sign In (Native 1-Tap on iOS/Android, Web OAuth fallback on browser)
+  signInWithGoogle: async (): Promise<{ data: UserSession | null; error: any }> => {
     localStorage.removeItem('mannat_logged_out');
 
-    // Always send the canonical, Google-registered redirect URI so sign-in works
-    // from ANY URL this app is served on (canonical alias, previews, deployment links).
-    // Local development keeps localhost (register http://localhost:5173 in the Google
-    // Cloud Console to enable it), or override via VITE_GOOGLE_REDIRECT_URI.
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await initNativeSocialLogin();
+        const res = await SocialLogin.login({
+          provider: 'google',
+          options: {
+            scopes: ['email', 'profile'],
+          },
+        });
+
+        const googleRes = res?.result as any;
+        if (googleRes) {
+          // If Supabase is configured and an idToken is returned, link session
+          if (googleRes.idToken && isSupabaseConfigured()) {
+            try {
+              const { data } = await supabase.auth.signInWithIdToken({
+                provider: 'google',
+                token: googleRes.idToken,
+              });
+              if (data?.user) {
+                const u = authService.setUserSession(
+                  data.user.email || googleRes.profile?.email || '',
+                  data.user.user_metadata?.full_name || googleRes.profile?.name || googleRes.profile?.givenName,
+                  data.user.user_metadata?.avatar_url || googleRes.profile?.imageUrl
+                );
+                return { data: u, error: null };
+              }
+            } catch (err) {
+              console.warn('Supabase ID Token sign-in warning:', err);
+            }
+          }
+
+          // Directly activate user session from Google profile info
+          if (googleRes.profile?.email) {
+            const u = authService.setUserSession(
+              googleRes.profile.email,
+              googleRes.profile.name || googleRes.profile.givenName || 'Google User',
+              googleRes.profile.imageUrl || ''
+            );
+            return { data: u, error: null };
+          }
+        }
+      } catch (err: any) {
+        if (err?.code === 'USER_CANCELLED') {
+          return { data: null, error: 'Cancelled' };
+        }
+        console.warn('Native Google Sign-In error:', err);
+        return { data: null, error: err };
+      }
+    }
+
+    // Web Browser Fallback
     const hostname = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '';
     const isLocalDev = hostname === 'localhost' || hostname === '127.0.0.1';
     const redirectUri = (typeof window !== 'undefined' && isLocalDev && window.location.origin)
@@ -46,15 +117,68 @@ export const authService = {
     return { data: null, error: null };
   },
 
-  // 1-Click Apple OAuth Sign In
-  signInWithApple: async () => {
+  // 1-Click Apple Sign In (Native Face ID/Touch ID on iOS, Web OAuth fallback)
+  signInWithApple: async (): Promise<{ data: UserSession | null; error: any }> => {
     localStorage.removeItem('mannat_logged_out');
-    return await supabase.auth.signInWithOAuth({
-      provider: 'apple',
-      options: {
-        redirectTo: window.location.origin
+
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await initNativeSocialLogin();
+        const res = await SocialLogin.login({
+          provider: 'apple',
+          options: {
+            scopes: ['name', 'email'],
+          },
+        });
+
+        const appleRes = res?.result as any;
+        if (appleRes) {
+          if (appleRes.idToken && isSupabaseConfigured()) {
+            try {
+              const { data } = await supabase.auth.signInWithIdToken({
+                provider: 'apple',
+                token: appleRes.idToken,
+              });
+              if (data?.user) {
+                const u = authService.setUserSession(
+                  data.user.email || appleRes.profile?.email || '',
+                  data.user.user_metadata?.full_name || [appleRes.profile?.givenName, appleRes.profile?.familyName].filter(Boolean).join(' ') || 'Apple Member',
+                  ''
+                );
+                return { data: u, error: null };
+              }
+            } catch (err) {
+              console.warn('Supabase Apple ID token sign-in error:', err);
+            }
+          }
+
+          if (appleRes.profile?.email || appleRes.profile?.user) {
+            const email = appleRes.profile?.email || `${appleRes.profile.user}@privaterelay.appleid.com`;
+            const name = [appleRes.profile?.givenName, appleRes.profile?.familyName].filter(Boolean).join(' ') || 'Apple Member';
+            const u = authService.setUserSession(email, name);
+            return { data: u, error: null };
+          }
+        }
+      } catch (err: any) {
+        if (err?.code === 'USER_CANCELLED') {
+          return { data: null, error: 'Cancelled' };
+        }
+        console.warn('Native Apple Sign-In error:', err);
+        return { data: null, error: err };
       }
-    });
+    }
+
+    if (isSupabaseConfigured()) {
+      const res = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
+        }
+      });
+      return { data: null, error: res.error };
+    }
+
+    return { data: null, error: null };
   },
 
   // Passwordless Email Magic Link

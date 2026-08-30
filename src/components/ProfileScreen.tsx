@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
   ShieldCheck,
-  UserCheck,
   LogOut,
   LogIn,
   User,
@@ -33,8 +32,8 @@ interface ProfileScreenProps {
   currentUser: UserSession | null;
   candidateProfile?: Profile | null;
   privacySettings: PrivacySettings;
-  isParentView: boolean;
-  onToggleParentView: () => void;
+  isParentView?: boolean;
+  onToggleParentView?: () => void;
   onOpenPrivacySettings: () => void;
   onOpenPaywall: () => void;
   onEditBioData?: () => void;
@@ -49,11 +48,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   currentUser,
   candidateProfile,
   privacySettings,
-  isParentView,
-  onToggleParentView,
   onOpenPrivacySettings,
   onOpenPaywall,
-  onEditBioData,
   onUpdateProfile,
   onOpenAuth,
   onLogout,
@@ -63,6 +59,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
+  const [isBioDataExpanded, setIsBioDataExpanded] = useState(false);
 
   // Editable Bio-Data State initialized from candidateProfile or defaults
   const [editName, setEditName] = useState(candidateProfile?.display_name || currentUser?.user_metadata?.full_name || '');
@@ -166,44 +163,50 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#FBF9F4] text-[#111111] pb-28 select-none font-sans">
+    <div className="w-full min-h-screen bg-[#FBF9F4] text-[#111111] pb-36 select-none font-sans">
 
       <div className="p-5 space-y-5">
         {/* User Card */}
-        <div className="bg-white rounded-3xl p-6 border border-[#E8E1D5] shadow-xs relative overflow-hidden">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-[#F4EFE6] border-2 border-[#B89552]/40 flex items-center justify-center text-[#B89552] text-xl font-serif-editorial font-bold shadow-inner overflow-hidden">
-              {editPhotos && editPhotos.length > 0 ? (
-                <img 
-                  src={editPhotos[0]} 
-                  alt={displayName} 
-                  className="w-full h-full rounded-full object-cover" 
-                />
-              ) : currentUser?.user_metadata?.avatar_url ? (
-                <img 
-                  src={currentUser.user_metadata.avatar_url} 
-                  alt={displayName} 
-                  className="w-full h-full rounded-full object-cover" 
-                />
-              ) : (
-                <User className="w-8 h-8 text-[#B89552]" />
-              )}
+        <div className="bg-white rounded-3xl p-6 border border-[#E8E1D5] shadow-xs relative overflow-hidden text-center space-y-4">
+          {/* Big Profile Picture */}
+          <div className="relative w-32 h-32 mx-auto rounded-3xl bg-[#F4EFE6] border-4 border-white shadow-lg flex items-center justify-center text-[#B89552] text-3xl font-serif-editorial font-bold overflow-hidden">
+            {editPhotos && editPhotos.length > 0 ? (
+              <img 
+                src={editPhotos[0]} 
+                alt={displayName} 
+                className="w-full h-full object-cover" 
+              />
+            ) : currentUser?.user_metadata?.avatar_url ? (
+              <img 
+                src={currentUser.user_metadata.avatar_url} 
+                alt={displayName} 
+                className="w-full h-full object-cover" 
+              />
+            ) : (
+              <User className="w-14 h-14 text-[#B89552]" />
+            )}
+            <div className="absolute bottom-2 right-2 bg-[#B89552] text-white p-1.5 rounded-full shadow-md">
+              <CheckCircle2 className="w-4 h-4" />
             </div>
+          </div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-serif-editorial font-bold text-[#111111] truncate">{displayName}</h2>
-                <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                  <span>Verified</span>
-                </span>
-              </div>
-              <p className="text-xs text-[#777777] truncate">
-                {editOccupation} · {editCity} · {editIncomeBracket}
-              </p>
-              <p className="text-[11px] text-[#999999] truncate">{email}</p>
+          <div className="space-y-1">
+            <div className="flex items-center justify-center gap-2">
+              <h2 className="text-2xl font-serif-editorial font-bold text-[#111111]">{displayName}</h2>
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <span>Verified</span>
+              </span>
             </div>
+            <p className="text-xs text-[#777777] font-semibold">
+              {editOccupation} · {editCity}
+            </p>
+            <p className="text-xs text-[#B89552] font-bold">{editIncomeBracket || '₹35 - 50 Lakhs / yr'}</p>
+            <p className="text-[11px] text-[#999999] font-medium">{email}</p>
+          </div>
 
+          {/* Account Edit & Logout */}
+          <div className="pt-2 flex items-center justify-center gap-3">
             {currentUser && (
               <button
                 type="button"
@@ -212,24 +215,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   setEditEmail(currentUser.email || '');
                   setShowEditModal(true);
                 }}
-                className="p-2 rounded-full hover:bg-[#F4EFE6] text-[#B89552] border border-[#E8E1D5] transition-all cursor-pointer"
-                title="Edit Account Credentials"
+                className="px-4 py-2 rounded-full hover:bg-[#F4EFE6] text-[#B89552] border border-[#E8E1D5] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
-                <Edit3 className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Auth & Bio-Data Action Buttons */}
-          <div className="mt-5 pt-4 border-t border-[#E8E1D5] space-y-2">
-            {currentUser && onEditBioData && (
-              <button
-                type="button"
-                onClick={onEditBioData}
-                className="w-full py-3 px-4 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-white text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98"
-              >
-                <Sparkles className="w-4 h-4 text-[#B89552]" />
-                <span>Launch Full Step-by-Step Bio-Data Wizard</span>
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>Edit Account</span>
               </button>
             )}
 
@@ -237,19 +226,19 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <button
                 type="button"
                 onClick={onLogout}
-                className="w-full py-2.5 px-4 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer border border-rose-200 active:scale-98"
+                className="px-4 py-2 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-rose-200 active:scale-98 shadow-xs"
               >
-                <LogOut className="w-4 h-4" />
-                <span>Log Out of Account</span>
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Log Out</span>
               </button>
             ) : (
               <button
                 type="button"
                 onClick={onOpenAuth}
-                className="w-full py-2.5 px-4 rounded-full bg-[#2D2824] hover:bg-[#B89552] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
+                className="px-5 py-2.5 rounded-full bg-[#2D2824] hover:bg-[#B89552] text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-98"
               >
-                <LogIn className="w-4 h-4 text-[#B89552]" />
-                <span>Sign In to Account</span>
+                <LogIn className="w-3.5 h-3.5 text-[#B89552]" />
+                <span>Sign In</span>
               </button>
             )}
           </div>
@@ -257,16 +246,38 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
         {/* Onboarding Bio-Data Overview & Dropdown Accordion Editors */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#8C6D32] block">
-              Candidate Bio-Data & Onboarding Details
-            </span>
-            <span className="text-[10px] text-[#777777] font-semibold">
-              Tap any section to edit
-            </span>
+          {/* Collapsible Dropdown Trigger Card */}
+          <div className="bg-white rounded-3xl border border-[#E8E1D5] p-4 shadow-xs">
+            <button
+              type="button"
+              onClick={() => setIsBioDataExpanded(!isBioDataExpanded)}
+              className="w-full flex items-center justify-between text-left cursor-pointer"
+            >
+              <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
+                <div className="p-2.5 rounded-2xl bg-amber-50 text-[#B89552] border border-[#B89552]/20 shrink-0">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-xs font-bold text-[#111111] truncate">Candidate Bio-Data & Vitals</h4>
+                    <span className="text-[9px] font-black uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                      7 Sections
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#777777] mt-0.5 truncate">
+                    {editName || 'Candidate'}, {editAge} yrs · {editCity} · {editOccupation}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-xs text-[#B89552] font-bold shrink-0">
+                <span>{isBioDataExpanded ? 'Hide' : 'Edit'}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isBioDataExpanded ? 'rotate-180' : ''}`} />
+              </div>
+            </button>
           </div>
 
-          <div className="bg-white rounded-3xl border border-[#E8E1D5] divide-y divide-[#E8E1D5] shadow-xs overflow-hidden">
+          {isBioDataExpanded && (
+            <div className="bg-white rounded-3xl border border-[#E8E1D5] divide-y divide-[#E8E1D5] shadow-xs overflow-hidden">
             
             {/* 1. Vitals & Identity Accordion */}
             <div className="transition-colors">
@@ -868,9 +879,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
 
           </div>
+          )}
         </div>
 
-<NudgeBanner
+        <NudgeBanner
           title="MEMBERSHIP STATUS"
           subtitle="Mannat Gold Membership"
           className="bg-gradient-to-br from-[#1A1A1A] to-[#2C261E] text-white border-[#B89552]/40"
@@ -919,36 +931,6 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               <span className="text-[11px] font-bold text-[#8C6D32] bg-[#F4EFE6] px-2.5 py-1 rounded-full border border-[#E8E1D5]">
                 {privacySettings.photo_privacy === 'visible_to_everyone' ? 'Standard' : 'Private'}
               </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Discovery & App Modes */}
-        <div className="space-y-2">
-          <span className="text-[10px] font-black uppercase tracking-wider text-[#8C6D32] px-1 block">
-            App Modes & Discovery
-          </span>
-          <div className="bg-white rounded-3xl border border-[#E8E1D5] divide-y divide-[#E8E1D5] shadow-xs overflow-hidden">
-            {/* Parent Mode Toggle */}
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-2xl border ${isParentView ? 'bg-amber-600 text-white border-amber-600' : 'bg-orange-50 text-orange-600 border-orange-200'}`}>
-                  <UserCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[#111111]">Parent View Mode</h4>
-                  <p className="text-[11px] text-[#777777]">Large text & family bio-data oriented interface</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={onToggleParentView}
-                className={`px-3 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer shadow-xs ${
-                  isParentView ? 'bg-amber-600 text-white' : 'bg-[#F4EFE6] text-[#111111] hover:bg-[#E8E1D5]'
-                }`}
-              >
-                {isParentView ? 'ON' : 'OFF'}
-              </button>
             </div>
           </div>
         </div>

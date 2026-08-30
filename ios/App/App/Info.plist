@@ -16,6 +16,17 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mannat</string>
+				<string>com.googleusercontent.apps.53450733585-6rk0itt9br119844l5tk2d28hl44787i</string>
+				<string>com.googleusercontent.apps.53450733585-uj6ltrdggai2146p321tb0ok27fjhi52</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -66,5 +77,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Mannat requires access to your camera to record your 30-second bio-data video introduction and profile photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Mannat requires access to your photo library to select verified bio-data photos and video introductions.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Mannat requires access to your microphone to record audio for your 30-second bio-data video introduction.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Mannat requires access to save your bio-data photos to your photo library.</string>
 </dict>
 </plist>

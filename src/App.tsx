@@ -501,16 +501,16 @@ function MainApp() {
     <div 
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className={`min-h-screen bg-[#FBF9F4] text-[#111111] flex flex-col items-center justify-start p-0 font-sans select-none relative overflow-x-hidden ${isParentView ? 'text-lg font-bold' : ''}`}
+      className={`min-h-[100dvh] bg-[#FBF9F4] text-[#111111] flex flex-col items-center justify-start p-0 font-sans select-none relative overflow-x-hidden ${isParentView ? 'text-lg font-bold' : ''}`}
     >
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
       {/* Main Responsive Mobile App Container */}
-      <div className="w-full max-w-md mx-auto flex-1 min-h-screen bg-[#FBF9F4] flex flex-col relative">
+      <div className="w-full max-w-md mx-auto flex-1 min-h-[100dvh] bg-[#FBF9F4] flex flex-col relative">
         
         {/* Luxury App Header with Back Button, Brand Logo, and Filter Button (Hidden on Auth & Onboarding) */}
         {currentView !== 'auth' && currentView !== 'onboarding' && (
-          <header className="w-full bg-[#FAF8F5]/90 backdrop-blur-xl border-b border-[#EADBCE]/80 px-4 py-3 z-40 sticky top-0 shadow-xs flex items-center justify-between">
+          <header className="w-full bg-[#FAF8F5]/90 backdrop-blur-xl border-b border-[#EADBCE]/80 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-3 z-40 sticky top-0 shadow-xs flex items-center justify-between">
             <div className="w-16 flex items-center justify-start">
               {currentView !== 'home' && (
                 <button
@@ -738,11 +738,11 @@ function MainApp() {
 
       {/* Ultra-Luxury Frosted Floating Bottom Dock Navigation Bar */}
       {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[92%] max-w-md glass-dock-vara rounded-full z-50 px-3 py-2 flex items-center justify-around shadow-xl border border-[#EADBCE]/90">
+        <div className="fixed bottom-[max(0.75rem,calc(env(safe-area-inset-bottom)+0.25rem))] left-1/2 -translate-x-1/2 w-[92%] max-w-sm glass-dock-vara rounded-full z-50 px-2 py-1.5 flex items-center justify-around shadow-xl border border-[#EADBCE]/90">
           <button
             type="button"
             onClick={() => navigateTo('home')}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-full transition-all cursor-pointer ${
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-full transition-all cursor-pointer ${
               currentView === 'home' 
                 ? 'text-[#C5A059] bg-[#FAF8F5] shadow-xs scale-105 font-bold' 
                 : 'text-[#7E776F] hover:text-[#161412] font-semibold'

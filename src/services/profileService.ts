@@ -14,6 +14,8 @@ export function generateUUID(): string {
   });
 }
 
+export const INITIAL_CURATED_PROFILES: Profile[] = [];
+
 export const profileService = {
   // Check if user has an existing completed profile / bio-data
   hasExistingProfile: async (userId?: string, email?: string): Promise<boolean> => {
@@ -54,20 +56,14 @@ export const profileService = {
     return false;
   },
 
-  // Fetch All Candidate Profiles
+  // Fetch All Real Candidate Profiles
   getProfiles: async (): Promise<Profile[]> => {
     let customProfiles: Profile[] = [];
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
       if (stored) {
-        // Purge any legacy seeded/mock entries (ids like prof-*, user_ids like usr-*)
         const parsed: Profile[] = JSON.parse(stored);
-        customProfiles = parsed.filter(p =>
-          !/^(prof|usr)-/i.test(p.id || '') && !/^(prof|usr)-/i.test(p.user_id || '')
-        );
-        if (customProfiles.length !== parsed.length) {
-          localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(customProfiles));
-        }
+        customProfiles = parsed;
       }
     } catch (e) {
       console.warn('Could not read local profiles:', e);
@@ -89,8 +85,8 @@ export const profileService = {
     };
 
     if (!isSupabaseConfigured()) {
-      const base = customProfiles;
-      return applyUnlocks(base);
+      const unique = Array.from(new Map(customProfiles.map((item) => [item.id, item])).values());
+      return applyUnlocks(unique);
     }
 
     try {
@@ -99,8 +95,9 @@ export const profileService = {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        return applyUnlocks(customProfiles.length > 0 ? customProfiles : []);
+      if (error || !data || data.length === 0) {
+        const unique = Array.from(new Map(customProfiles.map((item) => [item.id, item])).values());
+        return applyUnlocks(unique);
       }
 
       if (data) {
@@ -113,9 +110,9 @@ export const profileService = {
         return applyUnlocks(unique);
       }
 
-      return [];
+      return applyUnlocks(customProfiles);
     } catch {
-      return [];
+      return applyUnlocks(customProfiles);
     }
   },
 

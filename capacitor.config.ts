@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
     iosScheme: 'mannat'
   },
   ios: {
-    contentInset: 'always',
+    contentInset: 'never',
     preferredContentMode: 'mobile',
     scheme: 'Mannat Matrimony'
   }

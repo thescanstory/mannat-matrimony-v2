@@ -182,26 +182,26 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] w-full max-w-xl mx-auto flex flex-col justify-between pb-28 select-none font-sans">
+    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] w-full max-w-md mx-auto flex flex-col justify-start pb-36 select-none font-sans px-4 pt-2 space-y-4">
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
       {/* Top Header */}
-      <div className="bg-[#FBF9F4] px-5 pt-6 pb-4 border-b border-[#E8E1D5] flex items-center justify-between sticky top-0 z-30 shadow-xs">
+      <div className="flex items-center justify-between px-1">
         <div>
-          <h1 className="text-2xl font-serif-editorial font-bold text-[#111111] tracking-tight">Connections</h1>
+          <h1 className="text-xl font-serif-editorial font-bold text-[#111111] tracking-tight">Connections</h1>
           <p className="text-[11px] text-[#777777] font-semibold">Mutual Waves & Direct Discussions</p>
         </div>
         <button
           type="button"
           onClick={onOpenFilters}
-          className="p-2.5 rounded-full bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer shadow-xs"
+          className="p-2.5 rounded-full bg-white hover:bg-[#F4EFE6] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer shadow-xs"
         >
           <SlidersHorizontal className="w-4 h-4 text-[#111111]" />
         </button>
       </div>
 
-      {/* Tabs Row */}
-      <div className="bg-[#FBF9F4] px-5 border-b border-[#E8E1D5] flex items-center justify-around sticky top-[69px] z-20">
+      {/* Segmented Tabs Bar */}
+      <div className="bg-[#F4EFE6] p-1 rounded-2xl border border-[#E8E1D5] grid grid-cols-3 gap-1">
         {(['Accepted', 'Sent', 'Received'] as const).map((tab) => {
           const isActive = activeTab === tab;
           const count = tab === 'Accepted' ? acceptedList.length : tab === 'Sent' ? sentList.length : receivedList.length;
@@ -211,30 +211,27 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`py-3.5 text-xs font-extrabold uppercase tracking-wider transition-all relative cursor-pointer flex items-center gap-1.5 ${
-                isActive ? 'text-[#B89552]' : 'text-[#777777] hover:text-[#111111]'
+              className={`py-2 px-1 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
+                isActive ? 'bg-white text-[#111111] shadow-xs' : 'text-[#777777] hover:text-[#111111]'
               }`}
             >
               <span>{tab}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
                 isActive ? 'bg-[#B89552] text-white' : 'bg-[#E8E1D5] text-[#777777]'
               }`}>
                 {count}
               </span>
-              {isActive && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#B89552] rounded-full" />
-              )}
             </button>
           );
         })}
       </div>
 
       {/* Tab Content List */}
-      <div className="p-4 space-y-4 flex-1 bg-[#FBF9F4]">
+      <div className="space-y-3 flex-1">
         {activeTab === 'Accepted' && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {acceptedList.length === 0 ? (
-              <div className="py-12 text-center text-gray-500 text-xs font-medium">
+              <div className="py-12 text-center text-gray-500 text-xs font-medium bg-white rounded-3xl p-6 border border-[#E8E1D5]">
                 No accepted connections yet. Accept interest waves to start conversations.
               </div>
             ) : (
@@ -242,41 +239,46 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                 <div
                   key={profile.id}
                   onClick={() => onOpenProfile(profile)}
-                  className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer hover:shadow-md transition-all text-left"
+                  className="bg-white rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer hover:shadow-md transition-all text-left"
                 >
-                  {/* Photo Header */}
-                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-[#2D2824]">
-                    <img
-                      src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                      alt={profile.display_name}
-                      className="w-full h-full object-cover"
-                    />
-                    <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#B89552] bg-white px-3 py-1 rounded-full shadow-xs border border-[#E8E1D5] flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3 text-[#B89552]" />
-                      <span>Accepted Connection</span>
-                    </span>
-                  </div>
+                  {/* Photo & Brief Row */}
+                  <div className="flex items-center gap-3.5">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#2D2824] shrink-0 shadow-xs">
+                      <img
+                        src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                        alt={profile.display_name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-1.5 right-1.5 bg-emerald-500 text-white rounded-full p-0.5 shadow-xs">
+                        <ShieldCheck className="w-3 h-3" />
+                      </div>
+                    </div>
 
-                  {/* Profile Brief */}
-                  <div>
-                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
-                    <p className="text-xs text-[#777777] font-semibold mt-0.5">
-                      {profile.age}yrs, {profile.height || "5'6\""} • {profile.religion} ({profile.sub_community || profile.community})
-                    </p>
-                    <p className="text-xs text-[#999999] mt-0.5">{profile.occupation} • {profile.city}</p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-serif-editorial font-bold text-[#111111] truncate">{profile.display_name}</h3>
+                        <span className="text-[10px] text-emerald-700 bg-emerald-50 font-bold px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                          Connected
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#777777] font-semibold mt-0.5 truncate">
+                        {profile.age} yrs • {profile.height || "5'7\""} • {profile.religion}
+                      </p>
+                      <p className="text-xs text-[#111111] font-bold mt-0.5 truncate">{profile.occupation} • {profile.city}</p>
+                    </div>
                   </div>
 
                   {/* Actions Grid */}
-                  <div className="grid grid-cols-2 gap-2 pt-1">
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#E8E1D5]">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setActiveChatProfile(profile);
                       }}
-                      className="py-3 px-3 rounded-2xl bg-[#B89552] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#9A7B3E] active:scale-98 transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                      className="py-2.5 px-3 rounded-xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap"
                     >
-                      <MessageSquare className="w-4 h-4" />
+                      <MessageSquare className="w-3.5 h-3.5 text-[#DFBE7E]" />
                       <span>Live Chat</span>
                     </button>
 
@@ -286,9 +288,9 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                         e.stopPropagation();
                         onOpenProfile(profile);
                       }}
-                      className="py-3 px-3 rounded-2xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-gray-800 active:scale-98 transition-all cursor-pointer shadow-xs"
+                      className="py-2.5 px-3 rounded-xl bg-[#F4EFE6] border border-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-[#E8E1D5] active:scale-98 transition-all cursor-pointer shadow-xs whitespace-nowrap"
                     >
-                      View Bio-data
+                      <span>View Profile</span>
                     </button>
                   </div>
                 </div>
@@ -298,9 +300,9 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         )}
 
         {activeTab === 'Sent' && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {sentList.length === 0 ? (
-              <div className="py-12 text-center text-gray-500 text-xs font-medium">
+              <div className="py-12 text-center text-gray-500 text-xs font-medium bg-white rounded-3xl p-6 border border-[#E8E1D5]">
                 No outgoing waves sent yet. Send waves to profiles from the main feed.
               </div>
             ) : (
@@ -308,29 +310,35 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                 <div
                   key={profile.id}
                   onClick={() => onOpenProfile(profile)}
-                  className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left"
+                  className="bg-white rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left hover:shadow-md transition-all"
                 >
-                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-[#2D2824]">
-                    <img
-                      src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                      alt={profile.display_name}
-                      className="w-full h-full object-cover"
-                    />
-                    <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#777777] bg-white px-3 py-1 rounded-full shadow-xs border border-[#E8E1D5]">
-                      Pending Response
-                    </span>
+                  <div className="flex items-center gap-3.5">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#2D2824] shrink-0 shadow-xs">
+                      <img
+                        src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                        alt={profile.display_name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-serif-editorial font-bold text-[#111111] truncate">{profile.display_name}</h3>
+                        <span className="text-[10px] text-[#B89552] bg-amber-50 font-bold px-2 py-0.5 rounded-full border border-amber-200 shrink-0">
+                          Pending
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#777777] font-semibold mt-0.5 truncate">
+                        {profile.age} yrs • {profile.occupation}
+                      </p>
+                      <p className="text-xs text-[#111111] font-bold mt-0.5 truncate">{profile.city}, India</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
-                    <p className="text-xs text-[#777777] font-semibold mt-0.5">
-                      {profile.age}yrs • {profile.occupation} • {profile.city}
-                    </p>
-                  </div>
-                  <div className="pt-1">
+
+                  <div className="pt-2 border-t border-[#E8E1D5]">
                     <button
                       type="button"
                       onClick={(e) => handleCancelSent(profile, e)}
-                      className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-98"
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#FAF8F5] hover:bg-red-50 text-red-600 border border-red-200 text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-98 whitespace-nowrap"
                     >
                       Withdraw Interest Wave
                     </button>
@@ -342,9 +350,9 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         )}
 
         {activeTab === 'Received' && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {receivedList.length === 0 ? (
-              <div className="py-12 text-center text-gray-500 text-xs font-medium">
+              <div className="py-12 text-center text-gray-500 text-xs font-medium bg-white rounded-3xl p-6 border border-[#E8E1D5]">
                 No pending received requests.
               </div>
             ) : (
@@ -352,37 +360,42 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                 <div
                   key={profile.id}
                   onClick={() => onOpenProfile(profile)}
-                  className="bg-[#F4EFE6] rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left"
+                  className="bg-white rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left hover:shadow-md transition-all"
                 >
-                  <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-[#2D2824]">
-                    <img
-                      src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                      alt={profile.display_name}
-                      className="w-full h-full object-cover"
-                    />
-                    <span className="absolute top-3 right-3 text-[11px] font-extrabold text-[#B89552] bg-white px-3 py-1 rounded-full shadow-xs border border-[#E8E1D5]">
-                      New Interest Request
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">{profile.display_name}</h3>
-                    <p className="text-xs text-[#777777] font-semibold mt-0.5">
-                      {profile.age}yrs • {profile.occupation} • {profile.city}
-                    </p>
+                  <div className="flex items-center gap-3.5">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#2D2824] shrink-0 shadow-xs">
+                      <img
+                        src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                        alt={profile.display_name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-serif-editorial font-bold text-[#111111] truncate">{profile.display_name}</h3>
+                        <span className="text-[10px] text-emerald-700 bg-emerald-50 font-bold px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                          New Request
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#777777] font-semibold mt-0.5 truncate">
+                        {profile.age} yrs • {profile.occupation}
+                      </p>
+                      <p className="text-xs text-[#111111] font-bold mt-0.5 truncate">{profile.city}, India</p>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5 pt-1">
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#E8E1D5]">
                     <button
                       type="button"
                       onClick={(e) => handleDeclineReceived(profile, e)}
-                      className="py-3 px-4 rounded-2xl bg-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-gray-300 active:scale-98 transition-all cursor-pointer shadow-xs"
+                      className="py-2.5 px-3 rounded-xl bg-[#F4EFE6] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-gray-200 active:scale-98 transition-all cursor-pointer shadow-xs whitespace-nowrap"
                     >
                       Decline
                     </button>
                     <button
                       type="button"
                       onClick={(e) => handleAcceptReceived(profile, e)}
-                      className="py-3 px-4 rounded-2xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-sm"
+                      className="py-2.5 px-3 rounded-xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-sm whitespace-nowrap"
                     >
                       Accept Wave
                     </button>

@@ -31,6 +31,30 @@ import { profileService } from '../services/profileService';
 import type { UserSession } from '../services/authService';
 import { CITY_OPTIONS } from '../cityOptions';
 
+export const HEIGHT_OPTIONS = [
+  "4'10\" (147 cm)",
+  "4'11\" (150 cm)",
+  "5'0\" (152 cm)",
+  "5'1\" (155 cm)",
+  "5'2\" (157 cm)",
+  "5'3\" (160 cm)",
+  "5'4\" (163 cm)",
+  "5'5\" (165 cm)",
+  "5'6\" (168 cm)",
+  "5'7\" (170 cm)",
+  "5'8\" (173 cm)",
+  "5'9\" (175 cm)",
+  "5'10\" (178 cm)",
+  "5'11\" (180 cm)",
+  "6'0\" (183 cm)",
+  "6'1\" (185 cm)",
+  "6'2\" (188 cm)",
+  "6'3\" (190 cm)",
+  "6'4\" (193 cm)",
+  "6'5\" (196 cm)",
+  "6'6\" (198 cm)"
+];
+
 interface OnboardingCarouselProps {
   onComplete: (newProfile?: Profile) => void;
   currentUser?: UserSession | null;
@@ -73,9 +97,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   const [gender, setGender] = useState<string>(
     initialData?.gender === 'female' ? 'woman' : initialData?.gender === 'male' ? 'man' : ''
   );
-  const [managedBy, setManagedBy] = useState<string>(
-    (initialData?.managed_by as any) || ''
-  );
+  const managedBy = 'self';
   const [displayName, setDisplayName] = useState(
     initialData?.display_name || ''
   );
@@ -361,7 +383,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         company_name: companyName.trim(),
         salary_bracket: salaryBracket,
         diet: diet,
-        managed_by: (managedBy === 'sibling' ? 'self' : (managedBy || 'self')) as 'self' | 'parent',
+        managed_by: 'self',
         photos: finalPhotos,
         bio_video_url: videoUrl,
         family_background: `${familyType} family with ${familyValues.toLowerCase()} values. Settled in ${city}.`,
@@ -453,7 +475,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F4] flex flex-col p-4 sm:p-6 w-full max-w-lg mx-auto relative select-none text-[#111111] font-sans overflow-hidden">
+    <div className="min-h-[100dvh] bg-[#FBF9F4] flex flex-col justify-between pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] px-4 sm:px-6 w-full max-w-lg mx-auto relative font-sans text-[#111111]">
       {/* Hidden File & Camera Inputs */}
       <input
         ref={photoFileInputRef}
@@ -487,8 +509,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         className="hidden"
       />
 
-      {/* Top Header - Clean, no logo or back button */}
-      <div className="pt-1 sticky top-0 z-30 px-4 py-2 bg-[#FBF9F4]">
+      {/* Top Header with Safe Margin */}
+      <div className="w-full pb-1.5 z-30 bg-[#FBF9F4] space-y-2 shrink-0">
         <div className="flex items-center justify-between">
           <span className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight">
             mannat
@@ -497,7 +519,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
             <button
               type="button"
               onClick={() => (onCancel ? onCancel() : onComplete())}
-              className="text-[10px] font-black uppercase text-[#777777] hover:text-[#111111] bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-all cursor-pointer shadow-xs"
+              className="text-[10px] font-black uppercase text-[#777777] hover:text-[#111111] bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-all cursor-pointer shadow-xs whitespace-nowrap"
             >
               Cancel
             </button>
@@ -505,7 +527,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         </div>
 
         {/* Animated Progress Bar */}
-        <div className="w-full h-1 bg-[#E8E1D5] rounded-full overflow-hidden shadow-inner">
+        <div className="w-full h-1.5 bg-[#E8E1D5] rounded-full overflow-hidden shadow-inner">
           <motion.div
             className="h-full bg-[#B89552] rounded-full"
             initial={{ width: 0 }}
@@ -515,8 +537,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         </div>
       </div>
 
-      {/* Step Content Container - Aligned for Mobile without Dead Space */}
-      <div className="py-2 z-20 flex flex-col justify-start relative">
+      {/* Step Content Container - Scrollable on keyboard open */}
+      <div className="flex-1 py-3 z-20 flex flex-col justify-start overflow-y-auto">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={step}
@@ -525,11 +547,11 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
             initial="initial"
             animate="animate"
             exit="exit"
-            className="space-y-4 text-left"
+            className="space-y-4 text-left w-full pb-8"
           >
             {/* Step 1: Gender & Managed By */}
             {step === 1 && (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
                   STEP 1: IDENTITY & CREATOR *
                 </span>
@@ -541,56 +563,32 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                   <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
                     I am a: <span className="text-red-500">*</span>
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2.5">
                     <motion.button
                       whileTap={{ scale: 0.96 }}
                       type="button"
                       onClick={() => setGender('man')}
-                      className={`p-4 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'man'
+                      className={`p-3 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'man'
                           ? 'bg-[#2D2824] text-white border-[#111111] shadow-md font-bold'
                           : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                         }`}
                     >
-                      <User className="w-6 h-6 mx-auto mb-1 text-[#B89552]" />
-                      <span className="text-sm font-extrabold block">Man</span>
+                      <User className="w-5 h-5 mx-auto mb-1 text-[#B89552]" />
+                      <span className="text-xs font-extrabold block">Man</span>
                     </motion.button>
 
                     <motion.button
                       whileTap={{ scale: 0.96 }}
                       type="button"
                       onClick={() => setGender('woman')}
-                      className={`p-4 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'woman'
+                      className={`p-3 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'woman'
                           ? 'bg-[#2D2824] text-white border-[#111111] shadow-md font-bold'
                           : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
                         }`}
                     >
-                      <User className="w-6 h-6 mx-auto mb-1 text-[#B89552]" />
-                      <span className="text-sm font-extrabold block">Woman</span>
+                      <User className="w-5 h-5 mx-auto mb-1 text-[#B89552]" />
+                      <span className="text-xs font-extrabold block">Woman</span>
                     </motion.button>
-                  </div>
-
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] pt-2">
-                    Profile is managed by: <span className="text-red-500">*</span>
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { id: 'self', label: 'Self Candidate' },
-                      { id: 'parent', label: 'Parent' },
-                      { id: 'sibling', label: 'Sibling' }
-                    ].map((mgr) => (
-                      <motion.button
-                        key={mgr.id}
-                        whileTap={{ scale: 0.96 }}
-                        type="button"
-                        onClick={() => setManagedBy(mgr.id as any)}
-                        className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${managedBy === mgr.id
-                            ? 'bg-[#2D2824] text-white border-[#111111]'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                          }`}
-                      >
-                        {mgr.label}
-                      </motion.button>
-                    ))}
                   </div>
                 </div>
               </div>
@@ -633,6 +631,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                         <Calendar className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         <input
                           type="number"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           min="18"
                           max="80"
                           value={age}
@@ -646,18 +646,22 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
 
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
-                        Height (ft/in & cm) <span className="text-red-500">*</span>:
+                        Height <span className="text-red-500">*</span>:
                       </label>
                       <div className="relative flex items-center">
                         <Ruler className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                        <input
-                          type="text"
+                        <select
                           value={height}
                           onChange={(e) => setHeight(e.target.value)}
-                          placeholder="e.g. 5'9&quot; (175 cm)"
-                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
+                          className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
                           required
-                        />
+                        >
+                          <option value="" disabled>Select height</option>
+                          {HEIGHT_OPTIONS.map((hOpt) => (
+                            <option key={hOpt} value={hOpt}>{hOpt}</option>
+                          ))}
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
                     </div>
                   </div>
@@ -1291,13 +1295,13 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         </div>
       )}
 
-      {/* Bottom Navigation Buttons */}
-      <div className="flex items-center gap-3 bg-white/0 p-2">
+      {/* Bottom Navigation Buttons - Sticky bottom with safe area margin */}
+      <div className="w-full pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] mt-auto z-40 bg-[#FBF9F4]/95 backdrop-blur-md border-t border-[#E8E1D5] flex items-center gap-3 sticky bottom-0 shrink-0">
         {step > 1 && (
           <button
             type="button"
             onClick={handlePrev}
-            className="py-3.5 px-5 rounded-2xl bg-[#F4EFE6]/95 border border-[#E8E1D5] hover:bg-[#E8E1D5] text-xs font-bold text-[#111111] flex items-center gap-1 transition-all cursor-pointer backdrop-blur-md active:scale-95"
+            className="py-3.5 px-5 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] hover:bg-[#E8E1D5] text-xs font-bold text-[#111111] flex items-center gap-1 transition-all cursor-pointer active:scale-95 shadow-xs whitespace-nowrap"
           >
             <ArrowLeft className="w-4 h-4 text-[#B89552]" />
             <span>Back</span>
@@ -1308,16 +1312,16 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
           type="button"
           disabled={isSubmitting}
           onClick={handleNext}
-          className="flex-1 py-5 px-6 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-sm font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg active:scale-98"
+          className="flex-1 py-4 px-6 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-xs font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 whitespace-nowrap"
         >
           {step === totalSteps ? (
             <>
               <Sparkles className="w-4 h-4 text-[#B89552]" />
-              <span>{isSubmitting ? 'Saving Bio-Data...' : isEditing ? 'Save & Update Bio-Data' : 'Complete & Enter Mannat'}</span>
+              <span className="whitespace-nowrap">{isSubmitting ? 'Saving Bio-Data...' : isEditing ? 'Save & Update Bio-Data' : 'Complete & Enter Mannat'}</span>
             </>
           ) : (
             <>
-              <span>Continue</span>
+              <span className="whitespace-nowrap">Continue</span>
               <ArrowRight className="w-4 h-4 text-[#B89552]" />
             </>
           )}

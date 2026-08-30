@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, MessageCircle, PhoneCall, Send, Lock, Info, Star, SlidersHorizontal, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, User, Send, Lock, Info, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
@@ -16,7 +16,6 @@ interface InstaVibeFeedProps {
 
 export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   profiles,
-  onOpenFilters,
   onOpenSharePortal,
   onOpenPaywall
 }) => {
@@ -38,26 +37,43 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   const [isMuted, setIsMuted] = useState(true);
   const [pausedVideos, setPausedVideos] = useState<Record<string, boolean>>({});
   const [doubleTapHeart, setDoubleTapHeart] = useState<Record<string, boolean>>({});
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const touchStartYRef = useRef(0);
+  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
 
-  // First-time login banner state: shows on first login, then slides away to left
-  const [showIntroBanner, setShowIntroBanner] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('mannat_intro_dismissed') !== 'true';
-    } catch {
-      return true;
-    }
-  });
-
-  const dismissIntroBanner = () => {
-    setShowIntroBanner(false);
-    try {
-      localStorage.setItem('mannat_intro_dismissed', 'true');
-    } catch (e) {
-      console.error(e);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (window.scrollY <= 5) {
+      touchStartYRef.current = e.touches[0].clientY;
+    } else {
+      touchStartYRef.current = 0;
     }
   };
 
-  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartYRef.current > 0 && window.scrollY <= 5 && !isRefreshing) {
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - touchStartYRef.current;
+      if (diff > 0) {
+        setPullDistance(Math.min(diff * 0.45, 80));
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (pullDistance > 45 && !isRefreshing) {
+      setIsRefreshing(true);
+      setPullDistance(50);
+      setTimeout(() => {
+        setIsRefreshing(false);
+        setPullDistance(0);
+        triggerToast('Profiles Refreshed ✨', 'sparkle');
+      }, 900);
+    } else {
+      setPullDistance(0);
+    }
+    touchStartYRef.current = 0;
+  };
 
   const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {
     setToastMessage(msg);
@@ -156,39 +172,6 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       console.warn('Supabase wave insert fallback:', e);
     }
     triggerToast(`Interest Wave Sent to ${targetProfile.display_name}! 👋`, 'sparkle');
-  };
-
-  // Log Parent Callback Request to Supabase Database & Persistent Storage
-  const handleRequestCallback = async (targetProfile: Profile) => {
-    setConnectModalProfile(null);
-    try {
-      const stored = localStorage.getItem('mannat_callbacks');
-      const list: any[] = stored ? JSON.parse(stored) : [];
-      list.unshift({
-        id: `cb_${Date.now()}`,
-        candidate_name: targetProfile.display_name,
-        candidate_id: targetProfile.id,
-        status: 'Pending',
-        created_at: 'Just now'
-      });
-      localStorage.setItem('mannat_callbacks', JSON.stringify(list));
-    } catch (e) {
-      console.warn('Local callback save error:', e);
-    }
-
-    try {
-      if (isSupabaseConfigured() && targetProfile.id.includes('-') && targetProfile.id.length >= 32) {
-        await supabase.from('callback_requests').insert([
-          {
-            target_profile_id: targetProfile.id,
-            status: 'callback_requested'
-          }
-        ]);
-      }
-    } catch (e) {
-      console.warn('Supabase callback insert fallback:', e);
-    }
-    triggerToast(`Parent Callback Request Logged for ${targetProfile.display_name}! 📞`, 'success');
   };
 
   // Detailed profile view with luxury editorial layout
@@ -398,10 +381,10 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             <button
               type="button"
               onClick={() => setConnectModalProfile(p)}
-              className="w-full py-4 px-6 rounded-full btn-vara-gold text-white font-extrabold text-xs tracking-wider uppercase shadow-md active:scale-98 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 px-5 rounded-2xl btn-vara-gold text-white font-extrabold text-xs tracking-wider uppercase shadow-md active:scale-98 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Connect Now</span>
-              <ArrowUpRight className="w-4 h-4" />
+              <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -411,18 +394,36 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
   // Home Dashboard Feed
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#161412] max-w-md mx-auto flex flex-col justify-between pb-28 select-none font-sans relative">
+    <div
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      className="min-h-screen bg-[#FAF8F5] text-[#161412] max-w-md mx-auto flex flex-col justify-start pb-36 select-none font-sans relative"
+    >
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
+
+      {/* Pull to Refresh Visual Indicator */}
+      {(pullDistance > 0 || isRefreshing) && (
+        <div
+          style={{ height: `${Math.max(pullDistance, isRefreshing ? 48 : 0)}px` }}
+          className="w-full flex items-center justify-center overflow-hidden transition-all duration-150"
+        >
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#C5A059] bg-white px-4 py-1.5 rounded-full border border-[#EADBCE] shadow-sm">
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} style={{ transform: `rotate(${pullDistance * 4}deg)` }} />
+            <span>{isRefreshing ? 'Refreshing...' : pullDistance > 45 ? 'Release to Refresh' : 'Pull to Refresh'}</span>
+          </div>
+        </div>
+      )}
 
       {/* Interactive Connect Action Sheet Modal */}
       <AnimatePresence>
         {connectModalProfile && (
-          <div className="fixed inset-0 z-50 bg-[#2D2824]/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+          <div className="fixed inset-0 z-[70] bg-[#2D2824]/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
-              className="w-full max-w-sm bg-[#FAF8F5] rounded-3xl p-6 border border-[#EADBCE] shadow-2xl space-y-5 text-[#161412]"
+              className="w-full max-w-sm bg-[#FAF8F5] rounded-3xl p-6 border border-[#EADBCE] shadow-2xl space-y-4 text-[#161412] mb-2"
             >
               <div className="flex items-center justify-between border-b border-[#EADBCE] pb-3">
                 <h3 className="text-lg font-serif-editorial font-bold text-[#161412]">
@@ -441,10 +442,10 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 <button
                   type="button"
                   onClick={() => handleSendWave(connectModalProfile)}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#161412] hover:bg-[#C5A059] text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-[#161412] hover:bg-[#C5A059] active:scale-95 text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md whitespace-nowrap"
                 >
                   <Send className="w-4 h-4 text-[#DFBE7E]" />
-                  <span>Send Interest Wave 👋</span>
+                  <span className="whitespace-nowrap">Send Interest Wave 👋</span>
                 </button>
 
                 <button
@@ -453,19 +454,10 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                     setConnectModalProfile(null);
                     onOpenSharePortal(connectModalProfile);
                   }}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#EADBCE] hover:bg-[#F6F2E9] text-[#161412] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
+                  className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#EADBCE] hover:bg-[#F6F2E9] active:scale-95 text-[#161412] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
                 >
-                  <MessageCircle className="w-4 h-4 text-[#C5A059]" />
-                  <span>View Family Bio-data Portal</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleRequestCallback(connectModalProfile)}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#EADBCE] hover:bg-[#F6F2E9] text-[#161412] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
-                >
-                  <PhoneCall className="w-4 h-4 text-[#C5A059]" />
-                  <span>Request Parent Callback</span>
+                  <User className="w-4 h-4 text-[#C5A059]" />
+                  <span className="whitespace-nowrap truncate">View Full Profile</span>
                 </button>
               </div>
             </motion.div>
@@ -492,116 +484,31 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       )}
 
       {/* Hero Banner (First-time Login / Introductory Slide-Out to Left) */}
-      <AnimatePresence>
-        {showIntroBanner && (
-          <motion.div 
-            key="first-time-intro-banner"
-            initial={{ opacity: 0, y: -20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ 
-              x: '-125%', 
-              opacity: 0, 
-              scale: 0.95,
-              height: 0,
-              paddingTop: 0,
-              paddingBottom: 0,
-              marginBottom: 0,
-              transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] } 
-            }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={{ left: 0.9, right: 0.05 }}
-            onDragEnd={(_e, info) => {
-              if (info.offset.x < -30 || info.velocity.x < -200) {
-                dismissIntroBanner();
-                triggerToast('Curated Profiles Unlocked ✨', 'sparkle');
-              }
-            }}
-            onClick={dismissIntroBanner}
-            className="p-4 overflow-hidden cursor-grab active:cursor-grabbing"
-          >
-            <div className="bg-gradient-to-br from-white to-[#F6F2E9] rounded-[28px] p-6 text-[#161412] text-left space-y-4 relative overflow-hidden border border-[#EADBCE] shadow-md hover:border-[#C5A059] transition-colors">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] bg-[#FAF8F5] px-3.5 py-1 rounded-full border border-[#EADBCE] inline-flex items-center gap-1 shadow-xs">
-                <Sparkles className="w-3 h-3 text-[#C5A059]" />
-                INTENTION-FIRST MATCHMAKING
-              </span>
-
-              <h3 className="text-2xl sm:text-3xl font-serif-editorial font-bold tracking-tight leading-tight text-[#161412]">
-                Curated, vetted & intention-first.
-              </h3>
-
-              <p className="text-xs text-[#55504A] max-w-xs leading-relaxed font-medium">
-                Explore verified vertical video profiles of partners seeking marriage.
-              </p>
-
-              {/* Animated Swipe Left Gesture Cue */}
-              <div className="pt-3 border-t border-[#EADBCE] flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <motion.div
-                    animate={{ x: [0, -8, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
-                    className="w-7 h-7 rounded-full bg-[#161412] text-[#DFBE7E] flex items-center justify-center shadow-xs"
-                  >
-                    <ArrowLeft className="w-4 h-4 text-[#DFBE7E]" />
-                  </motion.div>
-                  <span className="text-xs font-black uppercase tracking-wider text-[#161412]">
-                    Swipe left to view profiles
-                  </span>
-                </div>
-
-                <motion.span 
-                  animate={{ opacity: [0.4, 1, 0.4] }}
-                  transition={{ repeat: Infinity, duration: 1.5 }}
-                  className="text-[10px] text-[#C5A059] font-black uppercase tracking-widest"
-                >
-                  ← SWIPE
-                </motion.span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Recommended Vertical Video Profiles List */}
-      <div className="px-4 space-y-4 flex-1 pt-1">
-        <div className="flex items-center justify-between px-1">
-          <span className="text-[11px] font-black uppercase tracking-widest text-[#C5A059] flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-[#EADBCE] shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Verified Intros ({profiles.length})
-          </span>
-
-          <button
-            type="button"
-            onClick={onOpenFilters}
-            className="text-[11px] font-black uppercase tracking-wider text-[#7E776F] hover:text-[#161412] flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-[#EADBCE] hover:border-[#C5A059] transition-colors cursor-pointer shadow-xs"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>Refine</span>
-          </button>
-        </div>
-
-        {/* Vertical Video Cards */}
-        <div className="grid grid-cols-1 gap-6 pb-6">
+      <div className="px-4 flex-1 pt-2">
+        {profiles.length === 0 ? (
+          <div className="bg-white rounded-3xl p-8 border border-[#EADBCE] shadow-xs text-center space-y-4 my-6">
+            <div className="w-16 h-16 rounded-full bg-[#F4EFE6] text-[#B89552] flex items-center justify-center mx-auto shadow-inner">
+              <Sparkles className="w-8 h-8 text-[#B89552]" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">No Candidate Profiles Yet</h3>
+              <p className="text-xs text-[#777777] max-w-xs mx-auto leading-relaxed">
+                As new users register, complete their bio-data, and upload video intros, their verified profiles will appear here in real-time.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 pb-6">
           {profiles.map((profile) => {
             const isBioExpanded = expandedBios[profile.id] ?? false;
-            const isSpotlight = profile.is_spotlight;
 
             return (
               <div
                 key={profile.id}
                 onClick={() => setSelectedDetailProfile(profile)}
-                className={`bg-white rounded-[32px] overflow-hidden border shadow-sm cursor-pointer hover:shadow-xl transition-all duration-300 group p-3.5 space-y-3 relative ${
-                  isSpotlight ? 'border-2 border-[#C5A059] gold-shadow-md ring-2 ring-[#C5A059]/20' : 'border-[#EADBCE]'
-                }`}
+                className="bg-white rounded-[28px] overflow-hidden border border-[#EADBCE] shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 group p-3 space-y-3 relative"
               >
-                {/* Spotlight Badge Header */}
-                {isSpotlight && (
-                  <div className="bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white text-[10px] font-black uppercase tracking-widest py-1.5 px-4 text-center rounded-full shadow-sm flex items-center justify-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-white" />
-                    <span>MANNAT SPOTLIGHT BOOSTED (TOP OF FEED)</span>
-                  </div>
-                )}
-
                 {/* Full-bleed Tall Vertical 9:16 / h-[480px] Video Stream */}
                 <div
                   className="relative w-full h-[480px] bg-[#2D2824] rounded-[24px] overflow-hidden cursor-pointer"
@@ -614,6 +521,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   <video
                     ref={(el) => { videoRefs.current[profile.id] = el; }}
                     src={profile.bio_video_url}
+                    poster={profile.photos?.[0]}
                     autoPlay
                     loop
                     muted={isMuted}
@@ -741,11 +649,11 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                         e.stopPropagation();
                         setConnectModalProfile(profile);
                       }}
-                      className="w-full py-3.5 px-6 rounded-2xl bg-white hover:bg-[#F6F2E9] text-[#161412] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-lg border border-[#EADBCE] cursor-pointer"
+                      className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#F6F2E9] text-[#161412] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md border border-[#EADBCE] cursor-pointer"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
                       <span>Connect & View Details</span>
-                      <ArrowUpRight className="w-4 h-4 text-[#C5A059]" />
+                      <ArrowUpRight className="w-3.5 h-3.5 text-[#C5A059]" />
                     </button>
                   </div>
                 </div>
@@ -810,6 +718,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             );
           })}
         </div>
+      )}
       </div>
     </div>
   );
