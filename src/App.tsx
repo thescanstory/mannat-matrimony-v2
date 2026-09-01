@@ -184,12 +184,15 @@ function MainApp() {
 
   const handleDeleteAllData = async () => {
     try {
+      if (currentUser?.id) {
+        await profileService.deleteProfile(currentUser.id);
+      }
       if (typeof window !== 'undefined') {
         localStorage.clear();
         localStorage.setItem('mannat_logged_out', 'true');
       }
       await authService.signOut();
-            setCurrentUser(null);
+      setCurrentUser(null);
       setProfiles([]);
       setActiveFilters(null);
       setCurrentView('auth');
@@ -247,6 +250,18 @@ function MainApp() {
                   setCurrentView('home');
                   triggerToast(`Welcome back, ${user.user_metadata?.full_name || 'Member'}! ✨`, 'sparkle');
                 } else {
+                  // Pre-register user in Supabase cloud database immediately
+                  profileService.createProfile({
+                    id: user.id,
+                    user_id: user.id,
+                    display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'New Member',
+                    age: 26,
+                    city: 'Mumbai',
+                    religion: 'Hindu',
+                    occupation: 'Member',
+                    bio_video_url: '',
+                    photos: user.user_metadata?.avatar_url ? [user.user_metadata.avatar_url] : []
+                  });
                   setCurrentView('onboarding');
                   triggerToast(`Welcome! Please complete your candidate bio-data ✨`, 'sparkle');
                 }
@@ -626,6 +641,18 @@ function MainApp() {
                         navigateTo('home');
                         triggerToast(`Welcome back, ${activeUser.user_metadata?.full_name || activeUser.email?.split('@')[0] || 'Member'}! ✨`, 'sparkle');
                       } else {
+                        // Pre-register user in Supabase cloud database immediately
+                        profileService.createProfile({
+                          id: activeUser.id,
+                          user_id: activeUser.id,
+                          display_name: activeUser.user_metadata?.full_name || activeUser.email?.split('@')[0] || 'New Member',
+                          age: 26,
+                          city: 'Mumbai',
+                          religion: 'Hindu',
+                          occupation: 'Member',
+                          bio_video_url: '',
+                          photos: activeUser.user_metadata?.avatar_url ? [activeUser.user_metadata.avatar_url] : []
+                        });
                         navigateTo('onboarding');
                         triggerToast(`Welcome! Please complete your candidate bio-data ✨`, 'sparkle');
                       }

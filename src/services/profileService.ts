@@ -69,10 +69,6 @@ export const profileService = {
       console.warn('Could not read local profiles:', e);
     }
 
-    if (typeof window !== 'undefined' && localStorage.getItem('mannat_admin_deleted') === 'true') {
-      return [];
-    }
-
     const unlockedIds: string[] = typeof window !== 'undefined'
       ? JSON.parse(localStorage.getItem('mannat_unlocked_ids') || '[]')
       : [];
@@ -93,9 +89,12 @@ export const profileService = {
     if (isSupabaseConfigured() && customProfiles.length > 0) {
       for (const p of customProfiles) {
         if (p.display_name && p.display_name !== 'Unnamed Member') {
+          const isValidUUID = (str?: string) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+          const syncId = isValidUUID(p.id) ? p.id : generateUUID();
+          const syncUserId = isValidUUID(p.user_id) ? p.user_id! : syncId;
           supabase.from('profiles').upsert([{
-            id: p.id,
-            user_id: p.user_id || p.id,
+            id: syncId,
+            user_id: syncUserId,
             display_name: p.display_name,
             gender: p.gender,
             age: p.age,
@@ -156,16 +155,39 @@ export const profileService = {
     }
   },
 
+  // Delete Candidate Profile (Remote Supabase & Local Cache)
+  deleteProfile: async (profileId: string): Promise<boolean> => {
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
+        if (stored) {
+          const list: Profile[] = JSON.parse(stored);
+          const filtered = list.filter(p => p.id !== profileId && p.user_id !== profileId);
+          localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(filtered));
+        }
+      }
+
+      if (isSupabaseConfigured()) {
+        const { error } = await supabase.from('profiles').delete().or(`id.eq.${profileId},user_id.eq.${profileId}`);
+        if (error) console.error('Supabase profile delete error:', error);
+      }
+      return true;
+    } catch (e) {
+      console.error('deleteProfile error:', e);
+      return false;
+    }
+  },
+
   // Create a new Candidate Profile
   createProfile: async (profileData: Partial<Profile>): Promise<Profile> => {
-    const validId = profileData.id && profileData.id.includes('-') && profileData.id.length >= 32
-      ? profileData.id
-      : generateUUID();
+    const isValidUUID = (str?: string) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+    const validId = isValidUUID(profileData.id) ? profileData.id! : generateUUID();
+    const validUserId = isValidUUID(profileData.user_id) ? profileData.user_id! : validId;
 
     const newProfile: Profile = {
       ...profileData,
       id: validId,
-      user_id: profileData.user_id || validId,
+      user_id: validUserId,
       display_name: (profileData.display_name || '').trim() || 'Unnamed Member',
       age: profileData.age || 0,
       // Required-by-type fields default to blank, never to fabricated values

@@ -18,7 +18,6 @@ import {
   UserX 
 } from 'lucide-react';
 import type { Profile } from './types';
-import { MOCK_PROFILES } from './services/mockData';
 import { supabase } from './services/supabaseClient';
 
 interface VIPCallback {
@@ -50,10 +49,6 @@ const INITIAL_MATCHMAKERS: MatchmakerCurator[] = [];
 
 function getInitialProfiles(): Profile[] {
   try {
-    const isDeleted = localStorage.getItem('mannat_admin_deleted');
-    if (isDeleted === 'true') {
-      return [];
-    }
     const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
     const customStored = localStorage.getItem('mannat_custom_profiles');
     const customList: Profile[] = customStored ? JSON.parse(customStored) : [];
@@ -73,16 +68,9 @@ function getInitialProfiles(): Profile[] {
       if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
     });
 
-    // 3. Add demo/mock profiles only if no real profiles exist
-    if (profileMap.size === 0) {
-      MOCK_PROFILES.forEach(p => {
-        if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
-      });
-    }
-
     return Array.from(profileMap.values());
   } catch {
-    return MOCK_PROFILES;
+    return [];
   }
 }
 
@@ -106,11 +94,6 @@ export function App() {
   // Fetch live profiles and callback requests from Supabase on mount
   useEffect(() => {
     async function loadSupabaseData() {
-      const isDeleted = localStorage.getItem('mannat_admin_deleted');
-      if (isDeleted === 'true') {
-        setProfiles([]);
-        return;
-      }
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
         const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
