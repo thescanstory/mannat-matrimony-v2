@@ -641,6 +641,36 @@ export function App() {
 
                 <button
                   type="button"
+                  onClick={async () => {
+                    showToast('🔄 Refreshing live profiles from Supabase...');
+                    try {
+                      const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+                      if (data && data.length > 0) {
+                        const mapped: Profile[] = (data as any[]).map(d => ({
+                          ...d,
+                          user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
+                          diet: d.lifestyle_details?.diet || d.diet || '',
+                          salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
+                          family_background: d.lifestyle_details?.family_background || d.family_background || '',
+                          marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
+                          gender: d.lifestyle_details?.gender || d.gender || 'male'
+                        }));
+                        updateAndPersistProfiles(mapped);
+                        showToast(`✨ Loaded ${mapped.length} live candidates from Supabase!`);
+                      }
+                    } catch (err) {
+                      console.error('Cloud refresh error:', err);
+                    }
+                  }}
+                  className="px-4 py-3 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] hover:border-[#B89552] text-[#111111] text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
+                  title="Force Sync with Cloud Database"
+                >
+                  <RefreshCw className="w-4 h-4 text-[#B89552]" />
+                  <span>Sync Cloud DB</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setShowDeleteAllUsersConfirm(true)}
                   className="px-4 py-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 hover:bg-red-700 hover:text-white text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
                   title="Delete All Registered Users & Accounts"
@@ -1404,7 +1434,12 @@ export function App() {
 
       {/* CANDIDATE MEDIA & FULL DOSSIER MODAL */}
       {viewingCandidate && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div 
+          className="fixed inset-0 z-[99999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setViewingCandidate(null);
+          }}
+        >
           <div className="bg-[#FBF9F4] rounded-3xl max-w-4xl w-full p-6 space-y-6 border border-[#B89552] shadow-2xl my-8 max-h-[90vh] overflow-y-auto text-left relative">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-4 sticky top-0 bg-[#FBF9F4] z-20">
