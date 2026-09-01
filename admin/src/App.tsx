@@ -18,9 +18,7 @@ import {
   UserX,
   Play,
   ImageIcon,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp
+  CheckCircle2
 } from 'lucide-react';
 import type { Profile } from './types';
 import { supabase } from './services/supabaseClient';
@@ -740,17 +738,24 @@ export function App() {
                       {/* Main Clickable Header Row */}
                       <div
                         onClick={() => {
-                          setExpandedCandidateId(isExpanded ? null : candidate.id);
+                          setViewingCandidate(candidate);
                           setActiveDossierPhoto(candidate.photos?.[0] || '');
                         }}
-                        className="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 cursor-pointer select-none"
+                        className="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 cursor-pointer select-none hover:bg-[#FBF9F4]/50 transition-colors"
                       >
                         <div className="flex items-start sm:items-center gap-4 flex-1">
-                          <div className="relative group/avatar shrink-0">
+                          <div 
+                            className="relative group/avatar shrink-0 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setViewingCandidate(candidate);
+                              setActiveDossierPhoto(candidate.photos?.[0] || '');
+                            }}
+                          >
                             <img
                               src={candidate.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80'}
                               alt={candidate.display_name}
-                              className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover border-2 border-[#E8E1D5] transition-colors shadow-xs"
+                              className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover border-2 border-[#E8E1D5] group-hover/avatar:border-[#B89552] transition-colors shadow-xs"
                             />
                             {candidate.photos && candidate.photos.length > 1 && (
                               <span className="absolute -bottom-1 -right-1 bg-[#111111] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border border-white shadow">
@@ -760,7 +765,7 @@ export function App() {
                           </div>
                           <div className="space-y-1">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h4 className="text-base font-extrabold text-[#111111] flex items-center gap-1.5">
+                              <h4 className="text-base font-extrabold text-[#111111] hover:text-[#B89552] transition-colors flex items-center gap-1.5">
                                 <span>{candidate.display_name} · {candidate.age} yrs</span>
                               </h4>
                               {candidate.is_vouched && (
@@ -795,7 +800,7 @@ export function App() {
                                 </span>
                               )}
                               <span className="text-[#B89552] font-bold text-[11px] underline">
-                                {isExpanded ? '▲ Hide Details' : '▼ Tap to Watch Video & Inspect Bio-Data'}
+                                🎬 Click anywhere to Watch Video & Inspect Bio-Data
                               </span>
                             </div>
                           </div>
@@ -805,16 +810,15 @@ export function App() {
                         <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-100 flex-wrap" onClick={(e) => e.stopPropagation()}>
                           <button
                             type="button"
-                            onClick={() => {
-                              setExpandedCandidateId(isExpanded ? null : candidate.id);
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setViewingCandidate(candidate);
                               setActiveDossierPhoto(candidate.photos?.[0] || '');
                             }}
-                            className={`px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 ${
-                              isExpanded ? 'bg-[#111111] text-white' : 'bg-[#B89552] hover:bg-[#A68243] text-white'
-                            }`}
+                            className="px-4 py-2.5 rounded-xl bg-[#B89552] hover:bg-[#A68243] text-white text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
                           >
-                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                            <span>{isExpanded ? 'Close Details' : '🎬 View Video & Details'}</span>
+                            <Play className="w-3.5 h-3.5 fill-white" />
+                            <span>🎬 Watch Video & Bio</span>
                           </button>
 
                           <button
