@@ -89,6 +89,46 @@ export const profileService = {
       return applyUnlocks(unique);
     }
 
+    // Auto-sync local custom profiles to Supabase cloud if present
+    if (isSupabaseConfigured() && customProfiles.length > 0) {
+      for (const p of customProfiles) {
+        if (p.display_name && p.display_name !== 'Unnamed Member') {
+          supabase.from('profiles').upsert([{
+            id: p.id,
+            user_id: p.user_id || p.id,
+            display_name: p.display_name,
+            gender: p.gender,
+            age: p.age,
+            height: p.height,
+            city: p.city,
+            religion: p.religion,
+            community: p.community,
+            sub_community: p.sub_community,
+            occupation: p.occupation,
+            company_name: p.company_name,
+            education: p.education,
+            salary_bracket: p.salary_bracket,
+            diet: p.diet,
+            family_background: p.family_background,
+            marriage_expectations: p.marriage_expectations,
+            bio_text: p.bio_text,
+            bio_video_url: p.bio_video_url,
+            photos: p.photos,
+            managed_by: p.managed_by,
+            compatibility_score: p.compatibility_score,
+            gun_milan_score: p.gun_milan_score,
+            is_vouched: p.is_vouched,
+            is_spotlight: p.is_spotlight,
+            is_unlocked: p.is_unlocked,
+            lifestyle_details: p.lifestyle_details,
+            horoscope: p.horoscope
+          }]).then(({ error }) => {
+            if (error) console.warn('Background profile sync notice:', error.message);
+          });
+        }
+      }
+    }
+
     try {
       const { data, error } = await supabase
         .from('profiles')
