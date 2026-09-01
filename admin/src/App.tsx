@@ -696,13 +696,14 @@ export function App() {
                 {filteredCandidates.map((candidate) => (
                   <div
                     key={candidate.id}
-                    className="bg-white rounded-3xl border border-[#E8E1D5] p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-xs hover:border-[#B89552] transition-all"
-                  >
-                    <div className="flex items-start sm:items-center gap-4 cursor-pointer flex-1" onClick={() => {
+                    onClick={() => {
                       setViewingCandidate(candidate);
                       setActiveDossierPhoto(candidate.photos?.[0] || '');
-                    }}>
-                      <div className="relative group shrink-0">
+                    }}
+                    className="bg-white rounded-3xl border border-[#E8E1D5] p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-xs hover:border-[#B89552] hover:shadow-md transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-start sm:items-center gap-4 flex-1">
+                      <div className="relative group/avatar shrink-0">
                         <img
                           src={candidate.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80'}
                           alt={candidate.display_name}
@@ -716,8 +717,9 @@ export function App() {
                       </div>
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-base font-extrabold text-[#111111] hover:text-[#B89552] transition-colors">
-                            {candidate.display_name} · {candidate.age} yrs
+                          <h4 className="text-base font-extrabold text-[#111111] group-hover:text-[#B89552] transition-colors flex items-center gap-1.5">
+                            <span>{candidate.display_name} · {candidate.age} yrs</span>
+                            <Eye className="w-3.5 h-3.5 text-[#B89552] opacity-0 group-hover:opacity-100 transition-opacity" />
                           </h4>
                           {candidate.is_vouched && (
                             <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 inline-flex items-center gap-1">
@@ -747,29 +749,36 @@ export function App() {
                           {candidate.bio_video_url && (
                             <span className="text-[#B89552] bg-[#B89552]/10 border border-[#B89552]/30 px-2 py-0.5 rounded-md font-extrabold inline-flex items-center gap-1">
                               <Play className="w-3 h-3 fill-[#B89552]" />
-                              Video Intro Ready
+                              🎬 30s Intro Video
                             </span>
                           )}
+                          <span className="text-gray-400 font-medium text-[10px] italic">
+                            (Click anywhere to view full dossier & video)
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-100 flex-wrap">
+                    <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-100 flex-wrap" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setViewingCandidate(candidate);
                           setActiveDossierPhoto(candidate.photos?.[0] || '');
                         }}
                         className="px-3.5 py-2 rounded-xl bg-[#B89552] hover:bg-[#A68243] text-white text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
                       >
                         <Eye className="w-3.5 h-3.5" />
-                        <span>View Media & Dossier</span>
+                        <span>View Media & Bio</span>
                       </button>
 
                       <button
                         type="button"
-                        onClick={() => setEditingCandidate(candidate)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingCandidate(candidate);
+                        }}
                         className="px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5 text-gray-600" />
@@ -778,7 +787,10 @@ export function App() {
 
                       <button
                         type="button"
-                        onClick={() => toggleVerified(candidate.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleVerified(candidate.id);
+                        }}
                         className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                           candidate.is_vouched
                             ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
@@ -791,7 +803,10 @@ export function App() {
 
                       <button
                         type="button"
-                        onClick={() => toggleSpotlight(candidate.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSpotlight(candidate.id);
+                        }}
                         className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                           candidate.is_spotlight
                             ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
@@ -804,7 +819,10 @@ export function App() {
 
                       <button
                         type="button"
-                        onClick={() => deleteCandidate(candidate.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteCandidate(candidate.id);
+                        }}
                         className="p-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
                         title="Delete Candidate"
                       >
