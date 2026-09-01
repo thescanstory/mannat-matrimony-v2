@@ -18,7 +18,9 @@ import {
   UserX,
   Play,
   ImageIcon,
-  CheckCircle2
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import type { Profile } from './types';
 import { supabase } from './services/supabaseClient';
@@ -89,7 +91,7 @@ export function App() {
   const [showDeleteAllUsersConfirm, setShowDeleteAllUsersConfirm] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Profile | null>(null);
   const [viewingCandidate, setViewingCandidate] = useState<Profile | null>(null);
-  const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(() => getInitialProfiles()[0]?.id || null);
+  const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(null);
   const [activeDossierPhoto, setActiveDossierPhoto] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -102,9 +104,6 @@ export function App() {
     async function loadSupabaseData() {
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-        if (data && !error && data.length > 0) {
-          setExpandedCandidateId((prev) => prev || data[0].id);
-        }
         const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
         
         // Start with all local candidate records
@@ -738,17 +737,17 @@ export function App() {
                       {/* Main Clickable Header Row */}
                       <div
                         onClick={() => {
-                          setViewingCandidate(candidate);
+                          setExpandedCandidateId(isExpanded ? null : candidate.id);
                           setActiveDossierPhoto(candidate.photos?.[0] || '');
                         }}
-                        className="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 cursor-pointer select-none hover:bg-[#FBF9F4]/50 transition-colors"
+                        className="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 cursor-pointer select-none hover:bg-[#FBF9F4]/70 transition-colors"
                       >
                         <div className="flex items-start sm:items-center gap-4 flex-1">
                           <div 
                             className="relative group/avatar shrink-0 cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setViewingCandidate(candidate);
+                              setExpandedCandidateId(isExpanded ? null : candidate.id);
                               setActiveDossierPhoto(candidate.photos?.[0] || '');
                             }}
                           >
@@ -796,11 +795,11 @@ export function App() {
                               {candidate.bio_video_url && (
                                 <span className="text-[#B89552] bg-[#B89552]/10 border border-[#B89552]/30 px-2 py-0.5 rounded-md font-extrabold inline-flex items-center gap-1">
                                   <Play className="w-3 h-3 fill-[#B89552]" />
-                                  🎬 30s Intro Video
+                                  🎬 30s Intro Video Attached
                                 </span>
                               )}
-                              <span className="text-[#B89552] font-bold text-[11px] underline">
-                                🎬 Click anywhere to Watch Video & Inspect Bio-Data
+                              <span className="text-[#B89552] font-bold text-[11px] underline flex items-center gap-1">
+                                {isExpanded ? '▲ Click to Collapse Dropdown' : '▼ Click to Drop Down & View Video / Photos'}
                               </span>
                             </div>
                           </div>
@@ -810,15 +809,16 @@ export function App() {
                         <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-100 flex-wrap" onClick={(e) => e.stopPropagation()}>
                           <button
                             type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setViewingCandidate(candidate);
+                            onClick={() => {
+                              setExpandedCandidateId(isExpanded ? null : candidate.id);
                               setActiveDossierPhoto(candidate.photos?.[0] || '');
                             }}
-                            className="px-4 py-2.5 rounded-xl bg-[#B89552] hover:bg-[#A68243] text-white text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                            className={`px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 ${
+                              isExpanded ? 'bg-[#111111] text-white' : 'bg-[#B89552] hover:bg-[#A68243] text-white'
+                            }`}
                           >
-                            <Play className="w-3.5 h-3.5 fill-white" />
-                            <span>🎬 Watch Video & Bio</span>
+                            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            <span>{isExpanded ? '▲ Close Details' : '▼ View Video & Bio'}</span>
                           </button>
 
                           <button
