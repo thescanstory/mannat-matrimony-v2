@@ -643,18 +643,31 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                       <p className="text-[11px] text-gray-300 font-medium">📍 {profile.city}, India</p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setConnectModalProfile(profile);
-                      }}
-                      className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#F6F2E9] text-[#161412] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md border border-[#EADBCE] cursor-pointer"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-                      <span>Connect & View Details</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-[#C5A059]" />
-                    </button>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedDetailProfile(profile);
+                        }}
+                        className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-[#F6F2E9] text-[#161412] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md border border-[#EADBCE] cursor-pointer"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
+                        <span>View Bio-Data & Video</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-[#C5A059]" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConnectModalProfile(profile);
+                        }}
+                        className="py-2.5 px-3 rounded-xl bg-[#C5A059] text-white text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1 shadow-md cursor-pointer"
+                      >
+                        <span>Connect</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
