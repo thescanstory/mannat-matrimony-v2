@@ -172,7 +172,7 @@ export const profileService = {
     // Save to Supabase with valid UUID
     if (isSupabaseConfigured()) {
       try {
-        await supabase.from('profiles').upsert([{
+        const { error: upsertError } = await supabase.from('profiles').upsert([{
           id: newProfile.id,
           user_id: newProfile.user_id,
           display_name: newProfile.display_name,
@@ -202,8 +202,11 @@ export const profileService = {
           lifestyle_details: newProfile.lifestyle_details,
           horoscope: newProfile.horoscope
         }]);
+        if (upsertError) {
+          console.error('Supabase profile upsert error:', upsertError);
+        }
       } catch (e) {
-        console.warn('Supabase profile insertion error:', e);
+        console.error('Supabase profile insertion exception:', e);
       }
     }
 
