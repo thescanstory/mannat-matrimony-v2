@@ -91,36 +91,38 @@ export const profileService = {
         if (p.display_name && p.display_name !== 'Unnamed Member') {
           const isValidUUID = (str?: string) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
           const syncId = isValidUUID(p.id) ? p.id : generateUUID();
-          const syncUserId = isValidUUID(p.user_id) ? p.user_id! : syncId;
           supabase.from('profiles').upsert([{
             id: syncId,
-            user_id: syncUserId,
+            user_id: null,
             display_name: p.display_name,
-            gender: p.gender,
-            age: p.age,
-            height: p.height,
-            city: p.city,
-            religion: p.religion,
-            community: p.community,
-            sub_community: p.sub_community,
-            occupation: p.occupation,
-            company_name: p.company_name,
-            education: p.education,
-            salary_bracket: p.salary_bracket,
-            diet: p.diet,
-            family_background: p.family_background,
-            marriage_expectations: p.marriage_expectations,
-            bio_text: p.bio_text,
-            bio_video_url: p.bio_video_url,
-            photos: p.photos,
-            managed_by: p.managed_by,
-            compatibility_score: p.compatibility_score,
-            gun_milan_score: p.gun_milan_score,
-            is_vouched: p.is_vouched,
-            is_spotlight: p.is_spotlight,
-            is_unlocked: p.is_unlocked,
-            lifestyle_details: p.lifestyle_details,
-            horoscope: p.horoscope
+            age: p.age || 0,
+            height: p.height || '',
+            city: p.city || 'Mumbai',
+            religion: p.religion || 'Hindu',
+            community: p.community || 'North Indian',
+            sub_community: p.sub_community || '',
+            occupation: p.occupation || 'Member',
+            company_name: p.company_name || '',
+            education: p.education || '',
+            bio_text: p.bio_text || '',
+            bio_video_url: p.bio_video_url || '',
+            photos: p.photos || [],
+            managed_by: p.managed_by || 'self',
+            compatibility_score: p.compatibility_score || 95,
+            gun_milan_score: p.gun_milan_score || 32,
+            is_vouched: p.is_vouched || false,
+            is_spotlight: p.is_spotlight || false,
+            is_unlocked: p.is_unlocked || false,
+            lifestyle_details: {
+              ...(p.lifestyle_details || {}),
+              user_id: p.user_id || syncId,
+              diet: p.diet,
+              salary_bracket: p.salary_bracket,
+              family_background: p.family_background,
+              marriage_expectations: p.marriage_expectations,
+              gender: p.gender
+            },
+            horoscope: p.horoscope || {}
           }]).then(({ error }) => {
             if (error) console.warn('Background profile sync notice:', error.message);
           });
@@ -143,7 +145,15 @@ export const profileService = {
         const deletedIds: string[] = typeof window !== 'undefined'
           ? JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]')
           : [];
-        const activeData = (data as Profile[]).filter(d => !deletedIds.includes(d.id));
+        const activeData = (data as any[]).filter(d => !deletedIds.includes(d.id)).map(d => ({
+          ...d,
+          user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
+          diet: d.lifestyle_details?.diet || '',
+          salary_bracket: d.lifestyle_details?.salary_bracket || '',
+          family_background: d.lifestyle_details?.family_background || '',
+          marriage_expectations: d.lifestyle_details?.marriage_expectations || '',
+          gender: d.lifestyle_details?.gender || (d.gender || 'male')
+        }));
         const combined = [...customProfiles, ...activeData];
         const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
         return applyUnlocks(unique);
@@ -231,38 +241,41 @@ export const profileService = {
       console.warn('Could not cache profile locally:', e);
     }
 
-    // Save to Supabase with valid UUID
+    // Save to Supabase with valid UUID and schema columns
     if (isSupabaseConfigured()) {
       try {
         const { error: upsertError } = await supabase.from('profiles').upsert([{
           id: newProfile.id,
-          user_id: newProfile.user_id,
+          user_id: null,
           display_name: newProfile.display_name,
-          gender: newProfile.gender,
           age: newProfile.age,
-          height: newProfile.height,
+          height: newProfile.height || '',
           city: newProfile.city,
           religion: newProfile.religion,
           community: newProfile.community,
           sub_community: newProfile.sub_community,
           occupation: newProfile.occupation,
-          company_name: newProfile.company_name,
-          education: newProfile.education,
-          salary_bracket: newProfile.salary_bracket,
-          diet: newProfile.diet,
-          family_background: newProfile.family_background,
-          marriage_expectations: newProfile.marriage_expectations,
-          bio_text: newProfile.bio_text,
-          bio_video_url: newProfile.bio_video_url,
-          photos: newProfile.photos,
-          managed_by: newProfile.managed_by,
-          compatibility_score: newProfile.compatibility_score,
-          gun_milan_score: newProfile.gun_milan_score,
-          is_vouched: newProfile.is_vouched,
-          is_spotlight: newProfile.is_spotlight,
-          is_unlocked: newProfile.is_unlocked,
-          lifestyle_details: newProfile.lifestyle_details,
-          horoscope: newProfile.horoscope
+          company_name: newProfile.company_name || '',
+          education: newProfile.education || '',
+          bio_text: newProfile.bio_text || '',
+          bio_video_url: newProfile.bio_video_url || '',
+          photos: newProfile.photos || [],
+          managed_by: newProfile.managed_by || 'self',
+          compatibility_score: newProfile.compatibility_score || 95,
+          gun_milan_score: newProfile.gun_milan_score || 32,
+          is_vouched: newProfile.is_vouched || false,
+          is_spotlight: newProfile.is_spotlight || false,
+          is_unlocked: newProfile.is_unlocked || false,
+          lifestyle_details: {
+            ...(newProfile.lifestyle_details || {}),
+            user_id: newProfile.user_id,
+            diet: newProfile.diet,
+            salary_bracket: newProfile.salary_bracket,
+            family_background: newProfile.family_background,
+            marriage_expectations: newProfile.marriage_expectations,
+            gender: newProfile.gender
+          },
+          horoscope: newProfile.horoscope || {}
         }]);
         if (upsertError) {
           console.error('Supabase profile upsert error:', upsertError);

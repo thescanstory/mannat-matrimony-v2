@@ -108,9 +108,18 @@ export function App() {
 
         // Merge Supabase profiles without overwriting newly created local profiles
         if (data && !error && data.length > 0) {
-          (data as Profile[]).forEach(d => {
+          (data as any[]).forEach(d => {
             if (!deletedIds.includes(d.id)) {
-              profileMap.set(d.id, { ...(profileMap.get(d.id) || {}), ...d });
+              const mapped: Profile = {
+                ...d,
+                user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
+                diet: d.lifestyle_details?.diet || d.diet || '',
+                salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
+                family_background: d.lifestyle_details?.family_background || d.family_background || '',
+                marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
+                gender: d.lifestyle_details?.gender || d.gender || 'male'
+              };
+              profileMap.set(d.id, { ...(profileMap.get(d.id) || {}), ...mapped });
             }
           });
         }
