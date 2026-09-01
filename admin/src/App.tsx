@@ -105,37 +105,26 @@ export function App() {
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
         const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
+        let currentProfiles: Profile[] = [];
         
-        // Start with all local candidate records
-        const localProfiles = getInitialProfiles();
-        const profileMap = new Map<string, Profile>();
-        
-        localProfiles.forEach(p => {
-          if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
-        });
+        if (data && !error) {
+          currentProfiles = (data as any[])
+            .filter(d => !deletedIds.includes(d.id))
+            .map(d => ({
+              ...d,
+              user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
+              diet: d.lifestyle_details?.diet || d.diet || '',
+              salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
+              family_background: d.lifestyle_details?.family_background || d.family_background || '',
+              marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
+              gender: d.lifestyle_details?.gender || d.gender || 'male'
+            }));
 
-        // Merge Supabase profiles without overwriting newly created local profiles
-        if (data && !error && data.length > 0) {
-          (data as any[]).forEach(d => {
-            if (!deletedIds.includes(d.id)) {
-              const mapped: Profile = {
-                ...d,
-                user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
-                diet: d.lifestyle_details?.diet || d.diet || '',
-                salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
-                family_background: d.lifestyle_details?.family_background || d.family_background || '',
-                marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
-                gender: d.lifestyle_details?.gender || d.gender || 'male'
-              };
-              profileMap.set(d.id, { ...(profileMap.get(d.id) || {}), ...mapped });
-            }
-          });
+          setProfiles(currentProfiles);
+          localStorage.setItem('mannat_admin_candidates', JSON.stringify(currentProfiles));
+          localStorage.setItem('mannat_custom_profiles', JSON.stringify(currentProfiles));
+          localStorage.setItem('mannat_profiles', JSON.stringify(currentProfiles));
         }
-
-        const merged = Array.from(profileMap.values());
-        setProfiles(merged);
-        localStorage.setItem('mannat_admin_candidates', JSON.stringify(merged));
-        localStorage.setItem('mannat_custom_profiles', JSON.stringify(merged));
 
         // Fetch live callback requests from Supabase
         const { data: cbData, error: cbErr } = await supabase.from('callback_requests').select('*').order('created_at', { ascending: false });
@@ -148,7 +137,7 @@ export function App() {
             callback_requested: 'Pending'
           };
           const mapped: VIPCallback[] = cbData.map((cb: any) => {
-            const matchedProfile = merged.find((p: any) => p.id === cb.target_profile_id);
+            const matchedProfile = currentProfiles.find((p: any) => p.id === cb.target_profile_id);
             return {
               id: cb.id,
               requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
