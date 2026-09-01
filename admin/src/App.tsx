@@ -91,7 +91,7 @@ export function App() {
   const [showDeleteAllUsersConfirm, setShowDeleteAllUsersConfirm] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Profile | null>(null);
   const [viewingCandidate, setViewingCandidate] = useState<Profile | null>(null);
-  const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(null);
+  const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(() => getInitialProfiles()[0]?.id || null);
   const [activeDossierPhoto, setActiveDossierPhoto] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -104,6 +104,9 @@ export function App() {
     async function loadSupabaseData() {
       try {
         const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+        if (data && !error && data.length > 0) {
+          setExpandedCandidateId((prev) => prev || data[0].id);
+        }
         const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
         
         // Start with all local candidate records
