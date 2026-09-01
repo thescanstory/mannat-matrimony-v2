@@ -34,8 +34,13 @@ async function purgeAllData() {
     const { error: vouchErr } = await supabase.from('creator_vouches').delete().neq('id', '00000000-0000-0000-0000-000000000000');
     console.log(vouchErr ? `⚠️ creator_vouches: ${vouchErr.message}` : '✅ creator_vouches purged');
 
-    // 6. Delete all candidate profiles
-    console.log('6. Deleting all candidate profiles...');
+    // 6. Delete all subscriptions
+    console.log('6. Deleting all subscriptions...');
+    const { error: subErr } = await supabase.from('subscriptions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    console.log(subErr ? `⚠️ subscriptions: ${subErr.message}` : '✅ subscriptions purged');
+
+    // 7. Delete all candidate profiles
+    console.log('7. Deleting all candidate profiles...');
     const { error: profErr } = await supabase.from('profiles').delete().neq('id', '00000000-0000-0000-0000-000000000000');
     console.log(profErr ? `⚠️ profiles: ${profErr.message}` : '✅ profiles purged');
 
