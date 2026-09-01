@@ -210,6 +210,15 @@ function MainApp() {
     }
   }, []);
 
+  // Lock screen orientation to portrait (disable auto-rotate)
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && 'screen' in window && 'orientation' in screen && (screen.orientation as any)?.lock) {
+        (screen.orientation as any).lock('portrait-primary').catch(() => {});
+      }
+    } catch {}
+  }, []);
+
   // Fetch initial profiles from Supabase Database on mount and listen to auth changes
   useEffect(() => {
     // Handle Direct Google OAuth 2.0 Return (via #access_token=...)

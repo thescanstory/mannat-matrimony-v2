@@ -1257,7 +1257,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                 autoPlay
                 muted
                 playsInline
-                className="w-full h-full object-cover scale-x-[-1]"
+                className="w-full h-full object-cover"
               />
 
               {/* Recording Indicator & Timer */}
