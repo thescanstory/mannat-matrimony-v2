@@ -36,6 +36,7 @@ export interface LifestyleDetails {
   second_home?: boolean;
   private_clubs?: string;
   net_worth?: string;
+  video_mirrored?: boolean;
 }
 
 export interface Horoscope {

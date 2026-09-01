@@ -20,7 +20,8 @@ import {
   Utensils,
   Home,
   Camera,
-  Upload
+  Upload,
+  FlipHorizontal
 } from 'lucide-react';
 import { NudgeBanner } from './NudgeBanner';
 import { authService } from '../services/authService';
@@ -88,6 +89,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
   const [editPhotos, setEditPhotos] = useState<string[]>(candidateProfile?.photos || []);
   const [editVideoUrl, setEditVideoUrl] = useState<string>(candidateProfile?.bio_video_url || '');
+  const [editVideoMirrored, setEditVideoMirrored] = useState<boolean>((candidateProfile?.lifestyle_details as any)?.video_mirrored || false);
 
   const photoInputRef = useRef<HTMLInputElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
@@ -142,7 +144,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       lifestyle_details: {
         net_worth: editIncomeBracket.includes('50L') ? '₹10Cr+' : '₹5Cr - ₹10Cr',
         private_clubs: 'City Golf & Country Club',
-        second_home: true
+        second_home: true,
+        video_mirrored: editVideoMirrored
       },
       horoscope: {
         manglik: 'No'
@@ -861,8 +864,23 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                         <span>Replace Video</span>
                       </button>
                     </div>
-                    <div className="relative rounded-2xl overflow-hidden aspect-[9/12] max-h-[180px] bg-[#2D2824] mx-auto">
-                      <video src={editVideoUrl} controls playsInline className="w-full h-full object-cover" />
+                    <div className="space-y-2">
+                      <div className="relative rounded-2xl overflow-hidden aspect-[9/12] max-h-[180px] bg-[#2D2824] mx-auto">
+                        <video
+                          src={editVideoUrl}
+                          controls
+                          playsInline
+                          className={`w-full h-full object-cover ${editVideoMirrored ? 'scale-x-[-1]' : ''}`}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setEditVideoMirrored(!editVideoMirrored)}
+                        className="py-1 px-3 rounded-full bg-white border border-[#B89552]/40 text-[#B89552] hover:bg-[#FAF8F5] text-[10px] font-bold flex items-center gap-1 mx-auto cursor-pointer shadow-xs transition-all active:scale-95"
+                      >
+                        <FlipHorizontal className="w-3 h-3" />
+                        <span>{editVideoMirrored ? 'Video Mirrored (Click to Un-mirror)' : 'Video Normal (Click to Mirror / Flip)'}</span>
+                      </button>
                     </div>
                   </div>
 

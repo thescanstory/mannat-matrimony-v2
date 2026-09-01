@@ -196,7 +196,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             loop
             muted={isMuted}
             playsInline
-            className="w-full h-full object-cover"
+            className={`w-full h-full object-cover ${(p.lifestyle_details as any)?.video_mirrored ? 'scale-x-[-1]' : ''}`}
           />
 
           {/* Double Tap Heart Animation */}
@@ -526,7 +526,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                     loop
                     muted={isMuted}
                     playsInline
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${(profile.lifestyle_details as any)?.video_mirrored ? 'scale-x-[-1]' : ''}`}
                   />
 
                   {/* Double Tap Floating Heart */}

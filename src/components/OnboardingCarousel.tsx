@@ -24,7 +24,8 @@ import {
   GraduationCap,
   Building2,
   Calendar,
-  Ruler
+  Ruler,
+  FlipHorizontal
 } from 'lucide-react';
 import type { Profile } from '../types';
 import { profileService } from '../services/profileService';
@@ -129,6 +130,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   const [isRecordingModalOpen, setIsRecordingModalOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [isVideoMirrored, setIsVideoMirrored] = useState(false);
+  const [isCameraMirrored, setIsCameraMirrored] = useState(false);
   const liveVideoRef = useRef<HTMLVideoElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
@@ -392,7 +395,8 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         lifestyle_details: {
           net_worth: salaryBracket.includes('50L') ? '₹10Cr+' : '₹5Cr - ₹10Cr',
           private_clubs: 'City Golf & Country Club',
-          second_home: true
+          second_home: true,
+          video_mirrored: isVideoMirrored
         },
         horoscope: {
           manglik: 'No'
@@ -1111,27 +1115,40 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                   Vertical videos with authentic voice build 10x higher trust.
                 </p>
 
-                {/* Video Player Preview with Sound Support */}
-                <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[260px] bg-[#2D2824] border-2 border-[#B89552] mx-auto shadow-md">
-                  {videoUrl ? (
-                    <>
-                      <video
-                        src={videoUrl}
-                        controls
-                        playsInline
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2 bg-[#B89552] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1">
-                        <Volume2 className="w-3 h-3" />
-                        <span>Sound Active</span>
+                {/* Video Player Preview with Sound Support & Mirror Toggle */}
+                <div className="space-y-2">
+                  <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[260px] bg-[#2D2824] border-2 border-[#B89552] mx-auto shadow-md">
+                    {videoUrl ? (
+                      <>
+                        <video
+                          src={videoUrl}
+                          controls
+                          playsInline
+                          className={`w-full h-full object-cover ${isVideoMirrored ? 'scale-x-[-1]' : ''}`}
+                        />
+                        <div className="absolute top-2 right-2 bg-[#B89552] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1">
+                          <Volume2 className="w-3 h-3" />
+                          <span>Sound Active</span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 px-4 text-center">
+                        <Camera className="w-7 h-7 text-[#B89552]" />
+                        <span className="text-xs font-extrabold text-[#111111]">No video yet</span>
+                        <span className="text-[10px] text-[#999999] leading-tight">Record or upload a 30-second intro below to continue.</span>
                       </div>
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 px-4 text-center">
-                      <Camera className="w-7 h-7 text-[#B89552]" />
-                      <span className="text-xs font-extrabold text-[#111111]">No video yet</span>
-                      <span className="text-[10px] text-[#999999] leading-tight">Record or upload a 30-second intro below to continue.</span>
-                    </div>
+                    )}
+                  </div>
+
+                  {videoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setIsVideoMirrored(!isVideoMirrored)}
+                      className="py-1.5 px-3 rounded-full bg-white border border-[#B89552]/40 text-[#B89552] hover:bg-[#FAF8F5] text-[11px] font-bold flex items-center gap-1.5 mx-auto cursor-pointer shadow-xs transition-all active:scale-95"
+                    >
+                      <FlipHorizontal className="w-3.5 h-3.5" />
+                      <span>{isVideoMirrored ? 'Video Mirrored (Click to Un-mirror)' : 'Video Normal (Click to Mirror / Flip)'}</span>
+                    </button>
                   )}
                 </div>
 
@@ -1257,8 +1274,20 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                 autoPlay
                 muted
                 playsInline
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover ${isCameraMirrored ? 'scale-x-[-1]' : ''}`}
               />
+
+              {/* Viewfinder Flip Button */}
+              {!isRecording && (
+                <button
+                  type="button"
+                  onClick={() => setIsCameraMirrored(!isCameraMirrored)}
+                  className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow hover:bg-black/80 cursor-pointer border border-white/20"
+                >
+                  <FlipHorizontal className="w-3.5 h-3.5" />
+                  <span>{isCameraMirrored ? 'Mirrored' : 'Normal'}</span>
+                </button>
+              )}
 
               {/* Recording Indicator & Timer */}
               {isRecording && (
