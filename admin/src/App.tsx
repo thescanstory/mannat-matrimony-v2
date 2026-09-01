@@ -15,7 +15,11 @@ import {
   Calendar, 
   Edit3, 
   ExternalLink,
-  UserX 
+  UserX,
+  Play,
+  Eye,
+  ImageIcon,
+  CheckCircle2
 } from 'lucide-react';
 import type { Profile } from './types';
 import { supabase } from './services/supabaseClient';
@@ -85,6 +89,8 @@ export function App() {
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
   const [showDeleteAllUsersConfirm, setShowDeleteAllUsersConfirm] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Profile | null>(null);
+  const [viewingCandidate, setViewingCandidate] = useState<Profile | null>(null);
+  const [activeDossierPhoto, setActiveDossierPhoto] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // VIP Callbacks & Matchmakers State
@@ -690,53 +696,81 @@ export function App() {
                 {filteredCandidates.map((candidate) => (
                   <div
                     key={candidate.id}
-                    className="bg-white rounded-3xl border border-[#E8E1D5] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs hover:border-[#B89552] transition-colors"
+                    className="bg-white rounded-3xl border border-[#E8E1D5] p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 shadow-xs hover:border-[#B89552] transition-all"
                   >
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={candidate.photos?.[0] || ''}
-                        alt={candidate.display_name}
-                        className="w-16 h-16 rounded-2xl object-cover border border-[#E8E1D5] shrink-0"
-                      />
-                      <div>
+                    <div className="flex items-start sm:items-center gap-4 cursor-pointer flex-1" onClick={() => {
+                      setViewingCandidate(candidate);
+                      setActiveDossierPhoto(candidate.photos?.[0] || '');
+                    }}>
+                      <div className="relative group shrink-0">
+                        <img
+                          src={candidate.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80'}
+                          alt={candidate.display_name}
+                          className="w-18 h-18 rounded-2xl object-cover border-2 border-[#E8E1D5] group-hover:border-[#B89552] transition-colors shadow-xs"
+                        />
+                        {candidate.photos && candidate.photos.length > 1 && (
+                          <span className="absolute -bottom-1 -right-1 bg-[#111111] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border border-white shadow">
+                            +{candidate.photos.length - 1}
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-base font-extrabold text-[#111111]">
-                              {candidate.display_name} · {candidate.age}
-                            </h4>
-                            <p className="candidate-timestamp text-xs text-gray-500">
-                              Created: {candidate.created_at ? new Date(candidate.created_at).toLocaleString() : '—'}
-                            </p>
+                          <h4 className="text-base font-extrabold text-[#111111] hover:text-[#B89552] transition-colors">
+                            {candidate.display_name} · {candidate.age} yrs
+                          </h4>
                           {candidate.is_vouched && (
-                            <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                              VOUCHED
+                            <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 inline-flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              VERIFIED
                             </span>
                           )}
                           {candidate.is_spotlight && (
-                            <span className="text-[10px] font-black text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                              BOOSTED
+                            <span className="text-[10px] font-black text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 inline-flex items-center gap-1">
+                              <Flame className="w-3 h-3 text-amber-600" />
+                              SPOTLIGHT
+                            </span>
+                          )}
+                          <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                            {candidate.gender === 'female' ? 'Female' : 'Male'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-800 font-semibold">
+                          {candidate.occupation} {candidate.company_name && `@ ${candidate.company_name}`}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          📍 {candidate.city} • 🕉️ {candidate.religion} {candidate.sub_community || candidate.community ? `(${candidate.sub_community || candidate.community})` : ''} • 📏 {candidate.height || "5'9\""} • 💰 {candidate.salary_bracket}
+                        </p>
+                        <div className="flex items-center gap-2 flex-wrap pt-0.5 text-[11px]">
+                          {candidate.education && <span className="text-gray-600 bg-[#F4EFE6] px-2 py-0.5 rounded-md font-medium">🎓 {candidate.education}</span>}
+                          {candidate.diet && <span className="text-gray-600 bg-[#F4EFE6] px-2 py-0.5 rounded-md font-medium">🥗 {candidate.diet}</span>}
+                          {candidate.bio_video_url && (
+                            <span className="text-[#B89552] bg-[#B89552]/10 border border-[#B89552]/30 px-2 py-0.5 rounded-md font-extrabold inline-flex items-center gap-1">
+                              <Play className="w-3 h-3 fill-[#B89552]" />
+                              Video Intro Ready
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-700 font-medium mt-0.5">
-                          {candidate.occupation} {candidate.company_name && `@ ${candidate.company_name}`}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          📍 {candidate.city} • 🕉️ {candidate.religion} {candidate.sub_community || candidate.community ? `(${candidate.sub_community || candidate.community})` : ''} • 📏 {candidate.height || "5'9\""} • 💰 {candidate.salary_bracket}
-                        </p>
-                        <p className="text-[11px] text-gray-500 mt-0.5 flex items-center gap-2 flex-wrap">
-                          {candidate.education && <span>🎓 {candidate.education}</span>}
-                          {candidate.diet && <span>🥗 {candidate.diet}</span>}
-                          {candidate.managed_by && <span>👤 Managed: {candidate.managed_by}</span>}
-                          {candidate.bio_video_url && <span className="text-[#B89552] font-bold">🎬 Video Bio Attached</span>}
-                        </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-100">
+                    <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-100 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setViewingCandidate(candidate);
+                          setActiveDossierPhoto(candidate.photos?.[0] || '');
+                        }}
+                        className="px-3.5 py-2 rounded-xl bg-[#B89552] hover:bg-[#A68243] text-white text-xs font-extrabold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>View Media & Dossier</span>
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => setEditingCandidate(candidate)}
-                        className="px-3.5 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                        className="px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5 text-gray-600" />
                         <span>Edit</span>
@@ -745,7 +779,7 @@ export function App() {
                       <button
                         type="button"
                         onClick={() => toggleVerified(candidate.id)}
-                        className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                           candidate.is_vouched
                             ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
                             : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
@@ -758,7 +792,7 @@ export function App() {
                       <button
                         type="button"
                         onClick={() => toggleSpotlight(candidate.id)}
-                        className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                           candidate.is_spotlight
                             ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
                             : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
@@ -772,6 +806,7 @@ export function App() {
                         type="button"
                         onClick={() => deleteCandidate(candidate.id)}
                         className="p-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer"
+                        title="Delete Candidate"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -1345,6 +1380,256 @@ export function App() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* CANDIDATE MEDIA & FULL DOSSIER MODAL */}
+      {viewingCandidate && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#FBF9F4] rounded-3xl max-w-4xl w-full p-6 space-y-6 border border-[#B89552] shadow-2xl my-8 max-h-[90vh] overflow-y-auto text-left relative">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-4 sticky top-0 bg-[#FBF9F4] z-20">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-[#2D2824] text-[#DFBE7E] flex items-center justify-center font-bold text-xl font-serif-editorial overflow-hidden shadow">
+                  {viewingCandidate.photos?.[0] ? (
+                    <img src={viewingCandidate.photos[0]} alt={viewingCandidate.display_name} className="w-full h-full object-cover" />
+                  ) : (
+                    viewingCandidate.display_name.charAt(0)
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">
+                      {viewingCandidate.display_name}, {viewingCandidate.age} yrs
+                    </h3>
+                    {viewingCandidate.is_vouched && (
+                      <span className="text-[10px] font-black text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 inline-flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        VERIFIED
+                      </span>
+                    )}
+                    {viewingCandidate.is_spotlight && (
+                      <span className="text-[10px] font-black text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 inline-flex items-center gap-1">
+                        <Flame className="w-3 h-3 text-amber-600" />
+                        SPOTLIGHT
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[#7E776F]">
+                    {viewingCandidate.occupation} {viewingCandidate.company_name && `@ ${viewingCandidate.company_name}`} • 📍 {viewingCandidate.city}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewingCandidate(null)}
+                className="p-2 rounded-full bg-black/5 hover:bg-black/10 text-gray-700 cursor-pointer transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body: Two Column Media & Bio-Data Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* LEFT COLUMN: Video Intro & Photo Gallery */}
+              <div className="space-y-4">
+                {/* 30s Video Intro Player */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-black uppercase tracking-wider text-[#B89552] flex items-center gap-1.5">
+                      <Play className="w-3.5 h-3.5 fill-[#B89552]" />
+                      <span>30s Video Introduction</span>
+                    </label>
+                    {viewingCandidate.bio_video_url && (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                        Audio Active 🔊
+                      </span>
+                    )}
+                  </div>
+
+                  {viewingCandidate.bio_video_url ? (
+                    <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[340px] bg-black border-2 border-[#B89552] mx-auto shadow-lg">
+                      <video
+                        src={viewingCandidate.bio_video_url}
+                        controls
+                        autoPlay
+                        playsInline
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border-2 border-dashed border-[#E8E1D5] p-8 text-center bg-[#F4EFE6] space-y-2">
+                      <Play className="w-8 h-8 text-[#B89552] mx-auto opacity-50" />
+                      <p className="text-xs font-bold text-gray-700">No Video Intro Uploaded</p>
+                      <p className="text-[11px] text-gray-500">Candidate has not submitted a 30s video introduction yet.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Candidate Photo Gallery */}
+                <div className="space-y-2 pt-2">
+                  <label className="text-xs font-black uppercase tracking-wider text-[#B89552] flex items-center gap-1.5">
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    <span>Photo Gallery ({viewingCandidate.photos?.length || 0} Photos)</span>
+                  </label>
+
+                  {viewingCandidate.photos && viewingCandidate.photos.length > 0 ? (
+                    <div className="space-y-3">
+                      {/* Big Selected Photo */}
+                      <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-[#2D2824] border border-[#E8E1D5] shadow-md">
+                        <img
+                          src={activeDossierPhoto || viewingCandidate.photos[0]}
+                          alt={viewingCandidate.display_name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      {/* Clickable Photo Thumbnails */}
+                      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                        {viewingCandidate.photos.map((photoUrl, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setActiveDossierPhoto(photoUrl)}
+                            className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${
+                              (activeDossierPhoto || viewingCandidate.photos![0]) === photoUrl
+                                ? 'border-[#B89552] scale-105 shadow-md'
+                                : 'border-transparent opacity-70 hover:opacity-100'
+                            }`}
+                          >
+                            <img src={photoUrl} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-[#E8E1D5] p-6 text-center bg-[#F4EFE6]">
+                      <p className="text-xs text-gray-500">No gallery photos uploaded.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN: Complete Bio-Data Dossier Breakdown */}
+              <div className="space-y-4 text-xs">
+                {/* Identity & Cultural Roots */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8E1D5] space-y-2 shadow-xs">
+                  <h4 className="font-extrabold text-[#111111] text-xs uppercase tracking-wider text-[#B89552]">
+                    1. Vitals & Cultural Heritage
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-gray-700">
+                    <div><span className="text-gray-400 font-bold">Gender:</span> {viewingCandidate.gender === 'female' ? 'Female' : 'Male'}</div>
+                    <div><span className="text-gray-400 font-bold">Age:</span> {viewingCandidate.age} years</div>
+                    <div><span className="text-gray-400 font-bold">Height:</span> {viewingCandidate.height || "5'10\""}</div>
+                    <div><span className="text-gray-400 font-bold">City:</span> {viewingCandidate.city}</div>
+                    <div><span className="text-gray-400 font-bold">Religion:</span> {viewingCandidate.religion}</div>
+                    <div><span className="text-gray-400 font-bold">Community:</span> {viewingCandidate.community || 'North Indian'}</div>
+                    <div><span className="text-gray-400 font-bold">Managed By:</span> {viewingCandidate.managed_by || 'Self'}</div>
+                    <div><span className="text-gray-400 font-bold">Marital Status:</span> {viewingCandidate.marital_status || 'Never Married'}</div>
+                  </div>
+                </div>
+
+                {/* Career & Financial Status */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8E1D5] space-y-2 shadow-xs">
+                  <h4 className="font-extrabold text-[#111111] text-xs uppercase tracking-wider text-[#B89552]">
+                    2. Career & Financial Profile
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-gray-700">
+                    <div className="col-span-2"><span className="text-gray-400 font-bold">Occupation:</span> {viewingCandidate.occupation}</div>
+                    <div><span className="text-gray-400 font-bold">Company:</span> {viewingCandidate.company_name || '—'}</div>
+                    <div><span className="text-gray-400 font-bold">Education:</span> {viewingCandidate.education || '—'}</div>
+                    <div><span className="text-gray-400 font-bold">Annual Income:</span> <span className="font-bold text-[#111111]">{viewingCandidate.salary_bracket || '—'}</span></div>
+                    <div><span className="text-gray-400 font-bold">Diet:</span> {viewingCandidate.diet || '—'}</div>
+                  </div>
+                </div>
+
+                {/* Bio Story & Aspirations */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8E1D5] space-y-2 shadow-xs">
+                  <h4 className="font-extrabold text-[#111111] text-xs uppercase tracking-wider text-[#B89552]">
+                    3. Persona Story & Background
+                  </h4>
+                  {viewingCandidate.bio_text && (
+                    <div>
+                      <span className="text-gray-400 font-bold block mb-0.5">Bio Text:</span>
+                      <p className="text-gray-800 leading-relaxed italic">"{viewingCandidate.bio_text}"</p>
+                    </div>
+                  )}
+                  {viewingCandidate.family_background && (
+                    <div>
+                      <span className="text-gray-400 font-bold block mb-0.5">Family Background:</span>
+                      <p className="text-gray-700">{viewingCandidate.family_background}</p>
+                    </div>
+                  )}
+                  {viewingCandidate.marriage_expectations && (
+                    <div>
+                      <span className="text-gray-400 font-bold block mb-0.5">Partner Expectations:</span>
+                      <p className="text-gray-700">{viewingCandidate.marriage_expectations}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Account & Contact Metadata */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8E1D5] space-y-2 shadow-xs">
+                  <h4 className="font-extrabold text-[#111111] text-xs uppercase tracking-wider text-[#B89552]">
+                    4. Account & Verification Metadata
+                  </h4>
+                  <div className="space-y-1 text-gray-700">
+                    <div><span className="text-gray-400 font-bold">Account Email:</span> <span className="font-mono font-bold text-gray-900">{(viewingCandidate.lifestyle_details as any)?.email || viewingCandidate.display_name}</span></div>
+                    <div><span className="text-gray-400 font-bold">Profile Database ID:</span> <span className="font-mono text-[10px] text-gray-500">{viewingCandidate.id}</span></div>
+                    <div><span className="text-gray-400 font-bold">Compatibility Score:</span> <span className="font-bold text-emerald-700">{viewingCandidate.compatibility_score || 95}% (Gun Milan: {viewingCandidate.gun_milan_score || 32}/36)</span></div>
+                  </div>
+                </div>
+
+                {/* Moderation Action Buttons Bar */}
+                <div className="flex items-center gap-2 pt-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toggleVerified(viewingCandidate.id);
+                      setViewingCandidate({ ...viewingCandidate, is_vouched: !viewingCandidate.is_vouched });
+                    }}
+                    className={`px-4 py-2.5 rounded-xl border text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
+                      viewingCandidate.is_vouched
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>{viewingCandidate.is_vouched ? 'Verified Member ✓' : 'Mark as Verified'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toggleSpotlight(viewingCandidate.id);
+                      setViewingCandidate({ ...viewingCandidate, is_spotlight: !viewingCandidate.is_spotlight });
+                    }}
+                    className={`px-4 py-2.5 rounded-xl border text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
+                      viewingCandidate.is_spotlight
+                        ? 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
+                        : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Flame className="w-4 h-4 text-amber-500" />
+                    <span>{viewingCandidate.is_spotlight ? 'Spotlight Boosted 🔥' : 'Boost to Spotlight'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cand = viewingCandidate;
+                      setViewingCandidate(null);
+                      setEditingCandidate(cand);
+                    }}
+                    className="px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                    <span>Edit Bio-Data</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
