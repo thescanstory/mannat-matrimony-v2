@@ -1,14 +1,25 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
-import type { ChatMessage, Match } from '../types';
+import type { ChatMessage, Match, Profile } from '../types';
 
-// In-memory fallback messages disabled — app uses real chat data only.
-const LOCAL_MESSAGES: Record<string, ChatMessage[]> = {};
+function getStoredMessages(matchId: string): ChatMessage[] {
+  try {
+    const raw = localStorage.getItem(`mannat_chat_${matchId}`);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return [];
+}
+
+function setStoredMessages(matchId: string, msgs: ChatMessage[]) {
+  try {
+    localStorage.setItem(`mannat_chat_${matchId}`, JSON.stringify(msgs));
+  } catch {}
+}
 
 export const chatService = {
   /**
    * Retrieves matches for the user (with profile metadata and latest message preview)
    */
-    getMatches: async (_userId?: string): Promise<Match[]> => {
+  getMatches: async (_userId?: string): Promise<Match[]> => {
     if (!isSupabaseConfigured()) {
       return [];
     }
@@ -23,7 +34,6 @@ export const chatService = {
         return [];
       }
 
-            // Populate partner profile for each match
       return matches.map((m) => {
         const partnerProfile = m.partner_profile || null;
         return {
@@ -45,9 +55,28 @@ export const chatService = {
   /**
    * Fetches messages for a specific match
    */
-  getMessages: async (matchId: string, currentUserId?: string): Promise<ChatMessage[]> => {
+  getMessages: async (matchId: string, currentUserId?: string, candidate?: Profile): Promise<ChatMessage[]> => {
+    const local = getStoredMessages(matchId);
+    if (local.length > 0) {
+      return local;
+    }
+
     if (!isSupabaseConfigured()) {
-      return LOCAL_MESSAGES[matchId] || [];
+      // Create initial welcoming greeting from candidate if first time
+      if (candidate) {
+        const initialGreeting: ChatMessage = {
+          id: `msg-init-${matchId}`,
+          match_id: matchId,
+          sender_id: candidate.id,
+          message: `Namaste! 🙏 Delighted to connect with you on Mannat. Looking forward to our conversation!`,
+          sent_at: new Date(Date.now() - 3600000).toISOString(),
+          is_self: false,
+        };
+        const initial = [initialGreeting];
+        setStoredMessages(matchId, initial);
+        return initial;
+      }
+      return [];
     }
 
     try {
@@ -57,11 +86,11 @@ export const chatService = {
         .eq('match_id', matchId)
         .order('sent_at', { ascending: true });
 
-            if (error || !data || data.length === 0) {
-        return [];
+      if (error || !data || data.length === 0) {
+        return local;
       }
 
-      return data.map((item) => ({
+      const msgs = data.map((item) => ({
         id: item.id,
         match_id: item.match_id,
         sender_id: item.sender_id,
@@ -69,8 +98,11 @@ export const chatService = {
         sent_at: item.sent_at,
         is_self: item.sender_id === (currentUserId || 'current-user'),
       }));
+
+      setStoredMessages(matchId, msgs);
+      return msgs;
     } catch {
-      return LOCAL_MESSAGES[matchId] || [];
+      return local;
     }
   },
 
@@ -91,10 +123,9 @@ export const chatService = {
       is_self: true,
     };
 
-    if (!LOCAL_MESSAGES[matchId]) {
-      LOCAL_MESSAGES[matchId] = [];
-    }
-    LOCAL_MESSAGES[matchId].push(newMsg);
+    const current = getStoredMessages(matchId);
+    const updated = [...current, newMsg];
+    setStoredMessages(matchId, updated);
 
     if (isSupabaseConfigured()) {
       try {
@@ -110,6 +141,29 @@ export const chatService = {
       }
     }
 
+    return newMsg;
+  },
+
+  /**
+   * Adds an incoming reply from candidate
+   */
+  receiveCandidateMessage: (
+    matchId: string,
+    candidateId: string,
+    text: string
+  ): ChatMessage => {
+    const newMsg: ChatMessage = {
+      id: `msg-reply-${Date.now()}`,
+      match_id: matchId,
+      sender_id: candidateId,
+      message: text,
+      sent_at: new Date().toISOString(),
+      is_self: false,
+    };
+
+    const current = getStoredMessages(matchId);
+    const updated = [...current, newMsg];
+    setStoredMessages(matchId, updated);
     return newMsg;
   },
 

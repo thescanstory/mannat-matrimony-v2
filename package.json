@@ -1,5 +1,5 @@
 {
-  "name": "vouch-2-0",
+  "name": "mannat",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,7 +15,11 @@
   "dependencies": {
     "@capacitor/cli": "^8.5.0",
     "@capacitor/core": "^8.5.0",
+    "@capacitor/haptics": "^8.0.2",
     "@capacitor/ios": "^8.5.0",
+    "@capacitor/share": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.3",
     "@capgo/capacitor-social-login": "^8.5.0",
     "@supabase/supabase-js": "^2.112.3",
     "@types/canvas-confetti": "^1.9.0",
@@ -32,6 +36,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
+    "playwright": "^1.62.1",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"

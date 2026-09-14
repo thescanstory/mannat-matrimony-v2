@@ -14,36 +14,36 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
   onOpenProfile
 }) => {
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] w-full max-w-md mx-auto flex flex-col justify-start pb-36 select-none font-sans px-4 pt-2 space-y-4">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-md mx-auto flex flex-col justify-start pb-44 select-none font-sans px-5 sm:px-6 pt-3 space-y-5">
       {/* Paywall Banner Card */}
-      <div className="bg-white rounded-3xl p-5 border border-[#E8E1D5] space-y-4 text-center shadow-xs relative overflow-hidden">
-        <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3">
+      <div className="bg-white rounded-[32px] p-6 sm:p-7 border border-[#E8DDD0] space-y-5 text-center shadow-xs relative overflow-hidden">
+        <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-3.5">
           <div className="text-left">
-            <h1 className="text-xl font-serif-editorial font-bold text-[#111111]">For You</h1>
-            <p className="text-[11px] text-[#777777] font-semibold">12 Premium Profile Viewers</p>
+            <h1 className="text-2xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>For You</h1>
+            <p className="text-[11px] text-[#6E6259] font-semibold">12 Premium Profile Viewers</p>
           </div>
           <button
             type="button"
             onClick={onOpenPaywall}
-            className="px-3 py-1.5 rounded-full bg-[#2D2824] text-white text-xs font-extrabold flex items-center gap-1.5 shadow-xs cursor-pointer hover:bg-[#B89552] transition-colors whitespace-nowrap active:scale-95 shrink-0"
+            className="px-3.5 py-1.5 rounded-full bg-[#560406] text-[#A17B5E] text-xs font-extrabold flex items-center gap-1.5 shadow-xs cursor-pointer hover:brightness-110 transition-colors whitespace-nowrap active:scale-95 shrink-0 border border-[#A17B5E]/30"
           >
-            <Crown className="w-3.5 h-3.5 text-[#B89552]" />
-            <span>Gold Member</span>
+            <Crown className="w-3.5 h-3.5 text-[#A17B5E]" />
+            <span>VIP Member</span>
           </button>
         </div>
 
-        <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] flex items-center justify-center mx-auto text-[#B89552] shadow-xs">
-          <Eye className="w-6 h-6" />
+        <div className="w-14 h-14 rounded-full bg-[#560406]/10 border border-[#A17B5E]/30 flex items-center justify-center mx-auto text-[#560406] shadow-xs">
+          <Eye className="w-7 h-7 text-[#560406]" />
         </div>
 
-        <div className="space-y-1">
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#B89552]">
+        <div className="space-y-1.5">
+          <span className="text-[10px] font-black uppercase tracking-widest text-[#560406]">
             RECENT PROFILE VISITORS
           </span>
-          <h2 className="text-2xl font-serif-editorial font-bold text-[#111111]">
+          <h2 className="text-2xl font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
             Who's interested in your profile?
           </h2>
-          <p className="text-xs text-[#777777] font-medium max-w-xs mx-auto">
+          <p className="text-xs text-[#6E6259] font-medium max-w-xs mx-auto leading-relaxed">
             Upgrade to Gold or Diamond to unlock clear photos, salary details, and direct contact numbers.
           </p>
         </div>
@@ -51,21 +51,21 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
         <button
           type="button"
           onClick={onOpenPaywall}
-          className="w-full py-3.5 px-4 rounded-2xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+          className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap border border-[#A17B5E]/40"
         >
-          <Sparkles className="w-4 h-4 text-[#B89552]" />
+          <Sparkles className="w-4 h-4 text-[#D8B486]" />
           <span className="truncate">Unlock All 12 Profiles (₹1,999/mo)</span>
         </button>
       </div>
 
       {/* Viewers & Shortlisted Grid */}
-      <div className="space-y-3 flex-1">
+      <div className="space-y-4 flex-1">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-base font-serif-editorial font-bold text-[#111111]">Recent Profile Viewers</h3>
-          <span className="text-xs text-[#B89552] font-bold">12 Total Views</span>
+          <h3 className="text-lg font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Recent Profile Viewers</h3>
+          <span className="text-xs text-[#560406] font-bold">12 Total Views</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {profiles.map((profile, idx) => {
             const isLocked = idx >= 1; // Lock for demo
 
@@ -79,10 +79,10 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
                     onOpenProfile(profile);
                   }
                 }}
-                className="bg-[#F4EFE6] rounded-3xl p-3 border border-[#E8E1D5] shadow-sm relative overflow-hidden space-y-2 cursor-pointer group hover:shadow-md transition-all"
+                className="bg-white rounded-[28px] p-3.5 border border-[#E8DDD0] shadow-sm relative overflow-hidden space-y-2.5 cursor-pointer group hover:shadow-md transition-all"
               >
                 {/* Image Container with optional Backdrop Blur */}
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#2D2824]">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#260102]">
                   <img
                     src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                     alt={profile.display_name}
@@ -93,29 +93,29 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
 
                   {/* Lock Overlay for Free Users */}
                   {isLocked && (
-                    <div className="absolute inset-0 bg-[#2D2824]/40 flex flex-col items-center justify-center text-white p-3 text-center backdrop-blur-xs">
-                      <div className="w-10 h-10 rounded-full bg-[#B89552] text-white flex items-center justify-center shadow-lg mb-1">
+                    <div className="absolute inset-0 bg-black/45 flex flex-col items-center justify-center text-white p-3 text-center backdrop-blur-xs">
+                      <div className="w-10 h-10 rounded-full bg-[#560406] text-[#A17B5E] flex items-center justify-center shadow-lg mb-1 border border-[#A17B5E]/40">
                         <Lock className="w-5 h-5" />
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-wider text-white">
-                        Premium Only
+                        VIP Only
                       </span>
                     </div>
                   )}
 
                   {!isLocked && (
-                    <span className="absolute top-2 right-2 bg-emerald-500 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow">
+                    <span className="absolute top-2 right-2 bg-emerald-600 text-white text-[9px] font-black uppercase px-2.5 py-0.5 rounded-full shadow">
                       Unlocked
                     </span>
                   )}
                 </div>
 
                 {/* Info Footer */}
-                <div className="space-y-0.5 text-left">
-                  <h4 className="text-sm font-serif-editorial font-bold text-[#111111]">
+                <div className="space-y-0.5 text-left px-1">
+                  <h4 className="text-sm font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                     {isLocked ? 'Verified Candidate' : profile.display_name}
                   </h4>
-                  <p className="text-[11px] text-[#777777] font-semibold">
+                  <p className="text-[11px] text-[#6E6259] font-semibold">
                     {profile.age} yrs • {profile.city}
                   </p>
                 </div>

@@ -161,28 +161,31 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-          className="w-full max-w-md h-[92vh] sm:h-[840px] bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
+          className="w-full max-w-md h-[92vh] sm:h-[840px] bg-[#F8F6F2] text-[#161412] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8DDD0] shadow-2xl relative"
         >
           {/* Header */}
-          <div className="px-5 pt-4 pb-3.5 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-xs sticky top-0 z-20">
+          <div className="px-5 pt-4 pb-3.5 bg-[#F8F6F2] border-b border-[#E8DDD0] flex items-center justify-between shadow-xs sticky top-0 z-20">
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex items-center gap-1.5 text-xs font-extrabold text-[#111111] hover:text-[#B89552] bg-[#F4EFE6] hover:bg-[#E8E1D5] px-3.5 py-1.5 rounded-full border border-[#E8E1D5] transition-all active:scale-95 cursor-pointer shadow-xs"
+                className="flex items-center gap-1.5 text-xs font-extrabold text-[#560406] hover:text-[#730C0F] bg-white hover:bg-[#F8F6F2] px-3.5 py-1.5 rounded-full border border-[#E8DDD0] transition-all active:scale-95 cursor-pointer shadow-xs"
                 title="Go Back"
               >
-                <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                <ArrowLeft className="w-4 h-4 text-[#560406]" />
                 <span>Back</span>
               </button>
-              <div className="h-4 w-px bg-[#E8E1D5]" />
-              <span className="font-instrument text-2xl lowercase text-[#B89552] leading-none">mannat</span>
+              <div className="h-4 w-px bg-[#E8DDD0]" />
+              <div className="flex flex-col text-left">
+                <span className="text-xs italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
+                <span className="text-base font-normal tracking-[0.2em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>MANNAT</span>
+              </div>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-[#E8E1D5]/50 text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-white text-gray-400 hover:text-[#161412] transition-colors cursor-pointer border border-[#E8DDD0]"
               title="Close"
             >
               <X className="w-5 h-5" />
@@ -190,7 +193,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           </div>
 
           {/* Paywall Body */}
-          <div className="p-6 space-y-5 overflow-y-auto flex-1 bg-[#FBF9F4]">
+          <div className="p-6 space-y-5 overflow-y-auto flex-1 bg-[#F8F6F2]">
             {upgradeSuccess && (
               <div className="p-3 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-extrabold rounded-2xl text-center animate-fadeIn">
                 ✓ Subscription Active via Apple StoreKit! Unlocking verified candidates...
@@ -205,14 +208,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
             {/* Banner */}
             <NudgeBanner
-          title="PREMIUM INTRODUCTIONS"
-          subtitle="Unlock direct contact & verified intros."
-          className="bg-[#F4EFE6] border-[#E8E1D5]"
-        >
-          <p className="text-xs text-[#777777] font-medium leading-relaxed max-w-full">
-            Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.
-          </p>
-        </NudgeBanner>
+              title="PREMIUM INTRODUCTIONS"
+              subtitle="Unlock direct contact & verified intros."
+              className="bg-[#F8F6F2] border-[#E8DDD0]"
+            >
+              <p className="text-xs text-[#6E6259] font-medium leading-relaxed max-w-full">
+                Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.
+              </p>
+            </NudgeBanner>
 
             {/* Plan Selector Grid */}
             <div className="space-y-3">
@@ -225,26 +228,26 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                     onClick={() => setSelectedPlan(plan.id as any)}
                     className={`p-5 rounded-3xl border transition-all cursor-pointer relative ${
                       isSelected
-                        ? 'bg-[#2D2824] text-white border-[#111111] shadow-xl scale-[1.01]'
-                        : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
+                        ? 'bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#260102] text-white border-2 border-[#A17B5E] shadow-xl scale-[1.01]'
+                        : 'bg-white text-[#161412] border-[#E8DDD0] hover:bg-[#F8F6F2]'
                     }`}
                   >
                     {plan.popular && (
-                      <span className="absolute -top-3 right-6 bg-[#B89552] text-white text-[10px] font-black uppercase tracking-wider px-3 py-0.5 rounded-full shadow-md border border-white">
+                      <span className="absolute -top-3 right-6 bg-[#A17B5E] text-[#1C0102] text-[10px] font-black uppercase tracking-wider px-3 py-0.5 rounded-full shadow-md border border-[#F5E6D3]/60">
                         ★ MOST POPULAR
                       </span>
                     )}
 
-                    <div className="flex items-center justify-between pb-3 border-b border-gray-700/40">
+                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
                       <div>
-                        <h3 className="font-serif-editorial text-xl font-bold">{plan.name}</h3>
-                        <span className={`text-[11px] font-extrabold ${isSelected ? 'text-[#B89552]' : 'text-[#777777]'}`}>
+                        <h3 className="text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{plan.name}</h3>
+                        <span className={`text-[11px] font-extrabold ${isSelected ? 'text-[#D8B486]' : 'text-[#A17B5E]'}`}>
                           Apple In-App Pass
                         </span>
                       </div>
                       <div className="text-right">
-                        <span className="text-xl font-black">{plan.price}</span>
-                        <span className={`text-[10px] block ${isSelected ? 'text-gray-400' : 'text-[#777777]'}`}>
+                        <span className={`text-xl font-black ${isSelected ? 'text-[#D8B486]' : 'text-[#560406]'}`}>{plan.price}</span>
+                        <span className={`text-[10px] block ${isSelected ? 'text-neutral-300' : 'text-[#6E6259]'}`}>
                           {plan.period}
                         </span>
                       </div>
@@ -253,8 +256,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                     <ul className="mt-3 space-y-2 text-xs">
                       {plan.features.map((feat, idx) => (
                         <li key={idx} className="flex items-center gap-2">
-                          <Check className={`w-3.5 h-3.5 ${isSelected ? 'text-[#B89552]' : 'text-[#111111]'}`} />
-                          <span className={isSelected ? 'text-gray-200' : 'text-[#555555]'}>{feat}</span>
+                          <Check className={`w-3.5 h-3.5 ${isSelected ? 'text-[#D8B486]' : 'text-[#560406]'}`} />
+                          <span className={isSelected ? 'text-neutral-200' : 'text-[#6E6259]'}>{feat}</span>
                         </li>
                       ))}
                     </ul>
@@ -264,13 +267,13 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             </div>
 
             {/* Apple Mandatory Subscription Terms & Legal Links */}
-            <div className="pt-2 pb-1 text-center space-y-2 border-t border-[#E8E1D5]">
-              <div className="flex items-center justify-center gap-3 text-[11px] font-bold text-[#777777]">
+            <div className="pt-2 pb-1 text-center space-y-2 border-t border-[#E8DDD0]">
+              <div className="flex items-center justify-center gap-3 text-[11px] font-bold text-[#6E6259]">
                 <button
                   type="button"
                   onClick={handleRestorePurchases}
                   disabled={restoring}
-                  className="hover:text-[#111111] flex items-center gap-1 cursor-pointer"
+                  className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
                 >
                   <RefreshCw className={`w-3 h-3 ${restoring ? 'animate-spin' : ''}`} />
                   <span>Restore Purchases</span>
@@ -279,7 +282,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowLegalModal('eula')}
-                  className="hover:text-[#111111] flex items-center gap-1 cursor-pointer"
+                  className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
                 >
                   <FileText className="w-3 h-3" />
                   <span>Terms (EULA)</span>
@@ -288,35 +291,35 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowLegalModal('privacy')}
-                  className="hover:text-[#111111] flex items-center gap-1 cursor-pointer"
+                  className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
                 >
                   <ShieldCheck className="w-3 h-3" />
                   <span>Privacy Policy</span>
                 </button>
               </div>
 
-              <p className="text-[10px] text-gray-500 leading-tight max-w-xs mx-auto">
+              <p className="text-[10px] text-[#8C7E74] leading-tight max-w-xs mx-auto">
                 Payment will be charged to your Apple ID Account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.
               </p>
             </div>
           </div>
 
           {/* Sticky Subscribe & Back Button */}
-          <div className="p-5 border-t border-[#E8E1D5] bg-[#FBF9F4] sticky bottom-0 z-20 shadow-lg space-y-2.5">
+          <div className="p-5 border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg space-y-2.5">
             <button
               type="button"
               disabled={upgrading}
               onClick={handleUpgrade}
-              className="w-full py-4 px-6 rounded-full bg-[#2D2824] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs uppercase tracking-wider hover:brightness-105 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40"
             >
-              <Apple className="w-4 h-4 text-white" />
+              <Apple className="w-4 h-4 text-[#1C0102]" />
               <span>{upgrading ? 'Processing StoreKit...' : `Subscribe via Apple Pay`}</span>
             </button>
 
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-2.5 px-4 rounded-full bg-transparent hover:bg-[#F4EFE6] text-[#777777] hover:text-[#2D2824] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-transparent hover:bg-white text-[#6E6259] hover:text-[#560406] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Go Back / Maybe Later</span>

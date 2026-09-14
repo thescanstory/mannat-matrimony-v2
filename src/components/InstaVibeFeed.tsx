@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, User, Send, Lock, Info, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, User, Send, Lock, Info, RefreshCw, CheckCircle2, Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
+import { ReportBlockModal } from './ReportBlockModal';
+import { nativeService } from '../services/nativeService';
 
 interface InstaVibeFeedProps {
   profiles: Profile[];
@@ -20,6 +22,15 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   onOpenPaywall
 }) => {
   const [selectedDetailProfile, setSelectedDetailProfile] = useState<Profile | null>(null);
+  const [reportModalProfile, setReportModalProfile] = useState<Profile | null>(null);
+  const [blockedProfileIds, setBlockedProfileIds] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('mannat_blocked_profiles');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
   const [likedProfiles, setLikedProfiles] = useState<Record<string, boolean>>(() => {
     try {
       const stored = localStorage.getItem('mannat_favorites');
@@ -180,7 +191,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     const isBioExpanded = expandedBios[p.id] ?? false;
 
     return (
-      <div className="min-h-screen bg-[#FAF8F5] text-[#161412] max-w-md mx-auto flex flex-col justify-between pb-24 select-none relative font-sans">
+      <div className="min-h-screen bg-[#F8F6F2] text-[#161412] max-w-md mx-auto flex flex-col justify-between pb-24 select-none relative font-sans">
         <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
         {/* Full Screen Edge-to-Edge Vertical Video Hero */}
@@ -208,14 +219,14 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 exit={{ scale: 2, opacity: 0 }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
               >
-                <Heart className="w-24 h-24 text-[#C5A059] fill-[#C5A059] drop-shadow-2xl" />
+                <Heart className="w-24 h-24 text-[#A17B5E] fill-[#A17B5E] drop-shadow-2xl" />
               </motion.div>
             )}
           </AnimatePresence>
 
           {/* Pause Badge */}
           {pausedVideos[p.id] && (
-            <div className="absolute inset-0 bg-[#2D2824]/40 flex items-center justify-center pointer-events-none z-30">
+            <div className="absolute inset-0 bg-[#260102]/40 flex items-center justify-center pointer-events-none z-30">
               <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl">
                 <Play className="w-8 h-8 fill-white ml-1" />
               </div>
@@ -230,30 +241,30 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             <button
               type="button"
               onClick={() => setSelectedDetailProfile(null)}
-              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#EADBCE] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
             >
-              <ArrowLeft className="w-5 h-5 text-[#C5A059]" />
+              <ArrowLeft className="w-5 h-5 text-[#560406]" />
             </button>
 
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={toggleSound}
-                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#EADBCE] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
                 title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
               >
-                {isMuted ? <VolumeX className="w-4 h-4 text-[#7E776F]" /> : <Volume2 className="w-4 h-4 text-[#C5A059]" />}
+                {isMuted ? <VolumeX className="w-4 h-4 text-[#6E6259]" /> : <Volume2 className="w-4 h-4 text-[#560406]" />}
               </button>
               <button
                 type="button"
                 onClick={(e) => toggleLike(p.id, e)}
                 className={`w-10 h-10 rounded-full backdrop-blur-xl border flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
                   likedProfiles[p.id]
-                    ? 'bg-[#C5A059] border-[#C5A059] text-white shadow-md'
-                    : 'bg-white/90 border-[#EADBCE] text-[#161412] hover:bg-white'
+                    ? 'bg-[#560406] border-[#560406] text-[#A17B5E] shadow-md'
+                    : 'bg-white/90 border-[#E8DDD0] text-[#161412] hover:bg-white'
                 }`}
               >
-                <Heart className={`w-4 h-4 ${likedProfiles[p.id] ? 'fill-white' : 'text-[#C5A059]'}`} />
+                <Heart className={`w-4 h-4 ${likedProfiles[p.id] ? 'fill-[#A17B5E]' : 'text-[#560406]'}`} />
               </button>
               <button
                 type="button"
@@ -261,67 +272,79 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   e.stopPropagation();
                   onOpenSharePortal(p);
                 }}
-                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#EADBCE] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+                title="Share Bio-Data"
               >
                 <Share2 className="w-4 h-4 text-[#161412]" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setReportModalProfile(p);
+                }}
+                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-rose-700 shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
+                title="Report or Block Candidate"
+              >
+                <Flag className="w-4 h-4 text-rose-700" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Profile Details Sheet */}
-        <div className="p-6 bg-[#FAF8F5] text-[#161412] rounded-t-[36px] -mt-8 relative z-20 space-y-5 border-t border-[#EADBCE] shadow-2xl">
+        <div className="p-6 bg-[#F8F6F2] text-[#161412] rounded-t-[36px] -mt-8 relative z-20 space-y-5 border-t border-[#E8DDD0] shadow-2xl">
           <div className="flex items-center justify-end">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] bg-[#F6F2E9] px-3.5 py-1.5 rounded-full border border-[#EADBCE] flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-[#C5A059]" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] bg-white px-3.5 py-1.5 rounded-full border border-[#E8DDD0] flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3 text-[#560406]" />
               {p.compatibility_score}% MUTUAL MATCH
             </span>
           </div>
 
           <div>
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-serif-editorial font-bold text-[#161412] tracking-tight flex items-center gap-2">
+              <h1 className="text-3xl font-bold text-[#161412] tracking-tight flex items-center gap-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                 <span>{p.display_name}</span>
-                <span className="text-[#C5A059] font-sans font-extrabold text-xl">· {p.age}</span>
+                <span className="text-[#A17B5E] font-sans font-extrabold text-xl">· {p.age}</span>
               </h1>
               {p.is_vouched && (
-                <span className="text-xs font-black text-[#C5A059] bg-[#F6F2E9] px-3.5 py-1.5 rounded-full border border-[#EADBCE] flex items-center gap-1.5 shadow-xs">
-                  <ShieldCheck className="w-4 h-4 text-[#C5A059]" />
+                <span className="text-xs font-black text-[#560406] bg-white px-3.5 py-1.5 rounded-full border border-[#E8DDD0] flex items-center gap-1.5 shadow-xs">
+                  <ShieldCheck className="w-4 h-4 text-[#A17B5E]" />
                   <span>Vouched</span>
                 </span>
               )}
             </div>
 
             <div className="flex flex-wrap items-center gap-2 mt-2">
-              <span className="text-xs text-[#7E776F] font-bold bg-[#F6F2E9] px-2.5 py-1 rounded-md border border-[#EADBCE]">
+              <span className="text-xs text-[#6E6259] font-bold bg-white px-2.5 py-1 rounded-md border border-[#E8DDD0]">
                 📏 {p.height || "5'6\""}
               </span>
-              <span className="text-xs text-[#7E776F] font-bold bg-[#F6F2E9] px-2.5 py-1 rounded-md border border-[#EADBCE]">
+              <span className="text-xs text-[#6E6259] font-bold bg-white px-2.5 py-1 rounded-md border border-[#E8DDD0]">
                 🙏 {p.religion} {p.sub_community ? `· ${p.sub_community}` : ''}
               </span>
-              <span className="text-xs text-[#161412] font-extrabold bg-[#F6F2E9] px-2.5 py-1 rounded-md border border-[#EADBCE]">
-                💼 {p.occupation}
+              <span className="text-xs text-[#161412] font-extrabold bg-white px-2.5 py-1 rounded-md border border-[#E8DDD0]">
+                📍 {p.city}
               </span>
             </div>
           </div>
 
-          {/* Contact Details Paywall Card */}
-          <div className="p-4 rounded-2xl bg-white border border-[#EADBCE] flex items-center justify-between shadow-xs">
-            <div className="space-y-0.5">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#C5A059] block">
-                VERIFIED CONTACT NUMBER
+          {/* Privacy Locked Salary & Credentials Pill */}
+          <div className="p-4 rounded-2xl bg-white border border-[#E8DDD0] flex items-center justify-between shadow-xs">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#560406] block">
+                ANNUAL INCOME & DOSSIER
               </span>
-              <span className="text-xs font-mono font-bold text-[#7E776F] blur-xs select-none">
-                +91 98765 *****
+              <span className="text-xs font-mono font-bold text-[#6E6259] blur-xs select-none">
+                ₹50,00,000 - ₹75,00,000 / yr
               </span>
             </div>
             <button
               type="button"
               onClick={onOpenPaywall}
-              className="px-4 py-2.5 rounded-full bg-[#161412] hover:bg-[#C5A059] text-white text-xs font-extrabold flex items-center gap-1.5 shadow transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-extrabold flex items-center gap-1.5 shadow transition-all cursor-pointer border border-[#A17B5E]/40"
             >
-              <Lock className="w-3.5 h-3.5 text-[#DFBE7E]" />
-              <span>Unlock Phone</span>
+              <Lock className="w-3.5 h-3.5 text-[#D8B486]" />
+              <span>Unlock Info</span>
             </button>
           </div>
 
@@ -398,19 +421,19 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="min-h-screen bg-[#FAF8F5] text-[#161412] max-w-md mx-auto flex flex-col justify-start pb-36 select-none font-sans relative"
+      className="min-h-screen bg-[#F8F6F2] text-[#161412] max-w-md mx-auto flex flex-col justify-start pb-44 select-none font-sans relative"
     >
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
       {/* Pull to Refresh Visual Indicator */}
       {(pullDistance > 0 || isRefreshing) && (
         <div
-          style={{ height: `${Math.max(pullDistance, isRefreshing ? 48 : 0)}px` }}
-          className="w-full flex items-center justify-center overflow-hidden transition-all duration-150"
+          style={{ height: `${Math.max(pullDistance, isRefreshing ? 52 : 0)}px` }}
+          className="w-full flex items-center justify-center overflow-hidden transition-all duration-150 py-2"
         >
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#C5A059] bg-white px-4 py-1.5 rounded-full border border-[#EADBCE] shadow-sm">
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} style={{ transform: `rotate(${pullDistance * 4}deg)` }} />
-            <span>{isRefreshing ? 'Refreshing...' : pullDistance > 45 ? 'Release to Refresh' : 'Pull to Refresh'}</span>
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#560406] bg-white px-5 py-2 rounded-full border border-[#E8DDD0] shadow-sm">
+            <RefreshCw className={`w-3.5 h-3.5 text-[#A17B5E] ${isRefreshing ? 'animate-spin' : ''}`} style={{ transform: `rotate(${pullDistance * 4}deg)` }} />
+            <span>{isRefreshing ? 'Refreshing Profiles...' : pullDistance > 45 ? 'Release to Refresh' : 'Pull to Refresh'}</span>
           </div>
         </div>
       )}
@@ -485,128 +508,153 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
       {/* Hero Banner (First-time Login / Introductory Slide-Out to Left) */}
       {/* Recommended Vertical Video Profiles List */}
-      <div className="px-4 flex-1 pt-2">
-        {profiles.length === 0 ? (
-          <div className="bg-white rounded-3xl p-8 border border-[#EADBCE] shadow-xs text-center space-y-4 my-6">
-            <div className="w-16 h-16 rounded-full bg-[#F4EFE6] text-[#B89552] flex items-center justify-center mx-auto shadow-inner">
-              <Sparkles className="w-8 h-8 text-[#B89552]" />
-            </div>
-            <div className="space-y-1.5">
-              <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">No Candidate Profiles Yet</h3>
-              <p className="text-xs text-[#777777] max-w-xs mx-auto leading-relaxed">
-                As new users register, complete their bio-data, and upload video intros, their verified profiles will appear here in real-time.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-5 pb-6">
-          {profiles.map((profile) => {
-            const isBioExpanded = expandedBios[profile.id] ?? false;
-
+      <div className="px-4 sm:px-5 flex-1 pt-3">
+        {(() => {
+          const visibleProfiles = profiles.filter((p) => !blockedProfileIds.includes(p.id));
+          if (visibleProfiles.length === 0) {
             return (
-              <div
-                key={profile.id}
-                onClick={() => setSelectedDetailProfile(profile)}
-                className="bg-white rounded-[28px] overflow-hidden border border-[#EADBCE] shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 group p-3 space-y-3 relative"
-              >
-                {/* Full-bleed Tall Vertical 9:16 / h-[480px] Video Stream */}
-                <div
-                  className="relative w-full h-[480px] bg-[#2D2824] rounded-[24px] overflow-hidden cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleVideoTap(profile.id);
-                  }}
-                  onDoubleClick={(e) => handleDoubleTapVideo(profile.id, e)}
-                >
-                  <video
-                    ref={(el) => { videoRefs.current[profile.id] = el; }}
-                    src={profile.bio_video_url}
-                    poster={profile.photos?.[0]}
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
-                    className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${(profile.lifestyle_details as any)?.video_mirrored ? 'scale-x-[-1]' : ''}`}
-                  />
+              <div className="bg-white rounded-[32px] p-8 sm:p-10 border border-[#E8DDD0] shadow-xs text-center space-y-5 my-6">
+                <div className="w-16 h-16 rounded-full bg-[#560406]/10 text-[#560406] flex items-center justify-center mx-auto shadow-inner border border-[#A17B5E]/30">
+                  <Sparkles className="w-8 h-8 text-[#A17B5E]" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-serif-editorial font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>No Candidate Profiles Yet</h3>
+                  <p className="text-xs text-[#6E6259] max-w-xs mx-auto leading-relaxed">
+                    As new users register, complete their bio-data, and upload video intros, their verified profiles will appear here in real-time.
+                  </p>
+                </div>
+              </div>
+            );
+          }
 
-                  {/* Double Tap Floating Heart */}
-                  <AnimatePresence>
-                    {doubleTapHeart[profile.id] && (
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1.4, opacity: 1 }}
-                        exit={{ scale: 2, opacity: 0 }}
-                        className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-                      >
-                        <Heart className="w-24 h-24 text-[#DFBE7E] fill-[#DFBE7E] drop-shadow-2xl" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+          return (
+            <div className="grid grid-cols-1 gap-7 pb-8">
+              {visibleProfiles.map((profile) => {
+                const isBioExpanded = expandedBios[profile.id] ?? false;
 
-                  {/* Pause Overlay Indicator */}
-                  {pausedVideos[profile.id] && (
-                    <div className="absolute inset-0 bg-[#2D2824]/40 flex items-center justify-center pointer-events-none z-30">
-                      <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl">
-                        <Play className="w-8 h-8 fill-white ml-1" />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Video Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30 pointer-events-none" />
-
-                  {/* Top Badges */}
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
-                    {/* eMatchMaker 2-Way Match Score Pill */}
+                return (
+                  <div
+                    key={profile.id}
+                    onClick={() => {
+                      nativeService.haptic.light();
+                      setSelectedDetailProfile(profile);
+                    }}
+                    className="bg-white rounded-[32px] overflow-hidden border border-[#E8DDD0] shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 group p-4 sm:p-5 space-y-4 relative"
+                  >
+                    {/* Full-bleed Tall Vertical 9:16 / h-[490px] Video Stream */}
                     <div
+                      className="relative w-full h-[490px] bg-[#260102] rounded-[26px] overflow-hidden cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setShowMatchScoreTooltip(showMatchScoreTooltip === profile.id ? null : profile.id);
+                        handleVideoTap(profile.id);
                       }}
-                      className="bg-white/95 backdrop-blur-xl px-3.5 py-1.5 rounded-full text-xs font-black text-[#C5A059] shadow-md border border-[#EADBCE] flex items-center gap-1.5 cursor-pointer hover:bg-white transition-colors"
+                      onDoubleClick={(e) => handleDoubleTapVideo(profile.id, e)}
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-                      <span>{profile.compatibility_score}% Match</span>
-                      <Info className="w-3 h-3 text-[#7E776F] ml-0.5" />
-                    </div>
+                      <video
+                        ref={(el) => { videoRefs.current[profile.id] = el; }}
+                        src={profile.bio_video_url}
+                        poster={profile.photos?.[0]}
+                        autoPlay
+                        loop
+                        muted={isMuted}
+                        playsInline
+                        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${(profile.lifestyle_details as any)?.video_mirrored ? 'scale-x-[-1]' : ''}`}
+                      />
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={toggleSound}
-                        className="w-10 h-10 rounded-full bg-[#2D2824]/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white shadow-md hover:bg-[#2D2824]/70 active:scale-95 transition-all cursor-pointer"
-                        title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-                      >
-                        {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-[#DFBE7E]" />}
-                      </button>
+                      {/* Double Tap Floating Heart */}
+                      <AnimatePresence>
+                        {doubleTapHeart[profile.id] && (
+                          <motion.div
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1.4, opacity: 1 }}
+                            exit={{ scale: 2, opacity: 0 }}
+                            className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
+                          >
+                            <Heart className="w-24 h-24 text-[#A17B5E] fill-[#A17B5E] drop-shadow-2xl" />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
-                      <button
-                        type="button"
-                        onClick={(e) => toggleLike(profile.id, e)}
-                        className={`w-10 h-10 rounded-full backdrop-blur-xl border flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
-                          likedProfiles[profile.id]
-                            ? 'bg-[#C5A059] border-[#C5A059] text-white'
-                            : 'bg-white/90 border-[#EADBCE] text-[#161412] hover:bg-white'
-                        }`}
-                      >
-                        <Heart className={`w-4 h-4 ${likedProfiles[profile.id] ? 'fill-white' : 'text-[#C5A059]'}`} />
-                      </button>
-                    </div>
-                  </div>
+                      {/* Pause Overlay Indicator */}
+                      {pausedVideos[profile.id] && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none z-30">
+                          <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl">
+                            <Play className="w-8 h-8 fill-white ml-1" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Video Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30 pointer-events-none" />
+
+                      {/* Top Badges */}
+                      <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
+                        {/* eMatchMaker 2-Way Match Score Pill */}
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowMatchScoreTooltip(showMatchScoreTooltip === profile.id ? null : profile.id);
+                          }}
+                          className="bg-white/95 backdrop-blur-xl px-4 py-2 rounded-full text-xs font-black text-[#560406] shadow-md border border-[#E8DDD0] flex items-center gap-1.5 cursor-pointer hover:bg-white transition-colors"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
+                          <span>{profile.compatibility_score}% Match</span>
+                          <Info className="w-3 h-3 text-[#6E6259] ml-0.5" />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={toggleSound}
+                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white shadow-md hover:bg-black/70 active:scale-95 transition-all cursor-pointer"
+                            title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
+                          >
+                            {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-[#A17B5E]" />}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              nativeService.haptic.light();
+                              toggleLike(profile.id, e);
+                            }}
+                            className={`w-10 h-10 rounded-full backdrop-blur-xl border flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
+                              likedProfiles[profile.id]
+                                ? 'bg-[#560406] border-[#560406] text-[#A17B5E]'
+                                : 'bg-white/90 border-[#E8DDD0] text-[#560406] hover:bg-white'
+                            }`}
+                          >
+                            <Heart className={`w-4 h-4 ${likedProfiles[profile.id] ? 'fill-[#A17B5E]' : 'text-[#560406]'}`} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              nativeService.haptic.light();
+                              setReportModalProfile(profile);
+                            }}
+                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-rose-300 shadow-md hover:bg-black/70 active:scale-95 transition-all cursor-pointer"
+                            title="Report or Block Candidate"
+                          >
+                            <Flag className="w-4 h-4 text-rose-300" />
+                          </button>
+                        </div>
+                      </div>
 
                   {/* Mutual Match Score Breakdown Tooltip */}
                   {showMatchScoreTooltip === profile.id && (
                     <div
                       onClick={(e) => e.stopPropagation()}
-                      className="absolute top-14 left-4 right-4 z-40 bg-[#161412] text-white p-4 rounded-2xl border border-[#C5A059]/40 shadow-2xl space-y-2 text-xs animate-fadeIn"
+                      className="absolute top-16 left-4 right-4 z-40 bg-[#161412] text-white p-5 rounded-2xl border border-[#A17B5E]/40 shadow-2xl space-y-2.5 text-xs animate-fadeIn"
                     >
-                      <div className="flex items-center justify-between pb-1 border-b border-gray-700">
-                        <span className="font-serif-editorial text-sm font-bold text-[#DFBE7E]">eMatchMaker 2-Way Score</span>
-                        <button type="button" onClick={() => setShowMatchScoreTooltip(null)} className="text-gray-400">
-                          <X className="w-3.5 h-3.5" />
+                      <div className="flex items-center justify-between pb-2 border-b border-gray-700">
+                        <span className="font-serif-editorial text-sm font-bold text-[#A17B5E]">eMatchMaker 2-Way Score</span>
+                        <button type="button" onClick={() => setShowMatchScoreTooltip(null)} className="text-gray-400 hover:text-white">
+                          <X className="w-4 h-4" />
                         </button>
                       </div>
-                      <div className="space-y-1 text-[11px]">
+                      <div className="space-y-1.5 text-[11px]">
                         <div className="flex justify-between">
                           <span className="text-gray-300">You meet {profile.display_name}'s criteria:</span>
                           <span className="font-bold text-emerald-400">100% (Age, Religion, Diet)</span>
@@ -620,14 +668,14 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   )}
 
                   {/* Bottom Overlay Info & Action Button */}
-                  <div className="absolute bottom-4 left-4 right-4 z-20 space-y-3">
+                  <div className="absolute bottom-4 left-4 right-4 z-20 space-y-3.5">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <h4 className="text-2xl font-serif-editorial font-bold text-white tracking-tight drop-shadow-md">
+                        <h4 className="text-2xl font-serif-editorial font-bold text-white tracking-tight drop-shadow-md" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                           {profile.display_name} · {profile.age}
                         </h4>
                         {profile.is_vouched && (
-                          <span className="text-[10px] font-black text-[#C5A059] bg-white px-2.5 py-0.5 rounded-full border border-[#EADBCE]">
+                          <span className="text-[10px] font-black text-[#560406] bg-white px-3 py-0.5 rounded-full border border-[#E8DDD0]">
                             Vouched
                           </span>
                         )}
@@ -643,18 +691,18 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                       <p className="text-[11px] text-gray-300 font-medium">📍 {profile.city}, India</p>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-1">
+                    <div className="flex items-center gap-2.5 pt-1">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedDetailProfile(profile);
                         }}
-                        className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-[#F6F2E9] text-[#161412] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md border border-[#EADBCE] cursor-pointer"
+                        className="flex-1 py-3 px-4 rounded-xl bg-white hover:bg-[#F8F6F2] text-[#560406] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md border border-[#E8DDD0] cursor-pointer"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
-                        <span>View Bio-Data & Video</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-[#C5A059]" />
+                        <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
+                        <span>View Bio-Data</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-[#560406]" />
                       </button>
 
                       <button
@@ -663,7 +711,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                           e.stopPropagation();
                           setConnectModalProfile(profile);
                         }}
-                        className="py-2.5 px-3 rounded-xl bg-[#C5A059] text-white text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1 shadow-md cursor-pointer"
+                        className="py-3 px-4 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1 shadow-md cursor-pointer border border-[#A17B5E]/40"
                       >
                         <span>Connect</span>
                       </button>
@@ -672,15 +720,15 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                 </div>
 
                 {/* 3 Small Picture Placeholders Below Video */}
-                <div className="space-y-1.5 pt-1">
+                <div className="space-y-2 pt-1">
                   <div className="flex items-center justify-between px-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#C5A059] flex items-center gap-1">
-                      <ImageIcon className="w-3 h-3" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5 text-[#A17B5E]" />
                       <span>Photos (3)</span>
                     </span>
-                    <span className="text-[10px] text-[#7E776F] font-semibold">Click to preview</span>
+                    <span className="text-[10px] text-[#6E6259] font-semibold">Click to preview</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-2.5">
                     {(profile.photos || []).map((photoUrl, idx) => (
                       <div
                         key={idx}
@@ -688,7 +736,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                           e.stopPropagation();
                           setSelectedPhotoPreview(photoUrl);
                         }}
-                        className="aspect-square rounded-xl overflow-hidden border border-[#EADBCE] bg-[#F6F2E9] hover:opacity-90 active:scale-95 transition-all shadow-xs relative group cursor-pointer"
+                        className="aspect-square rounded-2xl overflow-hidden border border-[#E8DDD0] bg-[#F8F6F2] hover:opacity-90 active:scale-95 transition-all shadow-xs relative group cursor-pointer"
                       >
                         <img
                           src={photoUrl}
@@ -705,22 +753,22 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                   <button
                     type="button"
                     onClick={(e) => toggleBioDropdown(profile.id, e)}
-                    className="w-full py-2.5 px-3.5 rounded-xl bg-[#F6F2E9] border border-[#EADBCE] flex items-center justify-between text-xs font-extrabold text-[#161412] hover:bg-[#EADBCE]/50 transition-all cursor-pointer"
+                    className="w-full py-3 px-4 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0] flex items-center justify-between text-xs font-extrabold text-[#161412] hover:bg-white transition-all cursor-pointer shadow-xs"
                   >
-                    <span className="font-serif-editorial text-sm">About & Bio Description</span>
-                    {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#C5A059]" /> : <ChevronDown className="w-4 h-4 text-[#7E776F]" />}
+                    <span className="font-serif-editorial text-sm" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>About & Bio Description</span>
+                    {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#560406]" /> : <ChevronDown className="w-4 h-4 text-[#6E6259]" />}
                   </button>
 
                   {isBioExpanded && (
                     <div
                       onClick={(e) => e.stopPropagation()}
-                      className="mt-2 p-3.5 rounded-xl bg-white border border-[#EADBCE] space-y-2.5 text-left shadow-xs animate-fadeIn"
+                      className="mt-2.5 p-4 rounded-2xl bg-white border border-[#E8DDD0] space-y-2.5 text-left shadow-xs animate-fadeIn"
                     >
                       <div>
-                        <span className="text-[10px] uppercase font-black tracking-wider text-[#C5A059] block mb-0.5">
+                        <span className="text-[10px] uppercase font-black tracking-wider text-[#560406] block mb-1">
                           Personal Bio
                         </span>
-                        <p className="text-xs text-[#55504A] font-medium leading-relaxed">
+                        <p className="text-xs text-[#6E6259] font-medium leading-relaxed">
                           {profile.bio_text || 'Design lead by day, classical dancer by weekend. Looking for an empathetic, ambitious partner.'}
                         </p>
                       </div>
@@ -731,8 +779,26 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
             );
           })}
         </div>
-      )}
-      </div>
+      );
+    })()}
+    </div>
+
+      {/* Safety & Moderation Report / Block Modal (Apple Guideline 1.2 Compliance) */}
+      <ReportBlockModal
+        isOpen={!!reportModalProfile}
+        profile={reportModalProfile}
+        onClose={() => setReportModalProfile(null)}
+        onBlockSuccess={(blockedId) => {
+          setBlockedProfileIds((prev) => [...prev, blockedId]);
+          if ((selectedDetailProfile as Profile | null)?.id === blockedId) {
+            setSelectedDetailProfile(null);
+          }
+          triggerToast('Candidate blocked and removed from feed', 'success');
+        }}
+        onReportSuccess={(_id, _reason) => {
+          triggerToast('Report submitted to Trust & Safety', 'sparkle');
+        }}
+      />
     </div>
   );
 };

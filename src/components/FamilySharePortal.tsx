@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Share2, Volume2, VolumeX, ExternalLink, Heart, Sparkles, MapPin, Briefcase, User, Check, Send } from 'lucide-react';
 import type { Profile } from '../types';
+import { nativeService } from '../services/nativeService';
 
 interface FamilySharePortalProps {
   profile: Profile;
@@ -19,14 +20,21 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
 
   const shareUrl = `${window.location.origin}/share/${profile.id}`;
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareUrl);
+  const handleCopyLink = async () => {
+    nativeService.haptic.light();
+    await nativeService.share({
+      title: `Matrimonial Bio-Data - ${profile.display_name}`,
+      text: `Verified matrimonial bio-data for ${profile.display_name} (${profile.age} yrs, ${profile.occupation}, ${profile.city}) on Mannat.`,
+      url: shareUrl,
+      dialogTitle: `Share Bio-Data of ${profile.display_name}`
+    });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleWhatsAppShare = () => {
-    const text = encodeURIComponent(
+  const handleWhatsAppShare = async () => {
+    nativeService.haptic.light();
+    const shareText = 
       `✨ Verified Matrimonial Bio-Data for ${profile.display_name}:\n\n` +
       `👤 Age & Height: ${profile.age} yrs, ${profile.height || "5'7\""}\n` +
       `📍 City: ${profile.city}\n` +
@@ -34,9 +42,18 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
       `💼 Profession: ${profile.occupation} (${profile.company_name || 'Top Firm'})\n` +
       `🙏 Community: ${profile.religion} (${profile.sub_community || profile.community || 'North Indian'})\n` +
       `💰 Income: ${profile.salary_bracket || '₹35L - ₹50L/yr'}\n\n` +
-      `View Full Verified Profile on Mannat: ${shareUrl}`
-    );
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+      `View Full Verified Profile on Mannat: ${shareUrl}`;
+
+    if (nativeService.isNative()) {
+      await nativeService.share({
+        title: `Matrimonial Bio-Data - ${profile.display_name}`,
+        text: shareText,
+        url: shareUrl,
+        dialogTitle: 'Share to WhatsApp or Family'
+      });
+    } else {
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+    }
   };
 
   const toggleVoicePlayback = () => {
@@ -64,11 +81,11 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] p-4 pb-36 max-w-lg mx-auto select-none font-sans">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] p-4 sm:p-6 pb-44 max-w-lg mx-auto select-none font-sans">
       {/* Hero Photo Carousel & Vitals */}
-      <div className="bg-white border border-[#E8E1D5] rounded-3xl p-4 space-y-4 shadow-sm">
+      <div className="bg-white border border-[#E8DDD0] rounded-[32px] p-5 space-y-4 shadow-sm">
         {/* Main Active Photo */}
-        <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#2D2824] shadow-md">
+        <div className="relative aspect-[3/4] rounded-[26px] overflow-hidden bg-[#260102] shadow-md">
           <img
             src={photos[selectedPhotoIndex]}
             alt={`${profile.display_name} photo`}
@@ -76,18 +93,18 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
           />
 
           {/* Compatibility Score Tag */}
-          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-sm border border-[#E8E1D5] flex items-center gap-1.5 text-xs font-extrabold text-[#B89552]">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-md border border-[#E8DDD0] flex items-center gap-1.5 text-xs font-bold text-[#560406]">
+            <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
             <span>{profile.compatibility_score || 98}% Match</span>
           </div>
 
           {/* Gradient Info Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent flex flex-col justify-end p-4 text-white">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent flex flex-col justify-end p-5 text-white">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-serif-editorial font-bold tracking-tight">
+              <h1 className="text-2xl font-serif-editorial font-bold tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                 {profile.display_name}, {profile.age}
               </h1>
-              <span className="text-[10px] font-black uppercase text-[#B89552] bg-white px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-black uppercase text-[#560406] bg-white px-2.5 py-0.5 rounded-full">
                 Vouched
               </span>
             </div>
@@ -95,7 +112,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
               {profile.height || "5'7\""} • {profile.religion} ({profile.sub_community || profile.community || 'North Indian'})
             </p>
             <p className="text-xs text-gray-300 font-medium flex items-center gap-1 mt-0.5">
-              <MapPin className="w-3.5 h-3.5 text-[#DFBE7E]" />
+              <MapPin className="w-3.5 h-3.5 text-[#A17B5E]" />
               <span>Settled in {profile.city}, India</span>
             </p>
           </div>
@@ -109,8 +126,8 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
                 key={idx}
                 type="button"
                 onClick={() => setSelectedPhotoIndex(idx)}
-                className={`relative flex-1 aspect-square rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                  selectedPhotoIndex === idx ? 'border-[#B89552] ring-2 ring-[#B89552]/30 scale-105' : 'border-[#E8E1D5] opacity-75'
+                className={`relative flex-1 aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${
+                  selectedPhotoIndex === idx ? 'border-[#560406] ring-2 ring-[#560406]/30 scale-105' : 'border-[#E8DDD0] opacity-75'
                 }`}
               >
                 <img src={url} alt="thumbnail" className="w-full h-full object-cover" />
@@ -121,20 +138,20 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
       </div>
 
       {/* Voice Intro Player */}
-      <div className="mt-4 p-4 rounded-2xl bg-white border border-[#E8E1D5] flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
+      <div className="mt-4 p-5 rounded-2xl bg-white border border-[#E8DDD0] flex items-center justify-between shadow-xs">
+        <div className="flex items-center gap-3.5">
           <button
             type="button"
             onClick={toggleVoicePlayback}
-            className={`w-11 h-11 rounded-full flex items-center justify-center shadow-xs transition-colors cursor-pointer shrink-0 ${
-              isPlayingAudio ? 'bg-[#B89552] text-white animate-pulse' : 'bg-[#2D2824] text-white hover:bg-[#B89552]'
+            className={`w-12 h-12 rounded-full flex items-center justify-center shadow-xs transition-colors cursor-pointer shrink-0 ${
+              isPlayingAudio ? 'bg-[#560406] text-[#A17B5E] animate-pulse' : 'bg-[#560406] text-white hover:brightness-110'
             }`}
           >
             {isPlayingAudio ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 text-white" />}
           </button>
           <div>
-            <span className="text-xs font-extrabold text-[#111111] block">Voice Bio-Description</span>
-            <span className="text-[11px] text-[#777777] font-semibold">
+            <span className="text-xs font-bold text-[#161412] block">Voice Bio-Description</span>
+            <span className="text-[11px] text-[#6E6259] font-medium">
               {isPlayingAudio ? 'Playing candidate voice introduction...' : 'Tap to listen to candidate audio description'}
             </span>
           </div>
@@ -144,121 +161,121 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
       {/* Detailed Matrimonial Sections */}
       <div className="mt-4 space-y-4">
         {/* 1. Core Vitals & Identity */}
-        <div className="bg-white rounded-3xl p-5 border border-[#E8E1D5] shadow-xs space-y-3">
-          <div className="flex items-center gap-2 border-b border-[#E8E1D5] pb-2.5">
-            <User className="w-4 h-4 text-[#B89552]" />
-            <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">Candidate Vitals & Identity</h3>
+        <div className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-3">
+          <div className="flex items-center gap-2 border-b border-[#E8DDD0] pb-2.5">
+            <User className="w-4 h-4 text-[#560406]" />
+            <h3 className="text-xs font-black uppercase tracking-wider text-[#560406]">Candidate Vitals & Identity</h3>
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Age & DOB</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.age} Years</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Age & DOB</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.age} Years</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Height</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.height || "5'7\" (170 cm)"}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Height</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.height || "5'7\" (170 cm)"}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Marital Status</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">Never Married</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Marital Status</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">Never Married</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Profile Managed By</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">Self Candidate</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Profile Managed By</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">Self Candidate</span>
             </div>
           </div>
         </div>
 
         {/* 2. Career & Financial Standing */}
-        <div className="bg-white rounded-3xl p-5 border border-[#E8E1D5] shadow-xs space-y-3">
-          <div className="flex items-center gap-2 border-b border-[#E8E1D5] pb-2.5">
-            <Briefcase className="w-4 h-4 text-[#B89552]" />
-            <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">Career & Education</h3>
+        <div className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-3">
+          <div className="flex items-center gap-2 border-b border-[#E8DDD0] pb-2.5">
+            <Briefcase className="w-4 h-4 text-[#560406]" />
+            <h3 className="text-xs font-black uppercase tracking-wider text-[#560406]">Career & Education</h3>
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5] col-span-2">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Current Role / Title</span>
-              <span className="font-extrabold text-[#111111] text-sm mt-0.5 block">{profile.occupation}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0] col-span-2">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Current Role / Title</span>
+              <span className="font-bold text-[#161412] text-sm mt-0.5 block">{profile.occupation}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Company / Firm</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.company_name || 'Leading Enterprise'}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Company / Firm</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.company_name || 'Leading Enterprise'}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Highest Degree</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.education || 'Masters Degree'}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Highest Degree</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.education || 'Masters Degree'}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Annual Income</span>
-              <span className="font-extrabold text-[#B89552] text-xs mt-0.5 block">{profile.salary_bracket || '₹35 - 50 Lakhs'}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Annual Income</span>
+              <span className="font-bold text-[#560406] text-xs mt-0.5 block">{profile.salary_bracket || '₹35 - 50 Lakhs'}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Work Location</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.city}, India</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Work Location</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.city}, India</span>
             </div>
           </div>
         </div>
 
         {/* 3. Cultural Roots & Horoscope */}
-        <div className="bg-white rounded-3xl p-5 border border-[#E8E1D5] shadow-xs space-y-3">
-          <div className="flex items-center gap-2 border-b border-[#E8E1D5] pb-2.5">
-            <Sparkles className="w-4 h-4 text-[#B89552]" />
-            <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">Cultural Roots & Astrology</h3>
+        <div className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-3">
+          <div className="flex items-center gap-2 border-b border-[#E8DDD0] pb-2.5">
+            <Sparkles className="w-4 h-4 text-[#560406]" />
+            <h3 className="text-xs font-black uppercase tracking-wider text-[#560406]">Cultural Roots & Astrology</h3>
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Religion</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.religion}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Religion</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.religion}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Community / Caste</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.sub_community || profile.community || 'North Indian'}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Community / Caste</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.sub_community || profile.community || 'North Indian'}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Manglik Status</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">No (Non-Manglik)</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Manglik Status</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">No (Non-Manglik)</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Gun Milan Match</span>
-              <span className="font-extrabold text-[#B89552] text-xs mt-0.5 block">{profile.gun_milan_score || 32} / 36 Gunas</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Gun Milan Match</span>
+              <span className="font-bold text-[#560406] text-xs mt-0.5 block">{profile.gun_milan_score || 32} / 36 Gunas</span>
             </div>
           </div>
         </div>
 
         {/* 4. Lifestyle & Dietary Habits */}
-        <div className="bg-white rounded-3xl p-5 border border-[#E8E1D5] shadow-xs space-y-3">
-          <div className="flex items-center gap-2 border-b border-[#E8E1D5] pb-2.5">
-            <Heart className="w-4 h-4 text-[#B89552]" />
-            <h3 className="text-xs font-black uppercase tracking-wider text-[#111111]">Lifestyle & Diet</h3>
+        <div className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-3">
+          <div className="flex items-center gap-2 border-b border-[#E8DDD0] pb-2.5">
+            <Heart className="w-4 h-4 text-[#560406]" />
+            <h3 className="text-xs font-black uppercase tracking-wider text-[#560406]">Lifestyle & Diet</h3>
           </div>
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Diet Preference</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">{profile.diet || 'Vegetarian'}</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Diet Preference</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">{profile.diet || 'Vegetarian'}</span>
             </div>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] border border-[#E8E1D5]">
-              <span className="text-[#777777] text-[10px] uppercase font-bold block">Drinking & Smoking</span>
-              <span className="font-extrabold text-[#111111] text-xs mt-0.5 block">Non-Smoker • Social</span>
+            <div className="p-3.5 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0]">
+              <span className="text-[#6E6259] text-[10px] uppercase font-bold block">Drinking & Smoking</span>
+              <span className="font-bold text-[#161412] text-xs mt-0.5 block">Non-Smoker • Social</span>
             </div>
           </div>
         </div>
 
         {/* 5. Family Background */}
-        <div className="bg-white rounded-3xl p-5 border border-[#E8E1D5] shadow-xs space-y-3">
-          <h3 className="text-xs font-black uppercase tracking-wider text-[#111111] border-b border-[#E8E1D5] pb-2.5">
+        <div className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-3">
+          <h3 className="text-xs font-black uppercase tracking-wider text-[#560406] border-b border-[#E8DDD0] pb-2.5">
             Family Background & Values
           </h3>
-          <p className="text-xs text-[#555555] leading-relaxed bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#E8E1D5]">
+          <p className="text-xs text-[#6E6259] leading-relaxed bg-[#F8F6F2] p-4 rounded-2xl border border-[#E8DDD0]">
             {profile.family_background || 'Respectable family settled in metro city with strong cultural values and progressive outlook.'}
           </p>
         </div>
 
         {/* 6. Partner Expectations */}
-        <div className="bg-white rounded-3xl p-5 border border-[#E8E1D5] shadow-xs space-y-3">
-          <h3 className="text-xs font-black uppercase tracking-wider text-[#111111] border-b border-[#E8E1D5] pb-2.5">
+        <div className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-3">
+          <h3 className="text-xs font-black uppercase tracking-wider text-[#560406] border-b border-[#E8DDD0] pb-2.5">
             Partner Expectations & Marriage Timeline
           </h3>
-          <p className="text-xs text-[#555555] leading-relaxed bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#E8E1D5]">
+          <p className="text-xs text-[#6E6259] leading-relaxed bg-[#F8F6F2] p-4 rounded-2xl border border-[#E8DDD0]">
             {profile.marriage_expectations || 'Looking for an ambitious, emotionally mature partner who values mutual growth, open communication, and family harmony.'}
           </p>
         </div>
@@ -269,11 +286,11 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
         <button
           type="button"
           onClick={() => setWaveSent(true)}
-          className={`w-full py-4 px-6 rounded-2xl text-white font-extrabold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 ${
-            waveSent ? 'bg-emerald-600' : 'bg-[#2D2824] hover:bg-[#B89552]'
+          className={`w-full py-4 px-6 rounded-2xl text-[#F5E6D3] font-black text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 ${
+            waveSent ? 'bg-emerald-600' : 'bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 border border-[#A17B5E]/40'
           }`}
         >
-          {waveSent ? <Check className="w-4 h-4" /> : <Send className="w-4 h-4 text-[#DFBE7E]" />}
+          {waveSent ? <Check className="w-4 h-4" /> : <Send className="w-4 h-4 text-[#D8B486]" />}
           <span>{waveSent ? 'Interest Wave Sent! 👋' : 'Send Interest Wave 👋'}</span>
         </button>
 
@@ -289,9 +306,9 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
         <button
           type="button"
           onClick={handleCopyLink}
-          className="w-full py-3.5 px-6 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-[#E8E1D5] active:scale-98 flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+          className="w-full py-3.5 px-6 rounded-2xl bg-white border border-[#E8DDD0] text-[#560406] text-xs font-bold uppercase tracking-wider hover:bg-[#F8F6F2] active:scale-98 flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
         >
-          <ExternalLink className="w-4 h-4 text-[#B89552]" />
+          <ExternalLink className="w-4 h-4 text-[#A17B5E]" />
           <span>{copied ? '✓ Link Copied!' : 'Copy Direct Web Portal Link'}</span>
         </button>
       </div>

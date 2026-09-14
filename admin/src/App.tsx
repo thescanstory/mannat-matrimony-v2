@@ -31,9 +31,16 @@ interface VIPCallback {
   requester_phone: string;
   target_candidate_name: string;
   requested_time: string;
-  managed_by: 'Parent' | 'Candidate';
+  managed_by: string;
   status: 'Pending' | 'In Progress' | 'Completed';
   notes: string;
+  email?: string;
+  city?: string;
+  annual_income?: string;
+  profession?: string;
+  education?: string;
+  source_cta?: string;
+  preferred_slot?: string;
 }
 
 interface MatchmakerCurator {
@@ -126,31 +133,85 @@ export function App() {
           localStorage.setItem('mannat_profiles', JSON.stringify(currentProfiles));
         }
 
-        // Fetch live callback requests from Supabase
-        const { data: cbData, error: cbErr } = await supabase.from('callback_requests').select('*').order('created_at', { ascending: false });
-        if (cbData && !cbErr && cbData.length > 0) {
-          const statusMap: Record<string, 'Pending' | 'In Progress' | 'Completed'> = {
-            pending: 'Pending',
-            in_progress: 'In Progress',
-            completed: 'Completed',
-            wave_sent: 'Pending',
-            callback_requested: 'Pending'
-          };
-          const mapped: VIPCallback[] = cbData.map((cb: any) => {
-            const matchedProfile = currentProfiles.find((p: any) => p.id === cb.target_profile_id);
-            return {
-              id: cb.id,
-              requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
-              requester_phone: cb.requester_phone || '+91 98201 44521',
-              target_candidate_name: matchedProfile ? `${matchedProfile.display_name} (${matchedProfile.age})` : `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
-              requested_time: cb.created_at ? new Date(cb.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Today',
-              managed_by: cb.status === 'wave_sent' ? 'Candidate' : 'Parent',
-              status: statusMap[cb.status] || 'Pending',
-              notes: cb.status === 'wave_sent' ? 'Interest wave sent via feed.' : 'Requested confidential callback with family.'
-            };
-          });
-          setCallbacks(mapped);
+        // 1. Fetch live VIP Consultations from localStorage
+        let localConsultations: VIPCallback[] = [];
+        try {
+          const rawLocal = localStorage.getItem('mannat_vip_consultations');
+          if (rawLocal) {
+            const parsed = JSON.parse(rawLocal);
+            localConsultations = parsed.map((item: any) => ({
+              id: item.id || `vip_${Date.now()}`,
+              requester_name: item.full_name || 'VIP Client',
+              requester_phone: `${item.phone_country_code || '+91'} ${item.phone_number || ''}`.trim(),
+              target_candidate_name: item.profile_for || 'VIP Consultation Request',
+              requested_time: item.created_at ? new Date(item.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Just Now',
+              managed_by: item.gender || 'Seeking Match',
+              status: (item.status === 'contacted' ? 'In Progress' : item.status === 'assigned' ? 'Completed' : 'Pending') as 'Pending' | 'In Progress' | 'Completed',
+              notes: item.notes || `City: ${item.city || 'N/A'} · Income: ${item.annual_income || 'N/A'} · Education: ${item.education || 'N/A'} · Profession: ${item.profession || 'N/A'}`,
+              email: item.email,
+              city: item.city,
+              annual_income: item.annual_income,
+              profession: item.profession,
+              education: item.education,
+              source_cta: item.source_cta || 'Landing Page Consultation Form',
+              preferred_slot: item.preferred_slot
+            }));
+          }
+        } catch (e) {
+          console.warn('Local VIP consultations load error:', e);
         }
+
+        // 2. Fetch live callback requests & VIP consultations from Supabase
+        const { data: cbData } = await supabase.from('callback_requests').select('*').order('created_at', { ascending: false });
+        const { data: vipData } = await supabase.from('vip_consultations').select('*').order('created_at', { ascending: false });
+        
+        const statusMap: Record<string, 'Pending' | 'In Progress' | 'Completed'> = {
+          pending: 'Pending',
+          in_progress: 'In Progress',
+          completed: 'Completed',
+          wave_sent: 'Pending',
+          callback_requested: 'Pending'
+        };
+
+        const mappedCallbacks: VIPCallback[] = (cbData || []).map((cb: any) => {
+          const matchedProfile = currentProfiles.find((p: any) => p.id === cb.target_profile_id);
+          return {
+            id: cb.id,
+            requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
+            requester_phone: cb.requester_phone || '+91 98201 44521',
+            target_candidate_name: matchedProfile ? `${matchedProfile.display_name} (${matchedProfile.age})` : `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
+            requested_time: cb.created_at ? new Date(cb.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Today',
+            managed_by: cb.status === 'wave_sent' ? 'Candidate' : 'Parent',
+            status: statusMap[cb.status] || 'Pending',
+            notes: cb.status === 'wave_sent' ? 'Interest wave sent via feed.' : 'Requested confidential callback with family.'
+          };
+        });
+
+        const mappedVip: VIPCallback[] = (vipData || []).map((v: any) => ({
+          id: v.id,
+          requester_name: v.full_name || 'VIP Inquirer',
+          requester_phone: v.phone || '+91 97383 97933',
+          target_candidate_name: v.profile_for || 'VIP Consultation Request',
+          requested_time: v.created_at ? new Date(v.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently',
+          managed_by: v.gender || 'Seeking Match',
+          status: statusMap[v.status] || 'Pending',
+          notes: `City: ${v.city || 'N/A'} · Income: ${v.annual_income || 'N/A'} · Profession: ${v.profession || 'N/A'}`,
+          email: v.email,
+          city: v.city,
+          annual_income: v.annual_income,
+          profession: v.profession
+        }));
+
+        // Combine and de-duplicate by ID
+        const combined = [...localConsultations, ...mappedVip, ...mappedCallbacks];
+        const uniqueMap = new Map<string, VIPCallback>();
+        combined.forEach(item => {
+          if (!uniqueMap.has(item.id)) {
+            uniqueMap.set(item.id, item);
+          }
+        });
+
+        setCallbacks(Array.from(uniqueMap.values()));
       } catch (e) {
         console.warn('Supabase initial fetch fallback:', e);
       }
@@ -1044,13 +1105,21 @@ export function App() {
 
               <div className="space-y-3">
                 {callbacks.map((cb) => (
-                  <div key={cb.id} className="p-5 rounded-2xl bg-[#FBF9F4] border border-[#E8E1D5] space-y-3">
+                  <div key={cb.id} className="p-5 rounded-2xl bg-[#FBF9F4] border border-[#E8E1D5] space-y-3 shadow-xs">
                     <div className="flex items-center justify-between flex-wrap gap-2">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-extrabold text-[#111111]">{cb.requester_name}</span>
                         <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-[#8C6D32]">
                           {cb.managed_by}
                         </span>
+                        <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-white border border-[#E8E1D5] text-neutral-600">
+                          ID: {cb.id}
+                        </span>
+                        {cb.source_cta && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">
+                            {cb.source_cta}
+                          </span>
+                        )}
                       </div>
                       <span className="text-xs font-bold text-[#B89552] flex items-center gap-1.5">
                         <Calendar className="w-4 h-4" />
@@ -1060,25 +1129,72 @@ export function App() {
 
                     <div className="flex items-center justify-between text-xs text-gray-600 flex-wrap gap-2">
                       <div>
-                        <span>Target Candidate: </span>
+                        <span>Target: </span>
                         <strong className="text-[#111111]">{cb.target_candidate_name}</strong>
                       </div>
-                      <div className="flex items-center gap-1.5 font-mono text-xs text-gray-800">
-                        <PhoneCall className="w-4 h-4 text-emerald-600" />
-                        <a href={`tel:${cb.requester_phone}`} className="underline font-bold text-emerald-800">{cb.requester_phone}</a>
+                      
+                      {/* Action Buttons: Phone & WhatsApp */}
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={`tel:${cb.requester_phone.replace(/\s+/g, '')}`}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E8E1D5] text-xs font-bold text-gray-800 hover:border-emerald-500 hover:text-emerald-700 transition"
+                        >
+                          <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{cb.requester_phone}</span>
+                        </a>
+
+                        <a
+                          href={`https://wa.me/${cb.requester_phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(cb.requester_name)},%20this%20is%20Shalini%20from%20Mannat%20Matrimony%20regarding%20your%20consultation%20(Ref:%20${cb.id}).`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs"
+                        >
+                          <span>WhatsApp Desk</span>
+                        </a>
                       </div>
                     </div>
 
-                    <p className="text-xs text-gray-600 bg-white p-3 rounded-xl border border-gray-100 italic">
-                      "{cb.notes}"
-                    </p>
+                    {/* Rich Details Chips */}
+                    <div className="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                      {cb.city && (
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-[#E8E1D5] text-neutral-700 font-semibold">
+                          📍 {cb.city}
+                        </span>
+                      )}
+                      {cb.annual_income && (
+                        <span className="px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-bold">
+                          💰 {cb.annual_income}
+                        </span>
+                      )}
+                      {cb.profession && (
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-[#E8E1D5] text-neutral-700 font-medium">
+                          💼 {cb.profession}
+                        </span>
+                      )}
+                      {cb.preferred_slot && (
+                        <span className="px-2.5 py-1 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 font-semibold">
+                          ⏰ Slot: {cb.preferred_slot}
+                        </span>
+                      )}
+                      {cb.email && (
+                        <span className="px-2.5 py-1 rounded-lg bg-white border border-[#E8E1D5] text-neutral-600 font-mono text-[10px]">
+                          ✉️ {cb.email}
+                        </span>
+                      )}
+                    </div>
+
+                    {cb.notes && (
+                      <p className="text-xs text-gray-600 bg-white p-3 rounded-xl border border-gray-100 italic">
+                        "{cb.notes}"
+                      </p>
+                    )}
 
                     <div className="flex items-center justify-end gap-2 pt-1">
                       <button
                         type="button"
                         onClick={() => handleUpdateCallbackStatus(cb.id, 'Pending')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                          cb.status === 'Pending' ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-600'
+                          cb.status === 'Pending' ? 'bg-amber-500 text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         Pending
@@ -1087,7 +1203,7 @@ export function App() {
                         type="button"
                         onClick={() => handleUpdateCallbackStatus(cb.id, 'In Progress')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                          cb.status === 'In Progress' ? 'bg-sky-600 text-white' : 'bg-gray-100 text-gray-600'
+                          cb.status === 'In Progress' ? 'bg-sky-600 text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         In Progress
@@ -1096,7 +1212,7 @@ export function App() {
                         type="button"
                         onClick={() => handleUpdateCallbackStatus(cb.id, 'Completed')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                          cb.status === 'Completed' ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-600'
+                          cb.status === 'Completed' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                         }`}
                       >
                         Completed ✓

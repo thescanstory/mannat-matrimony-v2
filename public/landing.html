@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIP Mannat - No. 1 Matchmaking Service for Elites</title>
+  <meta name="description" content="VIP Mannat is India's premier bespoke, invite-only matchmaking service for HNIs, industrialists, entrepreneurs, and prominent families. 5 times higher success rates.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="VIP Mannat - No. 1 Matchmaking Service for Elites">
+  <meta property="og:description" content="5 Times higher success rates | Assured meetings | Top consultants. Confidential bespoke matchmaking.">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+            cinzel: ['Cinzel', 'Georgia', 'serif'],
+            instrument: ['Instrument Serif', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#FAF8F5] text-[#161412] font-sans antialiased selection:bg-[#C5A059] selection:text-white relative overflow-x-hidden">
+
+  <!-- 1. VIP Header matching Image 1 & 2 -->
+  <header class="sticky top-0 z-50 bg-[#161412]/95 backdrop-blur-md border-b border-[#2D261E] text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- VIP Crest Logo -->
+      <a href="#hero-form" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#DFBE7E] to-[#C5A059] flex items-center justify-center text-[#161412] font-bold text-sm shadow-md">
+          <span class="font-serif">▽</span>
+        </div>
+        <div class="flex items-baseline">
+          <span class="font-sans font-black tracking-widest text-xl text-white">
+            VIP<span className="text-[#DFBE7E]">MANNAT</span>
+          </span>
+          <span class="text-[10px] text-neutral-400 ml-0.5 font-semibold">.com</span>
+        </div>
+      </a>
+
+      <!-- Center Navigation with Dropdowns -->
+      <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-neutral-300 relative">
+        <a href="#about" class="hover:text-white transition">About Us</a>
+        <a href="#stories" class="hover:text-white transition">Success Stories</a>
+        
+        <!-- Explore VIP Profiles with Dropdown -->
+        <div class="relative py-4 group cursor-pointer">
+          <button type="button" class="flex items-center gap-1.5 hover:text-white group-hover:text-[#DFBE7E] transition">
+            <span>Explore VIP Profiles</span>
+            <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+
+          <!-- Mega Dropdown matching Image 2 -->
+          <div class="hidden group-hover:flex absolute top-14 left-0 w-[420px] bg-white text-[#161412] rounded-2xl shadow-2xl border border-[#EADBCE] overflow-hidden z-50 text-left">
+            <!-- Left Categories -->
+            <div class="w-40 bg-[#FBF9F4] border-r border-[#EADBCE] py-3 text-xs font-bold" id="catList">
+              <button onclick="switchCategory('community')" class="cat-btn w-full text-left px-4 py-3 bg-white text-[#4A2568] border-l-4 border-[#4A2568]">Community</button>
+              <button onclick="switchCategory('religion')" class="cat-btn w-full text-left px-4 py-3 text-[#7E776F] hover:bg-white/60">Religion</button>
+              <button onclick="switchCategory('profession')" class="cat-btn w-full text-left px-4 py-3 text-[#7E776F] hover:bg-white/60">Profession</button>
+              <button onclick="switchCategory('language')" class="cat-btn w-full text-left px-4 py-3 text-[#7E776F] hover:bg-white/60">Language</button>
+              <button onclick="switchCategory('country')" class="cat-btn w-full text-left px-4 py-3 text-[#7E776F] hover:bg-white/60">Country</button>
+            </div>
+
+            <!-- Right Items List -->
+            <div class="flex-1 p-4 max-h-72 overflow-y-auto" id="subItemsContainer">
+              <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#4A2568] mb-2.5" id="subCategoryTitle">
+                BROWSE BY COMMUNITY
+              </div>
+              <div class="space-y-1.5" id="subItemsList">
+                <a href="#hero-form" class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-[#161412] hover:bg-[#FAF8F5] hover:text-[#4A2568] flex items-center justify-between">
+                  <span>Brahmin</span>
+                  <span class="text-neutral-400">›</span>
+                </a>
+                <a href="#hero-form" class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-[#161412] hover:bg-[#FAF8F5] hover:text-[#4A2568] flex items-center justify-between">
+                  <span>Baniya</span>
+                  <span class="text-neutral-400">›</span>
+                </a>
+                <a href="#hero-form" class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-[#161412] hover:bg-[#FAF8F5] hover:text-[#4A2568] flex items-center justify-between">
+                  <span>Agarwal</span>
+                  <span class="text-neutral-400">›</span>
+                </a>
+                <a href="#hero-form" class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-[#161412] hover:bg-[#FAF8F5] hover:text-[#4A2568] flex items-center justify-between">
+                  <span>Gupta</span>
+                  <span class="text-neutral-400">›</span>
+                </a>
+                <a href="#hero-form" class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-[#161412] hover:bg-[#FAF8F5] hover:text-[#4A2568] flex items-center justify-between">
+                  <span>Jain</span>
+                  <span class="text-neutral-400">›</span>
+                </a>
+                <a href="#hero-form" class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-[#161412] hover:bg-[#FAF8F5] hover:text-[#4A2568] flex items-center justify-between">
+                  <span>Nair</span>
+                  <span class="text-neutral-400">›</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a href="#contact" class="hover:text-white transition flex items-center gap-1">
+          <span>Contact Us</span>
+          <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </a>
+      </nav>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-3">
+        <a href="#hero-form" class="text-xs font-bold text-neutral-300 hover:text-white hidden sm:block mr-2">Consult Advisor</a>
+        <button onclick="openAppModal()" class="px-4 py-2 rounded-xl bg-black/40 hover:bg-black/60 border border-white/25 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition">
+          <span></span>
+          <span>▶</span>
+          <span class="font-semibold">Get the App</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- 2. Hero Section matching Image 1: High-res Couple on Sofa + Bold Serif Title + Purple Search Bar -->
+  <section class="relative min-h-[660px] md:min-h-[740px] flex flex-col justify-between items-center text-center overflow-hidden bg-cover bg-center">
+    
+    <!-- Real High-Res Widescreen Couple in Living Room -->
+    <div class="absolute inset-0 z-0">
+      <img
+        src="/images/vip/hero_vip_mansion_couple.jpg"
+        alt="Elite Royal Couple"
+        class="w-full h-full object-cover object-top sm:object-center"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/20"></div>
+    </div>
+
+    <!-- Title & Subtitle -->
+    <div class="pt-16 sm:pt-20 relative z-10 max-w-4xl mx-auto px-4 space-y-3">
+      
+      <div class="inline-flex items-center gap-1 text-xs font-serif text-[#DFBE7E] tracking-widest uppercase">
+        <span class="font-bold text-white tracking-normal font-sans text-sm">mannat</span>
+        <span class="text-[11px] text-neutral-200">presents</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl lg:text-[66px] font-bold text-white leading-[1.08] tracking-tight drop-shadow-xl" style="font-family: 'Cormorant Garamond', Georgia, serif;">
+        No. 1 Matchmaking Service for Elites
+      </h1>
+
+      <p class="text-sm sm:text-base text-neutral-200 font-medium tracking-wide drop-shadow">
+        5 Times higher success rates &nbsp;|&nbsp; Assured meetings &nbsp;|&nbsp; Top consultants
+      </p>
+
+    </div>
+
+    <!-- 3. Pixel-Perfect Floating Horizontal Search Bar (bg-[#174309]) -->
+    <div id="hero-form" class="w-full max-w-5xl mx-auto px-4 pb-12 sm:pb-16 relative z-20">
+      
+      <div class="bg-[#174309] p-3 sm:p-4 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20">
+        
+        <form id="heroQuickForm" onsubmit="handleQuickSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">
+          
+          <!-- Field 1: Your Name -->
+          <div class="sm:col-span-3">
+            <input
+              type="text"
+              id="qName"
+              required
+              placeholder="Your Name"
+              class="w-full h-12 px-4 bg-white rounded-xl text-xs font-medium text-[#161412] placeholder-neutral-400 border border-neutral-200/50 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#DFBE7E]"
+            />
+          </div>
+
+          <!-- Field 2: +91 ▾ | Mobile No. -->
+          <div class="sm:col-span-3 flex items-center bg-white rounded-xl h-12 px-3 border border-neutral-200/50 shadow-xs focus-within:ring-2 focus-within:ring-[#DFBE7E]">
+            <select id="qCountryCode" class="bg-transparent text-xs font-bold text-[#161412] focus:outline-none cursor-pointer pr-1">
+              <option value="+91">+91 ▾</option>
+              <option value="+1">+1 ▾</option>
+              <option value="+44">+44 ▾</option>
+              <option value="+971">+971 ▾</option>
+              <option value="+65">+65 ▾</option>
+            </select>
+            <div class="h-5 w-[1px] bg-neutral-200 mx-2 shrink-0"></div>
+            <input
+              type="tel"
+              id="qMobile"
+              required
+              placeholder="Mobile No."
+              class="w-full bg-transparent text-xs font-medium text-[#161412] placeholder-neutral-400 focus:outline-none"
+            />
+          </div>
+
+          <!-- Field 3: Annual Income -->
+          <div class="sm:col-span-3 relative">
+            <select id="qIncome" class="w-full h-12 pl-3.5 pr-8 bg-white rounded-xl text-xs font-medium text-neutral-700 border border-neutral-200/50 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#DFBE7E] appearance-none cursor-pointer">
+              <option value="">Annual Income</option>
+              <option value="₹5 - ₹10 Lakhs">₹5 – ₹10 Lakhs</option>
+              <option value="₹10 - ₹15 Lakhs">₹10 – ₹15 Lakhs</option>
+              <option value="₹15 - ₹25 Lakhs">₹15 – ₹25 Lakhs</option>
+              <option value="₹25 - ₹50 Lakhs">₹25 – ₹50 Lakhs</option>
+              <option value="₹50 - ₹75 Lakhs">₹50 – ₹75 Lakhs</option>
+              <option value="₹75 Lakhs - ₹1 Crore">₹75L – ₹1 Crore</option>
+              <option value="₹1 Crore - ₹2 Crores">₹1Cr – ₹2 Crores</option>
+              <option value="₹2 Crores - ₹5 Crores">₹2Cr – ₹5 Crores</option>
+              <option value="₹5 Crores+ / Family Office">₹5Cr+ (Ultra HNI)</option>
+            </select>
+            <svg class="w-3.5 h-3.5 text-neutral-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </div>
+
+          <!-- Field 4: Golden "Let's Begin" Button -->
+          <div class="sm:col-span-3">
+            <button
+              type="submit"
+              id="qSubmitBtn"
+              class="w-full h-12 px-4 rounded-xl bg-[#E5A93D] hover:bg-[#D4982F] text-[#161412] text-xs font-extrabold shadow-md cursor-pointer transition whitespace-nowrap flex items-center justify-center"
+            >
+              Let's Begin
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- 4. Curated VIP Profiles Section -->
+  <section id="stories" class="py-20 bg-white border-y border-[#EADBCE]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="space-y-2 text-left">
+          <span class="text-xs font-bold uppercase tracking-widest text-[#9A783A]">Vetted Profiles</span>
+          <h2 class="text-3xl sm:text-4xl font-bold text-[#161412]" style="font-family: 'Cormorant Garamond', Georgia, serif;">
+            Sample Portfolios from Our VIP Network
+          </h2>
+        </div>
+        <a href="#hero-form" class="text-xs font-bold text-[#9A783A] hover:text-[#161412] underline underline-offset-4">
+          Explore All Verified VIP Portfolios →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-[#FAF8F5] rounded-3xl p-4 border border-[#EADBCE] hover:border-[#C5A059] shadow-sm transition space-y-4 text-left">
+          <img src="/images/vip/couple_silk_saree.jpg" alt="Ananya & Aditya Singhania" class="w-full aspect-[4/5] object-cover rounded-2xl">
+          <div>
+            <div class="text-lg font-bold text-[#161412]" style="font-family: 'Cormorant Garamond', Georgia, serif;">Ananya &amp; Aditya Singhania, 27</div>
+            <div class="text-[11px] text-[#9A783A] font-semibold">South Mumbai · Growth Equity Partner</div>
+          </div>
+          <a href="#hero-form" class="block w-full py-2.5 rounded-xl bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white text-xs font-bold text-center">Request Introduction</a>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-3xl p-4 border border-[#EADBCE] hover:border-[#C5A059] shadow-sm transition space-y-4 text-left">
+          <img src="/images/vip/couple_window_red.jpg" alt="Dr. Kabir & Tanya Malhotra" class="w-full aspect-[4/5] object-cover rounded-2xl">
+          <div>
+            <div class="text-lg font-bold text-[#161412]" style="font-family: 'Cormorant Garamond', Georgia, serif;">Dr. Kabir &amp; Tanya Malhotra, 30</div>
+            <div class="text-[11px] text-[#9A783A] font-semibold">Delhi NCR &amp; London · Cardiologist</div>
+          </div>
+          <a href="#hero-form" class="block w-full py-2.5 rounded-xl bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white text-xs font-bold text-center">Request Introduction</a>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-3xl p-4 border border-[#EADBCE] hover:border-[#C5A059] shadow-sm transition space-y-4 text-left">
+          <img src="/images/vip/couple_floral_saree.jpg" alt="Meera & Siddharth Varma" class="w-full aspect-[4/5] object-cover rounded-2xl">
+          <div>
+            <div class="text-lg font-bold text-[#161412]" style="font-family: 'Cormorant Garamond', Georgia, serif;">Meera &amp; Siddharth Varma, 28</div>
+            <div class="text-[11px] text-[#9A783A] font-semibold">Bengaluru &amp; Singapore · VP Product</div>
+          </div>
+          <a href="#hero-form" class="block w-full py-2.5 rounded-xl bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white text-xs font-bold text-center">Request Introduction</a>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-3xl p-4 border border-[#EADBCE] hover:border-[#C5A059] shadow-sm transition space-y-4 text-left">
+          <img src="/images/vip/hero_palace_couple.jpg" alt="Rohan & Sonali Jindal" class="w-full aspect-[4/5] object-cover rounded-2xl">
+          <div>
+            <div class="text-lg font-bold text-[#161412]" style="font-family: 'Cormorant Garamond', Georgia, serif;">Rohan &amp; Sonali Jindal, 31</div>
+            <div class="text-[11px] text-[#9A783A] font-semibold">Mumbai &amp; NY · MD Family Office</div>
+          </div>
+          <a href="#hero-form" class="block w-full py-2.5 rounded-xl bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-white text-xs font-bold text-center">Request Introduction</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Footer -->
+  <footer id="contact" class="bg-[#161412] text-[#EADBCE] py-14 border-t border-[#322D28]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-[#322D28]">
+        <div class="space-y-1 text-center md:text-left">
+          <div class="text-2xl font-bold text-white" style="font-family: 'Cormorant Garamond', Georgia, serif;">
+            VIP MANNAT MATRIMONY
+          </div>
+          <p class="text-xs text-[#A8B2C1]">No. 1 Matchmaking Service for Elites. Where Extraordinary Futures Align.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="openAppModal()" class="px-4 py-2 rounded-xl bg-black border border-white/20 text-white text-xs font-bold flex items-center gap-2 hover:border-[#DFBE7E] transition">
+            <span> App Store</span>
+          </button>
+          <button onclick="openAppModal()" class="px-4 py-2 rounded-xl bg-black border border-white/20 text-white text-xs font-bold flex items-center gap-2 hover:border-[#DFBE7E] transition">
+            <span>▶ Google Play</span>
+          </button>
+          <a href="#hero-form" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-[#161412] text-xs font-bold shadow-md">
+            Consult Advisor
+          </a>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-[#7E776F] gap-4">
+        <div>© 2026 VIP Mannat Matrimony. All rights reserved. Strict Non-Disclosure &amp; BlurShield Protected.</div>
+        <div class="flex items-center gap-6">
+          <a href="/admin" class="text-[#DFBE7E] hover:underline">Admin Portal</a>
+          <a href="tel:+919738397933" class="hover:text-white">VIP Hotline: +91 97383 97933</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const megaMenuData = {
+      community: {
+        title: 'BROWSE BY COMMUNITY',
+        items: ['Brahmin', 'Baniya', 'Agarwal', 'Gupta', 'Jain', 'Nair', 'Kayastha', 'Punjabi', 'Khatri', 'Maratha']
+      },
+      religion: {
+        title: 'BROWSE BY RELIGION',
+        items: ['Hindu', 'Jain', 'Sikh', 'Parsi', 'Christian', 'Muslim', 'Buddhist', 'Spiritual']
+      },
+      profession: {
+        title: 'BROWSE BY PROFESSION',
+        items: ['Founders & Industrialists', 'Corporate CXOs & Directors', 'Surgeons & Doctors', 'Investment Bankers & VCs', 'Software Architects & Tech Leads', 'Civil Services & IAS']
+      },
+      language: {
+        title: 'BROWSE BY LANGUAGE',
+        items: ['Hindi', 'Punjabi', 'Gujarati', 'Marathi', 'Bengali', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'English']
+      },
+      country: {
+        title: 'BROWSE BY COUNTRY',
+        items: ['India', 'United States (USA)', 'United Kingdom (UK)', 'United Arab Emirates (UAE)', 'Canada', 'Singapore', 'Australia', 'Germany']
+      }
+    };
+
+    function switchCategory(cat) {
+      const data = megaMenuData[cat];
+      if (!data) return;
+
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.className = 'cat-btn w-full text-left px-4 py-3 text-[#7E776F] hover:bg-white/60';
+        if (btn.innerText.toLowerCase() === cat.toLowerCase()) {
+          btn.className = 'cat-btn w-full text-left px-4 py-3 bg-white text-[#4A2568] border-l-4 border-[#4A2568] font-bold';
+        }
+      });
+
+      document.getElementById('subCategoryTitle').innerText = data.title;
+      const subItemsList = document.getElementById('subItemsList');
+      subItemsList.innerHTML = data.items.map(item => `
+        <a href="#hero-form" class="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-[#161412] hover:bg-[#FAF8F5] hover:text-[#4A2568] flex items-center justify-between">
+          <span>${item}</span>
+          <span class="text-neutral-400">›</span>
+        </a>
+      `).join('');
+    }
+
+    function handleQuickSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('qName').value;
+      const code = document.getElementById('qCountryCode').value;
+      const phone = document.getElementById('qMobile').value;
+      const income = document.getElementById('qIncome').value;
+      const tongue = document.getElementById('qMotherTongue').value;
+
+      const lead = {
+        id: 'VIP-' + Date.now().toString().slice(-6),
+        full_name: name,
+        phone_country_code: code,
+        phone_number: phone,
+        annual_income: income,
+        city: tongue || 'India',
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        const stored = JSON.parse(localStorage.getItem('mannat_vip_consultations') || '[]');
+        stored.unshift(lead);
+        localStorage.setItem('mannat_vip_consultations', JSON.stringify(stored));
+      } catch (err) {}
+
+      alert(`Consultation Confirmed for ${name}! Reference ID: ${lead.id}. A Senior Matchmaker will contact you confidentially within 2 hours.`);
+    }
+
+    function openAppModal() {
+      alert('VIP Mannat App is available on the iOS App Store & Google Play Store.');
+    }
+  </script>
+
+</body>
+</html>

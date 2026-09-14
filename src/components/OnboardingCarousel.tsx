@@ -514,16 +514,24 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       />
 
       {/* Top Header with Safe Margin */}
-      <div className="w-full pb-1.5 z-30 bg-[#FBF9F4] space-y-2 shrink-0">
+      <div className="w-full pb-1.5 z-30 bg-[#F8F6F2] space-y-2 shrink-0">
         <div className="flex items-center justify-between">
-          <span className="font-instrument text-3xl lowercase text-[#B89552] tracking-tight">
-            mannat
-          </span>
+          <div className="flex flex-col text-left">
+            <span className="text-sm italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
+              At
+            </span>
+            <span className="text-2xl font-normal tracking-[0.24em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+              MANNAT
+            </span>
+            <span className="text-[7px] uppercase tracking-[0.34em] font-bold text-[#A17B5E]">
+              Bespoke Bio-Data
+            </span>
+          </div>
           {isEditing && (
             <button
               type="button"
               onClick={() => (onCancel ? onCancel() : onComplete())}
-              className="text-[10px] font-black uppercase text-[#777777] hover:text-[#111111] bg-white px-2.5 py-1 rounded-full border border-[#E8E1D5] transition-all cursor-pointer shadow-xs whitespace-nowrap"
+              className="text-[10px] font-black uppercase text-[#6E6259] hover:text-[#560406] bg-white px-2.5 py-1 rounded-full border border-[#E8DDD0] transition-all cursor-pointer shadow-xs whitespace-nowrap"
             >
               Cancel
             </button>
@@ -531,9 +539,9 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         </div>
 
         {/* Animated Progress Bar */}
-        <div className="w-full h-1.5 bg-[#E8E1D5] rounded-full overflow-hidden shadow-inner">
+        <div className="w-full h-1.5 bg-[#E8DDD0] rounded-full overflow-hidden shadow-inner">
           <motion.div
-            className="h-full bg-[#B89552] rounded-full"
+            className="h-full bg-gradient-to-r from-[#A17B5E] to-[#560406] rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${(step / totalSteps) * 100}%` }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
@@ -556,7 +564,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
             {/* Step 1: Gender & Managed By */}
             {step === 1 && (
               <div className="space-y-3">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
+                <span className="block text-[11px] font-black uppercase tracking-widest text-[#560406]">
                   STEP 1: IDENTITY & CREATOR *
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
@@ -1325,14 +1333,14 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       )}
 
       {/* Bottom Navigation Buttons - Sticky bottom with safe area margin */}
-      <div className="w-full pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] mt-auto z-40 bg-[#FBF9F4]/95 backdrop-blur-md border-t border-[#E8E1D5] flex items-center gap-3 sticky bottom-0 shrink-0">
+      <div className="w-full pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] mt-auto z-40 bg-[#F8F6F2]/95 backdrop-blur-md border-t border-[#E8DDD0] flex items-center gap-3 sticky bottom-0 shrink-0">
         {step > 1 && (
           <button
             type="button"
             onClick={handlePrev}
-            className="py-3.5 px-5 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] hover:bg-[#E8E1D5] text-xs font-bold text-[#111111] flex items-center gap-1 transition-all cursor-pointer active:scale-95 shadow-xs whitespace-nowrap"
+            className="py-3.5 px-5 rounded-xl bg-white border border-[#E8DDD0] hover:bg-[#F8F6F2] text-xs font-bold text-[#161412] flex items-center gap-1 transition-all cursor-pointer active:scale-95 shadow-xs whitespace-nowrap"
           >
-            <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+            <ArrowLeft className="w-4 h-4 text-[#560406]" />
             <span>Back</span>
           </button>
         )}
@@ -1341,17 +1349,17 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
           type="button"
           disabled={isSubmitting}
           onClick={handleNext}
-          className="flex-1 py-4 px-6 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-xs font-extrabold text-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 whitespace-nowrap"
+          className="flex-1 py-4 px-6 rounded-xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-xs font-extrabold text-[#F5E6D3] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 whitespace-nowrap border border-[#A17B5E]/40"
         >
           {step === totalSteps ? (
             <>
-              <Sparkles className="w-4 h-4 text-[#B89552]" />
+              <Sparkles className="w-4 h-4 text-[#D8B486]" />
               <span className="whitespace-nowrap">{isSubmitting ? 'Saving Bio-Data...' : isEditing ? 'Save & Update Bio-Data' : 'Complete & Enter Mannat'}</span>
             </>
           ) : (
             <>
               <span className="whitespace-nowrap">Continue</span>
-              <ArrowRight className="w-4 h-4 text-[#B89552]" />
+              <ArrowRight className="w-4 h-4 text-[#D8B486]" />
             </>
           )}
         </button>

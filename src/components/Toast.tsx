@@ -17,10 +17,10 @@ export const Toast: React.FC<ToastProps> = ({ message, type = 'success', onClose
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -20, scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-[100] max-w-[90vw] bg-[#2D2824]/95 text-white px-4 py-2 rounded-full shadow-2xl border border-[#B89552]/40 inline-flex items-center gap-2 backdrop-blur-xl pointer-events-auto"
+          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-[100] max-w-[90vw] bg-[#260102]/95 text-[#F5E6D3] px-4 py-2 rounded-full shadow-2xl border border-[#A17B5E]/50 inline-flex items-center gap-2 backdrop-blur-xl pointer-events-auto"
         >
-          {type === 'heart' && <Heart className="w-4 h-4 fill-[#B89552] text-[#B89552] shrink-0" />}
-          {type === 'sparkle' && <Sparkles className="w-4 h-4 text-[#B89552] shrink-0" />}
+          {type === 'heart' && <Heart className="w-4 h-4 fill-[#A17B5E] text-[#A17B5E] shrink-0" />}
+          {type === 'sparkle' && <Sparkles className="w-4 h-4 text-[#A17B5E] shrink-0" />}
           {type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
 
           <span className="text-xs font-bold whitespace-nowrap truncate max-w-[65vw]">{message}</span>

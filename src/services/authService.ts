@@ -276,8 +276,48 @@ export const authService = {
     } catch {}
   },
 
+  // Parse Google / OAuth access_token from URL hash callback
+  handleOAuthHashCallback: async (): Promise<UserSession | null> => {
+    if (typeof window === 'undefined') return null;
+    const hash = window.location.hash;
+    if (!hash || (!hash.includes('access_token') && !hash.includes('id_token'))) return null;
+
+    try {
+      const params = new URLSearchParams(hash.replace(/^#/, ''));
+      const accessToken = params.get('access_token');
+      if (!accessToken) return null;
+
+      const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      if (res.ok) {
+        const profile = await res.json();
+        if (profile?.email) {
+          const user = authService.setUserSession(
+            profile.email,
+            profile.name || profile.given_name || 'Google User',
+            profile.picture || ''
+          );
+          // Clean hash from URL bar
+          try {
+            window.history.replaceState({}, document.title, window.location.pathname);
+          } catch {}
+          return user;
+        }
+      }
+    } catch (e) {
+      console.warn('OAuth hash parse error:', e);
+    }
+    return null;
+  },
+
   // Get Current Active User
   getCurrentUser: async (): Promise<UserSession | null> => {
+    // 1. Check if returning from Google OAuth redirect with hash token
+    const oauthUser = await authService.handleOAuthHashCallback();
+    if (oauthUser) return oauthUser;
+
     // If user explicitly logged out, do not restore previous session
     try {
       if (localStorage.getItem('mannat_logged_out') === 'true') {

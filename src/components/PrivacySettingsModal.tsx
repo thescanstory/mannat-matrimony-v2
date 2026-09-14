@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Lock, Eye, Check, ShieldCheck, Sparkles, ArrowLeft, LogOut } from 'lucide-react';
 import type { PrivacySettings } from '../types';
@@ -67,34 +68,37 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-[#2D2824]/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-50 bg-[#1C0102]/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-          className="w-full max-w-md bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
+          className="w-full max-w-md bg-[#F8F6F2] text-[#161412] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8DDD0] shadow-2xl relative"
         >
           {/* Header */}
-          <div className="px-5 pt-4 pb-3.5 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-xs sticky top-0 z-20">
+          <div className="px-5 pt-4 pb-3.5 bg-[#F8F6F2] border-b border-[#E8DDD0] flex items-center justify-between shadow-xs sticky top-0 z-20">
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex items-center gap-1 text-xs font-black text-[#111111] hover:text-[#B89552] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8E1D5]/40 active:scale-95 cursor-pointer"
+                className="flex items-center gap-1 text-xs font-black text-[#161412] hover:text-[#560406] transition-all p-1.5 -ml-1 rounded-full hover:bg-[#E8DDD0]/40 active:scale-95 cursor-pointer"
                 title="Go Back"
               >
-                <ArrowLeft className="w-4 h-4 text-[#B89552]" />
+                <ArrowLeft className="w-4 h-4 text-[#560406]" />
                 <span>Back</span>
               </button>
-              <div className="h-4 w-px bg-[#E8E1D5]" />
-              <span className="font-instrument text-2xl lowercase text-[#B89552] leading-none">mannat</span>
+              <div className="h-4 w-px bg-[#E8DDD0]" />
+              <div className="flex flex-col text-left">
+                <span className="text-xs italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
+                <span className="text-lg font-normal tracking-[0.2em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>MANNAT</span>
+              </div>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-[#E8E1D5]/50 text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
+              className="p-1.5 rounded-full hover:bg-[#E8DDD0]/50 text-gray-400 hover:text-[#161412] transition-colors cursor-pointer"
               title="Close"
             >
               <X className="w-5 h-5" />
@@ -102,7 +106,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
           </div>
 
           {/* Content Options */}
-          <div className="p-6 space-y-6 overflow-y-auto flex-1 bg-[#FBF9F4]">
+          <div className="p-6 space-y-6 overflow-y-auto flex-1 bg-[#F8F6F2]">
             {savedSuccess && (
               <div className="p-3 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-extrabold rounded-2xl text-center animate-fadeIn">
                 ✓ Privacy Settings Saved to Supabase Database!
@@ -112,8 +116,8 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
             {/* 1. Photo Privacy */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-[#B89552]" />
-                <h3 className="text-xs font-black uppercase tracking-wider text-[#B89552]">
+                <Lock className="w-4 h-4 text-[#560406]" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-[#560406]">
                   Photo Privacy Boundary
                 </h3>
               </div>

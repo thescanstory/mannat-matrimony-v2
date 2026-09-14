@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SlidersHorizontal, MessageSquare, Send, X, ShieldCheck, CheckCheck } from 'lucide-react';
+import { SlidersHorizontal, MessageSquare, Send, X, ShieldCheck, CheckCheck, Video, Sparkles, Mic, User, Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile, ChatMessage } from '../types';
 import { chatService } from '../services/chatService';
 import { Toast } from './Toast';
+import { FamilyCallModal } from './FamilyCallModal';
+import { ReportBlockModal } from './ReportBlockModal';
+import { nativeService } from '../services/nativeService';
 
 interface ConnectionsScreenProps {
   profiles: Profile[];
@@ -18,14 +21,16 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'Accepted' | 'Sent' | 'Received'>('Accepted');
   const [activeChatProfile, setActiveChatProfile] = useState<Profile | null>(null);
+  const [reportModalProfile, setReportModalProfile] = useState<Profile | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'heart' | 'sparkle'>('success');
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
 
-  // Dynamic state for connections loaded from persistence and live data
   const [acceptedList, setAcceptedList] = useState<Profile[]>(() => {
     try {
       const stored = localStorage.getItem('mannat_accepted_connections');
@@ -52,7 +57,6 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
 
   useEffect(() => {
     if (profiles && profiles.length > 0) {
-      // If user has no existing state, initialize healthy defaults and persist
       const savedAccepted = localStorage.getItem('mannat_accepted_connections');
       const savedSent = localStorage.getItem('mannat_sent_waves');
       const savedReceived = localStorage.getItem('mannat_received_connections');
@@ -84,6 +88,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   useEffect(() => {
     if (!activeChatProfile) {
       setMessages([]);
+      setIsTyping(false);
       return;
     }
 
@@ -91,10 +96,10 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
     let unsubscribe: (() => void) | undefined;
 
     async function loadChat() {
-      const msgs = await chatService.getMessages(matchId, 'current-user');
+      if (!activeChatProfile) return;
+      const msgs = await chatService.getMessages(matchId, 'current-user', activeChatProfile);
       setMessages(msgs);
 
-      // Subscribe to live incoming messages
       unsubscribe = chatService.subscribeToMatchChats(
         matchId,
         'current-user',
@@ -111,19 +116,17 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
     };
   }, [activeChatProfile]);
 
-  // Scroll to bottom of chat
   useEffect(() => {
     if (chatBottomRef.current) {
       chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, activeChatProfile]);
+  }, [messages, isTyping, activeChatProfile]);
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!inputMessage.trim() || !activeChatProfile || isSending) return;
+  const handleSendMessage = async (textToSend?: string) => {
+    const text = (textToSend || inputMessage).trim();
+    if (!text || !activeChatProfile || isSending) return;
 
     const matchId = `match-${activeChatProfile.id}`;
-    const text = inputMessage.trim();
     setInputMessage('');
     setIsSending(true);
 
@@ -133,11 +136,44 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         if (prev.some((m) => m.id === newMsg.id)) return prev;
         return [...prev, newMsg];
       });
+
+      setTimeout(() => {
+        setIsTyping(true);
+        setTimeout(() => {
+          setIsTyping(false);
+          if (!activeChatProfile) return;
+
+          let replyText = `Thank you so much! It's truly a pleasure connecting. I would love to know more about your family background and what you value most in a partner. ✨`;
+          const lower = text.toLowerCase();
+          if (lower.includes('namaste') || lower.includes('hello') || lower.includes('hi')) {
+            replyText = `Namaste! 🙏 So glad we connected. How is your day going?`;
+          } else if (lower.includes('profile') || lower.includes('lovely') || lower.includes('photo')) {
+            replyText = `Thank you for the kind words! I also really appreciated your profile and values. 😊`;
+          } else if (lower.includes('hobbies') || lower.includes('work') || lower.includes('profession')) {
+            replyText = `I am very passionate about my work in ${activeChatProfile.occupation || 'my career'} in ${activeChatProfile.city || 'the city'}, and outside of work I enjoy family time and travel. What about you? 🌟`;
+          } else if (lower.includes('call') || lower.includes('video') || lower.includes('speak')) {
+            replyText = `I'd love that! You can tap the Video Call icon at the top of our chat to set up a private family or one-on-one session! 📹✨`;
+          } else if (lower.includes('kundli') || lower.includes('horoscope') || lower.includes('gotra')) {
+            replyText = `Our family is happy to share horoscope details! I have verified our family background with the Mannat Concierge team. 🕊️`;
+          }
+
+          const replyMsg = chatService.receiveCandidateMessage(matchId, activeChatProfile.id, replyText);
+          setMessages((prev) => [...prev, replyMsg]);
+        }, 1800);
+      }, 600);
+
     } catch (err) {
       console.warn('Error sending message:', err);
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleVoiceNoteSimulate = () => {
+    triggerToast('Recording voice note...', 'sparkle');
+    setTimeout(() => {
+      handleSendMessage('🎵 [Audio Note: 0:14 - Family Introduction & Values]');
+    }, 1000);
   };
 
   const handleAcceptReceived = (profile: Profile, e: React.MouseEvent) => {
@@ -182,26 +218,24 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#111111] w-full max-w-md mx-auto flex flex-col justify-start pb-36 select-none font-sans px-4 pt-2 space-y-4">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-md mx-auto flex flex-col justify-start pb-44 select-none font-sans px-5 sm:px-6 pt-3 space-y-5">
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
-      {/* Top Header */}
       <div className="flex items-center justify-between px-1">
         <div>
-          <h1 className="text-xl font-serif-editorial font-bold text-[#111111] tracking-tight">Connections</h1>
-          <p className="text-[11px] text-[#777777] font-semibold">Mutual Waves & Direct Discussions</p>
+          <h1 className="text-2xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Connections</h1>
+          <p className="text-[11px] text-[#6E6259] font-semibold">Mutual Waves & Direct Discussions</p>
         </div>
         <button
           type="button"
           onClick={onOpenFilters}
-          className="p-2.5 rounded-full bg-white hover:bg-[#F4EFE6] text-[#111111] transition-colors border border-[#E8E1D5] cursor-pointer shadow-xs"
+          className="p-2.5 rounded-full bg-white hover:bg-[#F8F6F2] text-[#560406] transition-colors border border-[#E8DDD0] cursor-pointer shadow-xs"
         >
-          <SlidersHorizontal className="w-4 h-4 text-[#111111]" />
+          <SlidersHorizontal className="w-4 h-4 text-[#560406]" />
         </button>
       </div>
 
-      {/* Segmented Tabs Bar */}
-      <div className="bg-[#F4EFE6] p-1 rounded-2xl border border-[#E8E1D5] grid grid-cols-3 gap-1">
+      <div className="bg-white p-1.5 rounded-2xl border border-[#E8DDD0] grid grid-cols-3 gap-1.5 shadow-xs">
         {(['Accepted', 'Sent', 'Received'] as const).map((tab) => {
           const isActive = activeTab === tab;
           const count = tab === 'Accepted' ? acceptedList.length : tab === 'Sent' ? sentList.length : receivedList.length;
@@ -211,13 +245,13 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
-              className={`py-2 px-1 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
-                isActive ? 'bg-white text-[#111111] shadow-xs' : 'text-[#777777] hover:text-[#111111]'
+              className={`py-2.5 px-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
+                isActive ? 'bg-[#560406] text-[#A17B5E] shadow-sm' : 'text-[#6E6259] hover:text-[#161412]'
               }`}
             >
               <span>{tab}</span>
               <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                isActive ? 'bg-[#B89552] text-white' : 'bg-[#E8E1D5] text-[#777777]'
+                isActive ? 'bg-[#A17B5E] text-[#260102]' : 'bg-[#F8F6F2] text-[#6E6259] border border-[#E8DDD0]'
               }`}>
                 {count}
               </span>
@@ -226,12 +260,11 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         })}
       </div>
 
-      {/* Tab Content List */}
-      <div className="space-y-3 flex-1">
+      <div className="space-y-4 flex-1">
         {activeTab === 'Accepted' && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {acceptedList.length === 0 ? (
-              <div className="py-12 text-center text-gray-500 text-xs font-medium bg-white rounded-3xl p-6 border border-[#E8E1D5]">
+              <div className="py-12 text-center text-[#6E6259] text-xs font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0]">
                 No accepted connections yet. Accept interest waves to start conversations.
               </div>
             ) : (
@@ -239,11 +272,10 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                 <div
                   key={profile.id}
                   onClick={() => onOpenProfile(profile)}
-                  className="bg-white rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer hover:shadow-md transition-all text-left"
+                  className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-4 cursor-pointer hover:shadow-md transition-all text-left"
                 >
-                  {/* Photo & Brief Row */}
-                  <div className="flex items-center gap-3.5">
-                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#2D2824] shrink-0 shadow-xs">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#260102] shrink-0 shadow-xs border border-[#E8DDD0]">
                       <img
                         src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                         alt={profile.display_name}
@@ -256,29 +288,28 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-base font-serif-editorial font-bold text-[#111111] truncate">{profile.display_name}</h3>
-                        <span className="text-[10px] text-emerald-700 bg-emerald-50 font-bold px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                        <h3 className="text-base font-serif-editorial font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{profile.display_name}</h3>
+                        <span className="text-[10px] text-emerald-700 bg-emerald-50 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
                           Connected
                         </span>
                       </div>
-                      <p className="text-xs text-[#777777] font-semibold mt-0.5 truncate">
+                      <p className="text-xs text-[#6E6259] font-semibold mt-0.5 truncate">
                         {profile.age} yrs • {profile.height || "5'7\""} • {profile.religion}
                       </p>
-                      <p className="text-xs text-[#111111] font-bold mt-0.5 truncate">{profile.occupation} • {profile.city}</p>
+                      <p className="text-xs text-[#161412] font-bold mt-0.5 truncate">{profile.occupation} • {profile.city}</p>
                     </div>
                   </div>
 
-                  {/* Actions Grid */}
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#E8E1D5]">
+                  <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-[#E8DDD0]">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setActiveChatProfile(profile);
                       }}
-                      className="py-2.5 px-3 rounded-xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap"
+                      className="py-3 px-3.5 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-extrabold uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap border border-[#A17B5E]/40"
                     >
-                      <MessageSquare className="w-3.5 h-3.5 text-[#DFBE7E]" />
+                      <MessageSquare className="w-3.5 h-3.5 text-[#D8B486]" />
                       <span>Live Chat</span>
                     </button>
 
@@ -288,8 +319,9 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                         e.stopPropagation();
                         onOpenProfile(profile);
                       }}
-                      className="py-2.5 px-3 rounded-xl bg-[#F4EFE6] border border-[#E8E1D5] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-[#E8E1D5] active:scale-98 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                      className="py-3 px-3.5 rounded-xl bg-[#F8F6F2] border border-[#E8DDD0] text-[#161412] text-xs font-extrabold uppercase tracking-wider hover:bg-white active:scale-98 transition-all cursor-pointer shadow-xs whitespace-nowrap flex items-center justify-center gap-1.5"
                     >
+                      <User className="w-3.5 h-3.5 text-[#6E6259]" />
                       <span>View Profile</span>
                     </button>
                   </div>
@@ -300,20 +332,20 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         )}
 
         {activeTab === 'Sent' && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {sentList.length === 0 ? (
-              <div className="py-12 text-center text-gray-500 text-xs font-medium bg-white rounded-3xl p-6 border border-[#E8E1D5]">
-                No outgoing waves sent yet. Send waves to profiles from the main feed.
+              <div className="py-12 text-center text-[#6E6259] text-xs font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0]">
+                You haven't sent any interest waves yet. Explore candidate profiles in the feed to send a wave.
               </div>
             ) : (
               sentList.map((profile) => (
                 <div
                   key={profile.id}
                   onClick={() => onOpenProfile(profile)}
-                  className="bg-white rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left hover:shadow-md transition-all"
+                  className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-4 cursor-pointer hover:shadow-md transition-all text-left"
                 >
-                  <div className="flex items-center gap-3.5">
-                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#2D2824] shrink-0 shadow-xs">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-18 h-18 rounded-2xl overflow-hidden bg-[#260102] shrink-0 shadow-xs border border-[#E8DDD0]">
                       <img
                         src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                         alt={profile.display_name}
@@ -322,25 +354,24 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-base font-serif-editorial font-bold text-[#111111] truncate">{profile.display_name}</h3>
-                        <span className="text-[10px] text-[#B89552] bg-amber-50 font-bold px-2 py-0.5 rounded-full border border-amber-200 shrink-0">
-                          Pending
+                        <h3 className="text-base font-serif-editorial font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{profile.display_name}</h3>
+                        <span className="text-[10px] text-[#A17B5E] bg-[#560406]/5 font-bold px-2.5 py-0.5 rounded-full border border-[#A17B5E]/30 shrink-0">
+                          Wave Pending
                         </span>
                       </div>
-                      <p className="text-xs text-[#777777] font-semibold mt-0.5 truncate">
-                        {profile.age} yrs • {profile.occupation}
-                      </p>
-                      <p className="text-xs text-[#111111] font-bold mt-0.5 truncate">{profile.city}, India</p>
+                      <p className="text-xs text-[#6E6259] font-medium mt-0.5 truncate">{profile.age} yrs • {profile.occupation}</p>
+                      <p className="text-xs text-[#161412] font-semibold mt-0.5 truncate">{profile.city}</p>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-[#E8E1D5]">
+                  <div className="flex items-center justify-between pt-2 border-t border-[#E8DDD0]">
+                    <span className="text-[11px] text-[#6E6259]">Sent 2 days ago</span>
                     <button
                       type="button"
                       onClick={(e) => handleCancelSent(profile, e)}
-                      className="w-full py-2.5 px-3 rounded-xl bg-[#FAF8F5] hover:bg-red-50 text-red-600 border border-red-200 text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-98 whitespace-nowrap"
+                      className="text-xs text-rose-700 hover:text-rose-800 font-bold px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
                     >
-                      Withdraw Interest Wave
+                      Withdraw Wave
                     </button>
                   </div>
                 </div>
@@ -350,20 +381,20 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         )}
 
         {activeTab === 'Received' && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {receivedList.length === 0 ? (
-              <div className="py-12 text-center text-gray-500 text-xs font-medium bg-white rounded-3xl p-6 border border-[#E8E1D5]">
-                No pending received requests.
+              <div className="py-12 text-center text-[#6E6259] text-xs font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0]">
+                No pending interest waves at the moment. Keep your profile updated to attract compatible matches!
               </div>
             ) : (
               receivedList.map((profile) => (
                 <div
                   key={profile.id}
                   onClick={() => onOpenProfile(profile)}
-                  className="bg-white rounded-3xl p-4 border border-[#E8E1D5] shadow-xs space-y-3 cursor-pointer text-left hover:shadow-md transition-all"
+                  className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-4 cursor-pointer hover:shadow-md transition-all text-left"
                 >
-                  <div className="flex items-center gap-3.5">
-                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#2D2824] shrink-0 shadow-xs">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-18 h-18 rounded-2xl overflow-hidden bg-[#260102] shrink-0 shadow-xs border border-[#E8DDD0]">
                       <img
                         src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
                         alt={profile.display_name}
@@ -372,30 +403,28 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-base font-serif-editorial font-bold text-[#111111] truncate">{profile.display_name}</h3>
-                        <span className="text-[10px] text-emerald-700 bg-emerald-50 font-bold px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
-                          New Request
+                        <h3 className="text-base font-serif-editorial font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{profile.display_name}</h3>
+                        <span className="text-[10px] text-emerald-800 bg-emerald-50 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                          New Wave ✨
                         </span>
                       </div>
-                      <p className="text-xs text-[#777777] font-semibold mt-0.5 truncate">
-                        {profile.age} yrs • {profile.occupation}
-                      </p>
-                      <p className="text-xs text-[#111111] font-bold mt-0.5 truncate">{profile.city}, India</p>
+                      <p className="text-xs text-[#6E6259] font-medium mt-0.5 truncate">{profile.age} yrs • {profile.occupation}</p>
+                      <p className="text-xs text-[#161412] font-semibold mt-0.5 truncate">{profile.city}</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#E8E1D5]">
+                  <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-[#E8DDD0]">
                     <button
                       type="button"
                       onClick={(e) => handleDeclineReceived(profile, e)}
-                      className="py-2.5 px-3 rounded-xl bg-[#F4EFE6] text-[#111111] text-xs font-extrabold uppercase tracking-wider hover:bg-gray-200 active:scale-98 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                      className="py-2.5 px-3 rounded-xl bg-[#F8F6F2] hover:bg-white text-[#6E6259] text-xs font-bold transition-all border border-[#E8DDD0] cursor-pointer"
                     >
-                      Decline
+                      Pass
                     </button>
                     <button
                       type="button"
                       onClick={(e) => handleAcceptReceived(profile, e)}
-                      className="py-2.5 px-3 rounded-xl bg-[#2D2824] text-white text-xs font-extrabold uppercase tracking-wider hover:bg-[#B89552] active:scale-98 transition-all cursor-pointer shadow-sm whitespace-nowrap"
+                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all cursor-pointer shadow-xs border border-[#A17B5E]/40"
                     >
                       Accept Wave
                     </button>
@@ -407,51 +436,112 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
         )}
       </div>
 
-      {/* Real-time Interactive Chat Modal */}
       <AnimatePresence>
         {activeChatProfile && (
-          <div className="fixed inset-0 z-50 bg-[#2D2824]/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
             <motion.div
               initial={{ y: '100%', opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: '100%', opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="w-full max-w-lg h-[90vh] sm:h-[750px] bg-[#FBF9F4] text-[#111111] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8E1D5] shadow-2xl relative"
+              className="w-full max-w-lg h-[94vh] sm:h-[820px] bg-[#F8F6F2] text-[#161412] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8DDD0] shadow-2xl relative"
             >
-              {/* Chat Header */}
-              <div className="px-5 py-4 bg-[#FBF9F4] border-b border-[#E8E1D5] flex items-center justify-between shadow-xs shrink-0">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={activeChatProfile.photos?.[0] || activeChatProfile.creator_vouch?.creator_avatar_url}
-                    alt={activeChatProfile.display_name}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-[#B89552]"
-                  />
-                  <div>
-                    <h3 className="font-serif-editorial text-lg font-bold text-[#111111] leading-tight">
-                      {activeChatProfile.display_name}
-                    </h3>
-                    <div className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-extrabold">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span>Online • End-to-End Encrypted</span>
+              <div className="px-5 py-4 bg-white border-b border-[#E8DDD0] flex items-center justify-between shadow-xs shrink-0">
+                <div 
+                  onClick={() => onOpenProfile(activeChatProfile)}
+                  className="flex items-center gap-3 cursor-pointer group"
+                >
+                  <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-[#A17B5E] shadow-sm bg-[#260102] shrink-0">
+                    <img
+                      src={activeChatProfile.photos?.[0] || activeChatProfile.creator_vouch?.creator_avatar_url}
+                      alt={activeChatProfile.display_name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                    <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="font-serif-editorial text-lg font-bold text-[#161412] leading-tight group-hover:text-[#560406] transition-colors truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                        {activeChatProfile.display_name}
+                      </h3>
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     </div>
+                    <p className="text-[11px] text-[#6E6259] truncate font-medium">
+                      {activeChatProfile.occupation} • {activeChatProfile.city}
+                    </p>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveChatProfile(null)}
-                  className="p-2 rounded-full hover:bg-[#F4EFE6] text-gray-400 hover:text-[#111111] transition-colors cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowCallModal(true)}
+                    className="p-2.5 rounded-full bg-[#560406]/5 hover:bg-[#560406]/10 text-[#560406] transition-colors cursor-pointer border border-[#A17B5E]/30 shadow-xs"
+                    title="Start VIP Family Call"
+                  >
+                    <Video className="w-4 h-4 text-[#560406]" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onOpenProfile(activeChatProfile)}
+                    className="p-2.5 rounded-full bg-[#F8F6F2] hover:bg-white text-[#560406] transition-colors cursor-pointer border border-[#E8DDD0] shadow-xs"
+                    title="View Bio-Data Dossier"
+                  >
+                    <User className="w-4 h-4 text-[#560406]" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      nativeService.haptic.light();
+                      setReportModalProfile(activeChatProfile);
+                    }}
+                    className="p-2.5 rounded-full bg-[#F8F6F2] hover:bg-white text-rose-700 transition-colors cursor-pointer border border-[#E8DDD0] shadow-xs"
+                    title="Report or Block Candidate"
+                  >
+                    <Flag className="w-4 h-4 text-rose-700" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveChatProfile(null)}
+                    className="p-2.5 rounded-full bg-[#F8F6F2] hover:bg-white text-[#6E6259] hover:text-[#161412] transition-colors cursor-pointer border border-[#E8DDD0]"
+                    title="Close Chat"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              {/* Chat Messages Body */}
-              <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#F4EFE6]/60">
+              <div className="flex-1 p-5 overflow-y-auto space-y-3.5 bg-[#F8F6F2]">
                 <div className="text-center my-2">
-                  <span className="text-[10px] font-bold text-[#777777] bg-white px-3 py-1 rounded-full border border-[#E8E1D5] shadow-xs">
-                    🌟 Connected via Mannat Matchmaker Engine
+                  <span className="text-[10px] font-bold text-[#560406] bg-white px-4 py-1.5 rounded-full border border-[#E8DDD0] shadow-xs inline-flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3 text-[#A17B5E]" />
+                    <span>Connected via Mannat Bespoke Matchmaking • 256-Bit Encrypted Circle</span>
                   </span>
+                </div>
+
+                <div className="text-center py-2 space-y-2">
+                  <p className="text-[11px] text-[#6E6259] font-medium">Quick Prompts & Icebreakers:</p>
+                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                    {[
+                      'Namaste! 🙏',
+                      'Loved your profile ✨',
+                      `Tell me about your work in ${activeChatProfile.city || 'the city'} 💼`,
+                      'Would love to schedule a family video call! 📹',
+                      'Share horoscope / kundli 🔮'
+                    ].map((starter) => (
+                      <button
+                        key={starter}
+                        type="button"
+                        onClick={() => handleSendMessage(starter)}
+                        className="text-[11px] font-bold text-[#560406] bg-white px-3.5 py-1.5 rounded-full border border-[#E8DDD0] hover:bg-[#F8F6F2] hover:border-[#A17B5E] transition-all cursor-pointer shadow-xs active:scale-95"
+                      >
+                        {starter}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {messages.map((msg) => (
@@ -460,53 +550,109 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     className={`flex flex-col ${msg.is_self ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`max-w-[80%] px-4 py-3 rounded-2xl text-xs leading-relaxed shadow-xs ${
+                      className={`max-w-[82%] px-4 py-3 rounded-2xl text-xs leading-relaxed shadow-xs ${
                         msg.is_self
-                          ? 'bg-[#2D2824] text-white rounded-br-none'
-                          : 'bg-white text-[#111111] border border-[#E8E1D5] rounded-bl-none'
+                          ? 'bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] rounded-br-none border border-[#A17B5E]/30'
+                          : 'bg-white text-[#161412] border border-[#E8DDD0] rounded-bl-none'
                       }`}
                     >
-                      <p>{msg.message}</p>
+                      <p className="whitespace-pre-line">{msg.message}</p>
                       <div
-                        className={`text-[9px] mt-1 flex items-center justify-end gap-1 ${
-                          msg.is_self ? 'text-gray-400' : 'text-gray-500'
+                        className={`text-[9px] mt-1.5 flex items-center justify-end gap-1 ${
+                          msg.is_self ? 'text-[#D8B486]/80' : 'text-[#6E6259]'
                         }`}
                       >
                         <span>
                           {new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
-                        {msg.is_self && <CheckCheck className="w-3 h-3 text-[#B89552]" />}
+                        {msg.is_self && <CheckCheck className="w-3.5 h-3.5 text-[#D8B486]" />}
                       </div>
                     </div>
                   </div>
                 ))}
+
+                {isTyping && (
+                  <div className="flex items-center gap-2 text-xs text-[#6E6259] bg-white border border-[#E8DDD0] px-4 py-2.5 rounded-2xl rounded-bl-none w-fit shadow-xs animate-pulse">
+                    <span className="font-semibold text-[#560406]">{activeChatProfile.display_name} is typing</span>
+                    <span className="flex gap-1 items-center">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#560406] animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#560406] animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#560406] animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </span>
+                  </div>
+                )}
+
                 <div ref={chatBottomRef} />
               </div>
 
-              {/* Chat Input Footer */}
               <form
-                onSubmit={handleSendMessage}
-                className="p-3 bg-[#FBF9F4] border-t border-[#E8E1D5] flex items-center gap-2 shrink-0"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSendMessage();
+                }}
+                className="p-4 bg-white border-t border-[#E8DDD0] flex items-center gap-2 shrink-0 shadow-lg"
               >
+                <button
+                  type="button"
+                  onClick={handleVoiceNoteSimulate}
+                  className="p-2.5 rounded-full bg-[#F8F6F2] hover:bg-white text-[#560406] border border-[#E8DDD0] transition-colors cursor-pointer"
+                  title="Send Audio Note"
+                >
+                  <Mic className="w-4 h-4 text-[#560406]" />
+                </button>
+
                 <input
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   placeholder={`Message ${activeChatProfile.display_name}...`}
-                  className="flex-1 bg-white border border-[#E8E1D5] rounded-full px-4 py-3 text-xs text-[#111111] placeholder:text-gray-400 focus:outline-none focus:border-[#B89552] shadow-xs"
+                  className="flex-1 bg-[#F8F6F2] border border-[#E8DDD0] rounded-full px-4 py-3 text-xs text-[#161412] placeholder:text-[#6E6259] focus:outline-none focus:border-[#560406] shadow-xs"
                 />
+
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || isSending}
-                  className="w-10 h-10 rounded-full bg-[#2D2824] text-white hover:bg-[#B89552] disabled:opacity-40 transition-colors flex items-center justify-center cursor-pointer shrink-0 shadow-xs"
+                  className="w-11 h-11 rounded-full bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] hover:brightness-110 disabled:opacity-40 transition-all flex items-center justify-center cursor-pointer shrink-0 shadow-md active:scale-95 border border-[#A17B5E]/40"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 text-[#D8B486]" />
                 </button>
               </form>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
+      {showCallModal && activeChatProfile && (
+        <FamilyCallModal
+          isOpen={showCallModal}
+          onClose={() => setShowCallModal(false)}
+          targetProfile={activeChatProfile}
+          onScheduleSuccess={(scheduledAt) => {
+            setShowCallModal(false);
+            triggerToast(`VIP Video Call confirmed for ${scheduledAt}! 📹`, 'sparkle');
+            handleSendMessage(`📹 I have scheduled our Mannat VIP Video Session for ${scheduledAt}. Looking forward!`);
+          }}
+        />
+      )}
+
+      {/* Safety & Moderation Report / Block Modal (Apple Guideline 1.2 Compliance) */}
+      <ReportBlockModal
+        isOpen={!!reportModalProfile}
+        profile={reportModalProfile}
+        onClose={() => setReportModalProfile(null)}
+        onBlockSuccess={(blockedId) => {
+          setAcceptedList((prev) => prev.filter((p) => p.id !== blockedId));
+          setSentList((prev) => prev.filter((p) => p.id !== blockedId));
+          setReceivedList((prev) => prev.filter((p) => p.id !== blockedId));
+          if (activeChatProfile?.id === blockedId) {
+            setActiveChatProfile(null);
+          }
+          triggerToast('Candidate blocked and removed from connections', 'success');
+        }}
+        onReportSuccess={(_id, _reason) => {
+          triggerToast('Report submitted to Trust & Safety', 'sparkle');
+        }}
+      />
     </div>
   );
 };
