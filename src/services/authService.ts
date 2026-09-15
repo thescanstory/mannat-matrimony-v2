@@ -278,35 +278,55 @@ export const authService = {
     } catch {}
   },
 
-  // Parse Google / OAuth access_token from URL hash callback
+  // Parse Apple / Google / Supabase OAuth access_token from URL hash callback
   handleOAuthHashCallback: async (): Promise<UserSession | null> => {
     if (typeof window === 'undefined') return null;
     const hash = window.location.hash;
-    if (!hash || (!hash.includes('access_token') && !hash.includes('id_token'))) return null;
+    if (!hash || (!hash.includes('access_token') && !hash.includes('id_token') && !hash.includes('refresh_token'))) return null;
 
     try {
-      const params = new URLSearchParams(hash.replace(/^#/, ''));
-      const accessToken = params.get('access_token');
-      if (!accessToken) return null;
+      localStorage.removeItem('mannat_logged_out');
 
-      const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      });
-
-      if (res.ok) {
-        const profile = await res.json();
-        if (profile?.email) {
-          const user = authService.setUserSession(
-            profile.email,
-            profile.name || profile.given_name || 'Google User',
-            profile.picture || ''
-          );
-          // Clean hash from URL bar
+      // 1. Try Supabase session extraction first (handles Apple, Google, Supabase Auth)
+      if (isSupabaseConfigured()) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const u: UserSession = {
+            id: session.user.id,
+            email: session.user.email,
+            user_metadata: session.user.user_metadata,
+          };
           try {
+            localStorage.setItem('mannat_active_user', JSON.stringify(u));
             window.history.replaceState({}, document.title, window.location.pathname);
           } catch {}
-          return user;
+          return u;
         }
+      }
+
+      // 2. Direct Google OAuth hash fallback
+      const params = new URLSearchParams(hash.replace(/^#/, ''));
+      const accessToken = params.get('access_token');
+      if (accessToken) {
+        try {
+          const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
+          if (res.ok) {
+            const profile = await res.json();
+            if (profile?.email) {
+              const user = authService.setUserSession(
+                profile.email,
+                profile.name || profile.given_name || 'Google User',
+                profile.picture || ''
+              );
+              try {
+                window.history.replaceState({}, document.title, window.location.pathname);
+              } catch {}
+              return user;
+            }
+          }
+        } catch {}
       }
     } catch (e) {
       console.warn('OAuth hash parse error:', e);

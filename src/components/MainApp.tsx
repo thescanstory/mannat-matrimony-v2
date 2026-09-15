@@ -176,7 +176,7 @@ export const MainApp: React.FC = () => {
     }
   }, []);
 
-  // Check and restore active user session (including Google OAuth hash redirect)
+  // Check and restore active user session (including Apple & Google OAuth hash redirect)
   useEffect(() => {
     async function checkUserSession() {
       try {
@@ -190,6 +190,17 @@ export const MainApp: React.FC = () => {
       }
     }
     checkUserSession();
+
+    const authListener = authService.onAuthStateChange((user) => {
+      if (user) {
+        setCurrentUser(user);
+        setCurrentView('home');
+      }
+    });
+
+    return () => {
+      authListener?.data?.subscription?.unsubscribe();
+    };
   }, []);
 
   // Fetch initial profiles from Supabase Database on mount
