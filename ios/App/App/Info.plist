@@ -85,5 +85,7 @@
 	<string>Mannat requires access to your microphone to record audio for your 30-second bio-data video introduction.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Mannat requires access to save your bio-data photos to your photo library.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
