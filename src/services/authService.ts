@@ -179,8 +179,17 @@ export const authService = {
       }
     }
 
-    // Web Browser: If running on web, seamlessly log in with Apple ID session
-    // (Native iOS App uses Face ID / Touch ID via Capacitor ASAuthorizationController above)
+    // Web Browser: Direct real OAuth redirect via Supabase Apple Provider
+    if (isSupabaseConfigured()) {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/app` : undefined
+        }
+      });
+      return { data: null, error };
+    }
+
     const fallbackUser = authService.setUserSession('member.apple@icloud.com', 'Apple ID Member');
     return { data: fallbackUser, error: null };
   },
