@@ -114,11 +114,9 @@ export const authService = {
     }
 
     // Web Browser Fallback
-    const hostname = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : '';
-    const isLocalDev = hostname === 'localhost' || hostname === '127.0.0.1';
-    const redirectUri = (typeof window !== 'undefined' && isLocalDev && window.location.origin)
+    const redirectUri = typeof window !== 'undefined' && window.location.origin
       ? window.location.origin
-      : (import.meta.env.VITE_GOOGLE_REDIRECT_URI || 'https://mannat-matrimony-v2.vercel.app');
+      : (import.meta.env.VITE_GOOGLE_REDIRECT_URI || 'https://mannatmatrimony.com');
 
     const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=email%20profile%20openid&prompt=select_account`;
 
