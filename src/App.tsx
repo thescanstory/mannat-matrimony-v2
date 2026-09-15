@@ -1,6 +1,7 @@
 import { LandingPage } from './components/LandingPage';
 import { MainApp } from './components/MainApp';
 import { App as AdminPortal } from '../admin/src/App';
+import { LegalPage } from './components/LegalPage';
 import { Capacitor } from '@capacitor/core';
 
 export function App() {
@@ -21,7 +22,25 @@ export function App() {
     return <AdminPortal />;
   }
 
-  // 3. OAuth Login Callback in URL Hash (e.g. Google Sign-In redirect with #access_token=...)
+  // 3. Legal & App Store Compliance Routes (/privacy, /terms, /eula, /guidelines, /account-deletion)
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  if (pathname.startsWith('/privacy')) {
+    return <LegalPage initialDoc="privacy" />;
+  }
+  if (pathname.startsWith('/terms')) {
+    return <LegalPage initialDoc="terms" />;
+  }
+  if (pathname.startsWith('/eula')) {
+    return <LegalPage initialDoc="eula" />;
+  }
+  if (pathname.startsWith('/guidelines')) {
+    return <LegalPage initialDoc="guidelines" />;
+  }
+  if (pathname.startsWith('/account-deletion') || pathname.startsWith('/deletion')) {
+    return <LegalPage initialDoc="deletion" />;
+  }
+
+  // 4. OAuth Login Callback in URL Hash (e.g. Google Sign-In redirect with #access_token=...)
   const isAuthCallback = typeof window !== 'undefined' && (
     window.location.hash.includes('access_token') ||
     window.location.hash.includes('id_token') ||
@@ -29,7 +48,7 @@ export function App() {
     window.location.search.includes('code=')
   );
 
-  // 4. Isolated internal app route (/app or ?app=true) or OAuth Redirect
+  // 5. Isolated internal app route (/app or ?app=true) or OAuth Redirect
   const isDirectAppRoute = typeof window !== 'undefined' && (
     isAuthCallback ||
     window.location.pathname.startsWith('/app') ||
@@ -40,7 +59,7 @@ export function App() {
     return <MainApp />;
   }
 
-  // 5. Default Website for www.mannatmatrimony.com
+  // 6. Default Website for www.mannatmatrimony.com
   return <LandingPage />;
 }
 

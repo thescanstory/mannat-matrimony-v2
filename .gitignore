@@ -28,3 +28,4 @@ dist-isolation
 *.sln
 *.sw?
 .vercel
+.env*

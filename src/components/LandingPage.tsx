@@ -23,6 +23,7 @@ import {
   Users
 } from 'lucide-react';
 import { vipConsultationService, type VipLead } from '../services/vipConsultationService';
+import { LegalModal, type LegalDocType } from './LegalModal';
 
 const InstagramIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
   <svg
@@ -46,6 +47,8 @@ export const LandingPage: React.FC = () => {
   const [showConsultModal, setShowConsultModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showLegal, setShowLegal] = useState(false);
+  const [legalInitialDoc, setLegalInitialDoc] = useState<LegalDocType>('privacy');
   const [activeStoryIdx, setActiveStoryIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -970,14 +973,43 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#A89CAE] gap-2 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#A89CAE] gap-3 text-center sm:text-left">
             <div>
               © 2026 Mannat Matrimony. All rights reserved. Strict Non-Disclosure &amp; BlurShield Protected.
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3.5 flex-wrap justify-center sm:justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setLegalInitialDoc('privacy');
+                  setShowLegal(true);
+                }}
+                className="hover:text-white transition cursor-pointer"
+              >
+                Privacy Policy
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLegalInitialDoc('terms');
+                  setShowLegal(true);
+                }}
+                className="hover:text-white transition cursor-pointer"
+              >
+                Terms &amp; EULA
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLegalInitialDoc('guidelines');
+                  setShowLegal(true);
+                }}
+                className="hover:text-white transition cursor-pointer"
+              >
+                UGC Guidelines
+              </button>
               <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Member Web App</a>
               <a href="/admin" className="text-[#A17B5E] hover:underline">Admin Portal</a>
-              <a href="tel:+919738397933" className="hover:text-white">Hotline: +91 97383 97933</a>
             </div>
           </div>
 
@@ -1181,6 +1213,13 @@ export const LandingPage: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* 12. Legal & App Store Compliance Policies Modal */}
+      <LegalModal
+        isOpen={showLegal}
+        onClose={() => setShowLegal(false)}
+        initialDoc={legalInitialDoc}
+      />
 
     </div>
   );

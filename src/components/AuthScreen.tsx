@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, User, Mail, LogIn } from 'lucide-react';
 import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
+import { LegalModal } from './LegalModal';
 
 interface AuthScreenProps {
   onLoginSuccess: (user?: UserSession) => void;
@@ -11,6 +12,7 @@ interface AuthScreenProps {
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLanding }) => {
   const [loading, setLoading] = useState(false);
+  const [showLegal, setShowLegal] = useState(false);
   const [name, setName] = useState('Rahul Sharma');
   const [email, setEmail] = useState('rahul@mannat.vip');
 
@@ -180,21 +182,42 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLa
         </div>
       </div>
 
-      {/* Footer Assurance & Landing Link */}
+      {/* Footer Assurance & Legal Links */}
       <div className="text-center pt-2 mt-auto space-y-2">
         {onOpenLanding && (
           <button
             type="button"
             onClick={onOpenLanding}
-            className="text-xs text-[#560406] hover:text-[#730C0F] font-bold underline underline-offset-4 transition cursor-pointer"
+            className="text-xs text-[#560406] hover:text-[#730C0F] font-bold underline underline-offset-4 transition cursor-pointer block mx-auto"
           >
             Why At Mannat? Explore Platform Features →
           </button>
         )}
-        <p className="text-[10px] text-[#6E6259] font-medium">
-          Strict BlurShield™ privacy & verified matchmaking protocols.
-        </p>
+        <div className="text-[10px] text-[#6E6259] font-medium flex items-center justify-center gap-2 flex-wrap pt-1">
+          <span>By signing in, you agree to our</span>
+          <button
+            type="button"
+            onClick={() => setShowLegal(true)}
+            className="font-bold text-[#560406] underline cursor-pointer"
+          >
+            Terms &amp; EULA
+          </button>
+          <span>and</span>
+          <button
+            type="button"
+            onClick={() => setShowLegal(true)}
+            className="font-bold text-[#560406] underline cursor-pointer"
+          >
+            Privacy Policy
+          </button>
+        </div>
       </div>
+
+      <LegalModal
+        isOpen={showLegal}
+        onClose={() => setShowLegal(false)}
+        initialDoc="privacy"
+      />
     </div>
   );
 };

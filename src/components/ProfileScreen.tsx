@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import type { UserSession } from '../services/authService';
 import type { Profile, PrivacySettings } from '../types';
+import { LegalModal, type LegalDocType } from './LegalModal';
 
 interface ProfileScreenProps {
   currentUser: UserSession | null;
@@ -50,6 +51,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 }) => {
   const [showEditAccountModal, setShowEditAccountModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [showLegalModal, setShowLegalModal] = useState(false);
+  const [legalInitialDoc, setLegalInitialDoc] = useState<LegalDocType>('privacy');
   const [selectedPhotoPreview, setSelectedPhotoPreview] = useState<string | null>(null);
 
   // Profile data from props or defaults
@@ -375,16 +378,77 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
         </div>
 
-        {/* 7. Danger Zone & Session Management */}
+        {/* 7. Legal, Privacy & App Store Compliance Policies */}
+        <div className="bg-white rounded-[28px] border border-[#E8DDD0] p-5 shadow-xs space-y-3">
+          <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2.5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#A17B5E]" />
+              <span>Legal &amp; Safety Compliance</span>
+            </span>
+            <span className="text-[10px] font-bold text-[#A17B5E]">v1.0.0</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs font-bold">
+            <button
+              type="button"
+              onClick={() => {
+                setLegalInitialDoc('privacy');
+                setShowLegalModal(true);
+              }}
+              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+            >
+              <span>Privacy Policy</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setLegalInitialDoc('terms');
+                setShowLegalModal(true);
+              }}
+              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+            >
+              <span>Terms &amp; EULA</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setLegalInitialDoc('guidelines');
+                setShowLegalModal(true);
+              }}
+              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+            >
+              <span>UGC &amp; Safety</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setLegalInitialDoc('deletion');
+                setShowLegalModal(true);
+              }}
+              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+            >
+              <span>Account Rights</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+            </button>
+          </div>
+        </div>
+
+        {/* 8. Danger Zone & Session Management */}
         <div className="bg-white rounded-[28px] border border-rose-200 p-5 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <h4 className="text-xs font-bold text-rose-700 flex items-center gap-1.5">
                 <Trash2 className="w-4 h-4 text-rose-600" />
-                <span>Delete All Profile Data</span>
+                <span>Delete Account &amp; Data</span>
               </h4>
               <p className="text-[11px] text-[#6E6259]">
-                Permanently erase your candidate profile, bio-data & photos.
+                Permanently erase your account, candidate profile, bio-data &amp; photos.
               </p>
             </div>
             <button
@@ -392,7 +456,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               onClick={() => setShowDeleteConfirmModal(true)}
               className="py-2 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition-all cursor-pointer shrink-0"
             >
-              Delete
+              Delete Account
             </button>
           </div>
 
@@ -530,6 +594,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
           </div>
         </div>
       )}
+
+      {/* Legal & Compliance Policies Modal */}
+      <LegalModal
+        isOpen={showLegalModal}
+        onClose={() => setShowLegalModal(false)}
+        initialDoc={legalInitialDoc}
+      />
     </div>
   );
 };
