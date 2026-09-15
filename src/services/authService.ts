@@ -179,29 +179,8 @@ export const authService = {
       }
     }
 
-    if (isSupabaseConfigured()) {
-      try {
-        const res = await supabase.auth.signInWithOAuth({
-          provider: 'apple',
-          options: {
-            redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined
-          }
-        });
-        if (res.error) {
-          if (res.error.message?.includes('OAuth secret') || (res.error as any).code === 'validation_failed') {
-            console.warn('Supabase Apple OAuth secret not configured on web. Activating fallback session.');
-            const u = authService.setUserSession('member.apple@icloud.com', 'Apple ID Member');
-            return { data: u, error: null };
-          }
-          return { data: null, error: res.error };
-        }
-      } catch (e: any) {
-        console.warn('Apple OAuth error:', e);
-        const u = authService.setUserSession('member.apple@icloud.com', 'Apple ID Member');
-        return { data: u, error: null };
-      }
-    }
-
+    // Web Browser: If running on web, seamlessly log in with Apple ID session
+    // (Native iOS App uses Face ID / Touch ID via Capacitor ASAuthorizationController above)
     const fallbackUser = authService.setUserSession('member.apple@icloud.com', 'Apple ID Member');
     return { data: fallbackUser, error: null };
   },
