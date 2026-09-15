@@ -17,7 +17,10 @@ import {
   Heart,
   ExternalLink,
   Menu,
-  Sparkles
+  Sparkles,
+  Lock,
+  Smartphone,
+  Users
 } from 'lucide-react';
 import { vipConsultationService, type VipLead } from '../services/vipConsultationService';
 
@@ -44,7 +47,6 @@ export const LandingPage: React.FC = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [activeStoryIdx, setActiveStoryIdx] = useState(0);
-  const [activePlanTab, setActivePlanTab] = useState(1); // 0: Royale, 1: Imperial, 2: Heritage
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   // Quick Hero Form State
@@ -188,46 +190,7 @@ export const LandingPage: React.FC = () => {
     }
   ];
 
-  // Membership Packages
-  const membershipPlans = [
-    {
-      name: 'Signature Royale',
-      price: '₹75,000',
-      tag: 'SELECT ENTRY',
-      desc: 'For established families seeking certified profiles with dedicated concierge oversight.',
-      features: [
-        'Dedicated Senior Matchmaking Consultant',
-        'Direct Profile Presentation to Families',
-        'Full Background & Credential Verification',
-        'BlurShield™ Privacy Lock Protection'
-      ]
-    },
-    {
-      name: 'Imperial Bespoke',
-      price: '₹1,50,000',
-      tag: 'MOST PREFERRED',
-      desc: 'Our flagship tier for industrialists, CXOs, and high-net-worth lineages demanding absolute excellence.',
-      features: [
-        'Principal Consultant Assignment',
-        'Unlimited Verified Introductions',
-        'In-Person Family Meeting Facilitation in 5-Star Venues',
-        'Comprehensive Astrological & Pedigree Matching',
-        'Complete Discretion under Strict Mutual NDA'
-      ]
-    },
-    {
-      name: 'Heritage Global',
-      price: '₹3,00,000',
-      tag: 'ULTRA HNI & NRI',
-      desc: 'Exclusive service for prominent global dynasties, NRI magnates, and top-tier family offices worldwide.',
-      features: [
-        'Founder & Executive Level Concierge',
-        'Global Cross-Border Matching (US, UK, UAE, India)',
-        'Private Chauffeur & Venue Arrangements for Meets',
-        'Custom Background Dossier & Asset Verification'
-      ]
-    }
-  ];
+
 
   // Instagram Curated Journal Posts
   const instagramPosts = [
@@ -309,7 +272,7 @@ export const LandingPage: React.FC = () => {
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#6E6259]">
               <a href="#about" className="hover:text-[#560406] transition">Why At Mannat</a>
-              <a href="#plans" className="hover:text-[#560406] transition">Membership</a>
+              <a href="#experience" className="hover:text-[#560406] transition text-[#560406]">Experience App</a>
               <a href="#stories" className="hover:text-[#560406] transition">Portfolios</a>
               <a href="#instagram" className="hover:text-[#560406] transition">Journal</a>
               <a href="#faq" className="hover:text-[#560406] transition">FAQ</a>
@@ -373,11 +336,11 @@ export const LandingPage: React.FC = () => {
                   <span>★ Why At Mannat</span>
                 </a>
                 <a
-                  href="#plans"
+                  href="#experience"
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-3 bg-white rounded-xl border border-[#E8DDD0] text-[#161412] flex items-center justify-between"
                 >
-                  <span>👑 Membership</span>
+                  <span>📱 Experience App</span>
                 </a>
                 <a
                   href="#stories"
@@ -603,98 +566,150 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. Membership Packages: Snappy Tabbed Card on Mobile, 3-Columns on Desktop */}
-      <section id="plans" className="py-10 sm:py-16 bg-[#FBF9F4] border-b border-[#E8DDD0]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+      {/* 4. Welcome & Experience the App: Interactive Showcase */}
+      <section id="experience" className="py-12 sm:py-20 bg-[#FAF7F2] border-b border-[#E8DDD0] relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
           
-          <div className="text-center space-y-1 sm:space-y-2">
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#560406]">
-              Curated Packages
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-              Bespoke Membership Tiers
+          <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#560406]/10 border border-[#560406]/20 text-[#560406] text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
+              <span>THE DIGITAL SANCTUARY · EXPERIENCE THE APP</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-normal text-[#161412] tracking-tight leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+              Welcome to the House of Mannat App
             </h2>
+            <p className="text-xs sm:text-sm text-[#6E6259] leading-relaxed">
+              Step inside India&apos;s premier bespoke matrimonial ecosystem built exclusively for distinguished lineages, verified professionals, and confidential family alliances.
+            </p>
           </div>
 
-          {/* Mobile Tab Switcher */}
-          <div className="md:hidden flex p-1 rounded-xl bg-[#E8DDD0]/50 border border-[#E8DDD0] gap-1">
-            {['Royale', 'Imperial (VIP)', 'Heritage Global'].map((tab, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActivePlanTab(idx)}
-                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all text-center ${
-                  activePlanTab === idx
-                    ? 'bg-[#560406] text-[#A17B5E] shadow-sm'
-                    : 'text-[#6E6259]'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          {/* Desktop 3-Card Grid / Mobile Tabbed Active Card */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-            {membershipPlans.map((plan, idx) => {
-              const isHiddenOnMobile = activePlanTab !== idx;
-              return (
-                <div
-                  key={idx}
-                  className={`rounded-2xl sm:rounded-3xl p-5 sm:p-7 transition-all flex flex-col justify-between text-left space-y-5 ${
-                    isHiddenOnMobile ? 'hidden md:flex' : 'flex'
-                  } ${
-                    idx === 1
-                      ? 'bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#260102] text-white border-2 border-[#A17B5E] shadow-xl'
-                      : 'bg-white text-[#161412] border border-[#E8DDD0] shadow-sm'
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className={`inline-block px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider ${
-                      idx === 1 ? 'bg-[#A17B5E] text-[#260102]' : 'bg-[#F8F6F2] text-[#560406] border border-[#E8DDD0]'
-                    }`}>
-                      {plan.tag}
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                        {plan.name}
-                      </h3>
-                      <div className={`text-lg sm:text-xl font-black mt-0.5 ${idx === 1 ? 'text-[#A17B5E]' : 'text-[#560406]'}`}>
-                        {plan.price}
-                      </div>
-                    </div>
-
-                    <p className={`text-xs leading-relaxed ${idx === 1 ? 'text-neutral-200' : 'text-[#6E6259]'}`}>
-                      {plan.desc}
-                    </p>
-
-                    <div className="pt-3 space-y-2 border-t border-white/10">
-                      {plan.features.map((feat, fIdx) => (
-                        <div key={fIdx} className="flex items-start gap-2 text-xs">
-                          <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${idx === 1 ? 'text-[#A17B5E]' : 'text-[#560406]'}`} />
-                          <span className={idx === 1 ? 'text-neutral-200' : 'text-[#6E6259]'}>{feat}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setSelectedPlan(plan.name);
-                      setShowConsultModal(true);
-                    }}
-                    className={`w-full py-3 rounded-xl font-bold text-xs transition cursor-pointer shadow-md text-center flex items-center justify-center gap-1.5 ${
-                      idx === 1
-                        ? 'bg-[#A17B5E] text-[#260102] hover:brightness-105 font-black'
-                        : 'bg-[#560406] text-white hover:bg-[#730C0F]'
-                    }`}
-                  >
-                    <span>Inquire for {plan.name}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+          {/* 4 Feature Pillars Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
+              <div className="space-y-3">
+                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
+                  <Users className="w-5 h-5 text-[#560406]" />
                 </div>
-              );
-            })}
+                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                  Curated Alliances Feed
+                </h3>
+                <p className="text-xs text-[#6E6259] leading-relaxed">
+                  Browse handpicked, verified matrimonial bio-datas filtered precisely by pedigree, cultural values, education, and lifestyle harmony.
+                </p>
+              </div>
+              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>100% Background Verified</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
+              <div className="space-y-3">
+                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
+                  <Lock className="w-5 h-5 text-[#560406]" />
+                </div>
+                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                  BlurShield™ Privacy Lock
+                </h3>
+                <p className="text-xs text-[#6E6259] leading-relaxed">
+                  Total discretion guaranteed. Your photos, contacts, and sensitive family dossiers remain completely blurred until 1-on-1 approval.
+                </p>
+              </div>
+              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>Zero Public Scraping</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
+              <div className="space-y-3">
+                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
+                  <MessageSquare className="w-5 h-5 text-[#560406]" />
+                </div>
+                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                  Matchmaker Concierge
+                </h3>
+                <p className="text-xs text-[#6E6259] leading-relaxed">
+                  Direct 1-on-1 private messaging with senior consultants to facilitate introductions, astrological checks, and 5-star venue meetings.
+                </p>
+              </div>
+              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>Dedicated Principal Matchmaker</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
+              <div className="space-y-3">
+                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
+                  <Smartphone className="w-5 h-5 text-[#560406]" />
+                </div>
+                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                  Multi-Platform Access
+                </h3>
+                <p className="text-xs text-[#6E6259] leading-relaxed">
+                  Enjoy real-time access on iPhone, Android, iPad, and Desktop with Sign in with Apple, Google OAuth, and instant live sync.
+                </p>
+              </div>
+              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>iOS, Android &amp; Web App</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Hero Banner / Direct App Launch Card */}
+          <div className="rounded-3xl bg-gradient-to-br from-[#2A0204] via-[#480306] to-[#1C0102] p-6 sm:p-10 text-white border-2 border-[#A17B5E]/50 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-[#A17B5E]/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 text-center lg:text-left">
+              <div className="space-y-3 max-w-xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#A17B5E]/20 text-[#D8B486] text-[10px] sm:text-xs font-bold uppercase tracking-wider border border-[#A17B5E]/30">
+                  <Crown className="w-3.5 h-3.5 text-[#D8B486]" />
+                  <span>Exclusive Member Portal</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-normal text-[#FDFCFC] leading-snug" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                  Ready to Experience the Mannat Matchmaking App?
+                </h3>
+                <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
+                  Join hundreds of distinguished families and verified singles. Browse curated alliance matches, chat directly with advisors, and manage your privacy in real time.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
+                <a
+                  href="/app"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] hover:brightness-110 text-[#1C0102] text-xs sm:text-sm font-black tracking-wide shadow-xl flex items-center justify-center gap-2 transition active:scale-98"
+                >
+                  <Sparkles className="w-4 h-4 text-[#1C0102]" />
+                  <span>Launch Member Web App</span>
+                  <ArrowRight className="w-4 h-4 text-[#1C0102]" />
+                </a>
+
+                <button
+                  onClick={() => setShowConsultModal(true)}
+                  className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-[#A17B5E]/40 text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Book Private Briefing</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-6 pt-5 border-t border-white/10 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-8 text-[11px] text-[#D8B486]">
+              <span className="flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>Instant Single Sign-On</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>Strict Non-Disclosure (NDA) Protected</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>Direct Concierge Advisory</span>
+              </span>
+            </div>
+
           </div>
 
         </div>
