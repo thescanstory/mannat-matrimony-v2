@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { X, Lock, Eye, Check, ShieldCheck, Sparkles, ArrowLeft, LogOut } from 'lucide-react';
 import type { PrivacySettings } from '../types';
-import type { UserSession } from '../services/authService';
+import { authService, type UserSession } from '../services/authService';
+import { profileService } from '../services/profileService';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -290,10 +291,16 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                 </p>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     if (window.confirm('Are you sure you want to permanently delete your account and data? This action cannot be undone.')) {
+                      try {
+                        if (currentUser?.id) {
+                          await profileService.deleteProfile(currentUser.id);
+                        }
+                        await authService.signOut();
+                      } catch {}
                       localStorage.clear();
-                      window.location.reload();
+                      window.location.href = '/';
                     }
                   }}
                   className="px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-extrabold cursor-pointer transition-colors"

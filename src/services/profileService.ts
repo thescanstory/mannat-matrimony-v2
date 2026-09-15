@@ -165,7 +165,7 @@ export const profileService = {
     }
   },
 
-  // Delete Candidate Profile (Remote Supabase & Local Cache)
+  // Delete Candidate Profile (Remote Supabase & Local Cache) - Apple Guideline 5.1.1
   deleteProfile: async (profileId: string): Promise<boolean> => {
     try {
       if (typeof window !== 'undefined') {
@@ -177,9 +177,11 @@ export const profileService = {
         }
       }
 
-      if (isSupabaseConfigured()) {
-        const { error } = await supabase.from('profiles').delete().or(`id.eq.${profileId},user_id.eq.${profileId}`);
-        if (error) console.error('Supabase profile delete error:', error);
+      if (isSupabaseConfigured() && profileId) {
+        await supabase.from('profiles').delete().or(`id.eq.${profileId},user_id.eq.${profileId}`);
+        await supabase.from('privacy_settings').delete().eq('profile_id', profileId);
+        await supabase.from('connections').delete().or(`sender_id.eq.${profileId},receiver_id.eq.${profileId}`);
+        await supabase.from('messages').delete().or(`sender_id.eq.${profileId},receiver_id.eq.${profileId}`);
       }
       return true;
     } catch (e) {
