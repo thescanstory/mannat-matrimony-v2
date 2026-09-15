@@ -16,7 +16,8 @@ import {
   Star,
   Heart,
   ExternalLink,
-  Menu
+  Menu,
+  Sparkles
 } from 'lucide-react';
 import { vipConsultationService, type VipLead } from '../services/vipConsultationService';
 
@@ -317,6 +318,14 @@ export const LandingPage: React.FC = () => {
             {/* Right Action */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <a
+                href="/app"
+                className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#560406]/30 text-[#560406] bg-[#560406]/5 hover:bg-[#560406]/10 text-xs font-bold transition tracking-wide shadow-xs"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <span>Member Web App</span>
+              </a>
+
+              <a
                 href="https://wa.me/919738397933?text=Hello%20Mannat%20Matrimony,%20I%20would%20like%20to%20inquire%20about%20membership."
                 target="_blank"
                 rel="noreferrer"
@@ -385,6 +394,13 @@ export const LandingPage: React.FC = () => {
                   <span>❓ FAQs</span>
                 </a>
               </div>
+              <a
+                href="/app"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center justify-center gap-2 shadow-md border border-[#A17B5E]/40"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
+                <span>Open Member Web App →</span>
+              </a>
               <button
                 onClick={scrollToHeroForm}
                 className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] text-xs font-black flex items-center justify-center gap-1.5 shadow-sm border border-[#F5E6D3]/40"
@@ -508,6 +524,18 @@ export const LandingPage: React.FC = () => {
                   ⚠️ {formError}
                 </div>
               )}
+
+              {/* Direct Link for Existing Members */}
+              <div className="pt-3 border-t border-[#A17B5E]/20 flex flex-wrap items-center justify-center gap-2 text-xs text-[#E8DDD0]">
+                <span className="text-[#A17B5E]">Already registered with Mannat?</span>
+                <a
+                  href="/app"
+                  className="font-bold text-[#D8B486] hover:text-white underline underline-offset-4 flex items-center gap-1 transition"
+                >
+                  <span>Open Member Web App</span>
+                  <ArrowRight className="w-3 h-3 text-[#D8B486]" />
+                </a>
+              </div>
 
             </div>
 
@@ -903,6 +931,13 @@ export const LandingPage: React.FC = () => {
 
             <div className="flex flex-wrap items-center justify-center gap-3">
               <a
+                href="/app"
+                className="px-4 py-2 rounded-xl bg-[#560406] border border-[#A17B5E]/40 text-[#F5E6D3] text-xs font-bold flex items-center gap-1.5 hover:bg-[#730C0F] transition shadow-xs"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
+                <span>Member Web App</span>
+              </a>
+              <a
                 href="https://wa.me/919738397933?text=Hello%20Mannat%20Matrimony,%20I%20would%20like%20to%20inquire%20about%20membership."
                 target="_blank"
                 rel="noreferrer"
@@ -925,6 +960,7 @@ export const LandingPage: React.FC = () => {
               © 2026 Mannat Matrimony. All rights reserved. Strict Non-Disclosure &amp; BlurShield Protected.
             </div>
             <div className="flex items-center gap-4">
+              <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Member Web App</a>
               <a href="/admin" className="text-[#A17B5E] hover:underline">Admin Portal</a>
               <a href="tel:+919738397933" className="hover:text-white">Hotline: +91 97383 97933</a>
             </div>
