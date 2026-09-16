@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShieldCheck, FileText, Lock, AlertTriangle, Trash2 } from 'lucide-react';
+import { X, ShieldCheck, FileText, Lock, AlertTriangle, Trash2, Headphones } from 'lucide-react';
 
-export type LegalDocType = 'privacy' | 'terms' | 'eula' | 'guidelines' | 'deletion';
+export type LegalDocType = 'privacy' | 'terms' | 'eula' | 'guidelines' | 'deletion' | 'support';
 
 interface LegalModalProps {
   isOpen: boolean;
@@ -104,6 +104,18 @@ export const LegalModal: React.FC<LegalModalProps> = ({
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Account Deletion</span>
+            </button>
+
+            <button
+              onClick={() => setActiveDoc('support')}
+              className={`px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                activeDoc === 'support'
+                  ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                  : 'text-[#6E6259] hover:text-[#161412]'
+              }`}
+            >
+              <Headphones className="w-3.5 h-3.5" />
+              <span>Customer Support</span>
             </button>
           </div>
 
@@ -283,6 +295,43 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                   <p className="text-[11px] text-[#6E6259] pt-1">
                     Once initiated, data deletion is irreversible and completed across all live databases and cache servers immediately.
                   </p>
+                </div>
+              </div>
+            )}
+
+            {activeDoc === 'support' && (
+              <div className="space-y-4">
+                <div className="p-3 bg-[#560406]/5 border border-[#560406]/20 rounded-2xl">
+                  <h4 className="font-bold text-sm text-[#560406]">Dedicated Member Support &amp; Concierge Assistance</h4>
+                  <p className="text-[11px] text-[#6E6259] pt-1">
+                    The House of Mannat provides 24/7 dedicated assistance to our members, prospective candidates, and reviewing family elders.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="p-3 bg-white border border-[#E8DDD0] rounded-2xl space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#A17B5E]">Email Support (Guaranteed &lt; 24h Response)</span>
+                    <p className="font-bold text-[#560406] text-sm">
+                      <a href="mailto:support@mannatmatrimony.com" className="hover:underline">support@mannatmatrimony.com</a>
+                    </p>
+                    <p className="text-[11px] text-[#6E6259]">For technical queries, bio-data updates, or verification audits.</p>
+                  </div>
+
+                  <div className="p-3 bg-white border border-[#E8DDD0] rounded-2xl space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#A17B5E]">Priority Concierge Escalation Line</span>
+                    <p className="font-bold text-[#161412] text-sm">
+                      <a href="tel:+919738397933" className="hover:underline">+91 97383 97933</a>
+                    </p>
+                    <p className="text-[11px] text-[#6E6259]">Direct senior matchmaker escalation for active mutual introductions.</p>
+                  </div>
+
+                  <div className="p-3 bg-white border border-[#E8DDD0] rounded-2xl space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#A17B5E]">Privacy &amp; Data Protection Officer</span>
+                    <p className="font-bold text-[#560406] text-sm">
+                      <a href="mailto:privacy@mannatmatrimony.com" className="hover:underline">privacy@mannatmatrimony.com</a>
+                    </p>
+                    <p className="text-[11px] text-[#6E6259]">For GDPR, DPDP Act 2023, or cryptographic audit inquiries.</p>
+                  </div>
                 </div>
               </div>
             )}

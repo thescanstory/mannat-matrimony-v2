@@ -39,6 +39,9 @@ export function App() {
   if (pathname.startsWith('/account-deletion') || pathname.startsWith('/deletion')) {
     return <LegalPage initialDoc="deletion" />;
   }
+  if (pathname.startsWith('/support') || pathname.startsWith('/contact')) {
+    return <LegalPage initialDoc="support" />;
+  }
 
   // 4. OAuth Login Callback in URL Hash (e.g. Google Sign-In redirect with #access_token=...)
   const isAuthCallback = typeof window !== 'undefined' && (
