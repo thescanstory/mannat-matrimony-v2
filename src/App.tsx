@@ -58,8 +58,9 @@ export function App() {
   // 5. Isolated internal app route (/app or ?app=true) or OAuth Redirect
   const isDirectAppRoute = typeof window !== 'undefined' && (
     isAuthCallback ||
-    window.location.pathname.startsWith('/app') ||
-    window.location.search.includes('app')
+    window.location.pathname === '/app' ||
+    window.location.pathname.startsWith('/app/') ||
+    window.location.search.includes('app=true')
   );
 
   if (isDirectAppRoute) {
