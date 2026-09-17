@@ -1,5 +1,6 @@
 import React from 'react';
 import { Download, ExternalLink } from 'lucide-react';
+import { REVIEW_VIDEO_DATA } from './reviewVideoBase64';
 
 export const AppReviewPage: React.FC = () => {
   return (
@@ -31,23 +32,23 @@ export const AppReviewPage: React.FC = () => {
             <video
               controls
               playsInline
-              preload="metadata"
+              preload="auto"
               poster="/og-image.jpg"
+              src={REVIEW_VIDEO_DATA}
               className="w-full max-w-sm h-auto rounded-lg"
             >
-              <source src="/app-review-demo.webm" type="video/webm" />
               Your browser does not support the video tag.
             </video>
           </div>
 
           <div className="flex flex-wrap gap-3">
             <a
-              href="/app-review-demo.webm"
-              download="mannat_app_review_recording.webm"
-              className="inline-flex items-center gap-2 bg-[#560406] hover:bg-[#3A0204] text-[#FDFBF7] px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-xs"
+              href={REVIEW_VIDEO_DATA}
+              download="mannat_app_review_recording.mp4"
+              className="inline-flex items-center gap-2 bg-[#560406] hover:bg-[#3A0204] text-[#FDFBF7] px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              Download Video (.webm)
+              Download Video (.mp4)
             </a>
             <a
               href="/app"
@@ -74,11 +75,11 @@ export const AppReviewPage: React.FC = () => {
             </div>
             <div className="bg-[#FDFBF7] border border-[#E8DDD0] rounded-xl p-3.5">
               <span className="text-[10px] uppercase tracking-wider font-bold text-[#A17B5E] block mb-1">Demo Email</span>
-              <code className="text-xs font-bold text-[#560406] bg-white px-2 py-0.5 rounded border border-[#E8DDD0]">rahul@mannat.vip</code>
+              <code className="text-xs font-bold text-[#560406] bg-white px-2 py-0.5 rounded border border-[#E8DDD0]">appreview@mannatmatrimony.com</code>
             </div>
             <div className="bg-[#FDFBF7] border border-[#E8DDD0] rounded-xl p-3.5">
               <span className="text-[10px] uppercase tracking-wider font-bold text-[#A17B5E] block mb-1">Demo Candidate</span>
-              <code className="text-xs font-bold text-[#560406] bg-white px-2 py-0.5 rounded border border-[#E8DDD0]">Rahul Sharma</code>
+              <code className="text-xs font-bold text-[#560406] bg-white px-2 py-0.5 rounded border border-[#E8DDD0]">Apple Reviewer</code>
             </div>
             <div className="bg-[#FDFBF7] border border-[#E8DDD0] rounded-xl p-3.5">
               <span className="text-[10px] uppercase tracking-wider font-bold text-[#A17B5E] block mb-1">Password / OTP</span>
