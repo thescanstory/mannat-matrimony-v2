@@ -2,6 +2,7 @@ import { LandingPage } from './components/LandingPage';
 import { MainApp } from './components/MainApp';
 import { App as AdminPortal } from '../admin/src/App';
 import { LegalPage } from './components/LegalPage';
+import { AppReviewPage } from './components/AppReviewPage';
 import { Capacitor } from '@capacitor/core';
 
 export function App() {
@@ -38,6 +39,9 @@ export function App() {
   }
   if (pathname.startsWith('/account-deletion') || pathname.startsWith('/deletion')) {
     return <LegalPage initialDoc="deletion" />;
+  }
+  if (pathname.startsWith('/app-review') || pathname.startsWith('/review')) {
+    return <AppReviewPage />;
   }
   if (pathname.startsWith('/support') || pathname.startsWith('/contact')) {
     return <LegalPage initialDoc="support" />;
