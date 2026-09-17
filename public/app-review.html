@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mannat Matrimony — App Review & Demo Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #FDFBF7;
+      --bg-card: #FFFFFF;
+      --border: #E8DDD0;
+      --brand-burgundy: #560406;
+      --brand-burgundy-dark: #3A0204;
+      --brand-gold: #A17B5E;
+      --brand-gold-light: #C49E7C;
+      --text-main: #161412;
+      --text-muted: #6E6259;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-top: 12px;
+    }
+
+    .logo-subtitle {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--brand-gold);
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 32px;
+      color: var(--brand-burgundy);
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #F4EAE0;
+      color: var(--brand-burgundy);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(86, 4, 6, 0.04);
+    }
+
+    .card h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px;
+      color: var(--brand-burgundy);
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      margin: 16px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    video {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+    }
+
+    .credentials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .cred-box {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .cred-box label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--brand-gold);
+      letter-spacing: 0.1em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .cred-box code {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--brand-burgundy);
+      background: #FFF;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    ol, ul {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand-burgundy);
+      color: #FFF;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 12px;
+      transition: background 0.2s;
+    }
+
+    .download-btn:hover {
+      background: var(--brand-burgundy-dark);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-subtitle">Mannat — Bespoke Matrimony</div>
+      <h1>App Review & Demo Verification</h1>
+      <span class="badge">Apple App Store Review Reference (v1.0 Build 2)</span>
+    </header>
+
+    <!-- Video Recording Section -->
+    <div class="card">
+      <h2>1. Video Walkthrough (iPhone Viewport)</h2>
+      <p style="font-size: 14px; color: var(--text-muted);">
+        A continuous walkthrough starting at clean app launch on an iPhone viewport, covering Sign in with Apple, profile discovery, BlurShield™ photo privacy, mutual alliance requests, concierge messaging, profile reporting & member blocking, and account/data deletion (Guideline 5.1.1).
+      </p>
+
+      <div class="video-wrapper">
+        <video controls playsinline preload="metadata" poster="/og-image.jpg">
+          <source src="/app-review-demo.webm" type="video/webm">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <a href="/app-review-demo.webm" download="mannat_app_review_recording.webm" class="download-btn">
+        ⬇ Download Direct Video File (.webm)
+      </a>
+    </div>
+
+    <!-- Demo Access Section -->
+    <div class="card">
+      <h2>2. Demo Login & Reviewer Access</h2>
+      <p style="font-size: 14px; color: var(--text-muted);">
+        Reviewers do not require SMS or waiting for concierge verification. A pre-verified account is enabled for instant 1-tap email login:
+      </p>
+
+      <div class="credentials-grid">
+        <div class="cred-box">
+          <label>Login Method</label>
+          <strong>Email Sign-In (Launch Screen)</strong>
+        </div>
+        <div class="cred-box">
+          <label>Demo Email</label>
+          <code>rahul@mannat.vip</code>
+        </div>
+        <div class="cred-box">
+          <label>Demo Name</label>
+          <code>Rahul Sharma</code>
+        </div>
+        <div class="cred-box">
+          <label>Password / OTP</label>
+          <strong>None required (Instant Access)</strong>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+        <em>* Note: Sign in with Apple is also fully functional for any standard Apple ID / sandbox reviewer account.</em>
+      </p>
+    </div>
+
+    <!-- App Purpose & Audience -->
+    <div class="card">
+      <h2>3. Purpose & Target Audience</h2>
+      <p style="font-size: 14px;">
+        <strong>Mannat: Elite Matrimony</strong> is a private matrimonial matchmaking and family alliance network designed exclusively for marriage-seeking adults (18+) and their families. It provides discreet introductions, BlurShield™ photo privacy protection, and verified biodata exchanges.
+      </p>
+    </div>
+
+    <!-- External Services -->
+    <div class="card">
+      <h2>4. External Services & Backend Infrastructure</h2>
+      <ul>
+        <li><strong>Authentication:</strong> Sign in with Apple (<code>@capgo/capacitor-social-login</code>), Google Sign-In, and Supabase Auth.</li>
+        <li><strong>Backend & Database:</strong> Supabase (PostgreSQL database for real-time messaging, connections, and privacy settings).</li>
+        <li><strong>Storage:</strong> Supabase Storage (Encrypted bucket for candidate bio-data & photo uploads).</li>
+        <li><strong>Device APIs:</strong> Native Capacitor iOS plugins (Haptics, Status Bar, Splash Screen, Share).</li>
+        <li><strong>Payments / In-App Purchases:</strong> None active in this build (all features free to access, no gated consumables or StoreKit subscriptions).</li>
+        <li><strong>Matchmaking Engine:</strong> Client-side algorithmic profile compatibility scoring.</li>
+      </ul>
+    </div>
+
+    <!-- Compliance & Regulations -->
+    <div class="card">
+      <h2>5. Compliance, Safety & Regulations</h2>
+      <ul>
+        <li><strong>Safety & Moderation (Guideline 1.2):</strong> Users can report suspicious bio-datas and block candidates with instant removal from feed and connections.</li>
+        <li><strong>Account Deletion (Guideline 5.1.1):</strong> Users can permanently wipe their account, bio-data, messages, and uploaded photos anytime under Profile → <em>Delete Account &amp; Data</em>.</li>
+        <li><strong>Regional Differences:</strong> None. The app functions identically across all regions.</li>
+        <li><strong>Regulated Industry:</strong> Not applicable. Mannat is a matrimonial matchmaking platform and does not operate in regulated domains or use licensed third-party media.</li>
+      </ul>
+    </div>
+
+    <footer>
+      &copy; 2026 Mannat Matrimony. Confidential — Prepared for Apple App Review Team.
+    </footer>
+  </div>
+</body>
+</html>
