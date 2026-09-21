@@ -142,6 +142,7 @@ export interface PaymentOrder {
   currency?: string;
   name: string;
   description: string;
+  userName?: string;
   userEmail?: string;
   userPhone?: string;
   profileId?: string;

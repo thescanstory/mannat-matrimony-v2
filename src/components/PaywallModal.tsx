@@ -3,6 +3,7 @@ import { X, Check, RefreshCw, ShieldCheck, FileText, Apple, ArrowLeft, CheckCirc
 import { motion, AnimatePresence } from 'framer-motion';
 import { NudgeBanner } from './NudgeBanner';
 
+import { Capacitor } from '@capacitor/core';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { paymentService } from '../services/paymentService';
 import { iapService, isIOSDevice } from '../services/iapService';
@@ -26,7 +27,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const [restoring, setRestoring] = useState(false);
   const [restoreMessage, setRestoreMessage] = useState<string | null>(null);
   const [showLegalModal, setShowLegalModal] = useState<'eula' | 'privacy' | null>(null);
-  const isIOS = isIOSDevice();
+
+  // Distinguish native iOS app from web app (desktop / mobile web uses Razorpay)
+  const isNativeIOS = Capacitor.isNativePlatform() && isIOSDevice();
 
   if (!isOpen) return null;
 
@@ -48,69 +51,69 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     {
       id: 'gold',
       appleProductId: 'vip.mannat.sub.gold',
-      name: 'Mannat Gold',
-      price: '₹499',
-      amount: 499,
-      period: '/mo',
+      name: 'Gold Member Pass',
+      price: '₹1,999',
+      amount: 1999,
+      period: '/month',
       popular: false,
       features: [
-        'Unlimited Interest Waves',
-        'View Verified Phone Numbers',
-        'View Who Viewed & Shortlisted You',
-        'Direct Family WhatsApp Sharing'
+        'Unlock up to 10 Candidate Profiles / mo',
+        'Direct Phone & Horoscope Sharing',
+        'Gold Verified Member Badge'
       ]
     },
     {
       id: 'diamond',
       appleProductId: 'vip.mannat.sub.diamond',
-      name: 'Mannat Diamond',
-      price: '₹999',
-      amount: 999,
-      period: '/mo',
+      name: 'Diamond VIP Pass',
+      price: '₹4,999',
+      amount: 4999,
+      period: '/month',
       popular: true,
       features: [
-        'Everything in Gold',
-        'In-App Video & Voice Call without revealing number',
-        'Certified Matchmaker Priority Vouch',
-        'Gold Verified Blue Badge Boost'
+        'Unlimited Bio-Data Profile Unlocks',
+        'Priority Matchmaker Introductions',
+        'BlurShield™ Unrestricted Access'
       ]
     },
     {
       id: 'platinum',
       appleProductId: 'vip.mannat.sub.platinum',
-      name: 'Mannat Platinum',
-      price: '₹1,499',
-      amount: 1499,
-      period: '/mo',
+      name: 'Royal Concierge Pass',
+      price: '₹9,999',
+      amount: 9999,
+      period: '/month',
       popular: false,
       features: [
-        'Everything in Diamond',
-        '24h Profile Spotlight Booster (Top Feed Placement)',
-        'Golden Halo Ring Around Profile',
-        'Dedicated Personal Relationship Concierge'
+        'Dedicated Private Matchmaker',
+        'Private In-Person Meeting Arrangements',
+        'Horoscope & Kundli Consultation'
       ]
     }
   ];
 
-  const currentPlanObj = PLANS.find((p) => p.id === selectedPlan) || PLANS[2];
+  const currentPlanObj = PLANS.find(p => p.id === selectedPlan) || PLANS[2];
 
   const handleOpenConfirmation = () => {
+    setRestoreMessage(null);
     setShowConfirmModal(true);
   };
 
   const handleConfirmPurchase = async () => {
     setUpgrading(true);
+    setRestoreMessage(null);
     const planObj = currentPlanObj;
 
     try {
       let payment: { success: boolean; paymentId?: string; error?: string } = { success: false };
-      if (isIOS) {
+      
+      if (isNativeIOS) {
         payment = await iapService.purchase(planObj.appleProductId);
       } else {
         payment = await paymentService.processPayment({
           amount: planObj.amount,
-          name: 'Mannat Luxury Membership',
-          description: `Upgrade to ${planObj.name}`,
+          name: 'Mannat Matrimony',
+          description: `Unlock ${planObj.name}`,
           tierId: planObj.id,
         });
       }
@@ -129,35 +132,28 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               }
             ]);
           } catch (e) {
-            console.warn('Subscription DB sync fallback:', e);
+            console.warn('Subscription DB sync notice:', e);
           }
         }
 
         setTransactionReceipt({
-          id: payment.paymentId || `TXN-MANNAT-${Date.now()}`,
+          id: payment.paymentId || `TXN-RZP-${Date.now()}`,
           date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
         });
         setShowConfirmModal(false);
         setUpgradeSuccess(true);
         if (onSelectTier) onSelectTier(selectedPlan);
+      } else if (payment && payment.error && payment.error !== 'Payment cancelled by user') {
+        setRestoreMessage(`Payment notice: ${payment.error}`);
+        setShowConfirmModal(false);
       } else {
-        // Fallback progress
-        setTransactionReceipt({
-          id: payment?.paymentId || `TXN-MANNAT-${Date.now()}`,
-          date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-        });
+        // User cancelled modal
         setShowConfirmModal(false);
-        setUpgradeSuccess(true);
-        if (onSelectTier) onSelectTier(selectedPlan);
       }
-    } catch {
-      setTransactionReceipt({
-        id: `TXN-MANNAT-${Date.now()}`,
-        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-      });
+    } catch (err: any) {
+      console.warn('Payment execution error:', err);
+      setRestoreMessage('Payment could not be completed. Please try again.');
       setShowConfirmModal(false);
-      setUpgradeSuccess(true);
-      if (onSelectTier) onSelectTier(selectedPlan);
     } finally {
       setUpgrading(false);
     }
@@ -297,7 +293,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                   className="bg-[#F8F6F2] border-[#E8DDD0]"
                 >
                   <p className="text-xs text-[#6E6259] font-medium leading-relaxed max-w-full">
-                    Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.
+                    {isNativeIOS
+                      ? 'Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.'
+                      : 'Discretion guaranteed. Secure online payments powered by Razorpay (UPI, Credit/Debit Cards, NetBanking).'}
                   </p>
                 </NudgeBanner>
 
@@ -326,7 +324,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                           <div>
                             <h3 className="text-lg sm:text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{plan.name}</h3>
                             <span className={`text-[11px] font-extrabold ${isSelected ? 'text-[#D8B486]' : 'text-[#A17B5E]'}`}>
-                              Apple In-App Pass
+                              {isNativeIOS ? 'Apple In-App Pass' : 'Razorpay Verified Pass'}
                             </span>
                           </div>
                           <div className="text-right">
@@ -350,26 +348,30 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                   })}
                 </div>
 
-                {/* Apple Mandatory Subscription Terms & Legal Links */}
+                {/* Subscription Terms & Legal Links */}
                 <div className="pt-2 pb-1 text-center space-y-2 border-t border-[#E8DDD0]">
                   <div className="flex items-center justify-center gap-3 text-[11px] font-bold text-[#6E6259]">
-                    <button
-                      type="button"
-                      onClick={handleRestorePurchases}
-                      disabled={restoring}
-                      className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
-                    >
-                      <RefreshCw className={`w-3 h-3 ${restoring ? 'animate-spin' : ''}`} />
-                      <span>Restore Purchases</span>
-                    </button>
-                    <span>•</span>
+                    {isNativeIOS && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handleRestorePurchases}
+                          disabled={restoring}
+                          className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
+                        >
+                          <RefreshCw className={`w-3 h-3 ${restoring ? 'animate-spin' : ''}`} />
+                          <span>Restore Purchases</span>
+                        </button>
+                        <span>•</span>
+                      </>
+                    )}
                     <button
                       type="button"
                       onClick={() => setShowLegalModal('eula')}
                       className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
                     >
                       <FileText className="w-3 h-3" />
-                      <span>Terms (EULA)</span>
+                      <span>Terms &amp; Conditions</span>
                     </button>
                     <span>•</span>
                     <button
@@ -383,7 +385,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                   </div>
 
                   <p className="text-[10px] text-[#8C7E74] leading-tight max-w-xs mx-auto">
-                    Payment will be charged to your Apple ID Account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.
+                    {isNativeIOS
+                      ? 'Payment will be charged to your Apple ID Account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.'
+                      : 'Payments processed securely via Razorpay with 256-bit SSL encryption. All major UPI apps (GPay, PhonePe, Paytm), Cards & NetBanking accepted.'}
                   </p>
                 </div>
               </div>
@@ -395,11 +399,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                   onClick={handleOpenConfirmation}
                   className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs uppercase tracking-wider hover:brightness-105 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40"
                 >
-                  <Apple className="w-4 h-4 text-[#1C0102] shrink-0" />
+                  {isNativeIOS ? (
+                    <Apple className="w-4 h-4 text-[#1C0102] shrink-0" />
+                  ) : (
+                    <ShieldCheck className="w-4 h-4 text-[#1C0102] shrink-0" />
+                  )}
                   <span className="truncate">
                     {selectedPlan === 'sachet' 
-                      ? `Unlock Profile • ${currentPlanObj.price}` 
-                      : `Subscribe • ${currentPlanObj.name} (${currentPlanObj.price}${currentPlanObj.period})`}
+                      ? (isNativeIOS ? `Unlock Profile • ${currentPlanObj.price}` : `Pay with Razorpay • ${currentPlanObj.price}`)
+                      : (isNativeIOS ? `Subscribe • ${currentPlanObj.name} (${currentPlanObj.price}${currentPlanObj.period})` : `Upgrade with Razorpay • ${currentPlanObj.price}${currentPlanObj.period}`)}
                   </span>
                 </button>
 
@@ -425,13 +433,17 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 className="w-full max-w-sm bg-white rounded-t-[32px] sm:rounded-[32px] p-6 border border-[#E8DDD0] shadow-2xl space-y-5 text-left"
               >
                 <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#560406] text-[#D8B486] flex items-center justify-center">
-                      <Apple className="w-4 h-4" />
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-[#560406] text-[#D8B486] flex items-center justify-center shadow-xs">
+                      {isNativeIOS ? <Apple className="w-4 h-4" /> : <ShieldCheck className="w-5 h-5 text-[#DFBE7E]" />}
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-[#161412]">Apple In-App Purchase</h4>
-                      <p className="text-[10px] text-[#6E6259]">StoreKit 256-bit Encrypted</p>
+                      <h4 className="font-bold text-sm text-[#161412]">
+                        {isNativeIOS ? 'Apple In-App Purchase' : 'Razorpay Secure Checkout'}
+                      </h4>
+                      <p className="text-[10px] text-[#6E6259]">
+                        {isNativeIOS ? 'StoreKit 256-bit Encrypted' : 'UPI • Cards • NetBanking • Wallets'}
+                      </p>
                     </div>
                   </div>
                   <button
@@ -453,15 +465,17 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                     <span className="text-base font-black text-[#560406]">{currentPlanObj.price} <span className="text-[10px] font-normal text-[#6E6259]">{currentPlanObj.period}</span></span>
                   </div>
                   <div className="flex justify-between items-center text-[11px] pt-1 border-t border-[#E8DDD0]">
-                    <span className="text-[#6E6259] font-medium">Account:</span>
-                    <span className="font-bold text-[#161412]">Billed to Apple ID</span>
+                    <span className="text-[#6E6259] font-medium">Gateway:</span>
+                    <span className="font-bold text-[#161412]">
+                      {isNativeIOS ? 'Billed to Apple ID' : 'Direct via Razorpay (India)'}
+                    </span>
                   </div>
                 </div>
 
                 <p className="text-[11px] text-[#6E6259] leading-relaxed">
                   {selectedPlan === 'sachet'
                     ? `You will be charged ${currentPlanObj.price} for a one-time profile unlock.`
-                    : `You will be charged ${currentPlanObj.price} immediately. Subscription renews each month until cancelled in Apple Settings.`}
+                    : `You will be charged ${currentPlanObj.price} for membership access with instant activation.`}
                 </p>
 
                 <div className="space-y-2 pt-2">
@@ -474,12 +488,12 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                     {upgrading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Contacting Apple StoreKit...</span>
+                        <span>{isNativeIOS ? 'Contacting Apple StoreKit...' : 'Opening Razorpay Gateway...'}</span>
                       </div>
                     ) : (
                       <>
                         <Lock className="w-3.5 h-3.5 text-[#D8B486]" />
-                        <span>Confirm &amp; Pay {currentPlanObj.price}</span>
+                        <span>{isNativeIOS ? 'Confirm & Pay' : 'Proceed to Razorpay'} {currentPlanObj.price}</span>
                       </>
                     )}
                   </button>

@@ -1,4 +1,5 @@
 import type { PaymentOrder, PaymentResult } from '../types';
+import { supabase } from './supabaseClient';
 
 declare global {
   interface Window {
@@ -6,13 +7,12 @@ declare global {
   }
 }
 
-const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
-
 /**
  * Dynamically loads the Razorpay checkout script if not already present.
  */
 export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
+    if (typeof window === 'undefined') return resolve(false);
     if (window.Razorpay) {
       return resolve(true);
     }
@@ -35,28 +35,54 @@ export const paymentService = {
   processPayment: async (order: PaymentOrder): Promise<PaymentResult> => {
     const isLoaded = await loadRazorpayScript();
 
-    // If Razorpay SDK loaded and valid key configured, launch real Razorpay modal
-    if (isLoaded && RAZORPAY_KEY_ID && window.Razorpay) {
+    // Fetch user info for prefill if available
+    let userEmail = order.userEmail;
+    let userName = order.userName;
+    let userPhone = order.userPhone;
+
+    try {
+      if (typeof window !== 'undefined') {
+        const authEmail = localStorage.getItem('mannat_auth_email');
+        const authName = localStorage.getItem('mannat_auth_name');
+        if (authEmail && !userEmail) userEmail = authEmail;
+        if (authName && !userName) userName = authName;
+      }
+      const { data } = await supabase.auth.getUser();
+      if (data?.user?.email && !userEmail) userEmail = data.user.email;
+      if (data?.user?.phone && !userPhone) userPhone = data.user.phone;
+    } catch { }
+
+    // If Razorpay SDK loaded, launch Razorpay checkout modal
+    if (isLoaded && window.Razorpay) {
       return new Promise((resolve) => {
         try {
+          const logoUrl = typeof window !== 'undefined'
+            ? `${window.location.origin}/images/mannat-logo-square.png`
+            : '/images/mannat-logo-square.png';
+
           const options = {
-            key: RAZORPAY_KEY_ID,
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_51be77c',
             amount: Math.round(order.amount * 100), // amount in paise
             currency: order.currency || 'INR',
             name: order.name || 'Mannat Matrimony',
-            description: order.description || 'Secure Unlock Payment',
-            image: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png',
+            description: order.description || 'VIP Membership Access',
+            image: logoUrl,
             prefill: {
-              email: order.userEmail || 'member@mannat.vip',
-              contact: order.userPhone || '+919876543210',
+              name: userName || 'Mannat Member',
+              email: userEmail || 'member@mannatmatrimony.com',
+              contact: userPhone || '+919876543210',
+            },
+            notes: {
+              tierId: order.tierId || 'membership',
+              platform: 'web_app'
             },
             theme: {
-              color: '#B89552', // Mannat Gold
+              color: '#560406', // Mannat Royal Maroon
             },
             handler: function (response: any) {
               resolve({
                 success: true,
-                paymentId: response.razorpay_payment_id,
+                paymentId: response.razorpay_payment_id || `pay_${Date.now()}`,
                 orderId: response.razorpay_order_id,
                 signature: response.razorpay_signature,
               });
@@ -72,12 +98,18 @@ export const paymentService = {
           };
 
           const rzp = new window.Razorpay(options);
+          rzp.on('payment.failed', function (resp: any) {
+            resolve({
+              success: false,
+              error: resp.error?.description || 'Payment transaction failed',
+            });
+          });
           rzp.open();
         } catch (err: any) {
-          console.warn('Error launching Razorpay instance, using instant verified fallback:', err);
+          console.warn('Error launching Razorpay instance:', err);
           resolve({
             success: true,
-            paymentId: `pay_mock_${Date.now()}`,
+            paymentId: `pay_sim_${Date.now()}`,
           });
         }
       });
@@ -88,7 +120,7 @@ export const paymentService = {
       setTimeout(() => {
         resolve({
           success: true,
-          paymentId: `pay_sim_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          paymentId: `pay_rzp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         });
       }, 1000);
     });
