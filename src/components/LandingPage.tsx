@@ -547,14 +547,25 @@ export const LandingPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Direct Link for Existing Members */}
-              <div className="pt-3 border-t border-[#A17B5E]/20 flex flex-wrap items-center justify-center gap-2 text-xs text-[#E8DDD0]">
-                <span className="text-[#A17B5E]">Already registered with Mannat?</span>
+              {/* Direct Links for App and Existing Members */}
+              <div className="pt-3 border-t border-[#A17B5E]/20 flex flex-wrap items-center justify-center gap-3 text-xs text-[#E8DDD0]">
+                <a
+                  href="https://apps.apple.com/app/id6812288373"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3.5 py-1.5 rounded-full bg-black hover:bg-neutral-900 text-white font-bold flex items-center gap-1.5 border border-white/20 shadow-xs transition"
+                >
+                  <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 170 170">
+                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
+                  </svg>
+                  <span> Download on App Store</span>
+                </a>
+                <span className="text-neutral-400 hidden sm:inline">•</span>
                 <a
                   href="/app"
                   className="font-bold text-[#D8B486] hover:text-white underline underline-offset-4 flex items-center gap-1 transition"
                 >
-                  <span>Open Member Web App</span>
+                  <span>Member Web App</span>
                   <ArrowRight className="w-3 h-3 text-[#D8B486]" />
                 </a>
               </div>
