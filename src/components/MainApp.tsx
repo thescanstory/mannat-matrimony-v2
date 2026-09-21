@@ -383,14 +383,23 @@ export const MainApp: React.FC = () => {
                   </button>
                 )}
 
-                <a href="/" className="flex flex-col text-left group">
-                  <span className="text-xs sm:text-sm italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
-                  <span className="text-xl sm:text-2xl font-normal tracking-[0.24em] uppercase text-[#560406] group-hover:text-[#730C0F] transition-colors leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                    MANNAT
-                  </span>
-                  <span className="hidden md:inline text-[7px] uppercase tracking-[0.3em] font-bold text-[#A17B5E] -mt-0.5">
-                    Bespoke Matchmaking
-                  </span>
+                <a href="/" className="flex items-center gap-2.5 group">
+                  <img
+                    src="/images/mannat-logo-square.png"
+                    alt="Mannat"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover shadow-sm ring-1 ring-[#560406]/20 group-hover:scale-105 transition-transform"
+                  />
+                  <div className="flex flex-col text-left">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-xs italic text-[#560406] leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
+                      <span className="text-lg sm:text-2xl font-normal tracking-[0.2em] uppercase text-[#560406] group-hover:text-[#730C0F] transition-colors leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                        MANNAT
+                      </span>
+                    </div>
+                    <span className="hidden md:inline text-[7px] uppercase tracking-[0.3em] font-bold text-[#A17B5E] -mt-0.5">
+                      Bespoke Matchmaking
+                    </span>
+                  </div>
                 </a>
               </div>
 

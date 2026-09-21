@@ -294,16 +294,23 @@ export const LandingPage: React.FC = () => {
           <div className="flex items-center justify-between gap-3 h-16 sm:h-20">
             
             {/* Brand Typographic Lockup */}
-            <a href="#" className="flex flex-col text-left group shrink-0">
-              <span className="text-sm sm:text-base italic font-normal text-[#560406] -mb-1 sm:-mb-1.5 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
-                At
-              </span>
-              <span className="font-normal text-xl sm:text-3xl tracking-[0.22em] sm:tracking-[0.24em] uppercase text-[#560406] group-hover:text-[#730C0F] transition-colors leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                MANNAT
-              </span>
-              <span className="text-[7px] sm:text-[7.5px] uppercase tracking-[0.3em] sm:tracking-[0.34em] font-bold text-[#A17B5E] -mt-0.5 whitespace-nowrap">
-                Bespoke Matchmaking
-              </span>
+            <a href="#" className="flex items-center gap-3 group shrink-0">
+              <img
+                src="/images/mannat-logo-square.png"
+                alt="Mannat"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover shadow-sm ring-1 ring-[#560406]/20 group-hover:scale-105 transition-transform"
+              />
+              <div className="flex flex-col text-left">
+                <span className="text-xs sm:text-sm italic font-normal text-[#560406] -mb-1 sm:-mb-1.5 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
+                  At
+                </span>
+                <span className="font-normal text-xl sm:text-3xl tracking-[0.22em] sm:tracking-[0.24em] uppercase text-[#560406] group-hover:text-[#730C0F] transition-colors leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                  MANNAT
+                </span>
+                <span className="text-[7px] sm:text-[7.5px] uppercase tracking-[0.3em] sm:tracking-[0.34em] font-bold text-[#A17B5E] -mt-0.5 whitespace-nowrap">
+                  Bespoke Matchmaking
+                </span>
+              </div>
             </a>
 
             {/* Desktop Nav */}
@@ -1044,18 +1051,24 @@ export const LandingPage: React.FC = () => {
       {/* 8. Footer */}
       <footer id="contact" className="bg-[#1C0102] text-[#E8DDD0] pt-10 sm:pt-14 pb-28 sm:pb-16 border-t border-[#2A0203]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-          
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-white/10 text-center sm:text-left">
-            <div className="flex flex-col items-center sm:items-start">
-              <span className="text-sm italic font-normal text-white -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
-                At
-              </span>
-              <div className="text-xl sm:text-2xl font-normal text-white tracking-[0.24em] uppercase" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                MANNAT
+            <div className="flex items-center gap-3">
+              <img
+                src="/images/mannat-logo-square.png"
+                alt="Mannat"
+                className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover shadow-md ring-1 ring-[#D8B486]/30"
+              />
+              <div className="flex flex-col items-start text-left">
+                <span className="text-sm italic font-normal text-[#D8B486] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
+                  At
+                </span>
+                <div className="text-xl sm:text-2xl font-normal text-white tracking-[0.24em] uppercase" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                  MANNAT
+                </div>
+                <span className="text-[7px] uppercase tracking-[0.34em] font-bold text-[#A17B5E] mt-0.5">
+                  Bespoke Elite Matchmaking
+                </span>
               </div>
-              <span className="text-[7px] uppercase tracking-[0.34em] font-bold text-[#A17B5E] mt-0.5">
-                Bespoke Elite Matchmaking
-              </span>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-3">

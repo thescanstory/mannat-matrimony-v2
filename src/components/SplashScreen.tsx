@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Crown } from 'lucide-react';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -22,13 +21,17 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="flex flex-col items-center justify-center gap-6 text-center"
       >
-        {/* Crown Icon */}
+        {/* Royal Brand Logo */}
         <motion.div
-          animate={{ scale: [1, 1.08, 1] }}
+          animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#560406] via-[#3A0204] to-[#1C0102] border border-[#A17B5E]/50 flex items-center justify-center shadow-xl"
+          className="w-20 h-20 rounded-3xl overflow-hidden shadow-2xl border border-[#A17B5E]/50 flex items-center justify-center bg-[#560406]"
         >
-          <Crown className="w-8 h-8 text-[#D8B486]" />
+          <img
+            src="/images/mannat-logo-square.png"
+            alt="Mannat"
+            className="w-full h-full object-cover"
+          />
         </motion.div>
 
         {/* Brand Typographic Lockup */}

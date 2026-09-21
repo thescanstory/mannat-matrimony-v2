@@ -208,10 +208,16 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 <ArrowLeft className="w-4 h-4 text-[#560406]" />
                 <span>Back</span>
               </button>
-              <div className="h-4 w-px bg-[#E8DDD0]" />
-              <div className="flex flex-col text-left">
-                <span className="text-xs italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
-                <span className="text-base font-normal tracking-[0.2em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>MANNAT</span>
+              <div className="flex items-center gap-2">
+                <img
+                  src="/images/mannat-logo-square.png"
+                  alt="Mannat"
+                  className="w-7 h-7 rounded-lg object-cover shadow-xs ring-1 ring-[#560406]/20"
+                />
+                <div className="flex flex-col text-left">
+                  <span className="text-xs italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
+                  <span className="text-base font-normal tracking-[0.2em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>MANNAT</span>
+                </div>
               </div>
             </div>
 

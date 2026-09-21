@@ -65,6 +65,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLa
       {/* Top Branding - Royal Lockup */}
       <div className="pt-2 space-y-1 text-center">
         <div className="flex flex-col items-center">
+          <img
+            src="/images/mannat-logo-square.png"
+            alt="Mannat"
+            className="w-14 h-14 rounded-2xl object-cover shadow-md mx-auto mb-2 ring-1 ring-[#560406]/20"
+          />
           <span className="text-xl italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
             At
           </span>
