@@ -308,12 +308,67 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
                       : 'bg-[#FAF8F5] text-[#161412] border-[#E8DDD0] hover:bg-white'
                   }`}
                 >
-                  <option value="All">All Cities</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="Delhi">Delhi NCR</option>
-                  <option value="Bangalore">Bangalore</option>
-                  <option value="London">London / UK</option>
-                  <option value="Singapore">Singapore</option>
+                  <option value="All">All Cities & Global</option>
+                  
+                  <optgroup label="── Top Indian Metros ──">
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Delhi">Delhi NCR / New Delhi</option>
+                    <option value="Gurgaon">Gurgaon / Gurugram</option>
+                    <option value="Noida">Noida</option>
+                    <option value="Bangalore">Bangalore / Bengaluru</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Ahmedabad">Ahmedabad</option>
+                  </optgroup>
+
+                  <optgroup label="── Prominent Cities ──">
+                    <option value="Chandigarh">Chandigarh / Tricity</option>
+                    <option value="Jaipur">Jaipur</option>
+                    <option value="Lucknow">Lucknow</option>
+                    <option value="Surat">Surat</option>
+                    <option value="Indore">Indore</option>
+                    <option value="Kochi">Kochi / Kerala</option>
+                    <option value="Vadodara">Vadodara / Baroda</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Bhopal">Bhopal</option>
+                    <option value="Ludhiana">Ludhiana</option>
+                    <option value="Dehradun">Dehradun</option>
+                    <option value="Nagpur">Nagpur</option>
+                    <option value="Visakhapatnam">Visakhapatnam</option>
+                    <option value="Coimbatore">Coimbatore</option>
+                    <option value="Udaipur">Udaipur</option>
+                    <option value="Amritsar">Amritsar</option>
+                    <option value="Kanpur">Kanpur</option>
+                    <option value="Patna">Patna</option>
+                    <option value="Agra">Agra</option>
+                    <option value="Varanasi">Varanasi</option>
+                    <option value="Mysore">Mysore / Mysuru</option>
+                    <option value="Jodhpur">Jodhpur</option>
+                    <option value="Rajkot">Rajkot</option>
+                    <option value="Ranchi">Ranchi</option>
+                    <option value="Guwahati">Guwahati</option>
+                    <option value="Bhubaneswar">Bhubaneswar</option>
+                    <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                  </optgroup>
+
+                  <optgroup label="── International & NRI Hubs ──">
+                    <option value="London">London / United Kingdom</option>
+                    <option value="New York">New York / USA</option>
+                    <option value="San Francisco">San Francisco / Bay Area, USA</option>
+                    <option value="Seattle">Seattle / Washington, USA</option>
+                    <option value="Dallas">Dallas / Texas, USA</option>
+                    <option value="Chicago">Chicago / Illinois, USA</option>
+                    <option value="Dubai">Dubai / UAE</option>
+                    <option value="Singapore">Singapore</option>
+                    <option value="Toronto">Toronto / Canada</option>
+                    <option value="Vancouver">Vancouver / Canada</option>
+                    <option value="Sydney">Sydney / Australia</option>
+                    <option value="Melbourne">Melbourne / Australia</option>
+                    <option value="Hong Kong">Hong Kong</option>
+                    <option value="Zurich">Zurich / Switzerland</option>
+                  </optgroup>
                 </select>
               </div>
 
