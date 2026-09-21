@@ -1,7 +1,15 @@
 node_modules
 admin/node_modules
+admin/dist
 .git
 ios
 android
 dist
 .env
+.env.*
+recordings
+scratch
+*.webm
+*.mp4
+*.zip
+*.mov
