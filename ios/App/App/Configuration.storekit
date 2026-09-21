@@ -1,0 +1,155 @@
+{
+  "identifier" : "MannatStoreKit",
+  "nonRenewingSubscriptions" : [ ],
+  "products" : [
+    {
+      "displayPrice" : "49",
+      "familyShareable" : false,
+      "internalID" : "10000001",
+      "localizations" : [
+        {
+          "description" : "Unlock 1 verified profile with full bio-data & salary reveal",
+          "displayName" : "Instant Profile Unlock",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "vip.mannat.sachet49",
+      "referenceName" : "Instant Profile Unlock",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_IN",
+    "_storefront" : "IND",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "20000001",
+      "localizations" : [
+        {
+          "description" : "Mannat VIP Membership Subscriptions",
+          "displayName" : "Mannat VIP",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "Mannat VIP",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "499",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "20000002",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited Interest Waves & Verified Phone Numbers",
+              "displayName" : "Mannat Gold Membership",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vip.mannat.sub.gold",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Mannat Gold Membership",
+          "subscriptionGroupID" : "20000001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "999",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "20000003",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "In-App Video Calls, Concierge Priority & Gold Verified Badge",
+              "displayName" : "Mannat Diamond Membership",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vip.mannat.sub.diamond",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Mannat Diamond Membership",
+          "subscriptionGroupID" : "20000001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "1499",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "20000004",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Profile Spotlight, Golden Halo Ring & Personal Concierge",
+              "displayName" : "Mannat Platinum Membership",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vip.mannat.sub.platinum",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Mannat Platinum Membership",
+          "subscriptionGroupID" : "20000001",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
