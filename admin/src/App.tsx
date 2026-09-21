@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
   ShieldCheck, 
   Crown, 
@@ -65,17 +65,25 @@ function getInitialProfiles(): Profile[] {
     const customStored = localStorage.getItem('mannat_custom_profiles');
     const customList: Profile[] = customStored ? JSON.parse(customStored) : [];
 
+    const userProfileStored = localStorage.getItem('mannat_user_profile');
+    const userProfile: Profile | null = userProfileStored ? JSON.parse(userProfileStored) : null;
+
     const adminStored = localStorage.getItem('mannat_admin_candidates');
     const adminList: Profile[] = adminStored ? JSON.parse(adminStored) : [];
 
     const profileMap = new Map<string, Profile>();
 
-    // 1. Admin created candidates (highest precedence)
+    // 1. Current active user profile
+    if (userProfile && !deletedIds.includes(userProfile.id)) {
+      profileMap.set(userProfile.id, userProfile);
+    }
+
+    // 2. Admin created candidates
     adminList.forEach(p => {
       if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
     });
 
-    // 2. User onboarding profiles (next precedence)
+    // 3. User onboarding profiles
     customList.forEach(p => {
       if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
     });
@@ -106,120 +114,171 @@ export function App() {
   const [callbacks, setCallbacks] = useState<VIPCallback[]>(INITIAL_CALLBACKS);
   const [matchmakers] = useState<MatchmakerCurator[]>(INITIAL_MATCHMAKERS);
 
-  // Fetch live profiles and callback requests from Supabase on mount
-  useEffect(() => {
-    async function loadSupabaseData() {
+  // Fetch live profiles and callback requests from Supabase
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const loadSupabaseData = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
+      
+      let localProfiles: Profile[] = [];
       try {
-        const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-        const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
-        let currentProfiles: Profile[] = [];
-        
-        if (data && !error) {
-          currentProfiles = (data as any[])
-            .filter(d => !deletedIds.includes(d.id))
-            .map(d => ({
-              ...d,
-              user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
-              diet: d.lifestyle_details?.diet || d.diet || '',
-              salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
-              family_background: d.lifestyle_details?.family_background || d.family_background || '',
-              marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
-              gender: d.lifestyle_details?.gender || d.gender || 'male'
-            }));
+        const userP = localStorage.getItem('mannat_user_profile');
+        if (userP) localProfiles.push(JSON.parse(userP));
+        const custP = localStorage.getItem('mannat_custom_profiles');
+        if (custP) localProfiles.push(...JSON.parse(custP));
+      } catch {}
 
-          setProfiles(currentProfiles);
-          localStorage.setItem('mannat_admin_candidates', JSON.stringify(currentProfiles));
-          localStorage.setItem('mannat_custom_profiles', JSON.stringify(currentProfiles));
-          localStorage.setItem('mannat_profiles', JSON.stringify(currentProfiles));
-        }
+      let currentProfilesList: Profile[] = localProfiles.filter(p => !deletedIds.includes(p.id));
 
-        // 1. Fetch live VIP Consultations from localStorage
-        let localConsultations: VIPCallback[] = [];
-        try {
-          const rawLocal = localStorage.getItem('mannat_vip_consultations');
-          if (rawLocal) {
-            const parsed = JSON.parse(rawLocal);
-            localConsultations = parsed.map((item: any) => ({
-              id: item.id || `vip_${Date.now()}`,
-              requester_name: item.full_name || 'VIP Client',
-              requester_phone: `${item.phone_country_code || '+91'} ${item.phone_number || ''}`.trim(),
-              target_candidate_name: item.profile_for || 'VIP Consultation Request',
-              requested_time: item.created_at ? new Date(item.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Just Now',
-              managed_by: item.gender || 'Seeking Match',
-              status: (item.status === 'contacted' ? 'In Progress' : item.status === 'assigned' ? 'Completed' : 'Pending') as 'Pending' | 'In Progress' | 'Completed',
-              notes: item.notes || `City: ${item.city || 'N/A'} · Income: ${item.annual_income || 'N/A'} · Education: ${item.education || 'N/A'} · Profession: ${item.profession || 'N/A'}`,
-              email: item.email,
-              city: item.city,
-              annual_income: item.annual_income,
-              profession: item.profession,
-              education: item.education,
-              source_cta: item.source_cta || 'Landing Page Consultation Form',
-              preferred_slot: item.preferred_slot
-            }));
-          }
-        } catch (e) {
-          console.warn('Local VIP consultations load error:', e);
-        }
+      if (data && !error) {
+        const cloudProfiles: Profile[] = (data as any[])
+          .filter(d => !deletedIds.includes(d.id))
+          .map(d => ({
+            ...d,
+            display_name: (d.display_name || 'Member').trim(),
+            city: (d.city || '').trim(),
+            religion: (d.religion || '').trim(),
+            community: (d.community || '').trim(),
+            sub_community: (d.sub_community || '').trim(),
+            occupation: (d.occupation || '').trim(),
+            company_name: (d.company_name || '').trim(),
+            education: (d.education || '').trim(),
+            photos: Array.isArray(d.photos) ? d.photos : [],
+            user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
+            diet: d.lifestyle_details?.diet || d.diet || '',
+            salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
+            family_background: d.lifestyle_details?.family_background || d.family_background || '',
+            marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
+            gender: d.lifestyle_details?.gender || d.gender || 'male'
+          }));
 
-        // 2. Fetch live callback requests & VIP consultations from Supabase
-        const { data: cbData } = await supabase.from('callback_requests').select('*').order('created_at', { ascending: false });
-        const { data: vipData } = await supabase.from('vip_consultations').select('*').order('created_at', { ascending: false });
-        
-        const statusMap: Record<string, 'Pending' | 'In Progress' | 'Completed'> = {
-          pending: 'Pending',
-          in_progress: 'In Progress',
-          completed: 'Completed',
-          wave_sent: 'Pending',
-          callback_requested: 'Pending'
-        };
-
-        const mappedCallbacks: VIPCallback[] = (cbData || []).map((cb: any) => {
-          const matchedProfile = currentProfiles.find((p: any) => p.id === cb.target_profile_id);
-          return {
-            id: cb.id,
-            requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
-            requester_phone: cb.requester_phone || '+91 98201 44521',
-            target_candidate_name: matchedProfile ? `${matchedProfile.display_name} (${matchedProfile.age})` : `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
-            requested_time: cb.created_at ? new Date(cb.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Today',
-            managed_by: cb.status === 'wave_sent' ? 'Candidate' : 'Parent',
-            status: statusMap[cb.status] || 'Pending',
-            notes: cb.status === 'wave_sent' ? 'Interest wave sent via feed.' : 'Requested confidential callback with family.'
-          };
+        const profileMap = new Map<string, Profile>();
+        localProfiles.forEach(p => {
+          if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
+        });
+        cloudProfiles.forEach(p => {
+          if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
         });
 
-        const mappedVip: VIPCallback[] = (vipData || []).map((v: any) => ({
-          id: v.id,
-          requester_name: v.full_name || 'VIP Inquirer',
-          requester_phone: v.phone || '+91 97383 97933',
-          target_candidate_name: v.profile_for || 'VIP Consultation Request',
-          requested_time: v.created_at ? new Date(v.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently',
-          managed_by: v.gender || 'Seeking Match',
-          status: statusMap[v.status] || 'Pending',
-          notes: `City: ${v.city || 'N/A'} · Income: ${v.annual_income || 'N/A'} · Profession: ${v.profession || 'N/A'}`,
-          email: v.email,
-          city: v.city,
-          annual_income: v.annual_income,
-          profession: v.profession
-        }));
-
-        // Combine and de-duplicate by ID
-        const combined = [...localConsultations, ...mappedVip, ...mappedCallbacks];
-        const uniqueMap = new Map<string, VIPCallback>();
-        combined.forEach(item => {
-          if (!uniqueMap.has(item.id)) {
-            uniqueMap.set(item.id, item);
-          }
-        });
-
-        setCallbacks(Array.from(uniqueMap.values()));
-      } catch (e) {
-        console.warn('Supabase initial fetch fallback:', e);
+        currentProfilesList = Array.from(profileMap.values());
+        setProfiles(currentProfilesList);
+        localStorage.setItem('mannat_admin_candidates', JSON.stringify(currentProfilesList));
+      } else if (localProfiles.length > 0) {
+        setProfiles(currentProfilesList);
       }
+
+      // 1. Fetch live VIP Consultations from localStorage
+      let localConsultations: VIPCallback[] = [];
+      try {
+        const rawLocal = localStorage.getItem('mannat_vip_consultations');
+        if (rawLocal) {
+          const parsed = JSON.parse(rawLocal);
+          localConsultations = parsed.map((item: any) => ({
+            id: item.id || `vip_${Date.now()}`,
+            requester_name: item.full_name || 'VIP Client',
+            requester_phone: `${item.phone_country_code || '+91'} ${item.phone_number || ''}`.trim(),
+            target_candidate_name: item.profile_for || 'VIP Consultation Request',
+            requested_time: item.created_at ? new Date(item.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Just Now',
+            managed_by: item.gender || 'Seeking Match',
+            status: (item.status === 'contacted' ? 'In Progress' : item.status === 'assigned' ? 'Completed' : 'Pending') as 'Pending' | 'In Progress' | 'Completed',
+            notes: item.notes || `City: ${item.city || 'N/A'} · Income: ${item.annual_income || 'N/A'} · Education: ${item.education || 'N/A'} · Profession: ${item.profession || 'N/A'}`,
+            email: item.email,
+            city: item.city,
+            annual_income: item.annual_income,
+            profession: item.profession,
+            education: item.education,
+            source_cta: item.source_cta || 'Landing Page Consultation Form',
+            preferred_slot: item.preferred_slot
+          }));
+        }
+      } catch (e) {
+        console.warn('Local VIP consultations load error:', e);
+      }
+
+      // 2. Fetch live callback requests & VIP consultations from Supabase
+      const { data: cbData } = await supabase.from('callback_requests').select('*').order('created_at', { ascending: false });
+      const { data: vipData } = await supabase.from('vip_consultations').select('*').order('created_at', { ascending: false });
+      
+      const statusMap: Record<string, 'Pending' | 'In Progress' | 'Completed'> = {
+        pending: 'Pending',
+        in_progress: 'In Progress',
+        completed: 'Completed',
+        wave_sent: 'Pending',
+        callback_requested: 'Pending'
+      };
+
+      const mappedCallbacks: VIPCallback[] = (cbData || []).map((cb: any) => {
+        const matchedProfile = currentProfilesList.find((p: any) => p.id === cb.target_profile_id);
+        return {
+          id: cb.id,
+          requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
+          requester_phone: cb.requester_phone || '+91 98201 44521',
+          target_candidate_name: matchedProfile ? `${matchedProfile.display_name} (${matchedProfile.age})` : `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
+          requested_time: cb.created_at ? new Date(cb.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Today',
+          managed_by: cb.status === 'wave_sent' ? 'Candidate' : 'Parent',
+          status: statusMap[cb.status] || 'Pending',
+          notes: cb.status === 'wave_sent' ? 'Interest wave sent via feed.' : 'Requested confidential callback with family.'
+        };
+      });
+
+      const mappedVip: VIPCallback[] = (vipData || []).map((v: any) => ({
+        id: v.id,
+        requester_name: v.full_name || 'VIP Inquirer',
+        requester_phone: v.phone || '+91 97383 97933',
+        target_candidate_name: v.profile_for || 'VIP Consultation Request',
+        requested_time: v.created_at ? new Date(v.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently',
+        managed_by: v.gender || 'Seeking Match',
+        status: statusMap[v.status] || 'Pending',
+        notes: `City: ${v.city || 'N/A'} · Income: ${v.annual_income || 'N/A'} · Profession: ${v.profession || 'N/A'}`,
+        email: v.email,
+        city: v.city,
+        annual_income: v.annual_income,
+        profession: v.profession
+      }));
+
+      // Combine and de-duplicate by ID
+      const combined = [...localConsultations, ...mappedVip, ...mappedCallbacks];
+      const uniqueMap = new Map<string, VIPCallback>();
+      combined.forEach(item => {
+        if (!uniqueMap.has(item.id)) {
+          uniqueMap.set(item.id, item);
+        }
+      });
+
+      setCallbacks(Array.from(uniqueMap.values()));
+    } catch (e) {
+      console.warn('Supabase initial fetch fallback:', e);
+    } finally {
+      setIsRefreshing(false);
     }
-    loadSupabaseData();
   }, []);
 
-    // New Candidate Form State (starts blank — no fabricated defaults)
+  useEffect(() => {
+    loadSupabaseData();
+
+    // Live Realtime listener for incoming profiles and requests
+    const channel = supabase
+      .channel('admin_realtime_feed')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+        loadSupabaseData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'callback_requests' }, () => {
+        loadSupabaseData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'vip_consultations' }, () => {
+        loadSupabaseData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [loadSupabaseData]);
+
+  // New Candidate Form State (starts blank — no fabricated defaults)
   const [newCandidate, setNewCandidate] = useState({
     display_name: '',
     age: '' as number | '',
@@ -254,18 +313,21 @@ export function App() {
     }
   };
 
-  // Filtered Candidates
+  // Filtered Candidates with 100% null-safe property checks
   const filteredCandidates = useMemo(() => {
+    const s = (searchTerm || '').trim().toLowerCase();
+    const relFilter = (filterReligion || 'all').toLowerCase();
     return profiles.filter((p) => {
-      const matchSearch = p.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.occupation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.community && p.community.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchReligion = filterReligion === 'all' || p.religion.toLowerCase() === filterReligion.toLowerCase();
-      
+      const name = (p.display_name || '').toLowerCase();
+      const city = (p.city || '').toLowerCase();
+      const occ = (p.occupation || '').toLowerCase();
+      const comm = (p.community || '').toLowerCase();
+      const rel = (p.religion || '').toLowerCase();
+
+      const matchSearch = !s || name.includes(s) || city.includes(s) || occ.includes(s) || comm.includes(s);
+      const matchReligion = relFilter === 'all' || rel === relFilter;
       const matchVerified = filterVerified === 'all' || 
-        (filterVerified === 'verified' && p.is_vouched) || 
+        (filterVerified === 'verified' && Boolean(p.is_vouched)) || 
         (filterVerified === 'unverified' && !p.is_vouched);
 
       return matchSearch && matchReligion && matchVerified;
@@ -536,8 +598,23 @@ export function App() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={async () => {
+              showToast('🔄 Syncing live data from cloud database...');
+              await loadSupabaseData();
+              showToast('✨ Dashboard synchronized with cloud database!');
+            }}
+            disabled={isRefreshing}
+            className="px-4 py-2 rounded-full border border-[#B89552]/40 bg-[#1A1A1A] hover:bg-[#B89552]/20 text-white text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+            title="Sync all candidate profiles & VIP requests from Supabase"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-[#B89552] ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Syncing...' : 'Sync Cloud Data'}</span>
+          </button>
+
           <a
-            href="https://mannat-matrimony-v2.vercel.app"
+            href="https://www.mannatmatrimony.com/app"
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 rounded-full bg-[#B89552] text-[#111111] hover:bg-white text-xs font-extrabold transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
@@ -695,30 +772,15 @@ export function App() {
                   type="button"
                   onClick={async () => {
                     showToast('🔄 Refreshing live profiles from Supabase...');
-                    try {
-                      const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-                      if (data && data.length > 0) {
-                        const mapped: Profile[] = (data as any[]).map(d => ({
-                          ...d,
-                          user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
-                          diet: d.lifestyle_details?.diet || d.diet || '',
-                          salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
-                          family_background: d.lifestyle_details?.family_background || d.family_background || '',
-                          marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
-                          gender: d.lifestyle_details?.gender || d.gender || 'male'
-                        }));
-                        updateAndPersistProfiles(mapped);
-                        showToast(`✨ Loaded ${mapped.length} live candidates from Supabase!`);
-                      }
-                    } catch (err) {
-                      console.error('Cloud refresh error:', err);
-                    }
+                    await loadSupabaseData();
+                    showToast('✨ Dashboard synchronized with cloud database!');
                   }}
+                  disabled={isRefreshing}
                   className="px-4 py-3 rounded-2xl bg-[#F4EFE6] border border-[#E8E1D5] hover:border-[#B89552] text-[#111111] text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
                   title="Force Sync with Cloud Database"
                 >
-                  <RefreshCw className="w-4 h-4 text-[#B89552]" />
-                  <span>Sync Cloud DB</span>
+                  <RefreshCw className={`w-4 h-4 text-[#B89552] ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span>{isRefreshing ? 'Syncing...' : 'Sync Cloud DB'}</span>
                 </button>
 
                 <button

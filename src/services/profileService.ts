@@ -239,45 +239,49 @@ export const profileService = {
       } catch {}
     }
 
-    // Save to Supabase with valid UUID and schema columns with 3.5s timeout guarantee
+    // Save to Supabase with valid UUID and schema columns
     if (isSupabaseConfigured()) {
       try {
-        const upsertPromise = supabase.from('profiles').upsert([{
+        const payload = {
           id: newProfile.id,
           user_id: isValidUUID(newProfile.user_id) ? newProfile.user_id : null,
-          display_name: newProfile.display_name,
-          age: newProfile.age,
-          height: newProfile.height || '',
-          city: newProfile.city,
-          religion: newProfile.religion,
-          community: newProfile.community,
-          sub_community: newProfile.sub_community,
-          occupation: newProfile.occupation,
-          company_name: newProfile.company_name || '',
-          education: newProfile.education || '',
-          bio_text: newProfile.bio_text || '',
-          bio_video_url: newProfile.bio_video_url || '',
-          photos: newProfile.photos || [],
+          display_name: (newProfile.display_name || '').trim() || 'Member',
+          age: Number(newProfile.age) || 25,
+          height: (newProfile.height || "5'8\"").trim(),
+          city: (newProfile.city || 'Mumbai').trim(),
+          religion: (newProfile.religion || 'Hindu').trim(),
+          community: (newProfile.community || (newProfile.religion === 'Hindu' ? 'North Indian' : newProfile.religion || 'Community')).trim(),
+          sub_community: (newProfile.sub_community || '').trim(),
+          occupation: (newProfile.occupation || 'Professional').trim(),
+          company_name: (newProfile.company_name || '').trim(),
+          education: (newProfile.education || 'Graduate').trim(),
+          bio_text: (newProfile.bio_text || '').trim(),
+          bio_video_url: (newProfile.bio_video_url || '').trim(),
+          photos: Array.isArray(newProfile.photos) ? newProfile.photos : [],
+          voice_intro_url: newProfile.voice_intro_url || null,
           managed_by: newProfile.managed_by || 'self',
-          compatibility_score: newProfile.compatibility_score || 95,
-          gun_milan_score: newProfile.gun_milan_score || 32,
-          is_vouched: newProfile.is_vouched || false,
-          is_spotlight: newProfile.is_spotlight || false,
-          is_unlocked: newProfile.is_unlocked || false,
+          compatibility_score: Number(newProfile.compatibility_score) || 95,
+          gun_milan_score: Number(newProfile.gun_milan_score) || 32,
+          is_vouched: Boolean(newProfile.is_vouched),
+          is_spotlight: Boolean(newProfile.is_spotlight),
+          is_unlocked: Boolean(newProfile.is_unlocked),
           lifestyle_details: {
             ...(newProfile.lifestyle_details || {}),
             user_id: newProfile.user_id,
-            diet: newProfile.diet,
-            salary_bracket: newProfile.salary_bracket,
-            family_background: newProfile.family_background,
-            marriage_expectations: newProfile.marriage_expectations,
-            gender: newProfile.gender
+            diet: newProfile.diet || '',
+            salary_bracket: newProfile.salary_bracket || '',
+            family_background: newProfile.family_background || '',
+            marriage_expectations: newProfile.marriage_expectations || '',
+            gender: newProfile.gender || 'male'
           },
           horoscope: newProfile.horoscope || {}
-        }]);
-
-        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 3500));
-        await Promise.race([upsertPromise, timeoutPromise]);
+        };
+        const { error: upsertErr } = await supabase.from('profiles').upsert([payload]);
+        if (upsertErr) {
+          console.error('Supabase profile upsert error:', upsertErr);
+        } else {
+          console.log('Successfully saved profile to Supabase cloud:', newProfile.id);
+        }
       } catch (e) {
         console.warn('Supabase profile insertion exception:', e);
       }

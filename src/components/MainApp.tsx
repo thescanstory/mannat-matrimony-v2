@@ -234,6 +234,19 @@ export const MainApp: React.FC = () => {
     loadProfiles();
   }, []);
 
+  // Auto-sync active user candidate profile to Supabase cloud
+  useEffect(() => {
+    async function syncActiveProfile() {
+      if (!activeUserProfile || !activeUserProfile.display_name) return;
+      try {
+        await profileService.createProfile(activeUserProfile);
+      } catch (err) {
+        console.warn('Auto-sync profile notice:', err);
+      }
+    }
+    syncActiveProfile();
+  }, [activeUserProfile]);
+
   const filteredProfiles = useMemo(() => {
     let userGender: string | null = null;
     let userProfileId: string | null = null;
