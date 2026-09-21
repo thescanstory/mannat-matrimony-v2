@@ -7,6 +7,10 @@ export const DEFAULT_FILTERS: FilterCriteria = {
   selectedSubCommunity: ['Brahmin', 'Kayastha'],
   manglikPref: "Doesn't Matter",
   gunMilanMin: 24,
+  selectedRashi: [],
+  selectedNakshatraGroup: [],
+  kundliRequirement: "Doesn't Matter",
+  doshaFilters: [],
   locationIntent: ['Open to Relocate to US', 'Only Same City'],
   selectedNetWorth: ['₹5Cr - ₹10Cr'],
   secondHomePref: false

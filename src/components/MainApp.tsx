@@ -245,7 +245,38 @@ export const MainApp: React.FC = () => {
     });
 
     if (!activeFilters) return genderFiltered;
-    return genderFiltered;
+
+    return genderFiltered.filter((p) => {
+      // Age filter
+      if (p.age && (p.age < activeFilters.ageMin || p.age > activeFilters.ageMax)) {
+        return false;
+      }
+      // Religion filter
+      if (
+        activeFilters.selectedReligion &&
+        activeFilters.selectedReligion.length > 0 &&
+        p.religion &&
+        !activeFilters.selectedReligion.includes(p.religion)
+      ) {
+        return false;
+      }
+      // Sub-community / Caste filter
+      if (
+        activeFilters.selectedSubCommunity &&
+        activeFilters.selectedSubCommunity.length > 0 &&
+        (p.sub_community || p.community) &&
+        !activeFilters.selectedSubCommunity.some(
+          (c) =>
+            c.includes('No Bar') ||
+            c.includes('Open') ||
+            p.sub_community === c ||
+            p.community === c
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
   }, [profiles, activeFilters, currentUser]);
 
   const handleUnlockSuccess = (profileId: string) => {

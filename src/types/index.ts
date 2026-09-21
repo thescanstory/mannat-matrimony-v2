@@ -106,11 +106,15 @@ export interface FilterCriteria {
   ageMax: number;
   selectedReligion: string[];
   selectedSubCommunity: string[];
-  manglikPref: 'Yes' | 'No' | "Doesn't Matter";
+  manglikPref: 'Yes' | 'No' | "Doesn't Matter" | 'Anshik / Mild';
   gunMilanMin: number;
+  selectedRashi?: string[];
+  selectedNakshatraGroup?: string[];
+  kundliRequirement?: 'Mandatory' | 'Preferred' | 'Flexible' | "Doesn't Matter";
+  doshaFilters?: string[];
   locationIntent: string[];
   selectedNetWorth: string[];
-  secondHomePref: boolean;
+  secondHomePref?: boolean;
 }
 
 export interface Match {
