@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SlidersHorizontal, MessageSquare, Send, X, ShieldCheck, CheckCheck, Video, Sparkles, Mic, User, Flag } from 'lucide-react';
+import { MessageSquare, Send, X, ShieldCheck, CheckCheck, Video, Sparkles, Mic, User, Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile, ChatMessage } from '../types';
 import { chatService } from '../services/chatService';
@@ -11,13 +11,13 @@ import { nativeService } from '../services/nativeService';
 interface ConnectionsScreenProps {
   profiles: Profile[];
   onOpenProfile: (profile: Profile) => void;
-  onOpenFilters: () => void;
+  onOpenFilters?: () => void;
 }
 
 export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   profiles: _profiles,
   onOpenProfile,
-  onOpenFilters
+  onOpenFilters: _onOpenFilters
 }) => {
   const [activeTab, setActiveTab] = useState<'Accepted' | 'Sent' | 'Received'>('Accepted');
   const [activeChatProfile, setActiveChatProfile] = useState<Profile | null>(null);
@@ -206,18 +206,9 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
     <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-md mx-auto flex flex-col justify-start pb-44 select-none font-sans px-5 sm:px-6 pt-3 space-y-5">
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
-      <div className="flex items-center justify-between px-1">
-        <div>
-          <h1 className="text-2xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Connections</h1>
-          <p className="text-[11px] text-[#6E6259] font-semibold">Mutual Waves & Direct Discussions</p>
-        </div>
-        <button
-          type="button"
-          onClick={onOpenFilters}
-          className="p-2.5 rounded-full bg-white hover:bg-[#F8F6F2] text-[#560406] transition-colors border border-[#E8DDD0] cursor-pointer shadow-xs"
-        >
-          <SlidersHorizontal className="w-4 h-4 text-[#560406]" />
-        </button>
+      <div className="px-1 pt-1">
+        <h1 className="text-2xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Connections</h1>
+        <p className="text-[11px] text-[#6E6259] font-semibold">Mutual Waves & Direct Discussions</p>
       </div>
 
       <div className="bg-white p-1.5 rounded-2xl border border-[#E8DDD0] grid grid-cols-3 gap-1.5 shadow-xs">

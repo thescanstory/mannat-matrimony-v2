@@ -252,10 +252,10 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] selection:bg-[#A17B5E]/30 selection:text-[#161412] font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] selection:bg-[#A17B5E]/30 selection:text-[#161412] font-sans overflow-x-hidden pt-16 sm:pt-20">
       
-      {/* 1. Header */}
-      <header className="sticky top-0 z-50 bg-[#F8F6F2]/98 backdrop-blur-md border-b border-[#E8DDD0] shadow-xs">
+      {/* 1. Header (Constant fixed header) */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#F8F6F2]/98 backdrop-blur-md border-b border-[#E8DDD0] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3 h-16 sm:h-20">
             

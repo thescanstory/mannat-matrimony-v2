@@ -331,9 +331,9 @@ export const MainApp: React.FC = () => {
       {/* Main Responsive Mobile App Container */}
       <div className="w-full max-w-md mx-auto flex-1 min-h-[100dvh] bg-[#F8F6F2] flex flex-col relative">
         
-        {/* Luxury App Header */}
+        {/* Luxury Fixed App Header (Constant on all pages) */}
         {currentView !== 'auth' && currentView !== 'onboarding' && (
-          <header className="w-full bg-[#F8F6F2]/95 backdrop-blur-xl border-b border-[#E8DDD0] px-5 pt-[max(1.25rem,calc(env(safe-area-inset-top)+0.5rem))] pb-3.5 z-40 sticky top-0 shadow-xs flex items-center justify-between">
+          <header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#F8F6F2]/98 backdrop-blur-xl border-b border-[#E8DDD0] px-5 pt-[max(1.25rem,calc(env(safe-area-inset-top)+0.5rem))] pb-3.5 z-40 shadow-xs flex items-center justify-between">
             <div className="w-16 flex items-center justify-start">
               {currentView !== 'home' && (
                 <button
@@ -370,7 +370,7 @@ export const MainApp: React.FC = () => {
         )}
 
         {/* View Routing & Dynamic View Transitions */}
-        <main className="flex-1 w-full flex flex-col justify-start relative overflow-x-hidden">
+        <main className={`flex-1 w-full flex flex-col justify-start relative overflow-x-hidden ${currentView !== 'auth' && currentView !== 'onboarding' ? 'pt-[calc(env(safe-area-inset-top)+4.25rem)]' : ''}`}>
           <AnimatePresence mode="wait" custom={slideDirection}>
             <motion.div
               key={currentView}

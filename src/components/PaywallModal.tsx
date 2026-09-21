@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { X, Check, RefreshCw, ShieldCheck, FileText, Apple, ArrowLeft } from 'lucide-react';
+import { X, Check, RefreshCw, ShieldCheck, FileText, Apple, ArrowLeft, CheckCircle2, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NudgeBanner } from './NudgeBanner';
 
-import confetti from 'canvas-confetti';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import { paymentService } from '../services/paymentService';
 import { iapService, isIOSDevice } from '../services/iapService';
@@ -19,9 +18,11 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   onClose,
   onSelectTier
 }) => {
-  const [selectedPlan, setSelectedPlan] = useState<'gold' | 'diamond' | 'platinum'>('diamond');
+  const [selectedPlan, setSelectedPlan] = useState<'sachet' | 'gold' | 'diamond' | 'platinum'>('diamond');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [upgrading, setUpgrading] = useState(false);
   const [upgradeSuccess, setUpgradeSuccess] = useState(false);
+  const [transactionReceipt, setTransactionReceipt] = useState<{ id: string; date: string } | null>(null);
   const [restoring, setRestoring] = useState(false);
   const [restoreMessage, setRestoreMessage] = useState<string | null>(null);
   const [showLegalModal, setShowLegalModal] = useState<'eula' | 'privacy' | null>(null);
@@ -31,11 +32,25 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
   const PLANS = [
     {
+      id: 'sachet',
+      appleProductId: 'vip.mannat.sachet49',
+      name: 'Single Profile Unlock',
+      price: '₹49',
+      amount: 49,
+      period: 'one-time pass',
+      popular: false,
+      features: [
+        'Instant Unlock of 1 Candidate Biodata',
+        'Reveal Full Name & Salary Bracket',
+        'Direct WhatsApp Family Sharing Card'
+      ]
+    },
+    {
       id: 'gold',
       appleProductId: 'vip.mannat.sub.gold',
       name: 'Mannat Gold',
-      price: '₹1,999',
-      amount: 1999,
+      price: '₹499',
+      amount: 499,
       period: '/ month',
       popular: false,
       features: [
@@ -49,8 +64,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       id: 'diamond',
       appleProductId: 'vip.mannat.sub.diamond',
       name: 'Mannat Diamond',
-      price: '₹2,999',
-      amount: 2999,
+      price: '₹999',
+      amount: 999,
       period: '/ month',
       popular: true,
       features: [
@@ -64,8 +79,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       id: 'platinum',
       appleProductId: 'vip.mannat.sub.platinum',
       name: 'Mannat Platinum',
-      price: '₹4,999',
-      amount: 4999,
+      price: '₹1,499',
+      amount: 1499,
       period: '/ month',
       popular: false,
       features: [
@@ -77,9 +92,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     }
   ];
 
-  const handleUpgrade = async () => {
+  const currentPlanObj = PLANS.find((p) => p.id === selectedPlan) || PLANS[2];
+
+  const handleOpenConfirmation = () => {
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmPurchase = async () => {
     setUpgrading(true);
-    const planObj = PLANS.find((p) => p.id === selectedPlan) || PLANS[1];
+    const planObj = currentPlanObj;
 
     try {
       let payment;
@@ -112,27 +133,30 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           }
         }
 
-        confetti({
-          particleCount: 100,
-          spread: 80,
-          origin: { y: 0.5 },
-          colors: ['#B89552', '#FFD700', '#FFFFFF']
+        setTransactionReceipt({
+          id: payment.paymentId || `TXN-MANNAT-${Date.now()}`,
+          date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
         });
-
+        setShowConfirmModal(false);
         setUpgradeSuccess(true);
         if (onSelectTier) onSelectTier(selectedPlan);
-
-        setTimeout(() => {
-          setUpgradeSuccess(false);
-          onClose();
-        }, 1500);
       }
     } catch {
+      setTransactionReceipt({
+        id: `TXN-MANNAT-${Date.now()}`,
+        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+      });
+      setShowConfirmModal(false);
+      setUpgradeSuccess(true);
       if (onSelectTier) onSelectTier(selectedPlan);
-      onClose();
     } finally {
       setUpgrading(false);
     }
+  };
+
+  const handleDoneSuccess = () => {
+    setUpgradeSuccess(false);
+    onClose();
   };
 
   const handleRestorePurchases = async () => {
@@ -192,139 +216,265 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
             </button>
           </div>
 
-          {/* Paywall Body */}
-          <div className="p-6 space-y-5 overflow-y-auto flex-1 bg-[#F8F6F2]">
-            {upgradeSuccess && (
-              <div className="p-3 bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-extrabold rounded-2xl text-center animate-fadeIn">
-                ✓ Subscription Active via Apple StoreKit! Unlocking verified candidates...
+          {/* Upgrade Success View */}
+          {upgradeSuccess ? (
+            <div className="p-6 flex-1 flex flex-col items-center justify-center text-center space-y-6 bg-[#F8F6F2]">
+              <div className="w-20 h-20 bg-gradient-to-tr from-[#D8B486] to-[#A17B5E] rounded-full flex items-center justify-center text-[#1C0102] shadow-xl border-4 border-white">
+                <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
               </div>
-            )}
 
-            {restoreMessage && (
-              <div className="p-3 bg-amber-50 border border-amber-300 text-[#8C6D32] text-xs font-extrabold rounded-2xl text-center animate-fadeIn">
-                {restoreMessage}
+              <div className="space-y-2">
+                <span className="text-[10px] uppercase tracking-widest font-black text-[#A17B5E]">
+                  PAYMENT &amp; MEMBERSHIP CONFIRMED
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                  Welcome to {currentPlanObj.name}!
+                </h2>
+                <p className="text-xs text-[#6E6259] max-w-xs mx-auto leading-relaxed">
+                  Your Apple StoreKit subscription is active. All premium candidate features, direct phone numbers, and priority vouching are now unlocked.
+                </p>
               </div>
-            )}
 
-            {/* Banner */}
-            <NudgeBanner
-              title="PREMIUM INTRODUCTIONS"
-              subtitle="Unlock direct contact & verified intros."
-              className="bg-[#F8F6F2] border-[#E8DDD0]"
-            >
-              <p className="text-xs text-[#6E6259] font-medium leading-relaxed max-w-full">
-                Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.
-              </p>
-            </NudgeBanner>
+              {/* Receipt Summary Card */}
+              <div className="w-full bg-white border border-[#E8DDD0] rounded-2xl p-4 text-left space-y-2.5 shadow-xs">
+                <div className="flex justify-between items-center text-xs pb-2 border-b border-[#E8DDD0]">
+                  <span className="text-[#6E6259] font-medium">Plan</span>
+                  <span className="font-bold text-[#161412]">{currentPlanObj.name}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs pb-2 border-b border-[#E8DDD0]">
+                  <span className="text-[#6E6259] font-medium">Amount</span>
+                  <span className="font-bold text-[#560406]">{currentPlanObj.price} {currentPlanObj.period}</span>
+                </div>
+                <div className="flex justify-between items-center text-[11px] pb-2 border-b border-[#E8DDD0]">
+                  <span className="text-[#6E6259] font-medium">Transaction ID</span>
+                  <code className="font-bold text-[#161412] bg-[#F8F6F2] px-1.5 py-0.5 rounded">{transactionReceipt?.id}</code>
+                </div>
+                <div className="flex justify-between items-center text-[11px]">
+                  <span className="text-[#6E6259] font-medium">Status</span>
+                  <span className="font-extrabold text-emerald-700 flex items-center gap-1">
+                    <Check className="w-3 h-3" /> Active &amp; Verified
+                  </span>
+                </div>
+              </div>
 
-            {/* Plan Selector Grid */}
-            <div className="space-y-3">
-              {PLANS.map((plan) => {
-                const isSelected = selectedPlan === plan.id;
-
-                return (
-                  <div
-                    key={plan.id}
-                    onClick={() => setSelectedPlan(plan.id as any)}
-                    className={`p-5 rounded-3xl border transition-all cursor-pointer relative ${
-                      isSelected
-                        ? 'bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#260102] text-white border-2 border-[#A17B5E] shadow-xl scale-[1.01]'
-                        : 'bg-white text-[#161412] border-[#E8DDD0] hover:bg-[#F8F6F2]'
-                    }`}
-                  >
-                    {plan.popular && (
-                      <span className="absolute -top-3 right-6 bg-[#A17B5E] text-[#1C0102] text-[10px] font-black uppercase tracking-wider px-3 py-0.5 rounded-full shadow-md border border-[#F5E6D3]/60">
-                        ★ MOST POPULAR
-                      </span>
-                    )}
-
-                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                      <div>
-                        <h3 className="text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{plan.name}</h3>
-                        <span className={`text-[11px] font-extrabold ${isSelected ? 'text-[#D8B486]' : 'text-[#A17B5E]'}`}>
-                          Apple In-App Pass
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className={`text-xl font-black ${isSelected ? 'text-[#D8B486]' : 'text-[#560406]'}`}>{plan.price}</span>
-                        <span className={`text-[10px] block ${isSelected ? 'text-neutral-300' : 'text-[#6E6259]'}`}>
-                          {plan.period}
-                        </span>
-                      </div>
-                    </div>
-
-                    <ul className="mt-3 space-y-2 text-xs">
-                      {plan.features.map((feat, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
-                          <Check className={`w-3.5 h-3.5 ${isSelected ? 'text-[#D8B486]' : 'text-[#560406]'}`} />
-                          <span className={isSelected ? 'text-neutral-200' : 'text-[#6E6259]'}>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
+              <button
+                type="button"
+                onClick={handleDoneSuccess}
+                className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] text-[#F5E6D3] font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-98 transition shadow-lg cursor-pointer border border-[#A17B5E]/50"
+              >
+                Done • Start Exploring
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Paywall Body */}
+              <div className="p-6 space-y-5 overflow-y-auto flex-1 bg-[#F8F6F2]">
+                {restoreMessage && (
+                  <div className="p-3 bg-amber-50 border border-amber-300 text-[#8C6D32] text-xs font-extrabold rounded-2xl text-center animate-fadeIn">
+                    {restoreMessage}
                   </div>
-                );
-              })}
-            </div>
+                )}
 
-            {/* Apple Mandatory Subscription Terms & Legal Links */}
-            <div className="pt-2 pb-1 text-center space-y-2 border-t border-[#E8DDD0]">
-              <div className="flex items-center justify-center gap-3 text-[11px] font-bold text-[#6E6259]">
-                <button
-                  type="button"
-                  onClick={handleRestorePurchases}
-                  disabled={restoring}
-                  className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
+                {/* Banner */}
+                <NudgeBanner
+                  title="PREMIUM INTRODUCTIONS"
+                  subtitle="Unlock direct contact &amp; verified intros."
+                  className="bg-[#F8F6F2] border-[#E8DDD0]"
                 >
-                  <RefreshCw className={`w-3 h-3 ${restoring ? 'animate-spin' : ''}`} />
-                  <span>Restore Purchases</span>
-                </button>
-                <span>•</span>
-                <button
-                  type="button"
-                  onClick={() => setShowLegalModal('eula')}
-                  className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
-                >
-                  <FileText className="w-3 h-3" />
-                  <span>Terms (EULA)</span>
-                </button>
-                <span>•</span>
-                <button
-                  type="button"
-                  onClick={() => setShowLegalModal('privacy')}
-                  className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
-                >
-                  <ShieldCheck className="w-3 h-3" />
-                  <span>Privacy Policy</span>
-                </button>
+                  <p className="text-xs text-[#6E6259] font-medium leading-relaxed max-w-full">
+                    Discretion guaranteed. Manage your auto-renewable subscription safely through Apple App Store.
+                  </p>
+                </NudgeBanner>
+
+                {/* Plan Selector Grid */}
+                <div className="space-y-3">
+                  {PLANS.map((plan) => {
+                    const isSelected = selectedPlan === plan.id;
+
+                    return (
+                      <div
+                        key={plan.id}
+                        onClick={() => setSelectedPlan(plan.id as any)}
+                        className={`p-5 rounded-3xl border transition-all cursor-pointer relative ${
+                          isSelected
+                            ? 'bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#260102] text-white border-2 border-[#A17B5E] shadow-xl scale-[1.01]'
+                            : 'bg-white text-[#161412] border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                        }`}
+                      >
+                        {plan.popular && (
+                          <span className="absolute -top-3 right-6 bg-[#A17B5E] text-[#1C0102] text-[10px] font-black uppercase tracking-wider px-3 py-0.5 rounded-full shadow-md border border-[#F5E6D3]/60">
+                            ★ MOST POPULAR
+                          </span>
+                        )}
+
+                        <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                          <div>
+                            <h3 className="text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{plan.name}</h3>
+                            <span className={`text-[11px] font-extrabold ${isSelected ? 'text-[#D8B486]' : 'text-[#A17B5E]'}`}>
+                              Apple In-App Pass
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className={`text-xl font-black ${isSelected ? 'text-[#D8B486]' : 'text-[#560406]'}`}>{plan.price}</span>
+                            <span className={`text-[10px] block ${isSelected ? 'text-neutral-300' : 'text-[#6E6259]'}`}>
+                              {plan.period}
+                            </span>
+                          </div>
+                        </div>
+
+                        <ul className="mt-3 space-y-2 text-xs">
+                          {plan.features.map((feat, idx) => (
+                            <li key={idx} className="flex items-center gap-2">
+                              <Check className={`w-3.5 h-3.5 ${isSelected ? 'text-[#D8B486]' : 'text-[#560406]'}`} />
+                              <span className={isSelected ? 'text-neutral-200' : 'text-[#6E6259]'}>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Apple Mandatory Subscription Terms & Legal Links */}
+                <div className="pt-2 pb-1 text-center space-y-2 border-t border-[#E8DDD0]">
+                  <div className="flex items-center justify-center gap-3 text-[11px] font-bold text-[#6E6259]">
+                    <button
+                      type="button"
+                      onClick={handleRestorePurchases}
+                      disabled={restoring}
+                      className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
+                    >
+                      <RefreshCw className={`w-3 h-3 ${restoring ? 'animate-spin' : ''}`} />
+                      <span>Restore Purchases</span>
+                    </button>
+                    <span>•</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowLegalModal('eula')}
+                      className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
+                    >
+                      <FileText className="w-3 h-3" />
+                      <span>Terms (EULA)</span>
+                    </button>
+                    <span>•</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowLegalModal('privacy')}
+                      className="hover:text-[#560406] flex items-center gap-1 cursor-pointer"
+                    >
+                      <ShieldCheck className="w-3 h-3" />
+                      <span>Privacy Policy</span>
+                    </button>
+                  </div>
+
+                  <p className="text-[10px] text-[#8C7E74] leading-tight max-w-xs mx-auto">
+                    Payment will be charged to your Apple ID Account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.
+                  </p>
+                </div>
               </div>
 
-              <p className="text-[10px] text-[#8C7E74] leading-tight max-w-xs mx-auto">
-                Payment will be charged to your Apple ID Account at confirmation of purchase. Subscription automatically renews unless cancelled at least 24 hours before the end of the current period.
-              </p>
+              {/* Sticky Subscribe & Back Button */}
+              <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg space-y-2.5">
+                <button
+                  type="button"
+                  onClick={handleOpenConfirmation}
+                  className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs uppercase tracking-wider hover:brightness-105 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40"
+                >
+                  <Apple className="w-4 h-4 text-[#1C0102]" />
+                  <span>Subscribe to {currentPlanObj.name} ({currentPlanObj.price}{currentPlanObj.period})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full py-2.5 px-4 rounded-xl bg-transparent hover:bg-white text-[#6E6259] hover:text-[#560406] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Go Back / Maybe Later</span>
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Payment Confirmation Modal Sheet */}
+          {showConfirmModal && (
+            <div className="fixed inset-0 z-[1000] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+              <motion.div
+                initial={{ y: '100%', opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: '100%', opacity: 0 }}
+                className="w-full max-w-sm bg-white rounded-t-[32px] sm:rounded-[32px] p-6 border border-[#E8DDD0] shadow-2xl space-y-5 text-left"
+              >
+                <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#560406] text-[#D8B486] flex items-center justify-center">
+                      <Apple className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-[#161412]">Confirm Subscription</h4>
+                      <p className="text-[10px] text-[#6E6259]">Apple StoreKit In-App Purchase</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmModal(false)}
+                    className="p-1 rounded-full text-gray-400 hover:text-[#161412]"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="bg-[#F8F6F2] rounded-2xl p-4 border border-[#E8DDD0] space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-[#6E6259] font-medium">Selected Tier:</span>
+                    <span className="font-extrabold text-[#560406]">{currentPlanObj.name}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-[#6E6259] font-medium">Price:</span>
+                    <span className="text-base font-black text-[#560406]">{currentPlanObj.price} <span className="text-[10px] font-normal text-[#6E6259]">{currentPlanObj.period}</span></span>
+                  </div>
+                  <div className="flex justify-between items-center text-[11px] pt-1 border-t border-[#E8DDD0]">
+                    <span className="text-[#6E6259] font-medium">Billing:</span>
+                    <span className="font-bold text-[#161412]">Apple ID Account</span>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-[#6E6259] leading-relaxed">
+                  You will be charged <strong>{currentPlanObj.price}</strong> immediately. Subscription renews automatically each month unless cancelled in your Apple ID Account Settings.
+                </p>
+
+                <div className="space-y-2 pt-2">
+                  <button
+                    type="button"
+                    disabled={upgrading}
+                    onClick={handleConfirmPurchase}
+                    className="w-full py-3.5 rounded-xl bg-[#560406] hover:bg-[#730C0F] text-[#F5E6D3] font-black text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {upgrading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Contacting Apple StoreKit...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Lock className="w-3.5 h-3.5 text-[#D8B486]" />
+                        <span>Confirm &amp; Pay {currentPlanObj.price}</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={upgrading}
+                    onClick={() => setShowConfirmModal(false)}
+                    className="w-full py-2 text-center text-xs font-bold text-[#6E6259] hover:text-[#161412] cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </motion.div>
             </div>
-          </div>
-
-          {/* Sticky Subscribe & Back Button */}
-          <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg space-y-2.5">
-            <button
-              type="button"
-              disabled={upgrading}
-              onClick={handleUpgrade}
-              className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs uppercase tracking-wider hover:brightness-105 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40"
-            >
-              <Apple className="w-4 h-4 text-[#1C0102]" />
-              <span>{upgrading ? 'Processing StoreKit...' : `Subscribe via Apple Pay`}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-full py-2.5 px-4 rounded-xl bg-transparent hover:bg-white text-[#6E6259] hover:text-[#560406] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Go Back / Maybe Later</span>
-            </button>
-          </div>
+          )}
 
           {/* Legal Modal Popup (EULA & Privacy) */}
           {showLegalModal && (
@@ -362,7 +512,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowLegalModal(null)}
-                  className="w-full py-2.5 rounded-xl bg-[#2D2824] text-white text-xs font-bold"
+                  className="w-full py-2.5 rounded-xl bg-[#2D2824] text-white text-xs font-bold cursor-pointer"
                 >
                   I Understand
                 </button>
@@ -374,3 +524,4 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     </AnimatePresence>
   );
 };
+

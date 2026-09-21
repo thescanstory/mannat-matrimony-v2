@@ -54,7 +54,7 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
           className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap border border-[#A17B5E]/40"
         >
           <Sparkles className="w-4 h-4 text-[#D8B486]" />
-          <span className="truncate">Unlock All 12 Profiles (₹1,999/mo)</span>
+          <span className="truncate">Unlock All 12 Profiles (from ₹499/mo)</span>
         </button>
       </div>
 
