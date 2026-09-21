@@ -141,15 +141,15 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                     desc: 'Photos show 20px blur with gold lock badge'
                   }
                 ].map((opt) => (
+
                   <button
                     key={opt.id}
                     type="button"
                     onClick={() => setPhotoPrivacy(opt.id as any)}
-                    className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
-                      photoPrivacy === opt.id
+                    className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${photoPrivacy === opt.id
                         ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                         : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
-                    }`}
+                      }`}
                   >
                     <div className="space-y-0.5 pr-2">
                       <span className="text-xs font-extrabold block">{opt.title}</span>
@@ -189,11 +189,10 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                     key={opt.id}
                     type="button"
                     onClick={() => setProfileVisibility(opt.id as any)}
-                    className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
-                      profileVisibility === opt.id
+                    className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${profileVisibility === opt.id
                         ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                         : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
-                    }`}
+                      }`}
                   >
                     <div className="space-y-0.5 pr-2">
                       <span className="text-xs font-extrabold block">{opt.title}</span>
@@ -233,11 +232,10 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                     key={opt.id}
                     type="button"
                     onClick={() => setFinancialPrivacy(opt.id as any)}
-                    className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
-                      financialPrivacy === opt.id
+                    className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${financialPrivacy === opt.id
                         ? 'bg-[#2D2824] text-white border-[#111111] shadow-md'
                         : 'bg-[#F4EFE6] text-[#111111] border-[#E8E1D5] hover:bg-[#E8E1D5]'
-                    }`}
+                      }`}
                   >
                     <div className="space-y-0.5 pr-2">
                       <span className="text-xs font-extrabold block">{opt.title}</span>
@@ -298,7 +296,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                           await profileService.deleteProfile(currentUser.id);
                         }
                         await authService.signOut();
-                      } catch {}
+                      } catch { }
                       localStorage.clear();
                       window.location.href = '/';
                     }
