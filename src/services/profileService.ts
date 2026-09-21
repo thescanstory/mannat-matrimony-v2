@@ -21,32 +21,21 @@ export const profileService = {
   hasExistingProfile: async (userId?: string, email?: string): Promise<boolean> => {
     if (!userId && !email) return false;
 
-    // 1. If Supabase DB is configured, check the cloud DB as authoritative source
-    if (isSupabaseConfigured() && userId) {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('id, display_name')
-          .or(`id.eq.${userId},user_id.eq.${userId}`)
-          .limit(1);
-
-        if (data && data.length > 0 && !error) {
-          if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
-          localStorage.setItem('mannat_onboarded_' + userId, 'true');
-          return true;
-        } else {
-          // If no profile found in DB, wipe stale local flags
-          if (email) localStorage.removeItem('mannat_onboarded_' + email.toLowerCase());
-          localStorage.removeItem('mannat_onboarded_' + userId);
-          return false;
-        }
-      } catch (err) {
-        console.warn('DB check profile notice:', err);
-      }
-    }
-
-    // 2. Check local custom profiles cache (for offline / unconfigured environments)
+    // 1. Check local session flags & profile cache (instant refresh check)
     try {
+      if (email && localStorage.getItem('mannat_onboarded_' + email.toLowerCase()) === 'true') {
+        return true;
+      }
+      if (userId && localStorage.getItem('mannat_onboarded_' + userId) === 'true') {
+        return true;
+      }
+      const myProfileStr = localStorage.getItem('mannat_user_profile');
+      if (myProfileStr) {
+        const myP = JSON.parse(myProfileStr);
+        if (myP && (myP.user_id === userId || myP.id === userId || myP.display_name)) {
+          return true;
+        }
+      }
       const customProfilesStr = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
       if (customProfilesStr) {
         const customProfiles: Profile[] = JSON.parse(customProfilesStr);
@@ -54,6 +43,25 @@ export const profileService = {
         if (match) return true;
       }
     } catch { }
+
+    // 2. If Supabase DB is configured, check the cloud DB as authoritative source
+    if (isSupabaseConfigured() && userId) {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, user_id, display_name')
+          .or(`id.eq.${userId},user_id.eq.${userId}`)
+          .limit(1);
+
+        if (data && data.length > 0 && !error) {
+          if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
+          localStorage.setItem('mannat_onboarded_' + userId, 'true');
+          return true;
+        }
+      } catch (err) {
+        console.warn('DB check profile notice:', err);
+      }
+    }
 
     return false;
   },
@@ -85,51 +93,6 @@ export const profileService = {
     if (!isSupabaseConfigured()) {
       const unique = Array.from(new Map(customProfiles.map((item) => [item.id, item])).values());
       return applyUnlocks(unique);
-    }
-
-    // Auto-sync local custom profiles to Supabase cloud if present
-    if (isSupabaseConfigured() && customProfiles.length > 0) {
-      for (const p of customProfiles) {
-        if (p.display_name && p.display_name !== 'Unnamed Member') {
-          const isValidUUID = (str?: string) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-          const syncId = isValidUUID(p.id) ? p.id : generateUUID();
-          supabase.from('profiles').upsert([{
-            id: syncId,
-            user_id: null,
-            display_name: p.display_name,
-            age: p.age || 0,
-            height: p.height || '',
-            city: p.city || 'Mumbai',
-            religion: p.religion || 'Hindu',
-            community: p.community || 'North Indian',
-            sub_community: p.sub_community || '',
-            occupation: p.occupation || 'Member',
-            company_name: p.company_name || '',
-            education: p.education || '',
-            bio_text: p.bio_text || '',
-            bio_video_url: p.bio_video_url || '',
-            photos: p.photos || [],
-            managed_by: p.managed_by || 'self',
-            compatibility_score: p.compatibility_score || 95,
-            gun_milan_score: p.gun_milan_score || 32,
-            is_vouched: p.is_vouched || false,
-            is_spotlight: p.is_spotlight || false,
-            is_unlocked: p.is_unlocked || false,
-            lifestyle_details: {
-              ...(p.lifestyle_details || {}),
-              user_id: p.user_id || syncId,
-              diet: p.diet,
-              salary_bracket: p.salary_bracket,
-              family_background: p.family_background,
-              marriage_expectations: p.marriage_expectations,
-              gender: p.gender
-            },
-            horoscope: p.horoscope || {}
-          }]).then(({ error }) => {
-            if (error) console.warn('Background profile sync notice:', error.message);
-          });
-        }
-      }
     }
 
     try {
@@ -194,6 +157,7 @@ export const profileService = {
         localStorage.removeItem('mannat_active_user');
         localStorage.removeItem('mannat_auth_email');
         localStorage.removeItem('mannat_auth_name');
+        localStorage.removeItem(LOCAL_STORAGE_PROFILES_KEY);
       }
 
       if (isSupabaseConfigured() && profileId) {
@@ -222,7 +186,6 @@ export const profileService = {
       user_id: validUserId,
       display_name: (profileData.display_name || '').trim() || 'Unnamed Member',
       age: profileData.age || 0,
-      // Required-by-type fields default to blank, never to fabricated values
       marital_status: profileData.marital_status || '',
       religion: profileData.religion || '',
       community: profileData.community || '',
@@ -232,23 +195,27 @@ export const profileService = {
       company_name: profileData.company_name || '',
       family_background: profileData.family_background || '',
       marriage_expectations: profileData.marriage_expectations || '',
-      // No fabricated defaults — only what the user actually provided.
       bio_video_url: profileData.bio_video_url || '',
       photos: profileData.photos && profileData.photos.length > 0 ? profileData.photos : [],
       credits: 100,
       is_vouched: false,
       is_spotlight: false,
       is_unlocked: false,
-      compatibility_score: profileData.compatibility_score || 0,
-      gun_milan_score: profileData.gun_milan_score || 0,
+      compatibility_score: profileData.compatibility_score || 95,
+      gun_milan_score: profileData.gun_milan_score || 32,
       managed_by: profileData.managed_by || 'self'
     };
 
-    // Save to localStorage for instant offline/demo persistence
+    // Save to localStorage for instant offline/refresh persistence
     try {
+      localStorage.setItem('mannat_user_profile', JSON.stringify(newProfile));
+      localStorage.setItem('mannat_onboarded_' + newProfile.id, 'true');
+      if (newProfile.user_id) {
+        localStorage.setItem('mannat_onboarded_' + newProfile.user_id, 'true');
+      }
+
       const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
       const list: Profile[] = stored ? JSON.parse(stored) : [];
-      // Replace existing if id matches, or unshift
       const filtered = list.filter(p => p.id !== newProfile.id && p.user_id !== newProfile.user_id);
       filtered.unshift(newProfile);
       localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(filtered));
@@ -256,7 +223,7 @@ export const profileService = {
       // Also register in admin candidates list
       const adminStored = localStorage.getItem('mannat_admin_candidates');
       const adminList = adminStored ? JSON.parse(adminStored) : [];
-      const filteredAdmin = adminList.filter((p: Profile) => p.id !== newProfile.id);
+      const filteredAdmin = adminList.filter((p: Profile) => p.id !== newProfile.id && p.user_id !== newProfile.user_id);
       filteredAdmin.unshift(newProfile);
       localStorage.setItem('mannat_admin_candidates', JSON.stringify(filteredAdmin));
     } catch (e) {
@@ -268,7 +235,7 @@ export const profileService = {
       try {
         const { error: upsertError } = await supabase.from('profiles').upsert([{
           id: newProfile.id,
-          user_id: null,
+          user_id: isValidUUID(newProfile.user_id) ? newProfile.user_id : null,
           display_name: newProfile.display_name,
           age: newProfile.age,
           height: newProfile.height || '',

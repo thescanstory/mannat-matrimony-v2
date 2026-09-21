@@ -120,6 +120,13 @@ export const MainApp: React.FC = () => {
     if (found) return found;
 
     try {
+      const storedUserProf = localStorage.getItem('mannat_user_profile');
+      if (storedUserProf) {
+        const userProf = JSON.parse(storedUserProf);
+        if (userProf && (userProf.user_id === currentUser.id || userProf.id === currentUser.id || userProf.display_name)) {
+          return userProf;
+        }
+      }
       const stored = localStorage.getItem('mannat_custom_profiles');
       if (stored) {
         const list: Profile[] = JSON.parse(stored);
