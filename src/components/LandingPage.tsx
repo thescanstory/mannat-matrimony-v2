@@ -12,15 +12,12 @@ import {
   ArrowRight,
   Phone,
   Calendar,
-  Check,
   Star,
   Heart,
   ExternalLink,
   Menu,
   Sparkles,
-  Lock,
-  Smartphone,
-  Users
+  Lock
 } from 'lucide-react';
 import { vipConsultationService, type VipLead } from '../services/vipConsultationService';
 import { LegalModal, type LegalDocType } from './LegalModal';
@@ -51,6 +48,8 @@ export const LandingPage: React.FC = () => {
   const [legalInitialDoc, setLegalInitialDoc] = useState<LegalDocType>('privacy');
   const [activeStoryIdx, setActiveStoryIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [showTopAppBanner, setShowTopAppBanner] = useState(true);
+  const [showMobileAppPill, setShowMobileAppPill] = useState(true);
 
   // Quick Hero Form State
   const [heroProfileFor, setHeroProfileFor] = useState('Bride');
@@ -254,8 +253,43 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F8F6F2] text-[#161412] selection:bg-[#A17B5E]/30 selection:text-[#161412] font-sans overflow-x-hidden pt-16 sm:pt-20">
       
+      {/* 0. Top Smart App Store Announcement Bar */}
+      <AnimatePresence>
+        {showTopAppBanner && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-[#1C0102] via-[#3A0204] to-[#1C0102] text-[#F5E6D3] text-[11px] sm:text-xs font-semibold py-1.5 px-4 border-b border-[#A17B5E]/30 flex items-center justify-between"
+          >
+            <div className="flex-1 text-center flex items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1 bg-[#D8B486]/20 text-[#D8B486] px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-extrabold border border-[#D8B486]/30">
+                Official iOS App
+              </span>
+              <span className="hidden sm:inline">The House of Mannat is live on Apple App Store.</span>
+              <a
+                href="https://apps.apple.com/app/id6812288373"
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-2 text-[#D8B486] hover:text-white font-bold inline-flex items-center gap-1"
+              >
+                <span>Download on the App Store</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+            <button
+              onClick={() => setShowTopAppBanner(false)}
+              className="text-neutral-400 hover:text-white p-0.5"
+              aria-label="Dismiss banner"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 1. Header (Constant fixed header) */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#F8F6F2]/98 backdrop-blur-md border-b border-[#E8DDD0] shadow-xs">
+      <header className={`fixed left-0 right-0 z-50 bg-[#F8F6F2]/98 backdrop-blur-md border-b border-[#E8DDD0] shadow-xs transition-all ${showTopAppBanner ? 'top-7 sm:top-8' : 'top-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3 h-16 sm:h-20">
             
@@ -592,158 +626,191 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* 4. Welcome & Experience the App: Interactive Showcase */}
-      <section id="experience" className="py-12 sm:py-20 bg-[#FAF7F2] border-b border-[#E8DDD0] relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+      <section id="experience" className="py-14 sm:py-24 bg-gradient-to-b from-[#FAF7F2] via-[#F4EFE6] to-[#FAF7F2] border-b border-[#E8DDD0] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
           
-          <div className="text-center space-y-2 sm:space-y-3 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#560406]/10 border border-[#560406]/20 text-[#560406] text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+          <div className="text-center space-y-3 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#560406]/10 border border-[#560406]/20 text-[#560406] text-xs font-bold uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
-              <span>THE DIGITAL SANCTUARY · EXPERIENCE THE APP</span>
+              <span>THE MOBILE SANCTUARY · OFFICIAL IOS APP</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-normal text-[#161412] tracking-tight leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-              Welcome to the House of Mannat App
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-normal text-[#161412] tracking-tight leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+              Experience Mannat on Your iPhone
             </h2>
-            <p className="text-xs sm:text-sm text-[#6E6259] leading-relaxed">
-              Step inside India&apos;s premier bespoke matrimonial ecosystem built exclusively for distinguished lineages, verified professionals, and confidential family alliances.
+            <p className="text-sm sm:text-base text-[#6E6259] leading-relaxed max-w-2xl mx-auto">
+              India&apos;s premier bespoke matrimonial ecosystem — built with native Apple StoreKit, biometric privacy, and instant matchmaker concierge.
             </p>
           </div>
 
-          {/* 4 Feature Pillars Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
-              <div className="space-y-3">
-                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
-                  <Users className="w-5 h-5 text-[#560406]" />
-                </div>
-                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                  Curated Alliances Feed
-                </h3>
-                <p className="text-xs text-[#6E6259] leading-relaxed">
-                  Browse handpicked, verified matrimonial bio-datas filtered precisely by pedigree, cultural values, education, and lifestyle harmony.
-                </p>
-              </div>
-              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>100% Background Verified</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
-              <div className="space-y-3">
-                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
-                  <Lock className="w-5 h-5 text-[#560406]" />
-                </div>
-                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                  BlurShield™ Privacy Lock
-                </h3>
-                <p className="text-xs text-[#6E6259] leading-relaxed">
-                  Total discretion guaranteed. Your photos, contacts, and sensitive family dossiers remain completely blurred until 1-on-1 approval.
-                </p>
-              </div>
-              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Zero Public Scraping</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
-              <div className="space-y-3">
-                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
-                  <MessageSquare className="w-5 h-5 text-[#560406]" />
-                </div>
-                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                  Matchmaker Concierge
-                </h3>
-                <p className="text-xs text-[#6E6259] leading-relaxed">
-                  Direct 1-on-1 private messaging with senior consultants to facilitate introductions, astrological checks, and 5-star venue meetings.
-                </p>
-              </div>
-              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Dedicated Principal Matchmaker</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-[#E8DDD0] shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition">
-              <div className="space-y-3">
-                <div className="w-11 h-11 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center font-bold text-lg">
-                  <Smartphone className="w-5 h-5 text-[#560406]" />
-                </div>
-                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                  Multi-Platform Access
-                </h3>
-                <p className="text-xs text-[#6E6259] leading-relaxed">
-                  Enjoy real-time access on iPhone, Android, iPad, and Desktop with Sign in with Apple, Google OAuth, and instant live sync.
-                </p>
-              </div>
-              <div className="pt-2 border-t border-[#F0EAE1] text-[11px] font-semibold text-[#560406] flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>iOS, Android &amp; Web App</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Hero Banner / Direct App Launch Card */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#2A0204] via-[#480306] to-[#1C0102] p-6 sm:p-10 text-white border-2 border-[#A17B5E]/50 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-[#A17B5E]/10 rounded-full blur-3xl pointer-events-none" />
+          {/* Interactive 2-Column App Showcase */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 text-center lg:text-left">
-              <div className="space-y-3 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#A17B5E]/20 text-[#D8B486] text-[10px] sm:text-xs font-bold uppercase tracking-wider border border-[#A17B5E]/30">
-                  <Crown className="w-3.5 h-3.5 text-[#D8B486]" />
-                  <span>Exclusive Member Portal</span>
+            {/* Left Column: Feature Highlights & Download Callouts */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <div className="bg-white p-5 rounded-2xl border border-[#E8DDD0] shadow-sm hover:shadow-md transition space-y-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5 text-[#560406]" />
+                  </div>
+                  <h4 className="font-bold text-sm text-[#161412]">Biometric Face ID Shield</h4>
+                  <p className="text-xs text-[#6E6259] leading-relaxed">
+                    Hardware-level encryption prevents screenshots, leaks, and unauthorized viewing of candidate profiles.
+                  </p>
                 </div>
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-normal text-[#FDFCFC] leading-snug" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                  Ready to Experience the Mannat Matchmaking App?
-                </h3>
-                <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
-                  Join hundreds of distinguished families and verified singles. Browse curated alliance matches, chat directly with advisors, and manage your privacy in real time.
-                </p>
+
+                <div className="bg-white p-5 rounded-2xl border border-[#E8DDD0] shadow-sm hover:shadow-md transition space-y-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-[#560406]" />
+                  </div>
+                  <h4 className="font-bold text-sm text-[#161412]">Real-Time Interest Waves</h4>
+                  <p className="text-xs text-[#6E6259] leading-relaxed">
+                    Instant push notifications when matched lineages send interest waves or request in-app voice/video calls.
+                  </p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-[#E8DDD0] shadow-sm hover:shadow-md transition space-y-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center">
+                    <Lock className="w-5 h-5 text-[#560406]" />
+                  </div>
+                  <h4 className="font-bold text-sm text-[#161412]">1-Tap Apple StoreKit</h4>
+                  <p className="text-xs text-[#6E6259] leading-relaxed">
+                    Seamless and secure In-App Purchases and monthly memberships billed directly to your Apple ID.
+                  </p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-[#E8DDD0] shadow-sm hover:shadow-md transition space-y-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-[#560406]" />
+                  </div>
+                  <h4 className="font-bold text-sm text-[#161412]">WhatsApp Family Cards</h4>
+                  <p className="text-xs text-[#6E6259] leading-relaxed">
+                    Instantly generate elegant, verified bio-data cards to share securely with family elders via WhatsApp.
+                  </p>
+                </div>
+
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
-                <a
-                  href="https://apps.apple.com/app/id6812288373"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-[#000000] hover:bg-[#1C1C1E] text-white text-xs sm:text-sm font-bold tracking-wide shadow-xl flex items-center justify-center gap-2.5 transition active:scale-98 border border-white/20"
-                >
-                  <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 170 170">
-                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
-                  </svg>
-                  <span>App Store</span>
-                </a>
+              {/* Download Dock Card */}
+              <div className="p-6 rounded-3xl bg-gradient-to-r from-[#260102] via-[#3A0204] to-[#1C0102] text-white border border-[#A17B5E]/40 shadow-xl space-y-5">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1 text-[#D8B486] text-xs">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <Star key={s} className="w-3.5 h-3.5 fill-[#D8B486] text-[#D8B486]" />
+                      ))}
+                      <span className="font-bold ml-1 text-white">4.9 / 5.0 Rating</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                      Download Free on iOS App Store
+                    </h3>
+                    <p className="text-xs text-neutral-300">Requires iOS 15.0 or later. Compatible with iPhone &amp; iPad.</p>
+                  </div>
 
-                <a
-                  href="/app"
-                  className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] hover:brightness-110 text-[#1C0102] text-xs sm:text-sm font-black tracking-wide shadow-xl flex items-center justify-center gap-2 transition active:scale-98"
-                >
-                  <Sparkles className="w-4 h-4 text-[#1C0102]" />
-                  <span>Member Web App</span>
-                </a>
+                  <a
+                    href="https://apps.apple.com/app/id6812288373"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-6 py-3 rounded-2xl bg-white text-[#161412] hover:bg-neutral-100 text-xs font-extrabold flex items-center gap-2.5 shadow-lg transition active:scale-95 shrink-0"
+                  >
+                    <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 170 170">
+                      <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
+                    </svg>
+                    <span>Get on App Store</span>
+                  </a>
+                </div>
 
-                <button
-                  onClick={() => setShowConsultModal(true)}
-                  className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-[#A17B5E]/40 text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <span>Private Briefing</span>
-                </button>
+                <div className="pt-3 border-t border-white/10 flex flex-wrap items-center gap-4 text-[11px] text-[#D8B486]">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <span>Free Download</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <span>Sign in with Apple</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <span>Encrypted &amp; Ad-Free</span>
+                  </span>
+                </div>
               </div>
+
             </div>
 
-            <div className="relative z-10 mt-6 pt-5 border-t border-white/10 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-8 text-[11px] text-[#D8B486]">
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Instant Single Sign-On</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Strict Non-Disclosure (NDA) Protected</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Direct Concierge Advisory</span>
-              </span>
+            {/* Right Column: Realistic iPhone Mockup Frame */}
+            <div className="lg:col-span-5 flex justify-center">
+              <div className="relative w-[280px] sm:w-[320px] aspect-[9/18.5] bg-[#161412] rounded-[48px] p-3.5 shadow-[0_25px_70px_rgba(86,4,6,0.4)] border-4 border-[#3A0204] ring-1 ring-[#A17B5E]/40 overflow-hidden">
+                
+                {/* Dynamic Island / Notch */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-30 flex items-center justify-end px-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#1C0102] border border-white/10" />
+                </div>
+
+                {/* iPhone Screen Content */}
+                <div className="w-full h-full bg-[#1C0102] rounded-[38px] overflow-hidden flex flex-col justify-between p-4 text-white relative">
+                  
+                  {/* Top Status inside Phone */}
+                  <div className="pt-4 flex items-center justify-between text-[10px] text-[#A17B5E] border-b border-white/10 pb-2">
+                    <div className="flex items-center gap-1">
+                      <Crown className="w-3 h-3 text-[#D8B486]" />
+                      <span className="font-extrabold uppercase tracking-widest text-[#D8B486]">MANNAT VIP</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[9px] text-[#6E6259]">
+                      <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                      <span className="text-white font-bold">Encrypted</span>
+                    </div>
+                  </div>
+
+                  {/* Mock Candidate Card */}
+                  <div className="my-auto space-y-3 bg-gradient-to-b from-[#2A0204] to-[#1C0102] p-3.5 rounded-2xl border border-[#A17B5E]/40 shadow-lg text-left">
+                    <div className="relative aspect-[4/4.5] rounded-xl overflow-hidden border border-[#A17B5E]/30">
+                      <img
+                        src="/images/vip/portfolio_kavya_singhania.png"
+                        alt="Candidate Preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-[#560406]/90 backdrop-blur-md text-[#D8B486] text-[9px] font-bold border border-[#A17B5E]/50 flex items-center gap-1">
+                        <Crown className="w-2.5 h-2.5" />
+                        <span>Singhania Lineage</span>
+                      </div>
+                      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black via-black/60 to-transparent p-2.5 text-left">
+                        <h5 className="font-bold text-xs text-white">Kavya S., 27</h5>
+                        <p className="text-[10px] text-neutral-300">Columbia Univ • VC Principal • Mumbai</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-center text-[10px]">
+                      <div className="p-2 rounded-xl bg-[#1C0102] border border-[#A17B5E]/20">
+                        <span className="text-neutral-400 text-[9px] block">Kundli Match</span>
+                        <span className="font-extrabold text-[#D8B486]">32 / 36 (Uttam)</span>
+                      </div>
+                      <div className="p-2 rounded-xl bg-[#1C0102] border border-[#A17B5E]/20">
+                        <span className="text-neutral-400 text-[9px] block">Family Worth</span>
+                        <span className="font-extrabold text-[#D8B486]">₹150Cr+ Verified</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-1 flex gap-1.5">
+                      <button className="flex-1 py-2 rounded-xl bg-gradient-to-r from-[#D8B486] to-[#A17B5E] text-[#1C0102] text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1">
+                        <Sparkles className="w-3 h-3" />
+                        <span>Send Wave</span>
+                      </button>
+                      <button className="px-3 py-2 rounded-xl bg-white/10 text-white text-[10px] font-bold flex items-center justify-center">
+                        <MessageSquare className="w-3 h-3 text-[#D8B486]" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Bottom Home Indicator */}
+                  <div className="pt-2 text-center">
+                    <div className="w-24 h-1 bg-white/30 rounded-full mx-auto" />
+                  </div>
+
+                </div>
+
+              </div>
             </div>
 
           </div>
@@ -1257,6 +1324,47 @@ export const LandingPage: React.FC = () => {
         onClose={() => setShowLegal(false)}
         initialDoc={legalInitialDoc}
       />
+
+      {/* 13. Floating Mobile App Store Download Pill */}
+      <AnimatePresence>
+        {showMobileAppPill && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="md:hidden fixed bottom-4 inset-x-4 z-40 bg-[#1C0102]/95 backdrop-blur-md border border-[#A17B5E]/50 rounded-2xl p-3 shadow-2xl flex items-center justify-between text-white"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#560406] text-[#D8B486] flex items-center justify-center border border-[#A17B5E]/30 shrink-0">
+                <Crown className="w-4 h-4 text-[#D8B486]" />
+              </div>
+              <div className="text-left">
+                <h5 className="font-bold text-xs text-white">Mannat Matrimony App</h5>
+                <p className="text-[10px] text-[#D8B486]">Free on Apple App Store</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <a
+                href="https://apps.apple.com/app/id6812288373"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#D8B486] to-[#A17B5E] text-[#1C0102] text-xs font-black uppercase tracking-wider shadow-sm flex items-center gap-1 shrink-0"
+              >
+                <span>Get App</span>
+                <ArrowRight className="w-3 h-3" />
+              </a>
+              <button
+                onClick={() => setShowMobileAppPill(false)}
+                className="p-1 rounded-full text-neutral-400 hover:text-white"
+                aria-label="Close app banner"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
