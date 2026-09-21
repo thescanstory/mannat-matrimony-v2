@@ -16,7 +16,7 @@ export const FamilySharePortal: React.FC<FamilySharePortalProps> = ({ profile })
 
   const photos = profile.photos && profile.photos.length > 0
     ? profile.photos
-    : [profile.creator_vouch?.creator_avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800'];
+    : (profile.creator_vouch?.creator_avatar_url ? [profile.creator_vouch.creator_avatar_url] : []);
 
   const shareUrl = `${window.location.origin}/share/${profile.id}`;
 

@@ -56,22 +56,22 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   const [selectedPhotoPreview, setSelectedPhotoPreview] = useState<string | null>(null);
 
   // Profile data from props or defaults
-  const displayName = candidateProfile?.display_name || currentUser?.user_metadata?.full_name || 'Candidate Member';
-  const email = currentUser?.email || 'member@mannat.vip';
-  const age = candidateProfile?.age || 27;
-  const height = candidateProfile?.height || "5'7\" (170 cm)";
-  const city = candidateProfile?.city || 'Mumbai';
-  const occupation = candidateProfile?.occupation || 'Senior Product Designer';
-  const education = candidateProfile?.education || 'Master of Design (M.Des)';
-  const religion = candidateProfile?.religion || 'Hindu';
-  const subCommunity = candidateProfile?.sub_community || 'Brahmin';
-  const incomeBracket = candidateProfile?.income_bracket || '₹35,00,000 - ₹50,00,000 / yr';
-  const diet = candidateProfile?.diet || 'Vegetarian';
-  const bioText = candidateProfile?.bio_text || 'Passionate about timeless design, classical music, and meaningful family traditions. Looking for an empathetic partner with shared values.';
+  const displayName = candidateProfile?.display_name || currentUser?.user_metadata?.full_name || 'My Profile';
+  const email = currentUser?.email || '';
+  const age = candidateProfile?.age;
+  const height = candidateProfile?.height || 'Not specified';
+  const city = candidateProfile?.city || 'Not specified';
+  const occupation = candidateProfile?.occupation || 'Not specified';
+  const education = candidateProfile?.education || 'Not specified';
+  const religion = candidateProfile?.religion || 'Not specified';
+  const subCommunity = candidateProfile?.sub_community || '';
+  const incomeBracket = candidateProfile?.income_bracket || (candidateProfile as any)?.salary_bracket || 'Confidential';
+  const diet = candidateProfile?.diet || 'Not specified';
+  const bioText = candidateProfile?.bio_text || 'No bio written yet. Tap Edit Bio-Data to complete your profile.';
   const photos = candidateProfile?.photos && candidateProfile.photos.length > 0 
     ? candidateProfile.photos 
-    : ['https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80'];
-  const videoUrl = candidateProfile?.bio_video_url || 'https://assets.mixkit.co/videos/preview/mixkit-portrait-of-a-fashion-woman-with-silver-glitter-makeup-39875-large.mp4';
+    : [];
+  const videoUrl = candidateProfile?.bio_video_url || '';
 
   const [editName, setEditName] = useState(currentUser?.user_metadata?.full_name || displayName);
   const [editEmail, setEditEmail] = useState(currentUser?.email || '');
@@ -315,18 +315,34 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             )}
           </div>
 
-          <div className="grid grid-cols-3 gap-2.5">
-            {photos.map((url, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setSelectedPhotoPreview(url)}
-                className="aspect-square rounded-2xl overflow-hidden border border-[#E8DDD0] bg-[#F8F6F2] hover:opacity-90 active:scale-95 transition-all shadow-xs cursor-pointer relative group"
-              >
-                <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-              </button>
-            ))}
-          </div>
+          {photos.length > 0 ? (
+            <div className="grid grid-cols-3 gap-2.5">
+              {photos.map((url, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedPhotoPreview(url)}
+                  className="aspect-square rounded-2xl overflow-hidden border border-[#E8DDD0] bg-[#F8F6F2] hover:opacity-90 active:scale-95 transition-all shadow-xs cursor-pointer relative group"
+                >
+                  <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6 px-4 bg-[#F8F6F2] rounded-2xl border border-dashed border-[#E8DDD0] space-y-2">
+              <Camera className="w-8 h-8 text-[#A17B5E]/50 mx-auto" />
+              <p className="text-xs font-semibold text-[#6E6259]">No photos added yet</p>
+              {onEditBioData && (
+                <button
+                  type="button"
+                  onClick={onEditBioData}
+                  className="text-xs font-bold text-[#560406] hover:underline cursor-pointer"
+                >
+                  + Add Bio-Data Photos
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Intro Video Preview */}
           {videoUrl && (
