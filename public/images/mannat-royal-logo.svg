@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Rich Royal Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A0204" />
+      <stop offset="50%" stop-color="#560406" />
+      <stop offset="100%" stop-color="#1A0102" />
+    </linearGradient>
+
+    <!-- Luxury Metallic Gold Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E6D3" />
+      <stop offset="35%" stop-color="#D8B486" />
+      <stop offset="70%" stop-color="#C5A880" />
+      <stop offset="100%" stop-color="#A17B5E" />
+    </linearGradient>
+
+    <!-- Inner Glow / Shadow -->
+    <filter id="royalShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bgGrad)" />
+
+  <!-- Outer Fine Royal Border -->
+  <rect x="36" y="36" width="952" height="952" rx="192" fill="none" stroke="url(#goldGrad)" stroke-width="4" stroke-opacity="0.4" />
+  <rect x="52" y="52" width="920" height="920" rx="176" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" stroke-opacity="0.25" stroke-dasharray="12 8" />
+
+  <!-- Center Luxury Emblem / Monogram -->
+  <g filter="url(#royalShadow)" transform="translate(512, 390)">
+    <!-- Royal Arch / Diamond Frame -->
+    <path d="M 0,-180 L 160,-20 L 120,160 L -120,160 L -160,-20 Z" fill="none" stroke="url(#goldGrad)" stroke-width="3" stroke-opacity="0.5"/>
+    <circle cx="0" cy="-180" r="8" fill="url(#goldGrad)" />
+    
+    <!-- Stylized Royal "M" Monogram -->
+    <path d="M -90,130 L -90,-70 L -10,60 L 0,75 L 10,60 L 90,-70 L 90,130" 
+          fill="none" 
+          stroke="url(#goldGrad)" 
+          stroke-width="16" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+
+    <!-- Royal Crown Accent on Monogram Top -->
+    <path d="M -45,-105 L -60,-140 L -25,-120 L 0,-155 L 25,-120 L 60,-140 L 45,-105 Z" 
+          fill="url(#goldGrad)" />
+  </g>
+
+  <!-- Typographic Lockup -->
+  <!-- "At" script -->
+  <text x="512" y="650" 
+        text-anchor="middle" 
+        font-family="'Pinyon Script', 'Brush Script MT', cursive" 
+        font-size="64" 
+        font-style="italic" 
+        fill="url(#goldGrad)" 
+        opacity="0.9">At</text>
+
+  <!-- "MANNAT" -->
+  <text x="512" y="745" 
+        text-anchor="middle" 
+        font-family="'Cormorant Garamond', 'Playfair Display', Georgia, serif" 
+        font-size="102" 
+        font-weight="700" 
+        letter-spacing="18" 
+        fill="#FFFFFF" 
+        filter="url(#royalShadow)">MANNAT</text>
+
+  <!-- "BESPOKE MATCHMAKING" -->
+  <text x="512" y="805" 
+        text-anchor="middle" 
+        font-family="'Plus Jakarta Sans', -apple-system, sans-serif" 
+        font-size="28" 
+        font-weight="800" 
+        letter-spacing="14" 
+        fill="url(#goldGrad)">BESPOKE MATCHMAKING</text>
+
+  <!-- Subtle Bottom Flourish -->
+  <path d="M 412,850 L 512,865 L 612,850" fill="none" stroke="url(#goldGrad)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="512" cy="865" r="4" fill="url(#goldGrad)" />
+</svg>

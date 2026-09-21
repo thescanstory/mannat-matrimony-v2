@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160" width="600" height="160">
+  <defs>
+    <linearGradient id="maroonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#730C0F" />
+      <stop offset="50%" stop-color="#560406" />
+      <stop offset="100%" stop-color="#3A0204" />
+    </linearGradient>
+    <linearGradient id="goldAcc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D8B486" />
+      <stop offset="100%" stop-color="#A17B5E" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Emblem -->
+  <g transform="translate(80, 80) scale(0.48)">
+    <path d="M 0,-120 L 110,-10 L 80,110 L -80,110 L -110,-10 Z" fill="none" stroke="url(#maroonGrad)" stroke-width="4"/>
+    <path d="M -60,90 L -60,-50 L -8,40 L 0,50 L 8,40 L 60,-50 L 60,90" fill="none" stroke="url(#maroonGrad)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M -30,-75 L -42,-100 L -18,-85 L 0,-110 L 18,-85 L 42,-100 L 30,-75 Z" fill="url(#goldAcc)" />
+  </g>
+
+  <!-- Vertical Divider -->
+  <line x1="160" y1="35" x2="160" y2="125" stroke="#E8DDD0" stroke-width="1.5" />
+
+  <!-- Typography Right -->
+  <!-- "At" script -->
+  <text x="180" y="58" font-family="'Pinyon Script', 'Brush Script MT', cursive" font-size="32" font-style="italic" fill="#560406">At</text>
+
+  <!-- "MANNAT" -->
+  <text x="180" y="105" font-family="'Cormorant Garamond', 'Playfair Display', Georgia, serif" font-size="52" font-weight="700" letter-spacing="10" fill="#560406">MANNAT</text>
+
+  <!-- "BESPOKE MATCHMAKING" -->
+  <text x="182" y="132" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="12" font-weight="800" letter-spacing="6" fill="#A17B5E">BESPOKE MATCHMAKING</text>
+</svg>
