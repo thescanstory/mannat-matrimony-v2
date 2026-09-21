@@ -115,10 +115,18 @@ export const authService = {
 
     // Web Browser Fallback via Supabase
     if (isSupabaseConfigured()) {
+      const redirectUrl = typeof window !== 'undefined'
+        ? (window.location.hostname.includes('localhost') ? `${window.location.origin}/app` : 'https://www.mannatmatrimony.com/app')
+        : 'https://www.mannatmatrimony.com/app';
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/app` : undefined
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account'
+          }
         }
       });
       return { data: null, error };
@@ -181,10 +189,14 @@ export const authService = {
 
     // Web Browser: Direct real OAuth redirect via Supabase Apple Provider
     if (isSupabaseConfigured()) {
+      const redirectUrl = typeof window !== 'undefined'
+        ? (window.location.hostname.includes('localhost') ? `${window.location.origin}/app` : 'https://www.mannatmatrimony.com/app')
+        : 'https://www.mannatmatrimony.com/app';
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/app` : undefined
+          redirectTo: redirectUrl
         }
       });
       return { data: null, error };
