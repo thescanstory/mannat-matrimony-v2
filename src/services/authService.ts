@@ -113,6 +113,50 @@ export const authService = {
       }
     }
 
+    // Web Browser: Google Identity Services In-Browser Popup (Never redirects to localhost)
+    if (typeof window !== 'undefined' && (window as any).google?.accounts?.oauth2) {
+      return new Promise((resolve) => {
+        try {
+          const client = (window as any).google.accounts.oauth2.initTokenClient({
+            client_id: GOOGLE_CLIENT_ID,
+            scope: 'email profile openid',
+            callback: async (tokenResponse: any) => {
+              if (tokenResponse?.access_token) {
+                try {
+                  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                  });
+                  if (res.ok) {
+                    const profile = await res.json();
+                    if (profile?.email) {
+                      const user = authService.setUserSession(
+                        profile.email,
+                        profile.name || profile.given_name || 'Google User',
+                        profile.picture || ''
+                      );
+                      resolve({ data: user, error: null });
+                      return;
+                    }
+                  }
+                } catch (e) {
+                  console.warn('Userinfo fetch error:', e);
+                }
+              }
+              resolve({ data: null, error: 'Google sign in failed' });
+            },
+            error_callback: (err: any) => {
+              console.warn('Google Identity error:', err);
+              resolve({ data: null, error: err });
+            }
+          });
+          client.requestAccessToken();
+        } catch (e) {
+          console.warn('Failed to launch Google Token client:', e);
+          resolve({ data: null, error: e });
+        }
+      });
+    }
+
     // Web Browser Fallback via Supabase
     if (isSupabaseConfigured()) {
       const redirectUrl = typeof window !== 'undefined'
@@ -132,7 +176,7 @@ export const authService = {
       return { data: null, error };
     }
 
-    const fallbackUser = authService.setUserSession('member.google@gmail.com', 'Google Member');
+    const fallbackUser = authService.setUserSession('swariyaweddings@gmail.com', 'Swariya');
     return { data: fallbackUser, error: null };
   },
 
