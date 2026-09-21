@@ -284,11 +284,22 @@ export const LandingPage: React.FC = () => {
             {/* Right Action */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               <a
+                href="https://apps.apple.com/app/id6812288373"
+                target="_blank"
+                rel="noreferrer"
+                className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#560406]/30 text-white bg-[#1C0102] hover:bg-[#260102] text-xs font-bold transition tracking-wide shadow-xs"
+              >
+                <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 170 170">
+                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
+                </svg>
+                <span>App Store</span>
+              </a>
+              <a
                 href="/app"
-                className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#560406]/30 text-[#560406] bg-[#560406]/5 hover:bg-[#560406]/10 text-xs font-bold transition tracking-wide shadow-xs"
+                className="hidden xl:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#560406]/30 text-[#560406] bg-[#560406]/5 hover:bg-[#560406]/10 text-xs font-bold transition tracking-wide shadow-xs"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Member Web App</span>
+                <span>Web App</span>
               </a>
 
               <a
@@ -360,6 +371,17 @@ export const LandingPage: React.FC = () => {
                   <span>❓ FAQs</span>
                 </a>
               </div>
+              <a
+                href="https://apps.apple.com/app/id6812288373"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-2.5 rounded-xl bg-[#1C0102] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md border border-[#A17B5E]/40"
+              >
+                <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 170 170">
+                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
+                </svg>
+                <span>Download on App Store</span>
+              </a>
               <a
                 href="/app"
                 className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center justify-center gap-2 shadow-md border border-[#A17B5E]/40"
@@ -681,19 +703,30 @@ export const LandingPage: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
                 <a
+                  href="https://apps.apple.com/app/id6812288373"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-[#000000] hover:bg-[#1C1C1E] text-white text-xs sm:text-sm font-bold tracking-wide shadow-xl flex items-center justify-center gap-2.5 transition active:scale-98 border border-white/20"
+                >
+                  <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 170 170">
+                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
+                  </svg>
+                  <span>App Store</span>
+                </a>
+
+                <a
                   href="/app"
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] hover:brightness-110 text-[#1C0102] text-xs sm:text-sm font-black tracking-wide shadow-xl flex items-center justify-center gap-2 transition active:scale-98"
+                  className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] hover:brightness-110 text-[#1C0102] text-xs sm:text-sm font-black tracking-wide shadow-xl flex items-center justify-center gap-2 transition active:scale-98"
                 >
                   <Sparkles className="w-4 h-4 text-[#1C0102]" />
-                  <span>Launch Member Web App</span>
-                  <ArrowRight className="w-4 h-4 text-[#1C0102]" />
+                  <span>Member Web App</span>
                 </a>
 
                 <button
                   onClick={() => setShowConsultModal(true)}
                   className="w-full sm:w-auto px-6 sm:px-7 py-3.5 sm:py-4 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-[#A17B5E]/40 text-xs sm:text-sm font-bold tracking-wide transition cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>Book Private Briefing</span>
+                  <span>Private Briefing</span>
                 </button>
               </div>
             </div>
@@ -1008,6 +1041,10 @@ export const LandingPage: React.FC = () => {
               >
                 UGC Guidelines
               </button>
+              <a href="https://apps.apple.com/app/id6812288373" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline flex items-center gap-1">
+                <span>iOS App Store</span>
+                <ExternalLink className="w-3 h-3 text-[#D8B486]" />
+              </a>
               <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Member Web App</a>
               <a href="/admin" className="text-[#A17B5E] hover:underline">Admin Portal</a>
             </div>

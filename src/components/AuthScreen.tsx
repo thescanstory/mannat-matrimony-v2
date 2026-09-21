@@ -13,14 +13,15 @@ interface AuthScreenProps {
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLanding }) => {
   const [loading, setLoading] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
-  const [name, setName] = useState('Apple Reviewer');
-  const [email, setEmail] = useState('appreview@mannatmatrimony.com');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
 
   // Sign In with Specific Email & Name
   const handleCustomSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    const finalEmail = email.trim() || 'appreview@mannatmatrimony.com';
-    const finalName = name.trim() || 'Apple Reviewer';
+    const finalEmail = email.trim();
+    if (!finalEmail) return;
+    const finalName = name.trim() || finalEmail.split('@')[0];
     setLoading(true);
     const user = authService.setUserSession(finalEmail, finalName);
     setTimeout(() => {
