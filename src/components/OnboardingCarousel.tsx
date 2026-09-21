@@ -53,13 +53,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [objectUrls, setObjectUrls] = useState<string[]>([]);
 
-  useEffect(() => {
-    return () => {
-      objectUrls.forEach((u) => URL.revokeObjectURL(u));
-    };
-  }, [objectUrls]);
 
   // Parse existing occupation / employment type if editing
   const rawOccupation = initialData?.occupation || '';
@@ -126,30 +120,102 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
     setErrorMsg(null);
   }, [step, displayName, age, height, city, education, occupation, companyName, employmentType, salaryBracket, photos]);
 
+  // Convert file/blob to permanent Base64 Data URL
+  const readFileAsDataURL = (file: Blob | File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve((e.target?.result as string) || '');
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Compress image to high-quality JPEG Data URL for robust storage and display
+  const compressImageToDataURL = async (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawDataUrl = e.target?.result as string;
+        if (!rawDataUrl) return resolve('');
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            const MAX_DIM = 960;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_DIM) {
+                height = Math.round((height * MAX_DIM) / width);
+                width = MAX_DIM;
+              }
+            } else {
+              if (height > MAX_DIM) {
+                width = Math.round((width * MAX_DIM) / height);
+                height = MAX_DIM;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+              resolve(dataUrl);
+            } else {
+              resolve(rawDataUrl);
+            }
+          } catch {
+            resolve(rawDataUrl);
+          }
+        };
+        img.onerror = () => resolve(rawDataUrl);
+        img.src = rawDataUrl;
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
   // Handle Photo Selection (Gallery / Files / Camera)
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const newPhotoUrls: string[] = [];
-      Array.from(e.target.files).forEach((file) => {
-        const url = URL.createObjectURL(file);
-        newPhotoUrls.push(url);
-      });
-      setPhotos(prev => [...prev, ...newPhotoUrls].slice(0, 3));
-      setObjectUrls((prev) => [...prev, ...newPhotoUrls]);
+      const filesArray = Array.from(e.target.files);
+      const dataUrls: string[] = [];
+      for (const file of filesArray) {
+        try {
+          const dataUrl = await compressImageToDataURL(file);
+          if (dataUrl) {
+            dataUrls.push(dataUrl);
+          }
+        } catch (err) {
+          console.warn('Error reading photo:', err);
+        }
+      }
+      if (dataUrls.length > 0) {
+        setPhotos((prev) => [...prev, ...dataUrls].slice(0, 3));
+      }
     }
   };
 
   const handleRemovePhoto = (index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Handle Video Selection (Gallery / Files / Camera)
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const url = URL.createObjectURL(file);
-      setVideoUrl(url);
-      setObjectUrls((prev) => [...prev, url]);
+      try {
+        const dataUrl = await readFileAsDataURL(file);
+        if (dataUrl) {
+          setVideoUrl(dataUrl);
+        }
+      } catch (err) {
+        console.warn('Error reading video:', err);
+      }
     }
   };
 
@@ -183,11 +249,12 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
           recordedChunksRef.current.push(e.data);
         }
       };
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const blob = new Blob(recordedChunksRef.current, { type: 'video/mp4' });
-        const recordedUrl = URL.createObjectURL(blob);
-        setVideoUrl(recordedUrl);
-        setObjectUrls((prev) => [...prev, recordedUrl]);
+        const dataUrl = await readFileAsDataURL(blob);
+        if (dataUrl) {
+          setVideoUrl(dataUrl);
+        }
         closeWebcamRecorder();
       };
       recorder.start();
