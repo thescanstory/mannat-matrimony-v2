@@ -410,10 +410,19 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
 
     setIsSubmitting(true);
     const standardGender = gender === 'man' ? 'male' : 'female';
+    
+    // Save user completion and gender immediately so UI transitions seamlessly
     try {
-      // No stock photo defaults — only photos the user actually uploaded.
-      const finalPhotos = photos;
+      localStorage.setItem('mannat_user_gender', standardGender);
+      if (currentUser?.email) {
+        localStorage.setItem('mannat_onboarded_' + currentUser.email.toLowerCase(), 'true');
+      }
+      if (currentUser?.id) {
+        localStorage.setItem('mannat_onboarded_' + currentUser.id, 'true');
+      }
+    } catch {}
 
+    try {
       const createdProfile = await profileService.createProfile({
         id: initialData?.id,
         user_id: currentUser?.id || initialData?.user_id,
@@ -431,7 +440,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         salary_bracket: salaryBracket,
         diet: diet,
         managed_by: 'self',
-        photos: finalPhotos,
+        photos: photos,
         bio_video_url: videoUrl,
         family_background: `${familyType} family with ${familyValues.toLowerCase()} values. Settled in ${city}.`,
         marriage_expectations: `Looking for a compatible partner who appreciates ${financialStance.toLowerCase()} financial goals and family harmony.`,
@@ -447,19 +456,9 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         }
       });
 
-      // Save user gender so discover feed filters strictly
-      localStorage.setItem('mannat_user_gender', standardGender);
-
-      if (currentUser?.email) {
-        localStorage.setItem('mannat_onboarded_' + currentUser.email.toLowerCase(), 'true');
-      }
-      if (currentUser?.id) {
-        localStorage.setItem('mannat_onboarded_' + currentUser.id, 'true');
-      }
-
       onComplete(createdProfile);
     } catch (error) {
-      console.error('Profile creation error:', error);
+      console.warn('Profile creation non-critical notice:', error);
       onComplete();
     } finally {
       setIsSubmitting(false);

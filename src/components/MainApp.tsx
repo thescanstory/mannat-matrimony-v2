@@ -193,7 +193,11 @@ export const MainApp: React.FC = () => {
         if (user) {
           setCurrentUser(user);
           const hasProfile = await profileService.hasExistingProfile(user.id, user.email);
-          setCurrentView(hasProfile ? 'home' : 'onboarding');
+          if (hasProfile) {
+            setCurrentView((prev) => (prev === 'auth' || prev === 'onboarding' ? 'home' : prev));
+          } else {
+            setCurrentView((prev) => (prev === 'auth' ? 'onboarding' : prev));
+          }
         }
       } catch (err) {
         console.warn('Error checking user session:', err);
@@ -204,8 +208,9 @@ export const MainApp: React.FC = () => {
     const authListener = authService.onAuthStateChange(async (user) => {
       if (user) {
         setCurrentUser(user);
-        const hasProfile = await profileService.hasExistingProfile(user.id, user.email);
-        setCurrentView(hasProfile ? 'home' : 'onboarding');
+      } else {
+        setCurrentUser(null);
+        setCurrentView('auth');
       }
     });
 
@@ -312,16 +317,14 @@ export const MainApp: React.FC = () => {
     navigateTo('share-portal');
   };
 
-  const handleProfileCreated = async (newProfile?: Profile) => {
+  const handleProfileCreated = (newProfile?: Profile) => {
     if (newProfile) {
-      try {
-        const liveProfiles = await profileService.getProfiles();
+      setProfiles((prev) => [newProfile, ...prev.filter(p => p.id !== newProfile.id && p.user_id !== newProfile.user_id)]);
+      profileService.getProfiles().then((liveProfiles) => {
         if (liveProfiles && liveProfiles.length > 0) {
           setProfiles(liveProfiles);
         }
-      } catch {
-        setProfiles((prev) => [newProfile, ...prev]);
-      }
+      }).catch(() => {});
     }
     if (isEditingProfile) {
       setIsEditingProfile(false);
