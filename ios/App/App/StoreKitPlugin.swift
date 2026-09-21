@@ -2,9 +2,16 @@ import Capacitor
 import StoreKit
 
 @objc(StoreKitPlugin)
-public class StoreKitPlugin: CAPPlugin, SKPaymentTransactionObserver {
-    private var purchaseCompletion: ((Bool, String) -> Void)?
-    private var restoreCompletion: (([String]) -> Void)?
+public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionObserver, SKProductsRequestDelegate {
+    public let identifier = "StoreKitPlugin"
+    public let jsName = "StoreKitPlugin"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "purchase", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "restorePurchases", returnType: CAPPluginReturnPromise)
+    ]
+
+    private var activeCall: CAPPluginCall?
+    private var restoreCall: CAPPluginCall?
 
     override public func load() {
         SKPaymentQueue.default().add(self)
@@ -20,24 +27,32 @@ public class StoreKitPlugin: CAPPlugin, SKPaymentTransactionObserver {
             return
         }
 
+        self.activeCall = call
+
         let request = SKProductsRequest(productIdentifiers: [productId])
         request.delegate = self
         request.start()
-
-        purchaseCompletion = { success, message in
-            if success {
-                call.resolve(["success": true])
-            } else {
-                call.reject(message)
-            }
-        }
     }
 
     @objc func restorePurchases(_ call: CAPPluginCall) {
-        restoreCompletion = { activeProducts in
-            call.resolve(["activeProducts": activeProducts])
-        }
+        self.restoreCall = call
         SKPaymentQueue.default().restoreCompletedTransactions()
+    }
+
+    public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        guard let product = response.products.first else {
+            activeCall?.reject("Product '\(request)' not found in Apple StoreKit catalog.")
+            activeCall = nil
+            return
+        }
+
+        let payment = SKPayment(product: product)
+        SKPaymentQueue.default().add(payment)
+    }
+
+    public func request(_ request: SKRequest, didFailWithError error: Error) {
+        activeCall?.reject(error.localizedDescription)
+        activeCall = nil
     }
 
     public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
@@ -45,14 +60,26 @@ public class StoreKitPlugin: CAPPlugin, SKPaymentTransactionObserver {
             switch transaction.transactionState {
             case .purchased:
                 SKPaymentQueue.default().finishTransaction(transaction)
-                purchaseCompletion?(true, "Purchase successful")
+                let txId = transaction.transactionIdentifier ?? "tx_\(UUID().uuidString)"
+                activeCall?.resolve([
+                    "success": true,
+                    "transactionId": txId,
+                    "productId": transaction.payment.productIdentifier
+                ])
+                activeCall = nil
+
             case .failed:
                 SKPaymentQueue.default().finishTransaction(transaction)
-                purchaseCompletion?(false, "Purchase failed")
+                let errorMsg = transaction.error?.localizedDescription ?? "Purchase cancelled"
+                activeCall?.reject(errorMsg)
+                activeCall = nil
+
             case .restored:
                 SKPaymentQueue.default().finishTransaction(transaction)
+
             case .deferred, .purchasing:
                 break
+
             @unknown default:
                 break
             }
@@ -62,26 +89,15 @@ public class StoreKitPlugin: CAPPlugin, SKPaymentTransactionObserver {
     public func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
         let productIds = queue.transactions
             .compactMap { $0.payment.productIdentifier }
-        restoreCompletion?(productIds)
+        restoreCall?.resolve([
+            "restored": true,
+            "activeProducts": productIds
+        ])
+        restoreCall = nil
     }
 
     public func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
-        restoreCompletion?([])
-    }
-}
-
-extension StoreKitPlugin: SKProductsRequestDelegate {
-    public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        guard let product = response.products.first else {
-            purchaseCompletion?(false, "Product not found")
-            return
-        }
-
-        let payment = SKPayment(product: product)
-        SKPaymentQueue.default().add(payment)
-    }
-
-    public func request(_ request: SKRequest, didFailWithError error: Error) {
-        purchaseCompletion?(false, error.localizedDescription)
+        restoreCall?.reject(error.localizedDescription)
+        restoreCall = nil
     }
 }

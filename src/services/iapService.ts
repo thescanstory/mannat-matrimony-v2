@@ -1,5 +1,12 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import type { PaymentResult } from '../types';
+
+export interface StoreKitPluginInterface {
+  purchase(options: { productId: string }): Promise<{ success: boolean; transactionId: string; productId: string }>;
+  restorePurchases(): Promise<{ restored: boolean; activeProducts: string[] }>;
+}
+
+const StoreKit = registerPlugin<StoreKitPluginInterface>('StoreKitPlugin');
 
 export interface IAPProduct {
   id: string;
@@ -78,30 +85,33 @@ export const iapService = {
       return { success: false, error: 'Product not found in Apple StoreKit catalog' };
     }
 
-    // On native iOS, the StoreKit plugin will handle purchases
-    // On web, fallback to mock
-    if (Capacitor.getPlatform() === 'ios') {
-      // Native iOS StoreKit will be called via the registered plugin
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const transactionId = `apple_tx_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    // On native iOS Capacitor app, trigger native StoreKit payment sheet
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+      try {
+        const result = await StoreKit.purchase({ productId });
+        if (result && result.transactionId) {
           localStorage.setItem(`apple_receipt_${productId}`, JSON.stringify({
             productId,
-            transactionId,
+            transactionId: result.transactionId,
             purchaseDate: new Date().toISOString(),
             status: 'active'
           }));
 
-          resolve({
+          return {
             success: true,
-            paymentId: transactionId,
+            paymentId: result.transactionId,
             orderId: `apple_order_${productId}`
-          });
-        }, 1200);
-      });
+          };
+        } else {
+          return { success: false, error: 'StoreKit transaction was not completed.' };
+        }
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err || 'StoreKit transaction failed');
+        return { success: false, error: message };
+      }
     }
 
-    // Web preview fallback
+    // Web / Development Fallback Simulation
     return new Promise((resolve) => {
       setTimeout(() => {
         const transactionId = `apple_tx_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -117,7 +127,7 @@ export const iapService = {
           paymentId: transactionId,
           orderId: `apple_order_${productId}`
         });
-      }, 1200);
+      }, 1000);
     });
   },
 
@@ -125,6 +135,26 @@ export const iapService = {
    * Restores active Apple In-App Purchases (Mandatory for App Store Review Guideline 3.1.1)
    */
   restorePurchases: async (): Promise<{ restored: boolean; activeProducts: string[] }> => {
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
+      try {
+        const result = await StoreKit.restorePurchases();
+        const activeProducts = result.activeProducts || [];
+        activeProducts.forEach((pid) => {
+          localStorage.setItem(`apple_receipt_${pid}`, JSON.stringify({
+            productId: pid,
+            transactionId: `restored_${Date.now()}`,
+            purchaseDate: new Date().toISOString(),
+            status: 'active'
+          }));
+        });
+        return { restored: true, activeProducts };
+      } catch (err: unknown) {
+        console.error('StoreKit restore error:', err);
+        return { restored: false, activeProducts: [] };
+      }
+    }
+
+    // Web preview fallback
     return new Promise((resolve) => {
       setTimeout(() => {
         const active: string[] = [];
@@ -143,3 +173,4 @@ export const iapService = {
     });
   }
 };
+
