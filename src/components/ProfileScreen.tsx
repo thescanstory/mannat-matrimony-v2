@@ -99,398 +99,406 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#F8F6F2] text-[#161412] pb-44 select-none font-sans">
-      <div className="p-5 sm:p-6 space-y-6 max-w-md mx-auto">
+    <div className="w-full min-h-screen bg-[#F8F6F2] text-[#161412] pb-32 md:pb-20 select-none font-sans">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-8 space-y-6 lg:space-y-0">
 
-        {/* 1. Ultra-Luxurious Royal Profile Dossier Card */}
-        <div className="bg-white rounded-[32px] p-6 sm:p-7 border border-[#E8DDD0] shadow-sm relative overflow-hidden text-center space-y-5">
-          {/* Subtle Royal Accent Corner Badge */}
-          <div className="absolute top-4 right-4">
-            <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-[#560406] bg-[#A17B5E]/15 px-3 py-1 rounded-full border border-[#A17B5E]/30">
-              <Crown className="w-3 h-3 text-[#A17B5E]" />
-              <span>VIP Circle</span>
-            </span>
-          </div>
+          {/* Left Column: Dossier Hero, VIP Pass, Privacy */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* 1. Ultra-Luxurious Royal Profile Dossier Card */}
+            <div className="bg-white rounded-[32px] p-6 sm:p-8 border border-[#E8DDD0] shadow-sm relative overflow-hidden text-center space-y-5">
+              {/* Subtle Royal Accent Corner Badge */}
+              <div className="absolute top-4 right-4">
+                <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-[#560406] bg-[#A17B5E]/15 px-3 py-1 rounded-full border border-[#A17B5E]/30">
+                  <Crown className="w-3 h-3 text-[#A17B5E]" />
+                  <span>VIP Circle</span>
+                </span>
+              </div>
 
-          {/* Big Profile Avatar Frame */}
-          <div className="relative w-32 h-32 sm:w-36 sm:h-36 mx-auto mt-2">
-            <div className="w-full h-full rounded-[28px] bg-[#F8F6F2] border-4 border-white shadow-xl overflow-hidden flex items-center justify-center">
-              {photos[0] ? (
-                <img 
-                  src={photos[0]} 
-                  alt={displayName} 
-                  className="w-full h-full object-cover" 
-                />
-              ) : (
-                <User className="w-16 h-16 text-[#A17B5E]" />
-              )}
-            </div>
-            <div className="absolute -bottom-1 -right-1 bg-[#560406] text-[#A17B5E] p-2 rounded-full shadow-lg border-2 border-white">
-              <CheckCircle2 className="w-4 h-4 text-[#A17B5E]" />
-            </div>
-          </div>
+              {/* Big Profile Avatar Frame */}
+              <div className="relative w-32 h-32 sm:w-36 sm:h-36 mx-auto mt-2">
+                <div className="w-full h-full rounded-[28px] bg-[#F8F6F2] border-4 border-white shadow-xl overflow-hidden flex items-center justify-center">
+                  {photos[0] ? (
+                    <img 
+                      src={photos[0]} 
+                      alt={displayName} 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <User className="w-16 h-16 text-[#A17B5E]" />
+                  )}
+                </div>
+                <div className="absolute -bottom-1 -right-1 bg-[#560406] text-[#A17B5E] p-2 rounded-full shadow-lg border-2 border-white">
+                  <CheckCircle2 className="w-4 h-4 text-[#A17B5E]" />
+                </div>
+              </div>
 
-          {/* Name & Vitals */}
-          <div className="space-y-1 pt-1">
-            <h2 
-              className="text-2xl sm:text-3xl font-bold text-[#161412] tracking-tight" 
-              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-            >
-              {displayName} · {age}
-            </h2>
-            <p className="text-xs text-[#6E6259] font-semibold flex items-center justify-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-[#A17B5E]" />
-              <span>{city}, India</span>
-              <span>•</span>
-              <span>{religion} {subCommunity ? `(${subCommunity})` : ''}</span>
-            </p>
-            <p className="text-xs font-bold text-[#560406]">{occupation}</p>
-            <p className="text-[11px] text-[#6E6259] font-medium">{email}</p>
-          </div>
-
-          {/* Action Row */}
-          <div className="pt-2 flex items-center justify-center gap-2.5 flex-wrap">
-            {onEditBioData && (
-              <button
-                type="button"
-                onClick={onEditBioData}
-                className="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 border border-[#A17B5E]/40 whitespace-nowrap"
-              >
-                <Edit3 className="w-3.5 h-3.5 text-[#D8B486]" />
-                <span>Edit Bio-Data</span>
-              </button>
-            )}
-
-            {currentUser ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setEditName(currentUser.user_metadata?.full_name || displayName);
-                  setEditEmail(currentUser.email || '');
-                  setShowEditAccountModal(true);
-                }}
-                className="py-3 px-4 rounded-2xl bg-[#F8F6F2] hover:bg-white text-[#560406] border border-[#E8DDD0] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs whitespace-nowrap"
-              >
-                <User className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Account</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={onOpenAuth}
-                className="py-3 px-5 rounded-2xl bg-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
-              >
-                <LogIn className="w-3.5 h-3.5 text-[#D8B486]" />
-                <span>Sign In</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* 2. VIP Membership Status Banner */}
-        <div 
-          onClick={onOpenPaywall}
-          className="rounded-[28px] p-6 bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#400204] text-[#F8F6F2] shadow-xl border border-[#A17B5E]/40 relative overflow-hidden cursor-pointer hover:brightness-105 transition-all group"
-        >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#A17B5E]/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="flex items-center justify-between relative z-10">
-            <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#A17B5E] flex items-center gap-1.5">
-                <Crown className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>MANNAT VIP PASS</span>
-              </span>
-              <h3 className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                Diamond Membership
-              </h3>
-              <p className="text-xs text-amber-100/80 font-medium">
-                Direct phone requests & verified matchmaking concierge
-              </p>
-            </div>
-            <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-[#A17B5E] group-hover:scale-110 transition-transform">
-              <ChevronRight className="w-5 h-5 text-white" />
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Bio & Personal Narrative */}
-        <div className="bg-white rounded-[28px] p-6 border border-[#E8DDD0] shadow-xs space-y-3">
-          <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
-              <span>Personal Narrative</span>
-            </span>
-            {onEditBioData && (
-              <button
-                type="button"
-                onClick={onEditBioData}
-                className="text-[11px] font-bold text-[#560406] hover:underline cursor-pointer"
-              >
-                Edit
-              </button>
-            )}
-          </div>
-          <p className="text-xs text-[#6E6259] leading-relaxed font-medium">
-            {bioText}
-          </p>
-        </div>
-
-        {/* 4. Complete Bio-Data Grid Cards */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-black uppercase tracking-wider text-[#560406]">
-              Candidate Dossier
-            </span>
-            {onEditBioData && (
-              <button
-                type="button"
-                onClick={onEditBioData}
-                className="text-xs font-bold text-[#560406] hover:underline cursor-pointer flex items-center gap-1"
-              >
-                <Edit3 className="w-3 h-3 text-[#A17B5E]" />
-                <span>Update All</span>
-              </button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3.5">
-            {/* Height & Physical */}
-            <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
-              <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Height & Vitals</span>
-              <p className="text-xs font-bold text-[#161412]">{height}</p>
-              <span className="text-[10px] text-[#6E6259]">Age: {age} yrs</span>
-            </div>
-
-            {/* Career & Profession */}
-            <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
-              <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Profession</span>
-              <p className="text-xs font-bold text-[#161412] truncate">{occupation}</p>
-              <span className="text-[10px] text-[#6E6259] truncate block">{city}</span>
-            </div>
-
-            {/* Education */}
-            <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
-              <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Education</span>
-              <p className="text-xs font-bold text-[#161412] truncate">{education}</p>
-              <span className="text-[10px] text-[#6E6259]">Verified Degree</span>
-            </div>
-
-            {/* Annual Income */}
-            <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
-              <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Annual Package</span>
-              <p className="text-xs font-bold text-[#560406] truncate">{incomeBracket}</p>
-              <span className="text-[10px] text-[#6E6259]">Verified Dossier</span>
-            </div>
-
-            {/* Cultural Community */}
-            <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
-              <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Community</span>
-              <p className="text-xs font-bold text-[#161412] truncate">{religion} · {subCommunity}</p>
-              <span className="text-[10px] text-[#6E6259]">Traditional Values</span>
-            </div>
-
-            {/* Lifestyle & Diet */}
-            <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
-              <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Diet & Lifestyle</span>
-              <p className="text-xs font-bold text-[#161412] truncate">{diet}</p>
-              <span className="text-[10px] text-[#6E6259]">Non-Smoker</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 5. Verified Photos & Media Showcase */}
-        <div className="bg-white rounded-[28px] p-6 border border-[#E8DDD0] shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-              <Camera className="w-3.5 h-3.5 text-[#A17B5E]" />
-              <span>Photo Gallery ({photos.length})</span>
-            </span>
-            {onEditBioData && (
-              <button
-                type="button"
-                onClick={onEditBioData}
-                className="text-[11px] font-bold text-[#560406] hover:underline cursor-pointer"
-              >
-                Manage Photos
-              </button>
-            )}
-          </div>
-
-          {photos.length > 0 ? (
-            <div className="grid grid-cols-3 gap-2.5">
-              {photos.map((url, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSelectedPhotoPreview(url)}
-                  className="aspect-square rounded-2xl overflow-hidden border border-[#E8DDD0] bg-[#F8F6F2] hover:opacity-90 active:scale-95 transition-all shadow-xs cursor-pointer relative group"
+              {/* Name & Vitals */}
+              <div className="space-y-1 pt-1">
+                <h2 
+                  className="text-2xl sm:text-3xl font-bold text-[#161412] tracking-tight" 
+                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
                 >
-                  <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-6 px-4 bg-[#F8F6F2] rounded-2xl border border-dashed border-[#E8DDD0] space-y-2">
-              <Camera className="w-8 h-8 text-[#A17B5E]/50 mx-auto" />
-              <p className="text-xs font-semibold text-[#6E6259]">No photos added yet</p>
-              {onEditBioData && (
-                <button
-                  type="button"
-                  onClick={onEditBioData}
-                  className="text-xs font-bold text-[#560406] hover:underline cursor-pointer"
-                >
-                  + Add Bio-Data Photos
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Intro Video Preview */}
-          {videoUrl && (
-            <div className="pt-2 border-t border-[#E8DDD0] space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#560406] block">
-                Video Introduction (30s)
-              </span>
-              <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-black shadow-inner">
-                <video src={videoUrl} controls playsInline className="w-full h-full object-cover" />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* 6. Privacy & Security Trust Center */}
-        <div className="bg-white rounded-[28px] border border-[#E8DDD0] divide-y divide-[#E8DDD0] shadow-xs overflow-hidden">
-          <button
-            type="button"
-            onClick={onOpenPrivacySettings}
-            className="w-full p-5 flex items-center justify-between hover:bg-[#F8F6F2] transition-colors text-left cursor-pointer"
-          >
-            <div className="flex items-center gap-3.5">
-              <div className="p-3 rounded-2xl bg-[#560406]/10 text-[#560406] border border-[#A17B5E]/30">
-                <ShieldCheck className="w-5 h-5 text-[#560406]" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-[#161412]">Privacy Controls & Blur Shield</h4>
-                <p className="text-[11px] text-[#6E6259]">Photo visibility, discovery mode & dossier privacy</p>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-[#6E6259]" />
-          </button>
-
-          <div className="p-5 flex items-center justify-between">
-            <div className="flex items-center gap-3.5">
-              <div className="p-3 rounded-2xl bg-[#560406]/10 text-[#560406] border border-[#A17B5E]/30">
-                <Lock className="w-5 h-5 text-[#560406]" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-[#161412]">Photo Blur Shield</h4>
-                <p className="text-[11px] text-[#6E6259]">
-                  {privacySettings.photo_privacy === 'visible_to_everyone' ? 'Public (Visible)' : 'Protected (Request to view)'}
+                  {displayName} · {age}
+                </h2>
+                <p className="text-xs text-[#6E6259] font-semibold flex items-center justify-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#A17B5E]" />
+                  <span>{city}, India</span>
+                  <span>•</span>
+                  <span>{religion} {subCommunity ? `(${subCommunity})` : ''}</span>
                 </p>
+                <p className="text-xs font-bold text-[#560406]">{occupation}</p>
+                <p className="text-[11px] text-[#6E6259] font-medium">{email}</p>
+              </div>
+
+              {/* Action Row */}
+              <div className="pt-2 flex items-center justify-center gap-2.5 flex-wrap">
+                {onEditBioData && (
+                  <button
+                    type="button"
+                    onClick={onEditBioData}
+                    className="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 border border-[#A17B5E]/40 whitespace-nowrap"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 text-[#D8B486]" />
+                    <span>Edit Bio-Data</span>
+                  </button>
+                )}
+
+                {currentUser ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditName(currentUser.user_metadata?.full_name || displayName);
+                      setEditEmail(currentUser.email || '');
+                      setShowEditAccountModal(true);
+                    }}
+                    className="py-3 px-4 rounded-2xl bg-[#F8F6F2] hover:bg-white text-[#560406] border border-[#E8DDD0] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs whitespace-nowrap"
+                  >
+                    <User className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <span>Account</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onOpenAuth}
+                    className="py-3 px-5 rounded-2xl bg-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
+                  >
+                    <LogIn className="w-3.5 h-3.5 text-[#D8B486]" />
+                    <span>Sign In</span>
+                  </button>
+                )}
               </div>
             </div>
-            <span className="text-[11px] font-bold text-[#560406] bg-[#A17B5E]/15 px-3 py-1 rounded-full border border-[#A17B5E]/30">
-              {privacySettings.photo_privacy === 'visible_to_everyone' ? 'Standard' : 'Private'}
-            </span>
-          </div>
-        </div>
 
-        {/* 7. Legal, Privacy & App Store Compliance Policies */}
-        <div className="bg-white rounded-[28px] border border-[#E8DDD0] p-5 shadow-xs space-y-3">
-          <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#A17B5E]" />
-              <span>Legal &amp; Safety Compliance</span>
-            </span>
-            <span className="text-[10px] font-bold text-[#A17B5E]">v1.0.0</span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 text-xs font-bold">
-            <button
-              type="button"
-              onClick={() => {
-                setLegalInitialDoc('privacy');
-                setShowLegalModal(true);
-              }}
-              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+            {/* 2. VIP Membership Status Banner */}
+            <div 
+              onClick={onOpenPaywall}
+              className="rounded-[28px] p-6 bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#400204] text-[#F8F6F2] shadow-xl border border-[#A17B5E]/40 relative overflow-hidden cursor-pointer hover:brightness-105 transition-all group"
             >
-              <span>Privacy Policy</span>
-              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setLegalInitialDoc('terms');
-                setShowLegalModal(true);
-              }}
-              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
-            >
-              <span>Terms &amp; EULA</span>
-              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setLegalInitialDoc('guidelines');
-                setShowLegalModal(true);
-              }}
-              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
-            >
-              <span>UGC &amp; Safety</span>
-              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setLegalInitialDoc('deletion');
-                setShowLegalModal(true);
-              }}
-              className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
-            >
-              <span>Account Rights</span>
-              <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
-            </button>
-          </div>
-        </div>
-
-        {/* 8. Danger Zone & Session Management */}
-        <div className="bg-white rounded-[28px] border border-rose-200 p-5 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-rose-700 flex items-center gap-1.5">
-                <Trash2 className="w-4 h-4 text-rose-600" />
-                <span>Delete Account &amp; Data</span>
-              </h4>
-              <p className="text-[11px] text-[#6E6259]">
-                Permanently erase your account, candidate profile, bio-data &amp; photos.
-              </p>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#A17B5E]/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex items-center justify-between relative z-10">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#A17B5E] flex items-center gap-1.5">
+                    <Crown className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <span>MANNAT VIP PASS</span>
+                  </span>
+                  <h3 className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Diamond Membership
+                  </h3>
+                  <p className="text-xs text-amber-100/80 font-medium">
+                    Direct phone requests &amp; verified matchmaking concierge
+                  </p>
+                </div>
+                <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-[#A17B5E] group-hover:scale-110 transition-transform">
+                  <ChevronRight className="w-5 h-5 text-white" />
+                </div>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowDeleteConfirmModal(true)}
-              className="py-2 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition-all cursor-pointer shrink-0"
-            >
-              Delete Account
-            </button>
-          </div>
 
-          {currentUser && (
-            <div className="pt-2 border-t border-rose-100 flex items-center justify-between">
-              <span className="text-xs font-semibold text-[#6E6259]">Active Session: {email}</span>
+            {/* 3. Privacy & Security Trust Center */}
+            <div className="bg-white rounded-[28px] border border-[#E8DDD0] divide-y divide-[#E8DDD0] shadow-xs overflow-hidden">
               <button
                 type="button"
-                onClick={onLogout}
-                className="text-xs font-bold text-rose-600 hover:underline cursor-pointer flex items-center gap-1"
+                onClick={onOpenPrivacySettings}
+                className="w-full p-5 flex items-center justify-between hover:bg-[#F8F6F2] transition-colors text-left cursor-pointer"
               >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Log Out</span>
+                <div className="flex items-center gap-3.5">
+                  <div className="p-3 rounded-2xl bg-[#560406]/10 text-[#560406] border border-[#A17B5E]/30">
+                    <ShieldCheck className="w-5 h-5 text-[#560406]" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#161412]">Privacy Controls &amp; Blur Shield</h4>
+                    <p className="text-[11px] text-[#6E6259]">Photo visibility, discovery mode &amp; dossier privacy</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#6E6259]" />
               </button>
-            </div>
-          )}
-        </div>
 
+              <div className="p-5 flex items-center justify-between">
+                <div className="flex items-center gap-3.5">
+                  <div className="p-3 rounded-2xl bg-[#560406]/10 text-[#560406] border border-[#A17B5E]/30">
+                    <Lock className="w-5 h-5 text-[#560406]" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-[#161412]">Photo Blur Shield</h4>
+                    <p className="text-[11px] text-[#6E6259]">
+                      {privacySettings.photo_privacy === 'visible_to_everyone' ? 'Public (Visible)' : 'Protected (Request to view)'}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-bold text-[#560406] bg-[#A17B5E]/15 px-3 py-1 rounded-full border border-[#A17B5E]/30">
+                  {privacySettings.photo_privacy === 'visible_to_everyone' ? 'Standard' : 'Private'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Bio Narrative, Complete Dossier Grid, Photo Gallery, Legal & Danger Zone */}
+          <div className="lg:col-span-7 space-y-6">
+            {/* Bio & Personal Narrative */}
+            <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-[#E8DDD0] shadow-xs space-y-3">
+              <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2.5">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
+                  <span>Personal Narrative</span>
+                </span>
+                {onEditBioData && (
+                  <button
+                    type="button"
+                    onClick={onEditBioData}
+                    className="text-[11px] font-bold text-[#560406] hover:underline cursor-pointer"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+              <p className="text-xs sm:text-sm text-[#6E6259] leading-relaxed font-medium">
+                {bioText}
+              </p>
+            </div>
+
+            {/* Complete Bio-Data Grid Cards */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs font-black uppercase tracking-wider text-[#560406]">
+                  Candidate Dossier
+                </span>
+                {onEditBioData && (
+                  <button
+                    type="button"
+                    onClick={onEditBioData}
+                    className="text-xs font-bold text-[#560406] hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <Edit3 className="w-3 h-3 text-[#A17B5E]" />
+                    <span>Update All</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+                {/* Height & Physical */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Height &amp; Vitals</span>
+                  <p className="text-xs font-bold text-[#161412]">{height}</p>
+                  <span className="text-[10px] text-[#6E6259]">Age: {age} yrs</span>
+                </div>
+
+                {/* Career & Profession */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Profession</span>
+                  <p className="text-xs font-bold text-[#161412] truncate">{occupation}</p>
+                  <span className="text-[10px] text-[#6E6259] truncate block">{city}</span>
+                </div>
+
+                {/* Education */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Education</span>
+                  <p className="text-xs font-bold text-[#161412] truncate">{education}</p>
+                  <span className="text-[10px] text-[#6E6259]">Verified Degree</span>
+                </div>
+
+                {/* Annual Income */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Annual Package</span>
+                  <p className="text-xs font-bold text-[#560406] truncate">{incomeBracket}</p>
+                  <span className="text-[10px] text-[#6E6259]">Verified Dossier</span>
+                </div>
+
+                {/* Cultural Community */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Community</span>
+                  <p className="text-xs font-bold text-[#161412] truncate">{religion} · {subCommunity}</p>
+                  <span className="text-[10px] text-[#6E6259]">Traditional Values</span>
+                </div>
+
+                {/* Lifestyle & Diet */}
+                <div className="bg-white p-4 rounded-2xl border border-[#E8DDD0] shadow-xs space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-[#6E6259] block">Diet &amp; Lifestyle</span>
+                  <p className="text-xs font-bold text-[#161412] truncate">{diet}</p>
+                  <span className="text-[10px] text-[#6E6259]">Non-Smoker</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Verified Photos & Media Showcase */}
+            <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-[#E8DDD0] shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2.5">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
+                  <Camera className="w-3.5 h-3.5 text-[#A17B5E]" />
+                  <span>Photo Gallery ({photos.length})</span>
+                </span>
+                {onEditBioData && (
+                  <button
+                    type="button"
+                    onClick={onEditBioData}
+                    className="text-[11px] font-bold text-[#560406] hover:underline cursor-pointer"
+                  >
+                    Manage Photos
+                  </button>
+                )}
+              </div>
+
+              {photos.length > 0 ? (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                  {photos.map((url, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedPhotoPreview(url)}
+                      className="aspect-square rounded-2xl overflow-hidden border border-[#E8DDD0] bg-[#F8F6F2] hover:opacity-90 active:scale-95 transition-all shadow-xs cursor-pointer relative group"
+                    >
+                      <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 px-4 bg-[#F8F6F2] rounded-2xl border border-dashed border-[#E8DDD0] space-y-2">
+                  <Camera className="w-8 h-8 text-[#A17B5E]/50 mx-auto" />
+                  <p className="text-xs font-semibold text-[#6E6259]">No photos added yet</p>
+                  {onEditBioData && (
+                    <button
+                      type="button"
+                      onClick={onEditBioData}
+                      className="text-xs font-bold text-[#560406] hover:underline cursor-pointer"
+                    >
+                      + Add Bio-Data Photos
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Intro Video Preview */}
+              {videoUrl && (
+                <div className="pt-2 border-t border-[#E8DDD0] space-y-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#560406] block">
+                    Video Introduction (30s)
+                  </span>
+                  <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-black shadow-inner">
+                    <video src={videoUrl} controls playsInline className="w-full h-full object-cover" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Legal, Privacy & App Store Compliance Policies */}
+            <div className="bg-white rounded-[28px] border border-[#E8DDD0] p-6 shadow-xs space-y-3">
+              <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2.5">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#A17B5E]" />
+                  <span>Legal &amp; Safety Compliance</span>
+                </span>
+                <span className="text-[10px] font-bold text-[#A17B5E]">v1.0.0</span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLegalInitialDoc('privacy');
+                    setShowLegalModal(true);
+                  }}
+                  className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+                >
+                  <span>Privacy Policy</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLegalInitialDoc('terms');
+                    setShowLegalModal(true);
+                  }}
+                  className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+                >
+                  <span>Terms &amp; EULA</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLegalInitialDoc('guidelines');
+                    setShowLegalModal(true);
+                  }}
+                  className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+                >
+                  <span>UGC &amp; Safety</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLegalInitialDoc('deletion');
+                    setShowLegalModal(true);
+                  }}
+                  className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:bg-[#F3EDE2] text-[#161412] flex items-center justify-between transition cursor-pointer text-left"
+                >
+                  <span>Account Rights</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#A17B5E]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Danger Zone & Session Management */}
+            <div className="bg-white rounded-[28px] border border-rose-200 p-6 shadow-xs space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="space-y-0.5">
+                  <h4 className="text-xs font-bold text-rose-700 flex items-center gap-1.5">
+                    <Trash2 className="w-4 h-4 text-rose-600" />
+                    <span>Delete Account &amp; Data</span>
+                  </h4>
+                  <p className="text-[11px] text-[#6E6259]">
+                    Permanently erase your account, candidate profile, bio-data &amp; photos.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirmModal(true)}
+                  className="py-2 px-3.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition-all cursor-pointer shrink-0"
+                >
+                  Delete Account
+                </button>
+              </div>
+
+              {currentUser && (
+                <div className="pt-2 border-t border-rose-100 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-[#6E6259]">Active Session: {email}</span>
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    className="text-xs font-bold text-rose-600 hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
       </div>
 
       {/* Fullscreen Photo Lightbox Modal */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Home, Heart, User, SlidersHorizontal, ArrowLeft, Eye } from 'lucide-react';
+import { Home, Heart, User, SlidersHorizontal, ArrowLeft, Eye, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile, FilterCriteria, PrivacySettings } from '../types';
 import { InstaVibeFeed } from './InstaVibeFeed';
@@ -359,49 +359,137 @@ export const MainApp: React.FC = () => {
     >
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
-      {/* Main Responsive Mobile App Container */}
-      <div className="w-full max-w-md mx-auto flex-1 min-h-[100dvh] bg-[#F8F6F2] flex flex-col relative">
+      {/* Main Responsive Web App Container */}
+      <div className="w-full max-w-7xl mx-auto flex-1 min-h-[100dvh] bg-[#F8F6F2] flex flex-col relative">
         
-        {/* Luxury Fixed App Header (Constant on all pages) */}
+        {/* Luxury Fixed App Header (Responsive for Mobile & Desktop Web) */}
         {currentView !== 'auth' && currentView !== 'onboarding' && (
-          <header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-[#F8F6F2]/98 backdrop-blur-xl border-b border-[#E8DDD0] px-5 pt-[max(1.25rem,calc(env(safe-area-inset-top)+0.5rem))] pb-3.5 z-40 shadow-xs flex items-center justify-between">
-            <div className="w-16 flex items-center justify-start">
-              {currentView !== 'home' && (
+          <header className="fixed top-0 inset-x-0 w-full bg-[#F8F6F2]/98 backdrop-blur-xl border-b border-[#E8DDD0] z-40 shadow-xs">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+              
+              {/* Left Brand Lockup & Mobile Back */}
+              <div className="flex items-center gap-3 shrink-0">
+                {currentView !== 'home' && (
+                  <button
+                    type="button"
+                    onClick={goBack}
+                    className="flex items-center gap-1.5 text-xs font-bold text-[#560406] hover:text-[#730C0F] transition-all px-3 py-1.5 rounded-full bg-white border border-[#E8DDD0] active:scale-95 cursor-pointer shadow-xs"
+                    title="Go Back"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5 text-[#560406]" />
+                    <span className="text-[11px] font-extrabold hidden sm:inline">Back</span>
+                  </button>
+                )}
+
+                <a href="/" className="flex flex-col text-left group">
+                  <span className="text-xs sm:text-sm italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
+                  <span className="text-xl sm:text-2xl font-normal tracking-[0.24em] uppercase text-[#560406] group-hover:text-[#730C0F] transition-colors leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                    MANNAT
+                  </span>
+                  <span className="hidden md:inline text-[7px] uppercase tracking-[0.3em] font-bold text-[#A17B5E] -mt-0.5">
+                    Bespoke Matchmaking
+                  </span>
+                </a>
+              </div>
+
+              {/* Center Desktop Navigation Tabs */}
+              <nav className="hidden md:flex items-center gap-1.5 bg-white/80 p-1 rounded-full border border-[#E8DDD0] shadow-xs">
                 <button
                   type="button"
-                  onClick={goBack}
-                  className="flex items-center gap-1.5 text-xs font-bold text-[#560406] hover:text-[#730C0F] transition-all px-3 py-1.5 rounded-full bg-white border border-[#E8DDD0] active:scale-95 cursor-pointer shadow-xs"
-                  title="Go Back"
+                  onClick={() => navigateTo('home')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    currentView === 'home'
+                      ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                      : 'text-[#6E6259] hover:text-[#560406] hover:bg-neutral-100/60'
+                  }`}
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#560406]" />
-                  <span className="text-[11px] font-extrabold">Back</span>
+                  <Home className="w-3.5 h-3.5" />
+                  <span>Discover Feed</span>
                 </button>
-              )}
-            </div>
 
-            {/* Brand Typographic Lockup */}
-            <div className="flex flex-col items-center">
-              <span className="text-xs italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
-              <span className="text-xl font-normal tracking-[0.24em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                MANNAT
-              </span>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('for-you')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    currentView === 'for-you'
+                      ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                      : 'text-[#6E6259] hover:text-[#560406] hover:bg-neutral-100/60'
+                  }`}
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>For You</span>
+                </button>
 
-            <div className="w-16 flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() => setShowFiltersModal(true)}
-                className="p-2.5 rounded-full hover:bg-white text-[#560406] transition-colors border border-[#E8DDD0] cursor-pointer shadow-xs bg-white/80"
-                title="Search Filters"
-              >
-                <SlidersHorizontal className="w-4 h-4 text-[#560406]" />
-              </button>
+                <button
+                  type="button"
+                  onClick={() => navigateTo('connections')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    currentView === 'connections'
+                      ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                      : 'text-[#6E6259] hover:text-[#560406] hover:bg-neutral-100/60'
+                  }`}
+                >
+                  <Heart className="w-3.5 h-3.5" />
+                  <span>Alliances</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigateTo('profile')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    currentView === 'profile'
+                      ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                      : 'text-[#6E6259] hover:text-[#560406] hover:bg-neutral-100/60'
+                  }`}
+                >
+                  <User className="w-3.5 h-3.5" />
+                  <span>My Profile</span>
+                </button>
+              </nav>
+
+              {/* Right Action Tools */}
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowFiltersModal(true)}
+                  className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full bg-white hover:bg-neutral-50 text-[#560406] transition-colors border border-[#E8DDD0] cursor-pointer shadow-xs text-xs font-bold"
+                  title="Search Filters"
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#560406]" />
+                  <span className="hidden sm:inline">Filters</span>
+                  {activeFilters && (
+                    <span className="w-2 h-2 rounded-full bg-[#560406]" />
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowPaywallModal(true)}
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-bold transition shadow-xs cursor-pointer border border-[#A17B5E]/40"
+                >
+                  <Crown className="w-3.5 h-3.5 text-[#D8B486]" />
+                  <span>VIP Memberships</span>
+                </button>
+
+                <a
+                  href="https://apps.apple.com/app/id6812288373"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black hover:bg-neutral-900 text-white text-[11px] font-bold transition border border-white/20 shadow-xs"
+                >
+                  <svg className="w-3 h-3 fill-current shrink-0" viewBox="0 0 170 170">
+                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
+                  </svg>
+                  <span>iOS App</span>
+                </a>
+              </div>
+
             </div>
           </header>
         )}
 
         {/* View Routing & Dynamic View Transitions */}
-        <main className={`flex-1 w-full flex flex-col justify-start relative overflow-x-hidden ${currentView !== 'auth' && currentView !== 'onboarding' ? 'pt-[calc(env(safe-area-inset-top)+4.25rem)]' : ''}`}>
+        <main className={`flex-1 w-full flex flex-col justify-start relative overflow-x-hidden ${currentView !== 'auth' && currentView !== 'onboarding' ? 'pt-[calc(env(safe-area-inset-top)+4.5rem)] sm:pt-24' : ''}`}>
           <AnimatePresence mode="wait" custom={slideDirection}>
             <motion.div
               key={currentView}
@@ -556,9 +644,9 @@ export const MainApp: React.FC = () => {
         onSelectTier={(tier) => triggerToast(`Upgraded to Mannat ${tier.toUpperCase()} Membership! 👑`, 'sparkle')}
       />
 
-      {/* Ultra-Luxury Frosted Floating Bottom Dock Navigation Bar */}
+      {/* Ultra-Luxury Frosted Floating Bottom Dock Navigation Bar (Mobile Only - Desktop uses Top Header Nav) */}
       {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && !showFiltersModal && !showPrivacyModal && !showPaywallModal && (
-        <div className="fixed bottom-[max(1rem,calc(env(safe-area-inset-bottom)+0.5rem))] left-1/2 -translate-x-1/2 w-[92%] max-w-sm glass-dock-vara rounded-full z-40 px-3.5 py-2 flex items-center justify-around shadow-2xl border border-[#E8DDD0]">
+        <div className="md:hidden fixed bottom-[max(1rem,calc(env(safe-area-inset-bottom)+0.5rem))] left-1/2 -translate-x-1/2 w-[92%] max-w-sm glass-dock-vara rounded-full z-40 px-3.5 py-2 flex items-center justify-around shadow-2xl border border-[#E8DDD0]">
           <button
             type="button"
             onClick={() => navigateTo('home')}

@@ -322,7 +322,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="w-full max-w-md h-[92vh] sm:h-[840px] bg-[#F8F6F2] text-[#161412] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8DDD0] shadow-2xl relative"
+          className="w-full max-w-md md:max-w-2xl lg:max-w-3xl h-[92vh] sm:h-[840px] sm:max-h-[88vh] bg-[#F8F6F2] text-[#161412] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8DDD0] shadow-2xl relative"
         >
           {/* Top Header with Back Button & Royal Branding */}
           <div className="px-5 pt-4 pb-3.5 bg-[#F8F6F2] border-b border-[#E8DDD0] sticky top-0 z-20 flex items-center justify-between shadow-xs">

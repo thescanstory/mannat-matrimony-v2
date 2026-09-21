@@ -203,48 +203,51 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-md mx-auto flex flex-col justify-start pb-44 select-none font-sans px-5 sm:px-6 pt-3 space-y-5">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans px-4 sm:px-6 lg:px-8 pt-3 space-y-6">
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
-      <div className="px-1 pt-1">
-        <h1 className="text-2xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Connections</h1>
-        <p className="text-[11px] text-[#6E6259] font-semibold">Mutual Waves & Direct Discussions</p>
-      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E8DDD0] pb-4">
+        <div className="px-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Connections &amp; Alliances</h1>
+          <p className="text-xs text-[#6E6259] font-semibold">Mutual Waves, Introductions &amp; Direct Discussions</p>
+        </div>
 
-      <div className="bg-white p-1.5 rounded-2xl border border-[#E8DDD0] grid grid-cols-3 gap-1.5 shadow-xs">
-        {(['Accepted', 'Sent', 'Received'] as const).map((tab) => {
-          const isActive = activeTab === tab;
-          const count = tab === 'Accepted' ? acceptedList.length : tab === 'Sent' ? sentList.length : receivedList.length;
+        <div className="bg-white p-1.5 rounded-2xl border border-[#E8DDD0] grid grid-cols-3 gap-1.5 shadow-xs shrink-0 max-w-md w-full sm:w-auto">
+          {(['Accepted', 'Sent', 'Received'] as const).map((tab) => {
+            const isActive = activeTab === tab;
+            const count = tab === 'Accepted' ? acceptedList.length : tab === 'Sent' ? sentList.length : receivedList.length;
 
-          return (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(tab)}
-              className={`py-2.5 px-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
-                isActive ? 'bg-[#560406] text-[#A17B5E] shadow-sm' : 'text-[#6E6259] hover:text-[#161412]'
-              }`}
-            >
-              <span>{tab}</span>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                isActive ? 'bg-[#A17B5E] text-[#260102]' : 'bg-[#F8F6F2] text-[#6E6259] border border-[#E8DDD0]'
-              }`}>
-                {count}
-              </span>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`py-2 px-3 sm:px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
+                  isActive ? 'bg-[#560406] text-[#A17B5E] shadow-sm' : 'text-[#6E6259] hover:text-[#161412]'
+                }`}
+              >
+                <span>{tab}</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                  isActive ? 'bg-[#A17B5E] text-[#260102]' : 'bg-[#F8F6F2] text-[#6E6259] border border-[#E8DDD0]'
+                }`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="space-y-4 flex-1">
         {activeTab === 'Accepted' && (
-          <div className="space-y-4">
+          <div>
             {acceptedList.length === 0 ? (
-              <div className="py-12 text-center text-[#6E6259] text-xs font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0]">
-                No accepted connections yet. Accept interest waves to start conversations.
+              <div className="py-16 text-center text-[#6E6259] text-sm font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0] max-w-xl mx-auto shadow-xs">
+                No accepted connections yet. Accept interest waves or express interest in profiles to start conversations.
               </div>
             ) : (
-              acceptedList.map((profile) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {acceptedList.map((profile) => (
                 <div
                   key={profile.id}
                   onClick={() => onOpenProfile(profile)}
@@ -302,111 +305,116 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
                     </button>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
         {activeTab === 'Sent' && (
-          <div className="space-y-4">
+          <div>
             {sentList.length === 0 ? (
-              <div className="py-12 text-center text-[#6E6259] text-xs font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0]">
+              <div className="py-16 text-center text-[#6E6259] text-sm font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0] max-w-xl mx-auto shadow-xs">
                 You haven't sent any interest waves yet. Explore candidate profiles in the feed to send a wave.
               </div>
             ) : (
-              sentList.map((profile) => (
-                <div
-                  key={profile.id}
-                  onClick={() => onOpenProfile(profile)}
-                  className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-4 cursor-pointer hover:shadow-md transition-all text-left"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-18 h-18 rounded-2xl overflow-hidden bg-[#260102] shrink-0 shadow-xs border border-[#E8DDD0]">
-                      <img
-                        src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                        alt={profile.display_name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-base font-serif-editorial font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{profile.display_name}</h3>
-                        <span className="text-[10px] text-[#A17B5E] bg-[#560406]/5 font-bold px-2.5 py-0.5 rounded-full border border-[#A17B5E]/30 shrink-0">
-                          Wave Pending
-                        </span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {sentList.map((profile) => (
+                  <div
+                    key={profile.id}
+                    onClick={() => onOpenProfile(profile)}
+                    className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-4 cursor-pointer hover:shadow-md transition-all text-left"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-18 h-18 rounded-2xl overflow-hidden bg-[#260102] shrink-0 shadow-xs border border-[#E8DDD0]">
+                        <img
+                          src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                          alt={profile.display_name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <p className="text-xs text-[#6E6259] font-medium mt-0.5 truncate">{profile.age} yrs • {profile.occupation}</p>
-                      <p className="text-xs text-[#161412] font-semibold mt-0.5 truncate">{profile.city}</p>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-base font-serif-editorial font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{profile.display_name}</h3>
+                          <span className="text-[10px] text-[#A17B5E] bg-[#560406]/5 font-bold px-2.5 py-0.5 rounded-full border border-[#A17B5E]/30 shrink-0">
+                            Wave Pending
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6E6259] font-medium mt-0.5 truncate">{profile.age} yrs • {profile.occupation}</p>
+                        <p className="text-xs text-[#161412] font-semibold mt-0.5 truncate">{profile.city}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-[#E8DDD0]">
+                      <span className="text-[11px] text-[#6E6259]">Sent 2 days ago</span>
+                      <button
+                        type="button"
+                        onClick={(e) => handleCancelSent(profile, e)}
+                        className="text-xs text-rose-700 hover:text-rose-800 font-bold px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+                      >
+                        Withdraw Wave
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-[#E8DDD0]">
-                    <span className="text-[11px] text-[#6E6259]">Sent 2 days ago</span>
-                    <button
-                      type="button"
-                      onClick={(e) => handleCancelSent(profile, e)}
-                      className="text-xs text-rose-700 hover:text-rose-800 font-bold px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
-                    >
-                      Withdraw Wave
-                    </button>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}
 
         {activeTab === 'Received' && (
-          <div className="space-y-4">
+          <div>
             {receivedList.length === 0 ? (
-              <div className="py-12 text-center text-[#6E6259] text-xs font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0]">
+              <div className="py-16 text-center text-[#6E6259] text-sm font-medium bg-white rounded-3xl p-8 border border-[#E8DDD0] max-w-xl mx-auto shadow-xs">
                 No pending interest waves at the moment. Keep your profile updated to attract compatible matches!
               </div>
             ) : (
-              receivedList.map((profile) => (
-                <div
-                  key={profile.id}
-                  onClick={() => onOpenProfile(profile)}
-                  className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-4 cursor-pointer hover:shadow-md transition-all text-left"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="relative w-18 h-18 rounded-2xl overflow-hidden bg-[#260102] shrink-0 shadow-xs border border-[#E8DDD0]">
-                      <img
-                        src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
-                        alt={profile.display_name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-base font-serif-editorial font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{profile.display_name}</h3>
-                        <span className="text-[10px] text-emerald-800 bg-emerald-50 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
-                          New Wave ✨
-                        </span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {receivedList.map((profile) => (
+                  <div
+                    key={profile.id}
+                    onClick={() => onOpenProfile(profile)}
+                    className="bg-white rounded-[28px] p-5 border border-[#E8DDD0] shadow-xs space-y-4 cursor-pointer hover:shadow-md transition-all text-left"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-18 h-18 rounded-2xl overflow-hidden bg-[#260102] shrink-0 shadow-xs border border-[#E8DDD0]">
+                        <img
+                          src={profile.photos?.[0] || profile.creator_vouch?.creator_avatar_url}
+                          alt={profile.display_name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                      <p className="text-xs text-[#6E6259] font-medium mt-0.5 truncate">{profile.age} yrs • {profile.occupation}</p>
-                      <p className="text-xs text-[#161412] font-semibold mt-0.5 truncate">{profile.city}</p>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-base font-serif-editorial font-bold text-[#161412] truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{profile.display_name}</h3>
+                          <span className="text-[10px] text-emerald-800 bg-emerald-50 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                            New Wave ✨
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#6E6259] font-medium mt-0.5 truncate">{profile.age} yrs • {profile.occupation}</p>
+                        <p className="text-xs text-[#161412] font-semibold mt-0.5 truncate">{profile.city}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-[#E8DDD0]">
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeclineReceived(profile, e)}
+                        className="py-2.5 px-3 rounded-xl bg-[#F8F6F2] hover:bg-white text-[#6E6259] text-xs font-bold transition-all border border-[#E8DDD0] cursor-pointer"
+                      >
+                        Pass
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleAcceptReceived(profile, e)}
+                        className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all cursor-pointer shadow-xs border border-[#A17B5E]/40"
+                      >
+                        Accept Wave
+                      </button>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-[#E8DDD0]">
-                    <button
-                      type="button"
-                      onClick={(e) => handleDeclineReceived(profile, e)}
-                      className="py-2.5 px-3 rounded-xl bg-[#F8F6F2] hover:bg-white text-[#6E6259] text-xs font-bold transition-all border border-[#E8DDD0] cursor-pointer"
-                    >
-                      Pass
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => handleAcceptReceived(profile, e)}
-                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all cursor-pointer shadow-xs border border-[#A17B5E]/40"
-                    >
-                      Accept Wave
-                    </button>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}

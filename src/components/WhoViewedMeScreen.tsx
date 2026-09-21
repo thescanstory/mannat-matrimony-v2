@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, Eye, Crown, Sparkles } from 'lucide-react';
+import { Lock, Crown, Sparkles } from 'lucide-react';
 import type { Profile } from '../types';
 
 interface WhoViewedMeScreenProps {
@@ -14,58 +14,50 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
   onOpenProfile
 }) => {
   return (
-    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-md mx-auto flex flex-col justify-start pb-44 select-none font-sans px-5 sm:px-6 pt-3 space-y-5">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans px-4 sm:px-6 lg:px-8 pt-3 space-y-6">
       {/* Paywall Banner Card */}
-      <div className="bg-white rounded-[32px] p-6 sm:p-7 border border-[#E8DDD0] space-y-5 text-center shadow-xs relative overflow-hidden">
-        <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-3.5">
-          <div className="text-left">
-            <h1 className="text-2xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>For You</h1>
-            <p className="text-[11px] text-[#6E6259] font-semibold">12 Premium Profile Viewers</p>
+      <div className="bg-white rounded-[32px] p-6 sm:p-8 lg:p-10 border border-[#E8DDD0] shadow-xs relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="space-y-2 text-left max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] bg-[#560406]/10 px-3 py-1 rounded-full border border-[#A17B5E]/30">
+                RECENT PROFILE VISITORS
+              </span>
+              <span className="px-3 py-1 rounded-full bg-[#560406] text-[#A17B5E] text-[10px] font-extrabold flex items-center gap-1 shadow-xs border border-[#A17B5E]/30">
+                <Crown className="w-3 h-3 text-[#A17B5E]" />
+                <span>VIP Priority</span>
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+              Who's interested in your profile?
+            </h1>
+            <p className="text-xs sm:text-sm text-[#6E6259] font-medium leading-relaxed">
+              12 Premium verified candidates recently viewed your dossier. Upgrade to Gold or Diamond to unlock unblurred high-resolution photos, financial bio-data, and direct contact numbers.
+            </p>
           </div>
-          <button
-            type="button"
-            onClick={onOpenPaywall}
-            className="px-3.5 py-1.5 rounded-full bg-[#560406] text-[#A17B5E] text-xs font-extrabold flex items-center gap-1.5 shadow-xs cursor-pointer hover:brightness-110 transition-colors whitespace-nowrap active:scale-95 shrink-0 border border-[#A17B5E]/30"
-          >
-            <Crown className="w-3.5 h-3.5 text-[#A17B5E]" />
-            <span>VIP Member</span>
-          </button>
-        </div>
 
-        <div className="w-14 h-14 rounded-full bg-[#560406]/10 border border-[#A17B5E]/30 flex items-center justify-center mx-auto text-[#560406] shadow-xs">
-          <Eye className="w-7 h-7 text-[#560406]" />
+          <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-3">
+            <button
+              type="button"
+              onClick={onOpenPaywall}
+              className="py-4 px-6 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap border border-[#A17B5E]/40"
+            >
+              <Sparkles className="w-4 h-4 text-[#D8B486]" />
+              <span>Unlock All 12 Profiles (₹499/mo)</span>
+            </button>
+            <p className="text-[11px] text-center text-[#6E6259]">Instant unblur &amp; direct concierge access</p>
+          </div>
         </div>
-
-        <div className="space-y-1.5">
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#560406]">
-            RECENT PROFILE VISITORS
-          </span>
-          <h2 className="text-2xl font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-            Who's interested in your profile?
-          </h2>
-          <p className="text-xs text-[#6E6259] font-medium max-w-xs mx-auto leading-relaxed">
-            Upgrade to Gold or Diamond to unlock clear photos, salary details, and direct contact numbers.
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={onOpenPaywall}
-          className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap border border-[#A17B5E]/40"
-        >
-          <Sparkles className="w-4 h-4 text-[#D8B486]" />
-          <span className="truncate">Unlock All 12 Profiles (from ₹499/mo)</span>
-        </button>
       </div>
 
       {/* Viewers & Shortlisted Grid */}
       <div className="space-y-4 flex-1">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-lg font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Recent Profile Viewers</h3>
+          <h3 className="text-xl font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Recent Profile Viewers</h3>
           <span className="text-xs text-[#560406] font-bold">12 Total Views</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {profiles.map((profile, idx) => {
             const isLocked = idx >= 1; // Lock for demo
 

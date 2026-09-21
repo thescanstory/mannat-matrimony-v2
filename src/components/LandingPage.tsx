@@ -421,7 +421,7 @@ export const LandingPage: React.FC = () => {
                 className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center justify-center gap-2 shadow-md border border-[#A17B5E]/40"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
-                <span>Open Member Web App →</span>
+                <span>Open Web App →</span>
               </a>
               <button
                 onClick={scrollToHeroForm}
@@ -565,7 +565,7 @@ export const LandingPage: React.FC = () => {
                   href="/app"
                   className="font-bold text-[#D8B486] hover:text-white underline underline-offset-4 flex items-center gap-1 transition"
                 >
-                  <span>Member Web App</span>
+                  <span>Web App</span>
                   <ArrowRight className="w-3 h-3 text-[#D8B486]" />
                 </a>
               </div>
@@ -1123,7 +1123,7 @@ export const LandingPage: React.FC = () => {
                 <span>iOS App Store</span>
                 <ExternalLink className="w-3 h-3 text-[#D8B486]" />
               </a>
-              <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Member Web App</a>
+              <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Web App</a>
               <a href="/admin" className="text-[#A17B5E] hover:underline">Admin Portal</a>
             </div>
           </div>

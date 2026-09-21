@@ -191,7 +191,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     const isBioExpanded = expandedBios[p.id] ?? false;
 
     return (
-      <div className="min-h-screen bg-[#F8F6F2] text-[#161412] max-w-md mx-auto flex flex-col justify-between pb-24 select-none relative font-sans">
+      <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-md md:max-w-4xl lg:max-w-5xl mx-auto flex flex-col justify-between pb-24 select-none relative font-sans">
         <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
         {/* Full Screen Edge-to-Edge Vertical Video Hero */}
@@ -421,7 +421,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="min-h-screen bg-[#F8F6F2] text-[#161412] max-w-md mx-auto flex flex-col justify-start pb-44 select-none font-sans relative"
+      className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans relative px-4 sm:px-6 lg:px-8"
     >
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
@@ -528,7 +528,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
           }
 
           return (
-            <div className="grid grid-cols-1 gap-7 pb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-12 max-w-7xl mx-auto">
               {visibleProfiles.map((profile) => {
                 const isBioExpanded = expandedBios[profile.id] ?? false;
 

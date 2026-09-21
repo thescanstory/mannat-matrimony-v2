@@ -194,7 +194,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-          className="w-full max-w-md h-[92vh] sm:h-[840px] bg-[#F8F6F2] text-[#161412] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8DDD0] shadow-2xl relative"
+          className="w-full max-w-md md:max-w-2xl lg:max-w-3xl h-[92vh] sm:h-auto sm:max-h-[88vh] bg-[#F8F6F2] text-[#161412] rounded-t-[36px] sm:rounded-[36px] overflow-hidden flex flex-col justify-between select-none font-sans border border-[#E8DDD0] shadow-2xl relative"
         >
           {/* Header */}
           <div className="px-5 pt-4 pb-3.5 bg-[#F8F6F2] border-b border-[#E8DDD0] flex items-center justify-between shadow-xs sticky top-0 z-20">
