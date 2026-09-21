@@ -17,7 +17,7 @@ export const APPLE_IAP_PRODUCTS: Record<string, IAPProduct> = {
     id: 'vip.mannat.sachet49',
     title: 'Instant Profile Unlock',
     description: 'Unlock 1 candidate profile with full bio-data & salary reveal',
-    price: '$0.99',
+    price: '₹49',
     priceAmount: 49,
     type: 'consumable'
   },
@@ -26,7 +26,7 @@ export const APPLE_IAP_PRODUCTS: Record<string, IAPProduct> = {
     id: 'vip.mannat.sub.gold',
     title: 'Mannat Gold Membership',
     description: 'Unlimited Interest Waves & Verified Phone Numbers',
-    price: '$19.99',
+    price: '₹1,999',
     priceAmount: 1999,
     period: '/ month',
     type: 'subscription'
@@ -35,7 +35,7 @@ export const APPLE_IAP_PRODUCTS: Record<string, IAPProduct> = {
     id: 'vip.mannat.sub.diamond',
     title: 'Mannat Diamond Membership',
     description: 'In-App Video Calls, Concierge Priority & Gold Verified Badge',
-    price: '$29.99',
+    price: '₹2,999',
     priceAmount: 2999,
     period: '/ month',
     type: 'subscription'
@@ -44,7 +44,7 @@ export const APPLE_IAP_PRODUCTS: Record<string, IAPProduct> = {
     id: 'vip.mannat.sub.platinum',
     title: 'Mannat Platinum Membership',
     description: 'Profile Spotlight, Golden Halo Ring & Personal Concierge',
-    price: '$49.99',
+    price: '₹4,999',
     priceAmount: 4999,
     period: '/ month',
     type: 'subscription'

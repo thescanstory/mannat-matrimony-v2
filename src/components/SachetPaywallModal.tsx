@@ -183,7 +183,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
                   </div>
                 ) : (
                   <>
-                    <span>Unlock for ₹49 ($0.99)</span>
+                    <span>Unlock Profile for ₹49</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
