@@ -381,14 +381,30 @@ export function App() {
         deletedIds.push(profileId);
         localStorage.setItem('mannat_admin_deleted_ids', JSON.stringify(deletedIds));
       }
+
+      // Also remove from any local profile cache
+      const userPStr = localStorage.getItem('mannat_user_profile');
+      if (userPStr) {
+        const userP = JSON.parse(userPStr);
+        if (userP.id === profileId || userP.user_id === profileId) {
+          localStorage.removeItem('mannat_user_profile');
+          localStorage.removeItem('mannat_active_user');
+        }
+      }
     } catch {}
 
     try {
-      await supabase.from('profiles').delete().eq('id', profileId);
+      // Cascade delete across all tables in Supabase cloud
+      await supabase.from('profiles').delete().or(`id.eq.${profileId},user_id.eq.${profileId}`);
+      await supabase.from('callback_requests').delete().or(`target_profile_id.eq.${profileId},id.eq.${profileId}`);
+      await supabase.from('matches').delete().or(`profile_a.eq.${profileId},profile_b.eq.${profileId}`);
+      await supabase.from('chats').delete().or(`sender_id.eq.${profileId},receiver_id.eq.${profileId}`);
+      await supabase.from('privacy_settings').delete().eq('profile_id', profileId);
+      await supabase.from('subscriptions').delete().eq('user_id', profileId);
     } catch (e) {
       console.warn('DB delete error:', e);
     }
-    showToast('Candidate bio-data removed from platform & DB');
+    showToast('Candidate bio-data permanently deleted across platform & DB 🗑️');
   };
 
   const handleCreateCandidate = async (e: React.FormEvent) => {

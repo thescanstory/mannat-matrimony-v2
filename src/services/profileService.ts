@@ -21,7 +21,36 @@ export const profileService = {
   hasExistingProfile: async (userId?: string, email?: string): Promise<boolean> => {
     if (!userId && !email) return false;
 
-    // 1. Check local session flags & profile cache (instant refresh check)
+    // 1. If Supabase DB is configured, cloud DB is the strict authoritative source of truth
+    if (isSupabaseConfigured()) {
+      try {
+        let query = supabase.from('profiles').select('id, user_id, display_name');
+        if (userId) {
+          query = query.or(`id.eq.${userId},user_id.eq.${userId}`);
+        }
+        const { data, error } = await query.limit(1);
+
+        if (!error) {
+          if (data && data.length > 0) {
+            // Profile is alive in Supabase cloud
+            if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
+            if (userId) localStorage.setItem('mannat_onboarded_' + userId, 'true');
+            return true;
+          } else {
+            // Profile was deleted in Supabase cloud -> purge local cache so user gets onboarding
+            if (email) localStorage.removeItem('mannat_onboarded_' + email.toLowerCase());
+            if (userId) localStorage.removeItem('mannat_onboarded_' + userId);
+            localStorage.removeItem('mannat_user_profile');
+            localStorage.removeItem(LOCAL_STORAGE_PROFILES_KEY);
+            return false;
+          }
+        }
+      } catch (err) {
+        console.warn('DB check profile notice:', err);
+      }
+    }
+
+    // 2. Fallback for offline / demo mode
     try {
       if (email && localStorage.getItem('mannat_onboarded_' + email.toLowerCase()) === 'true') {
         return true;
@@ -36,48 +65,16 @@ export const profileService = {
           return true;
         }
       }
-      const customProfilesStr = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
-      if (customProfilesStr) {
-        const customProfiles: Profile[] = JSON.parse(customProfilesStr);
-        const match = customProfiles.some(p => (userId && (p.user_id === userId || p.id === userId)));
-        if (match) return true;
-      }
     } catch { }
-
-    // 2. If Supabase DB is configured, check the cloud DB as authoritative source
-    if (isSupabaseConfigured() && userId) {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('id, user_id, display_name')
-          .or(`id.eq.${userId},user_id.eq.${userId}`)
-          .limit(1);
-
-        if (data && data.length > 0 && !error) {
-          if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
-          localStorage.setItem('mannat_onboarded_' + userId, 'true');
-          return true;
-        }
-      } catch (err) {
-        console.warn('DB check profile notice:', err);
-      }
-    }
 
     return false;
   },
 
   // Fetch All Real Candidate Profiles
   getProfiles: async (): Promise<Profile[]> => {
-    let customProfiles: Profile[] = [];
-    try {
-      const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
-      if (stored) {
-        const parsed: Profile[] = JSON.parse(stored);
-        customProfiles = parsed;
-      }
-    } catch (e) {
-      console.warn('Could not read local profiles:', e);
-    }
+    const deletedIds: string[] = typeof window !== 'undefined'
+      ? JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]')
+      : [];
 
     const unlockedIds: string[] = typeof window !== 'undefined'
       ? JSON.parse(localStorage.getItem('mannat_unlocked_ids') || '[]')
@@ -91,7 +88,14 @@ export const profileService = {
     };
 
     if (!isSupabaseConfigured()) {
-      const unique = Array.from(new Map(customProfiles.map((item) => [item.id, item])).values());
+      let customProfiles: Profile[] = [];
+      try {
+        const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
+        if (stored) {
+          customProfiles = JSON.parse(stored);
+        }
+      } catch {}
+      const unique = Array.from(new Map(customProfiles.filter(p => !deletedIds.includes(p.id)).map((item) => [item.id, item])).values());
       return applyUnlocks(unique);
     }
 
@@ -102,36 +106,38 @@ export const profileService = {
         .order('created_at', { ascending: false });
 
       if (error || !data || data.length === 0) {
-        const combined = [...customProfiles, ...INITIAL_CURATED_PROFILES];
-        const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
-        return applyUnlocks(unique);
+        return [];
       }
 
-      if (data) {
-        const deletedIds: string[] = typeof window !== 'undefined'
-          ? JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]')
-          : [];
-        const activeData = (data as any[]).filter(d => !deletedIds.includes(d.id)).map(d => ({
+      const activeData: Profile[] = (data as any[])
+        .filter(d => !deletedIds.includes(d.id))
+        .map(d => ({
           ...d,
+          display_name: (d.display_name || 'Member').trim(),
+          city: (d.city || '').trim(),
+          religion: (d.religion || '').trim(),
+          community: (d.community || '').trim(),
+          sub_community: (d.sub_community || '').trim(),
+          occupation: (d.occupation || '').trim(),
+          company_name: (d.company_name || '').trim(),
+          education: (d.education || '').trim(),
+          photos: Array.isArray(d.photos) ? d.photos : [],
           user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
-          diet: d.lifestyle_details?.diet || '',
-          salary_bracket: d.lifestyle_details?.salary_bracket || '',
-          family_background: d.lifestyle_details?.family_background || '',
-          marriage_expectations: d.lifestyle_details?.marriage_expectations || '',
-          gender: d.lifestyle_details?.gender || (d.gender || 'male')
+          diet: d.lifestyle_details?.diet || d.diet || '',
+          salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
+          family_background: d.lifestyle_details?.family_background || d.family_background || '',
+          marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
+          gender: d.lifestyle_details?.gender || d.gender || 'male'
         }));
-        const combined = [...customProfiles, ...activeData, ...INITIAL_CURATED_PROFILES];
-        const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
-        return applyUnlocks(unique);
-      }
 
-      const combined = [...customProfiles, ...INITIAL_CURATED_PROFILES];
-      const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
-      return applyUnlocks(unique);
+      // Keep local cache pruned and synchronized with authoritative Supabase records
+      try {
+        localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(activeData));
+      } catch {}
+
+      return applyUnlocks(activeData);
     } catch {
-      const combined = [...customProfiles, ...INITIAL_CURATED_PROFILES];
-      const unique = Array.from(new Map(combined.map((item) => [item.id, item])).values());
-      return applyUnlocks(unique);
+      return [];
     }
   },
 

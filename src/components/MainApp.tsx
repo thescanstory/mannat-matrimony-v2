@@ -17,6 +17,7 @@ import { AuthScreen } from './AuthScreen';
 import { profileService, INITIAL_CURATED_PROFILES } from '../services/profileService';
 import { authService, type UserSession } from '../services/authService';
 import { nativeService } from '../services/nativeService';
+import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 
 type ViewType = 'splash' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile' | 'onboarding';
 
@@ -196,7 +197,10 @@ export const MainApp: React.FC = () => {
           if (hasProfile) {
             setCurrentView((prev) => (prev === 'auth' || prev === 'onboarding' ? 'home' : prev));
           } else {
-            setCurrentView((prev) => (prev === 'auth' ? 'onboarding' : prev));
+            // Profile was deleted in cloud DB -> clear local storage & navigate to onboarding
+            localStorage.removeItem('mannat_user_profile');
+            localStorage.removeItem('mannat_custom_profiles');
+            setCurrentView((prev) => (prev === 'auth' ? 'onboarding' : prev === 'home' || prev === 'profile' ? 'onboarding' : prev));
           }
         }
       } catch (err) {
@@ -208,8 +212,15 @@ export const MainApp: React.FC = () => {
     const authListener = authService.onAuthStateChange(async (user) => {
       if (user) {
         setCurrentUser(user);
+        const hasProfile = await profileService.hasExistingProfile(user.id, user.email);
+        if (!hasProfile) {
+          localStorage.removeItem('mannat_user_profile');
+          localStorage.removeItem('mannat_custom_profiles');
+        }
       } else {
         setCurrentUser(null);
+        localStorage.removeItem('mannat_user_profile');
+        localStorage.removeItem('mannat_custom_profiles');
         setCurrentView('auth');
       }
     });
@@ -224,9 +235,7 @@ export const MainApp: React.FC = () => {
     async function loadProfiles() {
       try {
         const liveProfiles = await profileService.getProfiles();
-        if (liveProfiles && liveProfiles.length > 0) {
-          setProfiles(liveProfiles);
-        }
+        setProfiles(liveProfiles);
       } catch (err) {
         console.warn('Error loading profiles:', err);
       }
@@ -234,18 +243,44 @@ export const MainApp: React.FC = () => {
     loadProfiles();
   }, []);
 
-  // Auto-sync active user candidate profile to Supabase cloud
+  // Realtime Supabase Database Listener: Listen for Admin Deletions & Updates live
   useEffect(() => {
-    async function syncActiveProfile() {
-      if (!activeUserProfile || !activeUserProfile.display_name) return;
-      try {
-        await profileService.createProfile(activeUserProfile);
-      } catch (err) {
-        console.warn('Auto-sync profile notice:', err);
-      }
-    }
-    syncActiveProfile();
-  }, [activeUserProfile]);
+    if (!isSupabaseConfigured()) return;
+
+    const channel = supabase
+      .channel('user_app_live_db_sync')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, async (payload) => {
+        if (payload.eventType === 'DELETE') {
+          const deletedId = (payload.old as any)?.id;
+          const deletedUserId = (payload.old as any)?.user_id;
+
+          // Check if deleted candidate profile belongs to currently active user
+          const isCurrentActiveUser = 
+            (deletedId && (deletedId === activeUserProfile?.id || (currentUser && deletedId === currentUser.id))) ||
+            (deletedUserId && currentUser && deletedUserId === currentUser.id);
+
+          if (isCurrentActiveUser) {
+            localStorage.removeItem('mannat_user_profile');
+            localStorage.removeItem('mannat_custom_profiles');
+            if (currentUser?.id) localStorage.removeItem('mannat_onboarded_' + currentUser.id);
+            if (currentUser?.email) localStorage.removeItem('mannat_onboarded_' + currentUser.email.toLowerCase());
+            setCurrentView('onboarding');
+            triggerToast('Your candidate profile was removed by administrator. Please complete onboarding.', 'sparkle');
+          }
+
+          // Remove the deleted profile from active feed immediately
+          setProfiles((prev) => prev.filter((p) => p.id !== deletedId && (!deletedUserId || p.user_id !== deletedUserId)));
+        } else if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+          const liveProfiles = await profileService.getProfiles();
+          setProfiles(liveProfiles);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUser, activeUserProfile]);
 
   const filteredProfiles = useMemo(() => {
     let userGender: string | null = null;
