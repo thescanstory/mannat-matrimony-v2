@@ -114,27 +114,15 @@ export const MainApp: React.FC = () => {
     financial_privacy: 'show_verified_badge'
   });
 
-  // Determine active logged-in user profile
+  // Determine active logged-in user profile strictly from verified live profiles
   const activeUserProfile = useMemo(() => {
     if (!currentUser) return null;
-    const found = profiles.find((p) => p.user_id === currentUser.id || p.id === currentUser.id);
-    if (found) return found;
-
-    try {
-      const storedUserProf = localStorage.getItem('mannat_user_profile');
-      if (storedUserProf) {
-        const userProf = JSON.parse(storedUserProf);
-        if (userProf && (userProf.user_id === currentUser.id || userProf.id === currentUser.id || userProf.display_name)) {
-          return userProf;
-        }
-      }
-      const stored = localStorage.getItem('mannat_custom_profiles');
-      if (stored) {
-        const list: Profile[] = JSON.parse(stored);
-        if (list.length > 0) return list[0];
-      }
-    } catch {}
-    return null;
+    const found = profiles.find((p) => 
+      p.user_id === currentUser.id || 
+      p.id === currentUser.id ||
+      ((p.lifestyle_details as any)?.user_id === currentUser.id)
+    );
+    return found || null;
   }, [currentUser, profiles]);
 
   const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {
@@ -236,12 +224,25 @@ export const MainApp: React.FC = () => {
       try {
         const liveProfiles = await profileService.getProfiles();
         setProfiles(liveProfiles);
+
+        if (currentUser) {
+          const myProfile = liveProfiles.find(
+            (p) => p.user_id === currentUser.id || p.id === currentUser.id || ((p.lifestyle_details as any)?.user_id === currentUser.id)
+          );
+          if (!myProfile) {
+            localStorage.removeItem('mannat_user_profile');
+            localStorage.removeItem('mannat_custom_profiles');
+            if (currentUser.id) localStorage.removeItem('mannat_onboarded_' + currentUser.id);
+            if (currentUser.email) localStorage.removeItem('mannat_onboarded_' + currentUser.email.toLowerCase());
+            setCurrentView((prev) => (prev === 'splash' || prev === 'auth' ? prev : 'onboarding'));
+          }
+        }
       } catch (err) {
         console.warn('Error loading profiles:', err);
       }
     }
     loadProfiles();
-  }, []);
+  }, [currentUser]);
 
   // Realtime Supabase Database Listener: Listen for Admin Deletions & Updates live
   useEffect(() => {
@@ -652,7 +653,7 @@ export const MainApp: React.FC = () => {
               {currentView === 'profile' && (
                 <ProfileScreen
                   currentUser={currentUser}
-                  candidateProfile={activeUserProfile || profiles[0]}
+                  candidateProfile={activeUserProfile}
                   privacySettings={privacySettings}
                   isParentView={isParentView}
                   onToggleParentView={() => {
