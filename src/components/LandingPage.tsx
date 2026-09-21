@@ -10,14 +10,13 @@ import {
   MessageSquare,
   Crown,
   ArrowRight,
-  Phone,
-  Calendar,
   Star,
   Heart,
   ExternalLink,
   Menu,
   Sparkles,
-  Lock
+  Lock,
+  Download
 } from 'lucide-react';
 import { vipConsultationService, type VipLead } from '../services/vipConsultationService';
 import { LegalModal, type LegalDocType } from './LegalModal';
@@ -69,14 +68,7 @@ export const LandingPage: React.FC = () => {
 
   const heroFormRef = useRef<HTMLDivElement>(null);
 
-  const scrollToHeroForm = () => {
-    setMobileMenuOpen(false);
-    if (heroFormRef.current) {
-      heroFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      const input = document.getElementById('heroNameInput');
-      if (input) input.focus();
-    }
-  };
+
 
   const handleHeroFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -328,38 +320,22 @@ export const LandingPage: React.FC = () => {
                 href="https://apps.apple.com/app/id6812288373"
                 target="_blank"
                 rel="noreferrer"
-                className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#560406]/30 text-white bg-[#1C0102] hover:bg-[#260102] text-xs font-bold transition tracking-wide shadow-xs"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#560406]/30 text-white bg-[#1C0102] hover:bg-[#260102] text-xs font-bold transition tracking-wide shadow-xs"
               >
                 <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 170 170">
                   <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
                 </svg>
                 <span>App Store</span>
               </a>
+
               <a
                 href="/app"
-                className="hidden xl:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#560406]/30 text-[#560406] bg-[#560406]/5 hover:bg-[#560406]/10 text-xs font-bold transition tracking-wide shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-xs font-bold tracking-wide shadow-md transition cursor-pointer whitespace-nowrap"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Web App</span>
-              </a>
-
-              <a
-                href="https://wa.me/919738397933?text=Hello%20Mannat%20Matrimony,%20I%20would%20like%20to%20inquire%20about%20membership."
-                target="_blank"
-                rel="noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-[#A17B5E]/50 text-[#560406] bg-[#A17B5E]/10 hover:bg-[#A17B5E]/20 text-xs font-bold transition tracking-wide"
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-[#560406]" />
-                <span>Private Concierge</span>
-              </a>
-
-              <button
-                onClick={() => setShowConsultModal(true)}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-xs font-bold tracking-wide shadow-md transition cursor-pointer whitespace-nowrap"
-              >
-                <span>Private Briefing</span>
+                <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
+                <span>Open Web App</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#A17B5E]" />
-              </button>
+              </a>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -413,47 +389,20 @@ export const LandingPage: React.FC = () => {
                 </a>
               </div>
               <a
+                href="/app"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] text-[#F5E6D3] border border-[#A17B5E]/60 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
+                <span>Open Member Web App →</span>
+              </a>
+              <a
                 href="https://apps.apple.com/app/id6812288373"
                 target="_blank"
                 rel="noreferrer"
-                className="w-full py-2.5 rounded-xl bg-[#1C0102] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-md border border-[#A17B5E]/40"
+                className="w-full py-2.5 rounded-xl bg-[#1C0102] text-white border border-[#560406]/30 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
               >
-                <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 170 170">
-                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
-                </svg>
-                <span>Download on App Store</span>
+                <span>Download on iOS App Store</span>
               </a>
-              <a
-                href="/app"
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center justify-center gap-2 shadow-md border border-[#A17B5E]/40"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
-                <span>Open Web App →</span>
-              </a>
-              <button
-                onClick={scrollToHeroForm}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] text-xs font-black flex items-center justify-center gap-1.5 shadow-sm border border-[#F5E6D3]/40"
-              >
-                <span>✦ Request Confidential Briefing</span>
-              </button>
-              <div className="pt-1 flex gap-2">
-                <a
-                  href="https://wa.me/919738397933?text=Hello%20Mannat%20Matrimony,%20I%20would%20like%20to%20inquire%20about%20membership."
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex-1 py-2.5 rounded-xl bg-[#2E0507] border border-[#A17B5E]/40 text-[#D8B486] text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#3D080A]"
-                >
-                  <MessageSquare className="w-3.5 h-3.5 text-[#D8B486]" />
-                  <span>Private Concierge</span>
-                </a>
-                <a
-                  href="tel:+919738397933"
-                  className="flex-1 py-2.5 rounded-xl bg-[#560406] text-[#F5E6D3] border border-[#A17B5E]/30 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
-                >
-                  <Phone className="w-3.5 h-3.5 text-[#A17B5E]" />
-                  <span>Advisor Hotline</span>
-                </a>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -541,7 +490,7 @@ export const LandingPage: React.FC = () => {
                     disabled={isSubmitting}
                     className="w-full h-11 px-4 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] hover:brightness-105 text-[#1C0102] text-xs font-black shadow-md cursor-pointer transition whitespace-nowrap flex items-center justify-center gap-1.5 border border-[#F5E6D3]/30"
                   >
-                    <span>{isSubmitting ? 'Connecting...' : 'Request Private Briefing'}</span>
+                    <span>{isSubmitting ? 'Connecting...' : 'Apply for Membership'}</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#1C0102]" />
                   </button>
                 </div>
@@ -1080,20 +1029,14 @@ export const LandingPage: React.FC = () => {
                 <span>Member Web App</span>
               </a>
               <a
-                href="https://wa.me/919738397933?text=Hello%20Mannat%20Matrimony,%20I%20would%20like%20to%20inquire%20about%20membership."
+                href="https://apps.apple.com/app/id6812288373"
                 target="_blank"
                 rel="noreferrer"
-                className="px-4 py-2 rounded-xl bg-[#2E0507] border border-[#A17B5E]/40 text-[#D8B486] text-xs font-bold flex items-center gap-1.5 hover:bg-[#3D080A] transition shadow-xs"
+                className="px-4 py-2 rounded-xl bg-[#2A0406] border border-[#A17B5E]/40 text-[#D8B486] text-xs font-bold flex items-center gap-1.5 hover:bg-[#3D080A] transition shadow-xs"
               >
-                <MessageSquare className="w-3.5 h-3.5 text-[#D8B486]" />
-                <span>Private Concierge</span>
+                <Download className="w-3.5 h-3.5 text-[#D8B486]" />
+                <span>Download iOS App</span>
               </a>
-              <button
-                onClick={() => setShowConsultModal(true)}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] text-xs font-black border border-[#F5E6D3]/40 shadow-sm hover:brightness-105 transition"
-              >
-                Reserve Consultation
-              </button>
             </div>
           </div>
 
@@ -1148,21 +1091,21 @@ export const LandingPage: React.FC = () => {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#160102]/95 backdrop-blur-md border-t border-[#A17B5E]/30 px-3 py-2 sm:hidden shadow-[0_-10px_30px_rgba(0,0,0,0.5)] safe-area-inset-bottom">
         <div className="flex items-center gap-2.5">
           <a
-            href="https://wa.me/919738397933?text=Hello%20Mannat%20Matrimony,%20I%20would%20like%20to%20inquire%20about%20membership."
+            href="/app"
+            className="flex-1 py-3 rounded-xl bg-[#560406] border border-[#A17B5E]/50 text-[#F5E6D3] text-xs font-bold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
+            <span>Open Web App</span>
+          </a>
+          <a
+            href="https://apps.apple.com/app/id6812288373"
             target="_blank"
             rel="noreferrer"
-            className="flex-1 py-3 rounded-xl bg-[#2A0406] border border-[#A17B5E]/50 text-[#D8B486] text-xs font-bold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition"
-          >
-            <MessageSquare className="w-3.5 h-3.5 text-[#D8B486]" />
-            <span>Private Concierge</span>
-          </a>
-          <button
-            onClick={() => setShowConsultModal(true)}
             className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#160102] text-xs font-black flex items-center justify-center gap-1.5 shadow-lg border border-[#F5E6D3]/40 active:scale-95 transition"
           >
-            <Calendar className="w-3.5 h-3.5 text-[#160102]" />
-            <span>Private Briefing</span>
-          </button>
+            <Download className="w-3.5 h-3.5 text-[#160102]" />
+            <span>iOS App Store</span>
+          </a>
         </div>
       </div>
 
