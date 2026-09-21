@@ -14,7 +14,7 @@ import { WhoViewedMeScreen } from './WhoViewedMeScreen';
 import { Toast } from './Toast';
 import { SplashScreen } from './SplashScreen';
 import { AuthScreen } from './AuthScreen';
-import { profileService } from '../services/profileService';
+import { profileService, INITIAL_CURATED_PROFILES } from '../services/profileService';
 import { authService, type UserSession } from '../services/authService';
 import { nativeService } from '../services/nativeService';
 
@@ -26,9 +26,9 @@ export const MainApp: React.FC = () => {
       if (typeof window !== 'undefined' && localStorage.getItem('mannat_admin_deleted') === 'true') {
         return [];
       }
-      return [];
+      return INITIAL_CURATED_PROFILES;
     } catch {
-      return [];
+      return INITIAL_CURATED_PROFILES;
     }
   });
 
