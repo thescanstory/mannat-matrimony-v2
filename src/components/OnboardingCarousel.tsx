@@ -455,8 +455,21 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
     })
   };
 
+  const stepLabels = [
+    { num: 1, title: 'Identity', desc: 'Gender & Creator' },
+    { num: 2, title: 'Vitals', desc: 'Name, Age & Height' },
+    { num: 3, title: 'Cultural Roots', desc: 'City & Faith' },
+    { num: 4, title: 'Career', desc: 'Education & Role' },
+    { num: 5, title: 'Affluence', desc: 'Income & Values' },
+    { num: 6, title: 'Lifestyle', desc: 'Diet & Habits' },
+    { num: 7, title: 'Family', desc: 'Roots & Values' },
+    { num: 8, title: 'Portfolio', desc: 'Photo Gallery' },
+    { num: 9, title: 'Video Intro', desc: '30s Voice Intro' },
+    { num: 10, title: 'Summary', desc: 'MQS Persona Match' }
+  ];
+
   return (
-    <div className="min-h-[100dvh] bg-[#FBF9F4] flex flex-col justify-between pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] px-4 sm:px-6 w-full max-w-lg mx-auto relative font-sans text-[#111111]">
+    <div className="min-h-[100dvh] bg-[#F4EFE6]/60 flex flex-col justify-start font-sans text-[#111111] antialiased">
       {/* Hidden File & Camera Inputs */}
       <input
         ref={photoFileInputRef}
@@ -490,756 +503,999 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         className="hidden"
       />
 
-      {/* Top Header with Safe Margin */}
-      <div className="w-full pb-1.5 z-30 bg-[#F8F6F2] space-y-2 shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col text-left">
-            <span className="text-sm italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
-              At
-            </span>
-            <span className="text-2xl font-normal tracking-[0.24em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-              MANNAT
-            </span>
-            <span className="text-[7px] uppercase tracking-[0.34em] font-bold text-[#A17B5E]">
-              Bespoke Bio-Data
-            </span>
+      {/* Main Responsive Web App Container */}
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 flex-1 flex flex-col">
+        
+        {/* Top Header Bar */}
+        <header className="w-full pb-4 sm:pb-6 flex items-center justify-between border-b border-[#E8DDD0]">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <img 
+              src="/images/mannat-logo-square.png" 
+              alt="Mannat" 
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-xl shadow-xs border border-[#E8DDD0]/80 bg-white p-1"
+            />
+            <div className="flex flex-col text-left">
+              <span className="text-xl sm:text-2xl font-normal tracking-[0.2em] uppercase text-[#560406] leading-none" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                MANNAT
+              </span>
+              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.34em] font-extrabold text-[#A17B5E] mt-1">
+                Bespoke Member Onboarding Studio
+              </span>
+            </div>
           </div>
-          {isEditing && (
-            <button
-              type="button"
-              onClick={() => (onCancel ? onCancel() : onComplete())}
-              className="text-[10px] font-black uppercase text-[#6E6259] hover:text-[#560406] bg-white px-2.5 py-1 rounded-full border border-[#E8DDD0] transition-all cursor-pointer shadow-xs whitespace-nowrap"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
 
-        {/* Animated Progress Bar */}
-        <div className="w-full h-1.5 bg-[#E8DDD0] rounded-full overflow-hidden shadow-inner">
-          <motion.div
-            className="h-full bg-gradient-to-r from-[#A17B5E] to-[#560406] rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${(step / totalSteps) * 100}%` }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-          />
-        </div>
-      </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E8DDD0] shadow-2xs text-xs font-bold text-[#560406]">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>100% Confidential & Encrypted</span>
+            </div>
 
-      {/* Step Content Container - Scrollable on keyboard open */}
-      <div className="flex-1 py-3 z-20 flex flex-col justify-start overflow-y-auto">
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={step}
-            custom={direction}
-            variants={slideVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="space-y-4 text-left w-full pb-8"
-          >
-            {/* Step 1: Gender & Managed By */}
-            {step === 1 && (
-              <div className="space-y-3">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#560406]">
-                  STEP 1: IDENTITY & CREATOR *
+            {isEditing && (
+              <button
+                type="button"
+                onClick={() => (onCancel ? onCancel() : onComplete())}
+                className="text-xs font-bold uppercase text-[#6E6259] hover:text-[#560406] bg-white px-4 py-2 rounded-full border border-[#E8DDD0] transition-all cursor-pointer shadow-xs whitespace-nowrap"
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
+        </header>
+
+        {/* Studio Content: 2-Column Desktop Grid */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 sm:pt-8 items-start">
+          
+          {/* Left Sidebar (Desktop Only): Step Journey & Trust Badges */}
+          <aside className="hidden lg:flex lg:col-span-4 flex-col gap-6 sticky top-8">
+            <div className="bg-white rounded-3xl p-6 border border-[#E8DDD0] shadow-sm space-y-5">
+              <div className="space-y-1 text-left">
+                <span className="text-[10px] uppercase tracking-widest font-black text-[#560406]">
+                  Profile Completion
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Who is seeking a life partner?
-                </h1>
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">
+                    Step {step} of {totalSteps}
+                  </h3>
+                  <span className="text-xs font-black text-[#560406]">
+                    {Math.round((step / totalSteps) * 100)}% Done
+                  </span>
+                </div>
+                {/* Progress bar */}
+                <div className="w-full h-2 bg-[#E8DDD0] rounded-full overflow-hidden mt-2">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-[#A17B5E] to-[#560406] rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(step / totalSteps) * 100}%` }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                  />
+                </div>
+              </div>
 
-                <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    I am a: <span className="text-red-500">*</span>
-                  </label>
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <motion.button
-                      whileTap={{ scale: 0.96 }}
-                      type="button"
-                      onClick={() => setGender('man')}
-                      className={`p-3 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'man'
-                          ? 'bg-[#2D2824] text-white border-[#111111] shadow-md font-bold'
-                          : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
-                        }`}
+              {/* Step Checklist List */}
+              <nav className="space-y-1 pt-2">
+                {stepLabels.map((s) => {
+                  const isCurrent = step === s.num;
+                  const isDone = step > s.num;
+                  return (
+                    <div
+                      key={s.num}
+                      className={`flex items-center gap-3 p-2.5 rounded-2xl text-left transition-all ${
+                        isCurrent
+                          ? 'bg-[#560406]/5 border border-[#560406]/20 font-bold'
+                          : isDone
+                          ? 'text-[#444444] opacity-80'
+                          : 'text-[#999999]'
+                      }`}
                     >
-                      <User className="w-5 h-5 mx-auto mb-1 text-[#B89552]" />
-                      <span className="text-xs font-extrabold block">Man</span>
-                    </motion.button>
-
-                    <motion.button
-                      whileTap={{ scale: 0.96 }}
-                      type="button"
-                      onClick={() => setGender('woman')}
-                      className={`p-3 rounded-2xl border text-center transition-all cursor-pointer backdrop-blur-md ${gender === 'woman'
-                          ? 'bg-[#2D2824] text-white border-[#111111] shadow-md font-bold'
-                          : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5] hover:bg-[#E8E1D5]'
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shrink-0 transition-colors ${
+                          isDone
+                            ? 'bg-emerald-600 text-white'
+                            : isCurrent
+                            ? 'bg-[#560406] text-[#F5E6D3]'
+                            : 'bg-[#E8DDD0] text-[#777777]'
                         }`}
-                    >
-                      <User className="w-5 h-5 mx-auto mb-1 text-[#B89552]" />
-                      <span className="text-xs font-extrabold block">Woman</span>
-                    </motion.button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Name, Age, Height */}
-            {step === 2 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 2: CANDIDATE VITALS *
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Personal Details & Vitals
-                </h1>
-
-                <div className="space-y-3 pt-2">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
-                      Full Candidate Name <span className="text-red-500">*</span>:
-                    </label>
-                    <div className="relative flex items-center">
-                      <User className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      <input
-                        type="text"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                        placeholder="Enter candidate full name"
-                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4">
-                        Age (Years) <span className="text-red-500">*</span>:
-                      </label>
-                      <div className="relative flex items-center">
-                        <Calendar className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="number"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          min="18"
-                          max="80"
-                          value={age}
-                          onChange={(e) => setAge(e.target.value)}
-                          placeholder="e.g. 27"
-                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                          required
-                        />
+                      >
+                        {isDone ? <Check className="w-3.5 h-3.5" /> : s.num}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className={`text-xs ${isCurrent ? 'font-black text-[#560406]' : 'font-semibold'}`}>
+                          {s.title}
+                        </span>
+                        <span className="text-[10px] text-[#777777] truncate">
+                          {s.desc}
+                        </span>
                       </div>
                     </div>
+                  );
+                })}
+              </nav>
+            </div>
 
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
-                        Height <span className="text-red-500">*</span>:
-                      </label>
-                      <div className="relative flex items-center">
-                        <Ruler className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                        <select
-                          value={height}
-                          onChange={(e) => setHeight(e.target.value)}
-                          className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
-                          required
-                        >
-                          <option value="" disabled>Select height</option>
-                          {HEIGHT_OPTIONS.map((hOpt) => (
-                            <option key={hOpt} value={hOpt}>{hOpt}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            {/* Desktop Trust Card */}
+            <div className="bg-gradient-to-br from-[#2D2824] to-[#161412] text-white p-5 rounded-3xl border border-[#A17B5E]/30 shadow-md space-y-2 text-left">
+              <div className="flex items-center gap-2 text-[#D8B486]">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-xs font-black uppercase tracking-wider">The Mannat Standard</span>
               </div>
-            )}
+              <p className="text-xs text-[#E5D8CC] font-medium leading-relaxed">
+                Every candidate biodata undergoes manual verification & BlurShield privacy screening before accessing our private matchmaking circle.
+              </p>
+            </div>
+          </aside>
 
-            {/* Step 3: Location, Religion & Sub-community */}
-            {step === 3 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 3: CULTURAL ROOTS
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Location & Background
-                </h1>
-
-                <div className="space-y-3.5 pt-2">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
-                      Settled City <span className="text-red-500">*</span>:
-                    </label>
-                    <div className="relative flex items-center">
-                      <MapPin className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      <select
-                        value={cityIsOther || (city && city !== 'Other' && !CITY_OPTIONS.includes(city)) ? 'other' : city}
-                        onChange={(e) => {
-                          if (e.target.value === 'other') {
-                            setCityIsOther(true);
-                            setCity('');
-                          } else {
-                            setCityIsOther(false);
-                            setCity(e.target.value);
-                          }
-                        }}
-                        className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
-                        required
-                      >
-                        <option value="" disabled>Select a city</option>
-                        {CITY_OPTIONS.map((cityName) => (
-                          <option key={cityName} value={cityName}>{cityName}</option>
-                        ))}
-                        <option value="other">Other / NRI city</option>
-                      </select>
-                      <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
-                    {(cityIsOther || (city && city !== 'Other' && !CITY_OPTIONS.includes(city))) && (
-                      <div className="relative flex items-center mt-2">
-                        <MapPin className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="text"
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          placeholder="Type your city / NRI location"
-                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                          required
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
-                        Religion <span className="text-red-500">*</span>:
-                      </label>
-                      <div className="relative flex items-center">
-                        <Compass className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
-                        <select
-                          value={religion}
-                          onChange={(e) => setReligion(e.target.value)}
-                          className="w-full h-12 pl-10 pr-8 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs cursor-pointer appearance-none"
-                          required
-                        >
-                          <option value="" disabled>Select religion</option>
-                          <option value="Hindu">Hindu</option>
-                          <option value="Muslim">Muslim</option>
-                          <option value="Sikh">Sikh</option>
-                          <option value="Christian">Christian</option>
-                          <option value="Jain">Jain</option>
-                          <option value="Parsi">Parsi</option>
-                          <option value="Atheist">Atheist</option>
-                          <option value="Agnostic">Agnostic</option>
-                          <option value="Spiritual">Spiritual</option>
-                          <option value="Buddhist">Buddhist</option>
-                          <option value="Jewish">Jewish</option>
-                          <option value="Other">Other</option>
-                        </select>
-                        <ChevronDown className="w-4 h-4 text-[#888888] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
-                        Community / Caste:
-                      </label>
-                      <div className="relative flex items-center">
-                        <Users className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="text"
-                          value={subCommunity}
-                          onChange={(e) => setSubCommunity(e.target.value)}
-                          placeholder="e.g. Brahmin (Opt)"
-                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          {/* Right Area: Step Interactive Form Card */}
+          <section className="lg:col-span-8 flex flex-col justify-between bg-white rounded-3xl p-6 sm:p-8 lg:p-10 border border-[#E8DDD0] shadow-sm relative min-h-[560px]">
+            
+            {/* Mobile Progress Bar */}
+            <div className="lg:hidden w-full pb-4 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-[#560406]">
+                <span>Step {step} of {totalSteps}: {stepLabels[step - 1]?.title}</span>
+                <span>{Math.round((step / totalSteps) * 100)}%</span>
               </div>
-            )}
+              <div className="w-full h-1.5 bg-[#E8DDD0] rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-[#A17B5E] to-[#560406] rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(step / totalSteps) * 100}%` }}
+                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                />
+              </div>
+            </div>
 
-            {/* Step 4: Education & Profession (Salaried vs Self-Employed) */}
-            {step === 4 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 4: CAREER & EMPLOYMENT *
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Education & Profession
-                </h1>
-
-                <div className="space-y-3.5 pt-2">
-                  {/* Salaried vs Self Employed Selector */}
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
-                      Employment Type <span className="text-red-500">*</span>:
-                    </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      <motion.button
-                        whileTap={{ scale: 0.96 }}
-                        type="button"
-                        onClick={() => setEmploymentType('Salaried')}
-                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${employmentType === 'Salaried'
-                            ? 'bg-[#2D2824] text-white border-[#111111] font-bold shadow-sm'
-                            : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
-                          }`}
-                      >
-                        <Briefcase className="w-4 h-4 text-[#B89552]" />
-                        <span className="text-xs font-extrabold">Salaried</span>
-                      </motion.button>
-
-                      <motion.button
-                        whileTap={{ scale: 0.96 }}
-                        type="button"
-                        onClick={() => setEmploymentType('Self-Employed / Business')}
-                        className={`h-12 px-3.5 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${employmentType === 'Self-Employed / Business'
-                            ? 'bg-[#2D2824] text-white border-[#111111] font-bold shadow-sm'
-                            : 'bg-white text-[#555555] border-[#E8E1D5] hover:bg-[#F4EFE6]'
-                          }`}
-                      >
-                        <Sparkles className="w-4 h-4 text-[#B89552]" />
-                        <span className="text-xs font-extrabold truncate">Self-Employed</span>
-                      </motion.button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5">
-                      Highest Education <span className="text-red-500">*</span>:
-                    </label>
-                    <div className="relative flex items-center">
-                      <GraduationCap className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      <input
-                        type="text"
-                        value={education}
-                        onChange={(e) => setEducation(e.target.value)}
-                        placeholder="e.g. MBA / B.Tech / MS / MD / CA"
-                        className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-sm font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
-                        Profession / Role <span className="text-red-500">*</span>:
-                      </label>
-                      <div className="relative flex items-center">
-                        <Briefcase className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="text"
-                          value={occupation}
-                          onChange={(e) => setOccupation(e.target.value)}
-                          placeholder="e.g. Engineer"
-                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                          required
-                        />
+            {/* Step Content Container */}
+            <div className="flex-1 flex flex-col justify-start">
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={step}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  className="space-y-6 text-left w-full"
+                >
+                  {/* Step 1: Gender & Managed By */}
+                  {step === 1 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 1 · IDENTITY & CANDIDATE
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Who is seeking a life partner?
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Select the candidate profile to personalize the matchmaking circle.
+                        </p>
                       </div>
-                    </div>
 
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-1.5 h-4 truncate">
-                        {employmentType === 'Salaried' ? 'Company *' : 'Business *'}:
-                      </label>
-                      <div className="relative flex items-center">
-                        <Building2 className="w-4 h-4 text-[#B89552] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          type="text"
-                          value={companyName}
-                          onChange={(e) => setCompanyName(e.target.value)}
-                          placeholder={employmentType === 'Salaried' ? 'e.g. Google' : 'e.g. Firm Name'}
-                          className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white border border-[#E8E1D5] text-xs font-bold text-[#111111] outline-none focus:border-[#B89552] shadow-xs"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 5: Income & Financial Stance */}
-            {step === 5 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 5: FINANCIAL HARMONY *
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Income & Money Values
-                </h1>
-
-                <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Annual Income Bracket <span className="text-red-500">*</span>:
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['₹5L - ₹10L', '₹10L - ₹15L', '₹15L - ₹25L', '₹25L - ₹35L', '₹35L - ₹50L', '₹50L+ HNI'].map((sal) => (
-                      <motion.button
-                        key={sal}
-                        whileTap={{ scale: 0.95 }}
-                        type="button"
-                        onClick={() => setSalaryBracket(sal)}
-                        className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${salaryBracket === sal
-                            ? 'bg-[#2D2824] text-white border-[#111111] shadow-sm'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                          }`}
-                      >
-                        {sal}
-                      </motion.button>
-                    ))}
-                  </div>
-
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] pt-2">
-                    Financial Management Preference <span className="text-red-500">*</span>:
-                  </label>
-                  <div className="space-y-2">
-                    {[
-                      { id: 'Total Pooling', label: 'Total Joint Account Pooling' },
-                      { id: 'Hybrid Balance', label: 'Shared Joint Account + Separate Savings' },
-                      { id: 'Independent', label: '100% Independent Accounts' }
-                    ].map((fin) => (
-                      <motion.button
-                        key={fin.id}
-                        whileTap={{ scale: 0.98 }}
-                        type="button"
-                        onClick={() => setFinancialStance(fin.id)}
-                        className={`w-full p-3.5 rounded-xl border text-xs font-bold text-left transition-all cursor-pointer flex items-center justify-between backdrop-blur-md ${financialStance === fin.id
-                            ? 'bg-[#2D2824] text-white border-[#111111]'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                          }`}
-                      >
-                        <span>{fin.label}</span>
-                        {financialStance === fin.id && <Check className="w-4 h-4 text-[#B89552]" />}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 6: Diet & Lifestyle */}
-            {step === 6 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 6: LIFESTYLE & DIET *
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Diet & Daily Habits
-                </h1>
-
-                <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Diet Preference <span className="text-red-500">*</span>:
-                  </label>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {['Veg', 'Eggetarian', 'Non-Veg', 'Vegan', 'Jain Veg'].map((d) => (
-                      <motion.button
-                        key={d}
-                        whileTap={{ scale: 0.95 }}
-                        type="button"
-                        onClick={() => setDiet(d)}
-                        className={`px-4 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer backdrop-blur-md ${diet === d
-                            ? 'bg-[#2D2824] text-white shadow-sm'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border border-[#E8E1D5]'
-                          }`}
-                      >
-                        {d}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 7: Family Background & Values */}
-            {step === 7 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 7: FAMILY & VALUES *
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Family Background & Values
-                </h1>
-
-                <div className="space-y-3 pt-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
-                    Family Type <span className="text-red-500">*</span>:
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {['Nuclear', 'Joint Family'].map((fam) => (
-                      <motion.button
-                        key={fam}
-                        whileTap={{ scale: 0.95 }}
-                        type="button"
-                        onClick={() => setFamilyType(fam)}
-                        className={`p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${familyType === fam
-                            ? 'bg-[#2D2824] text-white border-[#111111]'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                          }`}
-                      >
-                        {fam}
-                      </motion.button>
-                    ))}
-                  </div>
-
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] pt-2">
-                    Family Values <span className="text-red-500">*</span>:
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['Traditional', 'Moderate', 'Progressive'].map((val) => (
-                      <motion.button
-                        key={val}
-                        whileTap={{ scale: 0.95 }}
-                        type="button"
-                        onClick={() => setFamilyValues(val)}
-                        className={`py-3 px-2 rounded-xl border text-xs font-bold transition-all cursor-pointer backdrop-blur-md ${familyValues === val
-                            ? 'bg-[#2D2824] text-white border-[#111111]'
-                            : 'bg-[#F4EFE6]/95 text-[#555555] border-[#E8E1D5]'
-                          }`}
-                      >
-                        {val}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Step 8: Upload / Shoot Up to 3 Photos */}
-            {step === 8 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 8: PHOTO GALLERY (UP TO 3 IMAGES) *
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Choose up to 3 photos.
-                </h1>
-                <p className="text-xs text-[#777777] font-medium leading-relaxed">
-                  Shoot directly with your camera or select up to 3 pictures from your gallery.
-                </p>
-
-                {/* 3 Interactive Photo Slots */}
-                <div className="grid grid-cols-3 gap-2.5 pt-2">
-                  {[0, 1, 2].map((slotIdx) => {
-                    const photoUrl = photos[slotIdx];
-                    return (
-                      <div key={slotIdx} className="relative aspect-square">
-                        {photoUrl ? (
-                          <motion.div
-                            whileHover={{ scale: 1.03 }}
-                            className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-[#B89552] bg-[#F4EFE6] shadow-sm group"
+                      <div className="space-y-3 pt-2">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
+                          Candidate is a: <span className="text-red-500">*</span>
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <motion.button
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.98 }}
+                            type="button"
+                            onClick={() => setGender('man')}
+                            className={`p-5 rounded-2xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
+                              gender === 'man'
+                                ? 'bg-gradient-to-br from-[#2D2824] to-[#161412] text-white border-[#560406] shadow-md'
+                                : 'bg-[#FBF9F4] text-[#444444] border-[#E8DDD0] hover:border-[#560406]/50 hover:bg-[#F4EFE6]'
+                            }`}
                           >
-                            <img src={photoUrl} alt={`Photo ${slotIdx + 1}`} className="w-full h-full object-cover" />
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${gender === 'man' ? 'bg-[#560406] text-[#F5E6D3]' : 'bg-[#E8DDD0] text-[#555555]'}`}>
+                              <User className="w-6 h-6" />
+                            </div>
+                            <span className="text-base font-extrabold block">Groom (Man)</span>
+                            <span className="text-[11px] opacity-75">Creating profile for himself / family</span>
+                          </motion.button>
+
+                          <motion.button
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.98 }}
+                            type="button"
+                            onClick={() => setGender('woman')}
+                            className={`p-5 rounded-2xl border-2 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
+                              gender === 'woman'
+                                ? 'bg-gradient-to-br from-[#2D2824] to-[#161412] text-white border-[#560406] shadow-md'
+                                : 'bg-[#FBF9F4] text-[#444444] border-[#E8DDD0] hover:border-[#560406]/50 hover:bg-[#F4EFE6]'
+                            }`}
+                          >
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${gender === 'woman' ? 'bg-[#560406] text-[#F5E6D3]' : 'bg-[#E8DDD0] text-[#555555]'}`}>
+                              <User className="w-6 h-6" />
+                            </div>
+                            <span className="text-base font-extrabold block">Bride (Woman)</span>
+                            <span className="text-[11px] opacity-75">Creating profile for herself / family</span>
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 2: Name, Age, Height */}
+                  {step === 2 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 2 · CANDIDATE VITALS
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Personal Details & Vitals
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Accurate biodata details ensure high compatibility match scores.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 pt-2">
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Full Candidate Name <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="relative flex items-center">
+                            <User className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={displayName}
+                              onChange={(e) => setDisplayName(e.target.value)}
+                              placeholder="Enter candidate full legal name"
+                              className="w-full h-13 pl-11 pr-4 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-sm font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs transition-all"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                              Age (Years) <span className="text-red-500">*</span>:
+                            </label>
+                            <div className="relative flex items-center">
+                              <Calendar className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                              <input
+                                type="number"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                min="18"
+                                max="80"
+                                value={age}
+                                onChange={(e) => setAge(e.target.value)}
+                                placeholder="e.g. 28"
+                                className="w-full h-13 pl-11 pr-4 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-sm font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs transition-all"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                              Height <span className="text-red-500">*</span>:
+                            </label>
+                            <div className="relative flex items-center">
+                              <Ruler className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+                              <select
+                                value={height}
+                                onChange={(e) => setHeight(e.target.value)}
+                                className="w-full h-13 pl-11 pr-10 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-xs font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs cursor-pointer appearance-none transition-all"
+                                required
+                              >
+                                <option value="" disabled>Select height</option>
+                                {HEIGHT_OPTIONS.map((hOpt) => (
+                                  <option key={hOpt} value={hOpt}>{hOpt}</option>
+                                ))}
+                              </select>
+                              <ChevronDown className="w-4 h-4 text-[#888888] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 3: Location, Religion & Sub-community */}
+                  {step === 3 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 3 · CULTURAL ROOTS
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Location & Background
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Where is the candidate settled and what are their cultural roots?
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 pt-2">
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Settled City / Location <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="relative flex items-center">
+                            <MapPin className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <select
+                              value={cityIsOther || (city && city !== 'Other' && !CITY_OPTIONS.includes(city)) ? 'other' : city}
+                              onChange={(e) => {
+                                if (e.target.value === 'other') {
+                                  setCityIsOther(true);
+                                  setCity('');
+                                } else {
+                                  setCityIsOther(false);
+                                  setCity(e.target.value);
+                                }
+                              }}
+                              className="w-full h-13 pl-11 pr-10 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-xs font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs cursor-pointer appearance-none transition-all"
+                              required
+                            >
+                              <option value="" disabled>Select settled city</option>
+                              {CITY_OPTIONS.map((cityName) => (
+                                <option key={cityName} value={cityName}>{cityName}</option>
+                              ))}
+                              <option value="other">Other / NRI City (Specify below)</option>
+                            </select>
+                            <ChevronDown className="w-4 h-4 text-[#888888] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                          </div>
+
+                          {(cityIsOther || (city && city !== 'Other' && !CITY_OPTIONS.includes(city))) && (
+                            <div className="relative flex items-center mt-3">
+                              <MapPin className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                              <input
+                                type="text"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                placeholder="Type city and country (e.g. Dubai, London, New York)"
+                                className="w-full h-13 pl-11 pr-4 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-sm font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs transition-all"
+                                required
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                              Religion <span className="text-red-500">*</span>:
+                            </label>
+                            <div className="relative flex items-center">
+                              <Compass className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
+                              <select
+                                value={religion}
+                                onChange={(e) => setReligion(e.target.value)}
+                                className="w-full h-13 pl-11 pr-10 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-xs font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs cursor-pointer appearance-none transition-all"
+                                required
+                              >
+                                <option value="" disabled>Select religion</option>
+                                <option value="Hindu">Hindu</option>
+                                <option value="Muslim">Muslim</option>
+                                <option value="Sikh">Sikh</option>
+                                <option value="Christian">Christian</option>
+                                <option value="Jain">Jain</option>
+                                <option value="Parsi">Parsi</option>
+                                <option value="Atheist">Atheist</option>
+                                <option value="Agnostic">Agnostic</option>
+                                <option value="Spiritual">Spiritual</option>
+                                <option value="Buddhist">Buddhist</option>
+                                <option value="Jewish">Jewish</option>
+                                <option value="Other">Other</option>
+                              </select>
+                              <ChevronDown className="w-4 h-4 text-[#888888] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                              Community / Caste (Optional):
+                            </label>
+                            <div className="relative flex items-center">
+                              <Users className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                              <input
+                                type="text"
+                                value={subCommunity}
+                                onChange={(e) => setSubCommunity(e.target.value)}
+                                placeholder="e.g. Brahmin, Agarwal, Khatri, Sunni"
+                                className="w-full h-13 pl-11 pr-4 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-xs font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs transition-all"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 4: Education & Profession (Salaried vs Self-Employed) */}
+                  {step === 4 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 4 · CAREER & PROFESSIONAL STANDING
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Education & Profession
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Highlight credentials, employment structure, and professional domain.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 pt-2">
+                        {/* Salaried vs Self Employed Selector */}
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Employment Structure <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <motion.button
+                              whileTap={{ scale: 0.98 }}
+                              type="button"
+                              onClick={() => setEmploymentType('Salaried')}
+                              className={`h-14 px-4 rounded-2xl border-2 text-center transition-all cursor-pointer flex items-center justify-center gap-3 ${
+                                employmentType === 'Salaried'
+                                  ? 'bg-[#2D2824] text-white border-[#560406] font-bold shadow-md'
+                                  : 'bg-[#FBF9F4] text-[#555555] border-[#E8DDD0] hover:bg-[#F4EFE6]'
+                              }`}
+                            >
+                              <Briefcase className="w-5 h-5 text-[#D8B486]" />
+                              <div className="text-left">
+                                <span className="text-xs font-extrabold block">Corporate / Salaried</span>
+                                <span className="text-[10px] opacity-75">Employed at company or institution</span>
+                              </div>
+                            </motion.button>
+
+                            <motion.button
+                              whileTap={{ scale: 0.98 }}
+                              type="button"
+                              onClick={() => setEmploymentType('Self-Employed / Business')}
+                              className={`h-14 px-4 rounded-2xl border-2 text-center transition-all cursor-pointer flex items-center justify-center gap-3 ${
+                                employmentType === 'Self-Employed / Business'
+                                  ? 'bg-[#2D2824] text-white border-[#560406] font-bold shadow-md'
+                                  : 'bg-[#FBF9F4] text-[#555555] border-[#E8DDD0] hover:bg-[#F4EFE6]'
+                              }`}
+                            >
+                              <Sparkles className="w-5 h-5 text-[#D8B486]" />
+                              <div className="text-left">
+                                <span className="text-xs font-extrabold block">Business / Self-Employed</span>
+                                <span className="text-[10px] opacity-75">Founder, partner, or private practice</span>
+                              </div>
+                            </motion.button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Highest Qualification / Degree <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="relative flex items-center">
+                            <GraduationCap className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                              type="text"
+                              value={education}
+                              onChange={(e) => setEducation(e.target.value)}
+                              placeholder="e.g. MBA (IIM / Harvard), B.Tech (IIT), MS, MD, CA"
+                              className="w-full h-13 pl-11 pr-4 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-sm font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs transition-all"
+                              required
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                              Profession / Designation <span className="text-red-500">*</span>:
+                            </label>
+                            <div className="relative flex items-center">
+                              <Briefcase className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                              <input
+                                type="text"
+                                value={occupation}
+                                onChange={(e) => setOccupation(e.target.value)}
+                                placeholder="e.g. VP Strategy, Investment Banker, Surgeon"
+                                className="w-full h-13 pl-11 pr-4 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-xs font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs transition-all"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                              {employmentType === 'Salaried' ? 'Company / Employer *' : 'Business / Firm Name *'}:
+                            </label>
+                            <div className="relative flex items-center">
+                              <Building2 className="w-4 h-4 text-[#560406] absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                              <input
+                                type="text"
+                                value={companyName}
+                                onChange={(e) => setCompanyName(e.target.value)}
+                                placeholder={employmentType === 'Salaried' ? 'e.g. McKinsey & Co, Google' : 'e.g. Apex Legal & Capital'}
+                                className="w-full h-13 pl-11 pr-4 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] text-xs font-bold text-[#111111] outline-none focus:border-[#560406] focus:bg-white shadow-2xs transition-all"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 5: Income & Financial Stance */}
+                  {step === 5 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 5 · FINANCIAL HARMONY & AFFLUENCE
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Income Bracket & Money Values
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Financial alignment is one of the highest predictors of long-term compatibility.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 pt-2">
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Annual Income Bracket <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {['₹5L - ₹10L', '₹10L - ₹15L', '₹15L - ₹25L', '₹25L - ₹35L', '₹35L - ₹50L', '₹50L+ HNI'].map((sal) => (
+                              <motion.button
+                                key={sal}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="button"
+                                onClick={() => setSalaryBracket(sal)}
+                                className={`p-4 rounded-2xl border-2 text-xs font-extrabold transition-all cursor-pointer ${
+                                  salaryBracket === sal
+                                    ? 'bg-[#2D2824] text-white border-[#560406] shadow-md'
+                                    : 'bg-[#FBF9F4] text-[#444444] border-[#E8DDD0] hover:bg-[#F4EFE6]'
+                                }`}
+                              >
+                                {sal}
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Financial Management Outlook <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {[
+                              { id: 'Total Pooling', label: 'Joint Account Pooling', desc: '100% combined finances' },
+                              { id: 'Hybrid Balance', label: 'Shared + Independent', desc: 'Joint household + personal savings' },
+                              { id: 'Independent', label: 'Independent Finances', desc: 'Autonomous individual accounts' }
+                            ].map((fin) => (
+                              <motion.button
+                                key={fin.id}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="button"
+                                onClick={() => setFinancialStance(fin.id)}
+                                className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                                  financialStance === fin.id
+                                    ? 'bg-[#2D2824] text-white border-[#560406] shadow-md'
+                                    : 'bg-[#FBF9F4] text-[#444444] border-[#E8DDD0] hover:bg-[#F4EFE6]'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs font-extrabold">{fin.label}</span>
+                                  {financialStance === fin.id && <Check className="w-4 h-4 text-[#D8B486]" />}
+                                </div>
+                                <span className="text-[10px] opacity-75">{fin.desc}</span>
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 6: Diet & Lifestyle */}
+                  {step === 6 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 6 · LIFESTYLE & DIET
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Diet & Daily Living
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Food preferences and daily habits define day-to-day household synergy.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 pt-2">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-[#111111]">
+                          Diet Preference <span className="text-red-500">*</span>:
+                        </label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {['Veg', 'Eggetarian', 'Non-Veg', 'Vegan', 'Jain Veg'].map((d) => (
+                            <motion.button
+                              key={d}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              type="button"
+                              onClick={() => setDiet(d)}
+                              className={`p-4 rounded-2xl border-2 text-xs font-extrabold transition-all cursor-pointer ${
+                                diet === d
+                                  ? 'bg-[#2D2824] text-white border-[#560406] shadow-md'
+                                  : 'bg-[#FBF9F4] text-[#444444] border-[#E8DDD0] hover:bg-[#F4EFE6]'
+                              }`}
+                            >
+                              {d}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 7: Family Background & Values */}
+                  {step === 7 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 7 · FAMILY & CORE VALUES
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Family Background & Values
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Understanding family structure and foundational philosophy.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 pt-2">
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Family Structure <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {['Nuclear Family', 'Joint Family'].map((fam) => (
+                              <motion.button
+                                key={fam}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="button"
+                                onClick={() => setFamilyType(fam.replace(' Family', ''))}
+                                className={`p-4 rounded-2xl border-2 text-xs font-extrabold transition-all cursor-pointer ${
+                                  familyType === fam.replace(' Family', '')
+                                    ? 'bg-[#2D2824] text-white border-[#560406] shadow-md'
+                                    : 'bg-[#FBF9F4] text-[#444444] border-[#E8DDD0] hover:bg-[#F4EFE6]'
+                                }`}
+                              >
+                                {fam}
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-[#111111] mb-2">
+                            Family Outlook & Values <span className="text-red-500">*</span>:
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {[
+                              { val: 'Traditional', desc: 'Grounded in heritage & rituals' },
+                              { val: 'Moderate', desc: 'Balanced cultural harmony' },
+                              { val: 'Progressive', desc: 'Modern egalitarian outlook' }
+                            ].map((item) => (
+                              <motion.button
+                                key={item.val}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="button"
+                                onClick={() => setFamilyValues(item.val)}
+                                className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col gap-1 ${
+                                  familyValues === item.val
+                                    ? 'bg-[#2D2824] text-white border-[#560406] shadow-md'
+                                    : 'bg-[#FBF9F4] text-[#444444] border-[#E8DDD0] hover:bg-[#F4EFE6]'
+                                }`}
+                              >
+                                <span className="text-xs font-extrabold">{item.val}</span>
+                                <span className="text-[10px] opacity-75">{item.desc}</span>
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 8: Upload / Shoot Up to 3 Photos */}
+                  {step === 8 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 8 · PHOTO PORTFOLIO
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Select 1 to 3 High-Resolution Photos
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Photos are protected with BlurShield™ and only visible to verified matches.
+                        </p>
+                      </div>
+
+                      {/* 3 Interactive Photo Slots */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        {[0, 1, 2].map((slotIdx) => {
+                          const photoUrl = photos[slotIdx];
+                          return (
+                            <div key={slotIdx} className="relative aspect-3/4 sm:aspect-square">
+                              {photoUrl ? (
+                                <motion.div
+                                  whileHover={{ scale: 1.02 }}
+                                  className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-[#560406] bg-[#F4EFE6] shadow-sm group"
+                                >
+                                  <img src={photoUrl} alt={`Photo ${slotIdx + 1}`} className="w-full h-full object-cover" />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemovePhoto(slotIdx)}
+                                    className="absolute top-2 right-2 p-1.5 rounded-full bg-[#2D2824]/80 hover:bg-red-600 text-white transition-colors cursor-pointer shadow"
+                                    title="Remove Photo"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                  <span className="absolute bottom-2 left-2 bg-[#2D2824]/90 text-[#D8B486] text-[10px] font-extrabold px-2.5 py-1 rounded-lg">
+                                    Photo #{slotIdx + 1}
+                                  </span>
+                                </motion.div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => photoFileInputRef.current?.click()}
+                                  className="w-full h-full rounded-2xl border-2 border-dashed border-[#560406]/40 hover:border-[#560406] bg-[#FBF9F4] hover:bg-[#F4EFE6] flex flex-col items-center justify-center gap-2 text-[#777777] transition-all cursor-pointer p-4"
+                                >
+                                  <div className="w-10 h-10 rounded-full bg-white border border-[#E8DDD0] flex items-center justify-center text-[#560406]">
+                                    <Plus className="w-5 h-5" />
+                                  </div>
+                                  <span className="text-xs font-extrabold text-[#111111]">Photo #{slotIdx + 1}</span>
+                                  <span className="text-[10px] text-[#888888]">Click to upload</span>
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Desktop Action Buttons */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => photoCameraInputRef.current?.click()}
+                          className="p-4 rounded-2xl bg-[#2D2824] hover:bg-[#560406] text-white flex items-center justify-center gap-2.5 cursor-pointer transition-all shadow-md active:scale-98"
+                        >
+                          <Camera className="w-5 h-5 text-[#D8B486]" />
+                          <span className="text-xs font-extrabold">Open Camera & Snap Photo</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => photoFileInputRef.current?.click()}
+                          className="p-4 rounded-2xl bg-[#FBF9F4] hover:bg-[#F4EFE6] text-[#111111] border border-[#E8DDD0] flex items-center justify-center gap-2.5 cursor-pointer transition-all shadow-2xs active:scale-98"
+                        >
+                          <Upload className="w-5 h-5 text-[#560406]" />
+                          <span className="text-xs font-extrabold">Upload Files from Device</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Step 9: Record / Upload 30s Video Intro */}
+                  {step === 9 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-[#560406]/10 text-[11px] font-black uppercase tracking-widest text-[#560406] mb-2">
+                          STEP 9 · 30-SECOND VIDEO INTRO
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          30-Second Authentic Video Intro
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          A brief video showing personality and genuine voice builds 10x higher trust among families.
+                        </p>
+                      </div>
+
+                      {/* Video Player Preview and Studio */}
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center pt-2">
+                        <div className="sm:col-span-6 flex flex-col items-center">
+                          <div className="relative rounded-2xl overflow-hidden aspect-9/14 max-h-[300px] w-full max-w-[220px] bg-[#161412] border-2 border-[#560406] shadow-md">
+                            {videoUrl ? (
+                              <>
+                                <video
+                                  src={videoUrl}
+                                  controls
+                                  playsInline
+                                  className={`w-full h-full object-cover ${isVideoMirrored ? 'scale-x-[-1]' : ''}`}
+                                />
+                                <div className="absolute top-2 right-2 bg-[#560406] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1">
+                                  <Volume2 className="w-3 h-3" />
+                                  <span>Sound Active</span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center gap-2 p-4 text-center">
+                                <Camera className="w-8 h-8 text-[#D8B486]" />
+                                <span className="text-xs font-extrabold text-white">No video uploaded</span>
+                                <span className="text-[10px] text-[#A17B5E]">Record webcam or upload a video file</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {videoUrl && (
                             <button
                               type="button"
-                              onClick={() => handleRemovePhoto(slotIdx)}
-                              className="absolute top-1 right-1 p-1 rounded-full bg-[#2D2824]/70 hover:bg-red-600 text-white transition-colors cursor-pointer"
-                              title="Remove Photo"
+                              onClick={() => setIsVideoMirrored(!isVideoMirrored)}
+                              className="mt-3 py-1.5 px-3 rounded-full bg-white border border-[#E8DDD0] text-[#560406] hover:bg-[#F4EFE6] text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-2xs transition-all"
                             >
-                              <Trash2 className="w-3 h-3" />
+                              <FlipHorizontal className="w-3.5 h-3.5" />
+                              <span>{isVideoMirrored ? 'Mirrored (Click to Un-mirror)' : 'Normal (Click to Mirror)'}</span>
                             </button>
-                            <span className="absolute bottom-1 right-1 bg-[#2D2824] text-[#B89552] text-[9px] font-black px-1.5 py-0.5 rounded-md">
-                              #{slotIdx + 1}
-                            </span>
-                          </motion.div>
-                        ) : (
+                          )}
+                        </div>
+
+                        {/* Video Actions */}
+                        <div className="sm:col-span-6 space-y-3">
                           <button
                             type="button"
-                            onClick={() => photoFileInputRef.current?.click()}
-                            className="w-full h-full rounded-2xl border-2 border-dashed border-[#B89552]/50 hover:border-[#B89552] bg-white hover:bg-[#F4EFE6]/50 flex flex-col items-center justify-center gap-1 text-[#777777] transition-all cursor-pointer active:scale-95"
+                            onClick={openWebcamRecorder}
+                            className="w-full p-4 rounded-2xl bg-[#2D2824] hover:bg-[#560406] text-white flex items-center justify-center gap-3 cursor-pointer transition-all shadow-md active:scale-98"
                           >
-                            <Plus className="w-5 h-5 text-[#B89552]" />
-                            <span className="text-[10px] font-extrabold text-[#111111]">Photo #{slotIdx + 1}</span>
-                            <span className="text-[8px] text-[#999999]">Tap to add</span>
+                            <Camera className="w-5 h-5 text-[#D8B486]" />
+                            <div className="text-left">
+                              <span className="text-xs font-extrabold block">Record with Webcam / Camera</span>
+                              <span className="text-[10px] text-[#D8B486]">Live 30-second video recording</span>
+                            </div>
                           </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
 
-                {/* Dual Options: Camera Shoot & Gallery Upload */}
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => photoCameraInputRef.current?.click()}
-                    className="p-4 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all shadow-md active:scale-95"
-                  >
-                    <Camera className="w-5 h-5 text-[#B89552]" />
-                    <span className="text-xs font-extrabold">Use Camera to Shoot</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => photoFileInputRef.current?.click()}
-                    className="p-4 rounded-2xl bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] border border-[#E8E1D5] flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all shadow-xs active:scale-95"
-                  >
-                    <Upload className="w-5 h-5 text-[#B89552]" />
-                    <span className="text-xs font-extrabold">Upload from Gallery</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 9: Record / Upload 30s Video Intro */}
-            {step === 9 && (
-              <div className="space-y-4">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  STEP 9: 30-SEC VIDEO INTRO *
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-serif-editorial font-bold text-[#111111] leading-tight">
-                  Add a 30s Video Intro.
-                </h1>
-                <p className="text-xs text-[#777777] font-medium leading-relaxed">
-                  Vertical videos with authentic voice build 10x higher trust.
-                </p>
-
-                {/* Video Player Preview with Sound Support & Mirror Toggle */}
-                <div className="space-y-2">
-                  <div className="relative rounded-2xl overflow-hidden aspect-[9/14] max-h-[260px] bg-[#2D2824] border-2 border-[#B89552] mx-auto shadow-md">
-                    {videoUrl ? (
-                      <>
-                        <video
-                          src={videoUrl}
-                          controls
-                          playsInline
-                          className={`w-full h-full object-cover ${isVideoMirrored ? 'scale-x-[-1]' : ''}`}
-                        />
-                        <div className="absolute top-2 right-2 bg-[#B89552] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1">
-                          <Volume2 className="w-3 h-3" />
-                          <span>Sound Active</span>
+                          <button
+                            type="button"
+                            onClick={() => videoFileInputRef.current?.click()}
+                            className="w-full p-4 rounded-2xl bg-[#FBF9F4] hover:bg-[#F4EFE6] text-[#111111] border border-[#E8DDD0] flex items-center justify-center gap-3 cursor-pointer transition-all shadow-2xs active:scale-98"
+                          >
+                            <Upload className="w-5 h-5 text-[#560406]" />
+                            <div className="text-left">
+                              <span className="text-xs font-extrabold block">Upload Video File</span>
+                              <span className="text-[10px] text-[#777777]">MP4, MOV, or WebM from computer</span>
+                            </div>
+                          </button>
                         </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 px-4 text-center">
-                        <Camera className="w-7 h-7 text-[#B89552]" />
-                        <span className="text-xs font-extrabold text-[#111111]">No video yet</span>
-                        <span className="text-[10px] text-[#999999] leading-tight">Record or upload a 30-second intro below to continue.</span>
                       </div>
-                    )}
-                  </div>
-
-                  {videoUrl && (
-                    <button
-                      type="button"
-                      onClick={() => setIsVideoMirrored(!isVideoMirrored)}
-                      className="py-1.5 px-3 rounded-full bg-white border border-[#B89552]/40 text-[#B89552] hover:bg-[#FAF8F5] text-[11px] font-bold flex items-center gap-1.5 mx-auto cursor-pointer shadow-xs transition-all active:scale-95"
-                    >
-                      <FlipHorizontal className="w-3.5 h-3.5" />
-                      <span>{isVideoMirrored ? 'Video Mirrored (Click to Un-mirror)' : 'Video Normal (Click to Mirror / Flip)'}</span>
-                    </button>
+                    </div>
                   )}
-                </div>
 
-                {/* Dual Options: Camera Shoot & Video File Upload */}
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  <button
-                    type="button"
-                    onClick={openWebcamRecorder}
-                    className="p-3.5 rounded-2xl bg-[#2D2824] hover:bg-[#B89552] text-white flex flex-col items-center justify-center gap-1 cursor-pointer transition-all shadow-md active:scale-95"
-                  >
-                    <Camera className="w-5 h-5 text-[#B89552]" />
-                    <span className="text-xs font-extrabold">Use Camera to Shoot</span>
-                  </button>
+                  {/* Step 10: Persona Reveal & Verification Card */}
+                  {step === 10 && (
+                    <div className="space-y-5">
+                      <div>
+                        <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-black uppercase tracking-widest mb-2">
+                          STEP 10 · MANNAT PERSONA READY
+                        </span>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif-editorial font-bold text-[#111111] leading-tight">
+                          Review Your Verified Biodata
+                        </h1>
+                        <p className="text-xs sm:text-sm text-[#777777] font-medium mt-1">
+                          Your profile has been formulated with our algorithm for executive matrimony.
+                        </p>
+                      </div>
 
-                  <button
-                    type="button"
-                    onClick={() => videoFileInputRef.current?.click()}
-                    className="p-3.5 rounded-2xl bg-[#F4EFE6] hover:bg-[#E8E1D5] text-[#111111] border border-[#E8E1D5] flex flex-col items-center justify-center gap-1 cursor-pointer transition-all shadow-xs active:scale-95"
-                  >
-                    <Upload className="w-5 h-5 text-[#B89552]" />
-                    <span className="text-xs font-extrabold">Upload Video File</span>
-                  </button>
-                </div>
-              </div>
-            )}
+                      {/* Generated Persona Badge Card */}
+                      <motion.div
+                        initial={{ scale: 0.96, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: 'spring', stiffness: 220, damping: 20 }}
+                        className="bg-gradient-to-br from-[#FAF8F5] to-[#F4EFE6] border-2 border-[#560406]/30 rounded-3xl p-6 sm:p-8 space-y-4 shadow-md text-left"
+                      >
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <span className="text-xs font-black uppercase tracking-wider bg-[#560406] text-[#F5E6D3] px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                            <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
+                            <span>98% MQS MATCH COMPATIBILITY</span>
+                          </span>
+                          <span className="text-xs font-extrabold text-[#560406]">
+                            Persona: {getGeneratedPersonaTitle()}
+                          </span>
+                        </div>
 
-            {/* Step 10: Expectations & Generated Persona Card Reveal */}
-            {step === 10 && (
-              <div className="space-y-4 text-center">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-[#B89552]">
-                  MANNAT PERSONA PROFILE {isEditing ? 'UPDATED' : 'GENERATED'}
-                </span>
+                        <div>
+                          <h3 className="text-2xl font-serif-editorial font-bold text-[#111111]">
+                            {displayName || 'Candidate Name'}, {age} yrs
+                          </h3>
+                          <p className="text-xs text-[#6E6259] font-bold mt-0.5">
+                            {occupation} ({employmentType}) · {city} · {religion} {subCommunity ? `(${subCommunity})` : ''}
+                          </p>
+                        </div>
 
-                {/* Generated Persona Badge Card */}
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-                  className="bg-[#F4EFE6]/95 border-2 border-[#B89552] rounded-3xl p-6 space-y-4 shadow-xl text-left backdrop-blur-md"
-                >
-                  <div className="flex items-center justify-end">
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-[#2D2824] text-white px-3 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles className="w-3 h-3 text-[#B89552]" />
-                      <span>98% MQS MATCH SCORE</span>
-                    </span>
-                  </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-white border border-[#E8DDD0] text-xs">
+                          <div className="flex items-center justify-between py-1 border-b sm:border-b-0 sm:border-r border-[#E8DDD0] sm:pr-3">
+                            <span className="text-[#777777] font-bold">Employment:</span>
+                            <span className="font-extrabold text-[#111111] truncate">{employmentType} · {companyName}</span>
+                          </div>
+                          <div className="flex items-center justify-between py-1 sm:pl-3">
+                            <span className="text-[#777777] font-bold">Annual Income:</span>
+                            <span className="font-extrabold text-[#111111]">{salaryBracket}</span>
+                          </div>
+                          <div className="flex items-center justify-between py-1 border-b sm:border-b-0 sm:border-r border-[#E8DDD0] sm:pr-3">
+                            <span className="text-[#777777] font-bold">Financial Stance:</span>
+                            <span className="font-extrabold text-[#111111]">{financialStance}</span>
+                          </div>
+                          <div className="flex items-center justify-between py-1 sm:pl-3">
+                            <span className="text-[#777777] font-bold">Diet:</span>
+                            <span className="font-extrabold text-[#111111]">{diet}</span>
+                          </div>
+                        </div>
 
-                  <div>
-                    <h3 className="text-xl font-serif-editorial font-bold text-[#111111]">
-                      {displayName}, {age}
-                    </h3>
-                    <p className="text-xs text-[#777777] font-semibold">
-                      {occupation} ({employmentType}) · {city} · {religion} {subCommunity ? `(${subCommunity})` : ''}
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-white border border-[#E8E1D5] space-y-2 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#777777] font-bold">Employment:</span>
-                      <span className="font-extrabold text-[#111111]">{employmentType} · {companyName}</span>
+                        <div className="flex items-center gap-2.5 text-xs text-emerald-800 bg-emerald-50 p-3 rounded-2xl border border-emerald-200">
+                          <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
+                          <span>BlurShield™ privacy applied. Ready for curated matrimonial discovery.</span>
+                        </div>
+                      </motion.div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#777777] font-bold">Persona Match:</span>
-                      <span className="font-extrabold text-[#B89552]">{getGeneratedPersonaTitle()}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#777777] font-bold">Financial Stance:</span>
-                      <span className="font-extrabold text-[#111111]">{financialStance}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#777777] font-bold">Annual Income:</span>
-                      <span className="font-extrabold text-[#111111]">{salaryBracket}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[#777777] font-bold">Diet:</span>
-                      <span className="font-extrabold text-[#111111]">{diet}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-[11px] text-emerald-800 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>BlurShield privacy applied & verified bio-data ready.</span>
-                  </div>
+                  )}
                 </motion.div>
-              </div>
+              </AnimatePresence>
+            </div>
+
+            {/* Validation Error Alert */}
+            {errorMsg && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="my-4 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-2.5 shadow-xs"
+              >
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                <span>{errorMsg}</span>
+              </motion.div>
             )}
-          </motion.div>
-        </AnimatePresence>
+
+            {/* Bottom Form Navigation Controls */}
+            <div className="w-full pt-6 border-t border-[#E8DDD0] flex items-center justify-between gap-4 mt-8">
+              {step > 1 ? (
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  className="py-3.5 px-6 rounded-2xl bg-[#FBF9F4] border border-[#E8DDD0] hover:bg-[#F4EFE6] text-xs font-bold text-[#161412] flex items-center gap-2 transition-all cursor-pointer active:scale-98 shadow-2xs"
+                >
+                  <ArrowLeft className="w-4 h-4 text-[#560406]" />
+                  <span>Previous Step</span>
+                </button>
+              ) : (
+                <div />
+              )}
+
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleNext}
+                className="py-4 px-8 rounded-2xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-xs font-extrabold text-[#F5E6D3] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 border border-[#A17B5E]/40"
+              >
+                {step === totalSteps ? (
+                  <>
+                    <Sparkles className="w-4 h-4 text-[#D8B486]" />
+                    <span>{isSubmitting ? 'Submitting Biodata...' : isEditing ? 'Save & Update Biodata' : 'Complete Onboarding & Enter Mannat'}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Continue to Step {step + 1}</span>
+                    <ArrowRight className="w-4 h-4 text-[#D8B486]" />
+                  </>
+                )}
+              </button>
+            </div>
+          </section>
+        </div>
       </div>
 
-      {/* Mandatory Validation Error Alert */}
-      {errorMsg && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="z-30 mb-2 p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-2 shadow-xs"
-        >
-          <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-          <span>{errorMsg}</span>
-        </motion.div>
-      )}
-
-      {/* Live Camera Recording Modal */}
+      {/* Live Webcam Recording Modal */}
       {isRecordingModalOpen && (
-        <div className="fixed inset-0 z-50 bg-[#2D2824]/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-[#161412] rounded-3xl p-5 text-white border border-[#B89552] space-y-4 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-[#161412]/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#221F1C] rounded-3xl p-6 text-white border border-[#560406] space-y-4 shadow-2xl relative">
             <button
               type="button"
               onClick={closeWebcamRecorder}
@@ -1248,12 +1504,12 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
               <X className="w-4 h-4" />
             </button>
 
-            <h3 className="text-base font-serif-editorial font-bold text-center text-[#DFBE7E]">
+            <h3 className="text-lg font-serif-editorial font-bold text-center text-[#D8B486]">
               Record 30s Video Intro
             </h3>
 
             {/* Live Camera Viewfinder */}
-            <div className="relative aspect-[9/14] max-h-[380px] w-full bg-[#2D2824] rounded-2xl overflow-hidden border border-white/20">
+            <div className="relative aspect-9/14 max-h-[380px] w-full bg-black rounded-2xl overflow-hidden border border-white/20 mx-auto">
               <video
                 ref={liveVideoRef}
                 autoPlay
@@ -1267,7 +1523,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsCameraMirrored(!isCameraMirrored)}
-                  className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow hover:bg-black/80 cursor-pointer border border-white/20"
+                  className="absolute top-3 right-3 bg-black/70 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow hover:bg-black/90 cursor-pointer border border-white/20"
                 >
                   <FlipHorizontal className="w-3.5 h-3.5" />
                   <span>{isCameraMirrored ? 'Mirrored' : 'Normal'}</span>
@@ -1284,7 +1540,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
             </div>
 
             {/* Camera Controls */}
-            <div className="flex items-center justify-center gap-4 pt-1">
+            <div className="flex items-center justify-center gap-4 pt-2">
               {!isRecording ? (
                 <button
                   type="button"
@@ -1308,39 +1564,6 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
           </div>
         </div>
       )}
-
-      {/* Bottom Navigation Buttons - Sticky bottom with safe area margin */}
-      <div className="w-full pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] mt-auto z-40 bg-[#F8F6F2]/95 backdrop-blur-md border-t border-[#E8DDD0] flex items-center gap-3 sticky bottom-0 shrink-0">
-        {step > 1 && (
-          <button
-            type="button"
-            onClick={handlePrev}
-            className="py-3.5 px-5 rounded-xl bg-white border border-[#E8DDD0] hover:bg-[#F8F6F2] text-xs font-bold text-[#161412] flex items-center gap-1 transition-all cursor-pointer active:scale-95 shadow-xs whitespace-nowrap"
-          >
-            <ArrowLeft className="w-4 h-4 text-[#560406]" />
-            <span>Back</span>
-          </button>
-        )}
-
-        <button
-          type="button"
-          disabled={isSubmitting}
-          onClick={handleNext}
-          className="flex-1 py-4 px-6 rounded-xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-xs font-extrabold text-[#F5E6D3] flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 whitespace-nowrap border border-[#A17B5E]/40"
-        >
-          {step === totalSteps ? (
-            <>
-              <Sparkles className="w-4 h-4 text-[#D8B486]" />
-              <span className="whitespace-nowrap">{isSubmitting ? 'Saving Bio-Data...' : isEditing ? 'Save & Update Bio-Data' : 'Complete & Enter Mannat'}</span>
-            </>
-          ) : (
-            <>
-              <span className="whitespace-nowrap">Continue</span>
-              <ArrowRight className="w-4 h-4 text-[#D8B486]" />
-            </>
-          )}
-        </button>
-      </div>
     </div>
   );
 };
