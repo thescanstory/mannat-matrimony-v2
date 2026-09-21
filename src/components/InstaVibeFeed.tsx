@@ -36,6 +36,7 @@ interface InstaVibeFeedProps {
 
 export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   profiles,
+  onOpenFilters,
   onOpenSharePortal
 }) => {
   const [selectedDetailProfile, setSelectedDetailProfile] = useState<Profile | null>(null);
@@ -43,16 +44,13 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   const [activePhotoIndices, setActivePhotoIndices] = useState<Record<string, number>>({});
   const [modalActivePhotoIndex, setModalActivePhotoIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeQuickChip, setActiveQuickChip] = useState<'all' | 'high_match' | 'gun_milan' | 'vouched' | 'ivy_founders' | 'banking_pe' | 'doctors' | 'mumbai' | 'delhi' | 'global'>('all');
+  const [activeQuickChip, setActiveQuickChip] = useState<'all' | 'high_match' | 'gun_milan' | 'vouched' | 'ivy_founders' | 'banking_pe' | 'doctors'>('all');
   
-  // Interactive Filter States
-  const [filterAgeMin, setFilterAgeMin] = useState(21);
-  const [filterAgeMax, setFilterAgeMax] = useState(40);
-  const [filterReligion, setFilterReligion] = useState<string>('All');
-  const [filterDiet, setFilterDiet] = useState<string>('All');
-  const [filterManglik, setFilterManglik] = useState<string>('All');
-  const [filterMinGunMilan, setFilterMinGunMilan] = useState(0);
-  const [showFilterDropdowns, setShowFilterDropdowns] = useState(false);
+  // Interactive Direct Dropdown Filters
+  const [selectedCity, setSelectedCity] = useState<string>('All');
+  const [selectedReligion, setSelectedReligion] = useState<string>('All');
+  const [selectedMaxAge, setSelectedMaxAge] = useState<number>(45);
+  const [selectedMinGunMilan, setSelectedMinGunMilan] = useState<number>(0);
 
   const [blockedProfileIds, setBlockedProfileIds] = useState<string[]>(() => {
     try {
@@ -157,16 +155,25 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     triggerToast(`Interest Wave Sent to ${targetProfile.display_name}! 👋`, 'sparkle');
   };
 
+  const hasActiveFilters = useMemo(() => {
+    return (
+      searchQuery.trim() !== '' ||
+      activeQuickChip !== 'all' ||
+      selectedCity !== 'All' ||
+      selectedReligion !== 'All' ||
+      selectedMaxAge < 45 ||
+      selectedMinGunMilan > 0
+    );
+  }, [searchQuery, activeQuickChip, selectedCity, selectedReligion, selectedMaxAge, selectedMinGunMilan]);
+
   const handleResetFilters = () => {
-    setFilterAgeMin(21);
-    setFilterAgeMax(40);
-    setFilterReligion('All');
-    setFilterDiet('All');
-    setFilterManglik('All');
-    setFilterMinGunMilan(0);
+    setSelectedCity('All');
+    setSelectedReligion('All');
+    setSelectedMaxAge(45);
+    setSelectedMinGunMilan(0);
     setSearchQuery('');
     setActiveQuickChip('all');
-    triggerToast('Filters Reset', 'success');
+    triggerToast('All Filters Cleared ✨', 'success');
   };
 
   // Filtered profiles
@@ -209,16 +216,12 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
           return false;
         }
       }
-      if (activeQuickChip === 'mumbai' && !p.city?.toLowerCase().includes('mumbai')) return false;
-      if (activeQuickChip === 'delhi' && !p.city?.toLowerCase().includes('delhi')) return false;
-      if (activeQuickChip === 'global' && !p.city?.toLowerCase().includes('london') && !p.city?.toLowerCase().includes('singapore') && !p.city?.toLowerCase().includes('us')) return false;
 
       // Dropdown Filters
-      if (p.age < filterAgeMin || p.age > filterAgeMax) return false;
-      if (filterReligion !== 'All' && p.religion !== filterReligion) return false;
-      if (filterDiet !== 'All' && p.diet !== filterDiet) return false;
-      if (filterMinGunMilan > 0 && (p.gun_milan_score || 0) < filterMinGunMilan) return false;
-      if (filterManglik !== 'All' && p.horoscope?.manglik !== filterManglik) return false;
+      if (p.age > selectedMaxAge) return false;
+      if (selectedCity !== 'All' && !p.city?.toLowerCase().includes(selectedCity.toLowerCase())) return false;
+      if (selectedReligion !== 'All' && p.religion !== selectedReligion) return false;
+      if (selectedMinGunMilan > 0 && (p.gun_milan_score || 0) < selectedMinGunMilan) return false;
 
       return true;
     });
@@ -227,12 +230,10 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     blockedProfileIds,
     searchQuery,
     activeQuickChip,
-    filterAgeMin,
-    filterAgeMax,
-    filterReligion,
-    filterDiet,
-    filterManglik,
-    filterMinGunMilan
+    selectedCity,
+    selectedReligion,
+    selectedMaxAge,
+    selectedMinGunMilan
   ]);
 
   return (
@@ -264,179 +265,179 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       />
 
       {/* Main Spacious Max-Width Web Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-5">
         
-        {/* Top Search & Filter Bar */}
-        <div className="bg-white rounded-2xl border border-[#E8DDD0] p-3 sm:p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+        {/* UNIFIED LUXURY FILTER BAR */}
+        <div className="bg-white rounded-2xl border border-[#E8DDD0] p-3 sm:p-4 shadow-xs space-y-3">
           
-          {/* Search Input (Expands across available width) */}
-          <div className="relative w-full md:flex-1 max-w-xl">
-            <Search className="w-4 h-4 text-[#A17B5E] absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by candidate name, city, profession, alma mater..."
-              className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm bg-[#FAF8F5] rounded-xl border border-[#E8DDD0] text-[#161412] placeholder-[#A89F91] focus:outline-none focus:border-[#560406] transition"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8C827A] hover:text-[#161412] cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Filter Toggles & Candidate Counter */}
-          <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end shrink-0">
-            <button
-              type="button"
-              onClick={() => setShowFilterDropdowns(!showFilterDropdowns)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
-                showFilterDropdowns
-                  ? 'bg-[#560406] text-[#F5E6D3] border-[#560406] shadow-xs'
-                  : 'bg-[#FAF8F5] text-[#560406] border-[#E8DDD0] hover:bg-white'
-              }`}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>Refine Filters</span>
-              {(filterReligion !== 'All' || filterDiet !== 'All' || filterMinGunMilan > 0 || filterManglik !== 'All') && (
-                <span className="w-2 h-2 rounded-full bg-[#DFBE7E]" />
+          {/* Top Row: Search Input + Live Dropdowns + Reset */}
+          <div className="flex flex-col lg:flex-row items-center gap-3">
+            
+            {/* Search Input */}
+            <div className="relative w-full lg:flex-1">
+              <Search className="w-4 h-4 text-[#A17B5E] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search candidates by name, city, profession, or university..."
+                className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm bg-[#FAF8F5] rounded-xl border border-[#E8DDD0] text-[#161412] placeholder-[#A89F91] focus:outline-none focus:border-[#560406] transition"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8C827A] hover:text-[#161412] cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               )}
-            </button>
+            </div>
 
-            <span className="text-xs text-[#6E6259] bg-[#FAF8F5] px-3.5 py-2 rounded-xl border border-[#E8DDD0]">
-              Showing <strong className="text-[#560406] font-extrabold">{processedProfiles.length}</strong> Verified Candidates
-            </span>
-          </div>
-        </div>
+            {/* Quick Filter Dropdowns on Desktop */}
+            <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto shrink-0 text-xs">
+              
+              {/* City Dropdown */}
+              <div className="relative flex-1 sm:flex-none">
+                <select
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  className={`w-full sm:w-auto px-3.5 py-2.5 rounded-xl border text-xs font-semibold cursor-pointer focus:outline-none transition ${
+                    selectedCity !== 'All'
+                      ? 'bg-[#560406] text-[#F5E6D3] border-[#560406]'
+                      : 'bg-[#FAF8F5] text-[#161412] border-[#E8DDD0] hover:bg-white'
+                  }`}
+                >
+                  <option value="All">All Cities</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Delhi">Delhi NCR</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="London">London / UK</option>
+                  <option value="Singapore">Singapore</option>
+                </select>
+              </div>
 
-        {/* Expandable Top Filter Dropdown Row */}
-        <AnimatePresence>
-          {showFilterDropdowns && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden bg-white rounded-2xl border border-[#E8DDD0] p-5 shadow-sm space-y-4"
-            >
-              <div className="flex items-center justify-between border-b border-[#E8DDD0] pb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#560406]">
-                  Filter Preferences
-                </span>
+              {/* Religion Dropdown */}
+              <div className="relative flex-1 sm:flex-none">
+                <select
+                  value={selectedReligion}
+                  onChange={(e) => setSelectedReligion(e.target.value)}
+                  className={`w-full sm:w-auto px-3.5 py-2.5 rounded-xl border text-xs font-semibold cursor-pointer focus:outline-none transition ${
+                    selectedReligion !== 'All'
+                      ? 'bg-[#560406] text-[#F5E6D3] border-[#560406]'
+                      : 'bg-[#FAF8F5] text-[#161412] border-[#E8DDD0] hover:bg-white'
+                  }`}
+                >
+                  <option value="All">All Religions</option>
+                  <option value="Hindu">Hindu</option>
+                  <option value="Jain">Jain</option>
+                  <option value="Sikh">Sikh</option>
+                  <option value="Muslim">Muslim</option>
+                  <option value="Christian">Christian</option>
+                </select>
+              </div>
+
+              {/* Max Age Dropdown */}
+              <div className="relative flex-1 sm:flex-none">
+                <select
+                  value={selectedMaxAge}
+                  onChange={(e) => setSelectedMaxAge(Number(e.target.value))}
+                  className={`w-full sm:w-auto px-3.5 py-2.5 rounded-xl border text-xs font-semibold cursor-pointer focus:outline-none transition ${
+                    selectedMaxAge < 45
+                      ? 'bg-[#560406] text-[#F5E6D3] border-[#560406]'
+                      : 'bg-[#FAF8F5] text-[#161412] border-[#E8DDD0] hover:bg-white'
+                  }`}
+                >
+                  <option value={45}>All Ages</option>
+                  <option value={26}>Up to 26 yrs</option>
+                  <option value={28}>Up to 28 yrs</option>
+                  <option value={30}>Up to 30 yrs</option>
+                  <option value={35}>Up to 35 yrs</option>
+                </select>
+              </div>
+
+              {/* Gun Milan Dropdown */}
+              <div className="relative flex-1 sm:flex-none">
+                <select
+                  value={selectedMinGunMilan}
+                  onChange={(e) => setSelectedMinGunMilan(Number(e.target.value))}
+                  className={`w-full sm:w-auto px-3.5 py-2.5 rounded-xl border text-xs font-semibold cursor-pointer focus:outline-none transition ${
+                    selectedMinGunMilan > 0
+                      ? 'bg-[#560406] text-[#F5E6D3] border-[#560406]'
+                      : 'bg-[#FAF8F5] text-[#161412] border-[#E8DDD0] hover:bg-white'
+                  }`}
+                >
+                  <option value={0}>Any Gun Milan</option>
+                  <option value={30}>≥ 30 / 36 (High)</option>
+                  <option value={32}>≥ 32 / 36 (Very High)</option>
+                  <option value={34}>≥ 34 / 36 (Elite)</option>
+                </select>
+              </div>
+
+              {/* Full Filter Drawer Trigger */}
+              {onOpenFilters && (
+                <button
+                  type="button"
+                  onClick={onOpenFilters}
+                  className="px-3.5 py-2.5 rounded-xl bg-white border border-[#560406] text-[#560406] hover:bg-[#FAF8F5] text-xs font-bold flex items-center gap-1.5 cursor-pointer shrink-0 transition"
+                  title="Comprehensive Search Filters"
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#560406]" />
+                  <span className="hidden sm:inline">Advanced</span>
+                </button>
+              )}
+
+              {/* Clear All Filters Button */}
+              {hasActiveFilters && (
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="text-xs text-[#A17B5E] hover:text-[#560406] font-bold flex items-center gap-1 cursor-pointer"
+                  className="px-3.5 py-2.5 rounded-xl bg-rose-50 text-rose-800 hover:bg-rose-100 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition shrink-0"
+                  title="Clear all active filters"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  <span>Reset All</span>
+                  <span>Clear</span>
                 </button>
-              </div>
+              )}
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                {/* Age Slider */}
-                <div className="space-y-1.5 bg-[#FAF8F5] p-3 rounded-xl border border-[#E8DDD0]">
-                  <div className="flex justify-between font-bold">
-                    <span className="text-[#6E6259]">Max Age</span>
-                    <span className="text-[#560406]">{filterAgeMax} yrs</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="22"
-                    max="45"
-                    value={filterAgeMax}
-                    onChange={(e) => setFilterAgeMax(Number(e.target.value))}
-                    className="w-full accent-[#560406] cursor-pointer"
-                  />
-                </div>
+          </div>
 
-                {/* Gun Milan */}
-                <div className="space-y-1.5 bg-[#FAF8F5] p-3 rounded-xl border border-[#E8DDD0]">
-                  <div className="flex justify-between font-bold">
-                    <span className="text-[#6E6259]">Min Gun Milan</span>
-                    <span className="text-[#560406]">{filterMinGunMilan > 0 ? `≥ ${filterMinGunMilan}/36` : 'Any'}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="36"
-                    step="2"
-                    value={filterMinGunMilan}
-                    onChange={(e) => setFilterMinGunMilan(Number(e.target.value))}
-                    className="w-full accent-[#560406] cursor-pointer"
-                  />
-                </div>
+          {/* Bottom Row: Quick Curated Segment Chips + Active Count */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-[#F0EAE1]">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none text-xs">
+              {[
+                { id: 'all', label: 'All Candidates' },
+                { id: 'high_match', label: '⭐ Top Match (>95%)' },
+                { id: 'gun_milan', label: '🪐 High Kundli (>30)' },
+                { id: 'vouched', label: '🛡️ Vouched by Family' },
+                { id: 'ivy_founders', label: '🎓 Ivy League & Founders' },
+                { id: 'banking_pe', label: '💼 Finance & PE' },
+                { id: 'doctors', label: '🩺 Healthcare & Doctors' },
+              ].map((chip) => (
+                <button
+                  key={chip.id}
+                  type="button"
+                  onClick={() => setActiveQuickChip(chip.id as any)}
+                  className={`px-3 py-1.5 rounded-full font-bold whitespace-nowrap transition-all duration-200 cursor-pointer border text-[11px] ${
+                    activeQuickChip === chip.id
+                      ? 'bg-[#560406] text-[#F5E6D3] border-[#560406] shadow-2xs'
+                      : 'bg-[#FAF8F5] text-[#6E6259] border-[#E8DDD0] hover:bg-white hover:text-[#560406]'
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
 
-                {/* Religion */}
-                <div className="space-y-1 bg-[#FAF8F5] p-3 rounded-xl border border-[#E8DDD0]">
-                  <label className="font-bold text-[#6E6259] block">Religion</label>
-                  <select
-                    value={filterReligion}
-                    onChange={(e) => setFilterReligion(e.target.value)}
-                    className="w-full bg-white border border-[#E8DDD0] rounded-lg px-2.5 py-1.5 text-xs text-[#161412] focus:outline-none"
-                  >
-                    <option value="All">All Religions</option>
-                    <option value="Hindu">Hindu</option>
-                    <option value="Jain">Jain</option>
-                    <option value="Sikh">Sikh</option>
-                    <option value="Muslim">Muslim</option>
-                    <option value="Christian">Christian</option>
-                  </select>
-                </div>
+            <div className="text-[11px] text-[#6E6259] font-medium shrink-0 self-end sm:self-center">
+              Showing <strong className="text-[#560406] font-bold">{processedProfiles.length}</strong> Verified Profiles
+            </div>
+          </div>
 
-                {/* Diet */}
-                <div className="space-y-1 bg-[#FAF8F5] p-3 rounded-xl border border-[#E8DDD0]">
-                  <label className="font-bold text-[#6E6259] block">Dietary Habit</label>
-                  <select
-                    value={filterDiet}
-                    onChange={(e) => setFilterDiet(e.target.value)}
-                    className="w-full bg-white border border-[#E8DDD0] rounded-lg px-2.5 py-1.5 text-xs text-[#161412] focus:outline-none"
-                  >
-                    <option value="All">All Diets</option>
-                    <option value="Vegetarian">Strictly Vegetarian</option>
-                    <option value="Eggetarian">Eggetarian</option>
-                    <option value="Non-Vegetarian">Non-Vegetarian</option>
-                  </select>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Quick Filter Chips Carousel */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
-          {[
-            { id: 'all', label: 'All Candidates' },
-            { id: 'high_match', label: '⭐ Top Compatibility (>95%)' },
-            { id: 'gun_milan', label: '🪐 High Gun Milan (>30)' },
-            { id: 'vouched', label: '🛡️ Vouched by Family' },
-            { id: 'ivy_founders', label: '🎓 Ivy League & Tech Founders' },
-            { id: 'banking_pe', label: '💼 Investment Banking & PE' },
-            { id: 'doctors', label: '🩺 Physicians & Surgeons' },
-            { id: 'mumbai', label: '📍 Mumbai' },
-            { id: 'delhi', label: '📍 Delhi NCR' },
-            { id: 'global', label: '🌍 Global / London / Singapore' },
-          ].map((chip) => (
-            <button
-              key={chip.id}
-              type="button"
-              onClick={() => setActiveQuickChip(chip.id as any)}
-              className={`px-4 py-2 rounded-full font-bold whitespace-nowrap transition-all duration-200 cursor-pointer border shadow-2xs ${
-                activeQuickChip === chip.id
-                  ? 'bg-[#560406] text-[#F5E6D3] border-[#560406] shadow-xs'
-                  : 'bg-white text-[#6E6259] border-[#E8DDD0] hover:bg-[#FAF8F5] hover:text-[#560406]'
-              }`}
-            >
-              {chip.label}
-            </button>
-          ))}
         </div>
 
-        {/* MAIN 3-COLUMN CANDIDATE DIRECTORY GRID (Spacious, Balanced Layout) */}
+        {/* MAIN 3-COLUMN CANDIDATE DIRECTORY GRID */}
         {processedProfiles.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 sm:p-16 border border-[#E8DDD0] shadow-xs text-center space-y-4 max-w-2xl mx-auto">
             <div className="w-16 h-16 rounded-full bg-[#560406]/10 text-[#560406] flex items-center justify-center mx-auto border border-[#A17B5E]/30">
@@ -446,14 +447,14 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
               No Candidates Found Matching Your Filters
             </h3>
             <p className="text-xs text-[#6E6259] max-w-sm mx-auto leading-relaxed">
-              Try resetting your filter parameters or selecting "All Candidates" to browse our complete verified network.
+              Try broadening your filter criteria or click "Clear All" to explore our complete directory of verified members.
             </p>
             <button
               type="button"
               onClick={handleResetFilters}
               className="px-6 py-2.5 rounded-full bg-[#560406] text-[#F5E6D3] text-xs font-bold uppercase tracking-wider hover:bg-[#730C0F] transition cursor-pointer shadow-sm"
             >
-              Reset All Filters
+              Clear All Filters
             </button>
           </div>
         ) : (
