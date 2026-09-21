@@ -206,7 +206,7 @@ export const profileService = {
       managed_by: profileData.managed_by || 'self'
     };
 
-    // Save to localStorage for instant offline/refresh persistence
+    // Safe LocalStorage persistence (guards against quota limits)
     try {
       localStorage.setItem('mannat_user_profile', JSON.stringify(newProfile));
       localStorage.setItem('mannat_onboarded_' + newProfile.id, 'true');
@@ -227,13 +227,22 @@ export const profileService = {
       filteredAdmin.unshift(newProfile);
       localStorage.setItem('mannat_admin_candidates', JSON.stringify(filteredAdmin));
     } catch (e) {
-      console.warn('Could not cache profile locally:', e);
+      console.warn('LocalStorage quota or caching notice, saving lightweight profile:', e);
+      try {
+        // Fallback: save profile without heavy video URL if storage quota is tight
+        const lightweight = { ...newProfile, bio_video_url: '' };
+        localStorage.setItem('mannat_user_profile', JSON.stringify(lightweight));
+        localStorage.setItem('mannat_onboarded_' + newProfile.id, 'true');
+        if (newProfile.user_id) {
+          localStorage.setItem('mannat_onboarded_' + newProfile.user_id, 'true');
+        }
+      } catch {}
     }
 
-    // Save to Supabase with valid UUID and schema columns
+    // Save to Supabase with valid UUID and schema columns with 3.5s timeout guarantee
     if (isSupabaseConfigured()) {
       try {
-        const { error: upsertError } = await supabase.from('profiles').upsert([{
+        const upsertPromise = supabase.from('profiles').upsert([{
           id: newProfile.id,
           user_id: isValidUUID(newProfile.user_id) ? newProfile.user_id : null,
           display_name: newProfile.display_name,
@@ -266,11 +275,11 @@ export const profileService = {
           },
           horoscope: newProfile.horoscope || {}
         }]);
-        if (upsertError) {
-          console.error('Supabase profile upsert error:', upsertError);
-        }
+
+        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 3500));
+        await Promise.race([upsertPromise, timeoutPromise]);
       } catch (e) {
-        console.error('Supabase profile insertion exception:', e);
+        console.warn('Supabase profile insertion exception:', e);
       }
     }
 

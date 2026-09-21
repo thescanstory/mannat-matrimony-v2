@@ -130,7 +130,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
     });
   };
 
-  // Compress image to high-quality JPEG Data URL for robust storage and display
+  // Compress image to fast, high-quality JPEG Data URL (guards against huge string sizes)
   const compressImageToDataURL = async (file: File): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -141,7 +141,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
         img.onload = () => {
           try {
             const canvas = document.createElement('canvas');
-            const MAX_DIM = 960;
+            const MAX_DIM = 640;
             let width = img.width;
             let height = img.height;
 
@@ -162,7 +162,7 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
             const ctx = canvas.getContext('2d');
             if (ctx) {
               ctx.drawImage(img, 0, 0, width, height);
-              const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+              const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
               resolve(dataUrl);
             } else {
               resolve(rawDataUrl);
