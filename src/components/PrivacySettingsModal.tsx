@@ -299,12 +299,12 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
                     if (window.confirm('Are you sure you want to permanently delete your account and data? This action cannot be undone.')) {
                       try {
                         if (currentUser?.id) {
-                          await profileService.deleteProfile(currentUser.id);
+                          await profileService.deleteProfile(currentUser.id, currentUser.email);
                         }
                         await authService.signOut();
                       } catch { }
                       localStorage.clear();
-                      window.location.href = '/';
+                      window.location.href = '/app';
                     }
                   }}
                   className="px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-extrabold cursor-pointer transition-colors"

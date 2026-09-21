@@ -21,37 +21,39 @@ export const profileService = {
   hasExistingProfile: async (userId?: string, email?: string): Promise<boolean> => {
     if (!userId && !email) return false;
 
-    // 1. Check local completed onboardings
-    try {
-      if (email && localStorage.getItem('mannat_onboarded_' + email.toLowerCase()) === 'true') {
-        return true;
-      }
-      if (userId && localStorage.getItem('mannat_onboarded_' + userId) === 'true') {
-        return true;
-      }
-      const customProfilesStr = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
-      if (customProfilesStr) {
-        const customProfiles: Profile[] = JSON.parse(customProfilesStr);
-        const match = customProfiles.some(p => (userId && p.user_id === userId) || (userId && p.id === userId));
-        if (match) return true;
-      }
-    } catch { }
-
-    // 2. Check Supabase DB
+    // 1. If Supabase DB is configured, check the cloud DB as authoritative source
     if (isSupabaseConfigured() && userId) {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('id')
+          .select('id, display_name')
           .or(`id.eq.${userId},user_id.eq.${userId}`)
           .limit(1);
+
         if (data && data.length > 0 && !error) {
           if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
           localStorage.setItem('mannat_onboarded_' + userId, 'true');
           return true;
+        } else {
+          // If no profile found in DB, wipe stale local flags
+          if (email) localStorage.removeItem('mannat_onboarded_' + email.toLowerCase());
+          localStorage.removeItem('mannat_onboarded_' + userId);
+          return false;
         }
-      } catch { }
+      } catch (err) {
+        console.warn('DB check profile notice:', err);
+      }
     }
+
+    // 2. Check local custom profiles cache (for offline / unconfigured environments)
+    try {
+      const customProfilesStr = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
+      if (customProfilesStr) {
+        const customProfiles: Profile[] = JSON.parse(customProfilesStr);
+        const match = customProfiles.some(p => (userId && (p.user_id === userId || p.id === userId)));
+        if (match) return true;
+      }
+    } catch { }
 
     return false;
   },
@@ -171,7 +173,7 @@ export const profileService = {
   },
 
   // Delete Candidate Profile (Remote Supabase & Local Cache) - Apple Guideline 5.1.1
-  deleteProfile: async (profileId: string): Promise<boolean> => {
+  deleteProfile: async (profileId: string, email?: string): Promise<boolean> => {
     try {
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
@@ -180,13 +182,26 @@ export const profileService = {
           const filtered = list.filter(p => p.id !== profileId && p.user_id !== profileId);
           localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(filtered));
         }
+
+        // Wipe all local onboarding and user state so next login asks onboarding questions
+        if (profileId) {
+          localStorage.removeItem('mannat_onboarded_' + profileId);
+        }
+        if (email) {
+          localStorage.removeItem('mannat_onboarded_' + email.toLowerCase());
+        }
+        localStorage.removeItem('mannat_user_profile');
+        localStorage.removeItem('mannat_active_user');
+        localStorage.removeItem('mannat_auth_email');
+        localStorage.removeItem('mannat_auth_name');
       }
 
       if (isSupabaseConfigured() && profileId) {
         await supabase.from('profiles').delete().or(`id.eq.${profileId},user_id.eq.${profileId}`);
         await supabase.from('privacy_settings').delete().eq('profile_id', profileId);
-        await supabase.from('connections').delete().or(`sender_id.eq.${profileId},receiver_id.eq.${profileId}`);
-        await supabase.from('messages').delete().or(`sender_id.eq.${profileId},receiver_id.eq.${profileId}`);
+        await supabase.from('matches').delete().or(`profile_a.eq.${profileId},profile_b.eq.${profileId}`);
+        await supabase.from('chats').delete().or(`sender_id.eq.${profileId},receiver_id.eq.${profileId}`);
+        await supabase.from('subscriptions').delete().eq('user_id', profileId);
       }
       return true;
     } catch (e) {

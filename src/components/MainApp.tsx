@@ -151,7 +151,7 @@ export const MainApp: React.FC = () => {
   const handleDeleteAllData = async () => {
     try {
       if (currentUser?.id) {
-        await profileService.deleteProfile(currentUser.id);
+        await profileService.deleteProfile(currentUser.id, currentUser.email);
       }
       if (typeof window !== 'undefined') {
         localStorage.clear();
@@ -185,7 +185,8 @@ export const MainApp: React.FC = () => {
         const user = await authService.getCurrentUser();
         if (user) {
           setCurrentUser(user);
-          setCurrentView('home');
+          const hasProfile = await profileService.hasExistingProfile(user.id, user.email);
+          setCurrentView(hasProfile ? 'home' : 'onboarding');
         }
       } catch (err) {
         console.warn('Error checking user session:', err);
@@ -193,10 +194,11 @@ export const MainApp: React.FC = () => {
     }
     checkUserSession();
 
-    const authListener = authService.onAuthStateChange((user) => {
+    const authListener = authService.onAuthStateChange(async (user) => {
       if (user) {
         setCurrentUser(user);
-        setCurrentView('home');
+        const hasProfile = await profileService.hasExistingProfile(user.id, user.email);
+        setCurrentView(hasProfile ? 'home' : 'onboarding');
       }
     });
 
@@ -515,13 +517,14 @@ export const MainApp: React.FC = () => {
               {/* Auth View */}
               {currentView === 'auth' && (
                 <AuthScreen 
-                  onLoginSuccess={(user) => {
+                  onLoginSuccess={async (user) => {
                     const activeUser = user || currentUser;
                     if (activeUser) {
                       setCurrentUser(activeUser);
-                      navigateTo('home');
+                      const hasProfile = await profileService.hasExistingProfile(activeUser.id, activeUser.email);
+                      navigateTo(hasProfile ? 'home' : 'onboarding');
                     } else {
-                      navigateTo('home');
+                      navigateTo('onboarding');
                     }
                   }}
                   onOpenLanding={() => {
