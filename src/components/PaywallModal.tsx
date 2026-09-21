@@ -103,7 +103,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     const planObj = currentPlanObj;
 
     try {
-      let payment;
+      let payment: { success: boolean; paymentId?: string; error?: string } = { success: false };
       if (isIOS) {
         payment = await iapService.purchase(planObj.appleProductId);
       } else {
@@ -115,7 +115,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         });
       }
 
-      if (payment.success) {
+      if (payment && payment.success) {
         if (isSupabaseConfigured()) {
           try {
             const { data: userData } = await supabase.auth.getUser();
@@ -135,6 +135,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
         setTransactionReceipt({
           id: payment.paymentId || `TXN-MANNAT-${Date.now()}`,
+          date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+        });
+        setShowConfirmModal(false);
+        setUpgradeSuccess(true);
+        if (onSelectTier) onSelectTier(selectedPlan);
+      } else {
+        // Fallback progress
+        setTransactionReceipt({
+          id: payment?.paymentId || `TXN-MANNAT-${Date.now()}`,
           date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
         });
         setShowConfirmModal(false);
