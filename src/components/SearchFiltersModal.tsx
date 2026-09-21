@@ -104,7 +104,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -422,7 +422,7 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
           </div>
 
           {/* Sticky Bottom Apply Button */}
-          <div className="p-5 border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg flex items-center gap-3">
+          <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg flex items-center gap-3">
             <button
               type="button"
               onClick={handleApplyClick}

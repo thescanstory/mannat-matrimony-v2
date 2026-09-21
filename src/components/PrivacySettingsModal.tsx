@@ -69,7 +69,7 @@ export const PrivacySettingsModal: React.FC<PrivacySettingsModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-[#1C0102]/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-[999] bg-[#1C0102]/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

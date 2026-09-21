@@ -513,7 +513,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* Edit Account Identity Modal */}
       {showEditAccountModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-sm bg-[#F8F6F2] rounded-[28px] p-6 border border-[#E8DDD0] shadow-2xl space-y-4 text-left">
             <h3 className="text-xl font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
               Edit Account Identity
@@ -575,7 +575,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirmModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-sm bg-white rounded-[28px] p-6 border border-rose-200 shadow-2xl space-y-4 text-left">
             <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mx-auto">
               <AlertTriangle className="w-6 h-6" />

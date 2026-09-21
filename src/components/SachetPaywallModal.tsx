@@ -66,7 +66,7 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#1C0102]/85 backdrop-blur-md">
+      <div className="fixed inset-0 z-[999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#1C0102]/85 backdrop-blur-md">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

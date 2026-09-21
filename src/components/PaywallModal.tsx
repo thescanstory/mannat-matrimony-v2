@@ -155,7 +155,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 bg-[#2D2824]/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           initial={{ y: '100%', opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -305,7 +305,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           </div>
 
           {/* Sticky Subscribe & Back Button */}
-          <div className="p-5 border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg space-y-2.5">
+          <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg space-y-2.5">
             <button
               type="button"
               disabled={upgrading}

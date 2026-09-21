@@ -15,7 +15,7 @@ interface ConnectionsScreenProps {
 }
 
 export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
-  profiles,
+  profiles: _profiles,
   onOpenProfile,
   onOpenFilters
 }) => {
@@ -34,7 +34,10 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   const [acceptedList, setAcceptedList] = useState<Profile[]>(() => {
     try {
       const stored = localStorage.getItem('mannat_accepted_connections');
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed: Profile[] = JSON.parse(stored);
+        return parsed.filter(p => p && p.id && !p.id.startsWith('11111') && !p.id.startsWith('22222') && !p.id.startsWith('33333'));
+      }
     } catch {}
     return [];
   });
@@ -42,7 +45,10 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   const [sentList, setSentList] = useState<Profile[]>(() => {
     try {
       const stored = localStorage.getItem('mannat_sent_waves');
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed: Profile[] = JSON.parse(stored);
+        return parsed.filter(p => p && p.id && !p.id.startsWith('11111') && !p.id.startsWith('22222') && !p.id.startsWith('33333'));
+      }
     } catch {}
     return [];
   });
@@ -50,34 +56,13 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   const [receivedList, setReceivedList] = useState<Profile[]>(() => {
     try {
       const stored = localStorage.getItem('mannat_received_connections');
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed: Profile[] = JSON.parse(stored);
+        return parsed.filter(p => p && p.id && !p.id.startsWith('11111') && !p.id.startsWith('22222') && !p.id.startsWith('33333'));
+      }
     } catch {}
     return [];
   });
-
-  useEffect(() => {
-    if (profiles && profiles.length > 0) {
-      const savedAccepted = localStorage.getItem('mannat_accepted_connections');
-      const savedSent = localStorage.getItem('mannat_sent_waves');
-      const savedReceived = localStorage.getItem('mannat_received_connections');
-
-      if (!savedAccepted && profiles.length >= 1) {
-        const initAccepted = profiles.slice(0, 1);
-        setAcceptedList(initAccepted);
-        try { localStorage.setItem('mannat_accepted_connections', JSON.stringify(initAccepted)); } catch {}
-      }
-      if (!savedSent && profiles.length >= 3) {
-        const initSent = profiles.slice(1, 3);
-        setSentList(initSent);
-        try { localStorage.setItem('mannat_sent_waves', JSON.stringify(initSent)); } catch {}
-      }
-      if (!savedReceived && profiles.length >= 4) {
-        const initReceived = profiles.slice(3, 5);
-        setReceivedList(initReceived);
-        try { localStorage.setItem('mannat_received_connections', JSON.stringify(initReceived)); } catch {}
-      }
-    }
-  }, [profiles]);
 
   const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {
     setToastMessage(msg);
@@ -438,7 +423,7 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
 
       <AnimatePresence>
         {activeChatProfile && (
-          <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="fixed inset-0 z-[999] bg-black/75 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4">
             <motion.div
               initial={{ y: '100%', opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}

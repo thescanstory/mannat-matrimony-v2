@@ -526,8 +526,8 @@ export const MainApp: React.FC = () => {
       />
 
       {/* Ultra-Luxury Frosted Floating Bottom Dock Navigation Bar */}
-      {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && (
-        <div className="fixed bottom-[max(1rem,calc(env(safe-area-inset-bottom)+0.5rem))] left-1/2 -translate-x-1/2 w-[92%] max-w-sm glass-dock-vara rounded-full z-50 px-3.5 py-2 flex items-center justify-around shadow-2xl border border-[#E8DDD0]">
+      {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && !showFiltersModal && !showPrivacyModal && !showPaywallModal && (
+        <div className="fixed bottom-[max(1rem,calc(env(safe-area-inset-bottom)+0.5rem))] left-1/2 -translate-x-1/2 w-[92%] max-w-sm glass-dock-vara rounded-full z-40 px-3.5 py-2 flex items-center justify-around shadow-2xl border border-[#E8DDD0]">
           <button
             type="button"
             onClick={() => navigateTo('home')}
