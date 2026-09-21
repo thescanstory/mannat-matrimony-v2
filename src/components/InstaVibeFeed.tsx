@@ -1,5 +1,27 @@
-import React, { useState, useRef } from 'react';
-import { ChevronDown, ChevronUp, ArrowLeft, ShieldCheck, Play, Sparkles, ArrowUpRight, Heart, Share2, Image as ImageIcon, X, Volume2, VolumeX, User, Send, Lock, Info, RefreshCw, CheckCircle2, Flag } from 'lucide-react';
+import React, { useState, useRef, useMemo } from 'react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  X, 
+  Heart, 
+  Share2, 
+  Sparkles, 
+  ShieldCheck, 
+  Volume2, 
+  VolumeX, 
+  Send, 
+  SlidersHorizontal, 
+  Briefcase, 
+  GraduationCap, 
+  MapPin, 
+  Gem, 
+  Flag, 
+  RotateCcw,
+  PhoneCall,
+  MessageCircle,
+  Search,
+  Filter
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Profile } from '../types';
 import { Toast } from './Toast';
@@ -18,11 +40,25 @@ interface InstaVibeFeedProps {
 
 export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   profiles,
+  onOpenFilters,
   onOpenSharePortal,
   onOpenPaywall
 }) => {
   const [selectedDetailProfile, setSelectedDetailProfile] = useState<Profile | null>(null);
   const [reportModalProfile, setReportModalProfile] = useState<Profile | null>(null);
+  const [activePhotoIndices, setActivePhotoIndices] = useState<Record<string, number>>({});
+  const [modalActivePhotoIndex, setModalActivePhotoIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeQuickChip, setActiveQuickChip] = useState<'all' | 'high_match' | 'gun_milan' | 'vouched' | 'ivy_founders' | 'banking_pe' | 'doctors' | 'mumbai' | 'delhi' | 'global'>('all');
+  
+  // Left Sidebar Filter States (Desktop)
+  const [filterAgeMin, setFilterAgeMin] = useState(21);
+  const [filterAgeMax, setFilterAgeMax] = useState(40);
+  const [filterReligion, setFilterReligion] = useState<string>('All');
+  const [filterDiet, setFilterDiet] = useState<string>('All');
+  const [filterManglik, setFilterManglik] = useState<string>('All');
+  const [filterMinGunMilan, setFilterMinGunMilan] = useState(0);
+
   const [blockedProfileIds, setBlockedProfileIds] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem('mannat_blocked_profiles');
@@ -31,6 +67,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       return [];
     }
   });
+
   const [likedProfiles, setLikedProfiles] = useState<Record<string, boolean>>(() => {
     try {
       const stored = localStorage.getItem('mannat_favorites');
@@ -39,52 +76,12 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       return {};
     }
   });
-  const [expandedBios, setExpandedBios] = useState<Record<string, boolean>>({});
-  const [selectedPhotoPreview, setSelectedPhotoPreview] = useState<string | null>(null);
-  const [connectModalProfile, setConnectModalProfile] = useState<Profile | null>(null);
-  const [showMatchScoreTooltip, setShowMatchScoreTooltip] = useState<string | null>(null);
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'heart' | 'sparkle'>('success');
   const [isMuted, setIsMuted] = useState(true);
-  const [pausedVideos, setPausedVideos] = useState<Record<string, boolean>>({});
-  const [doubleTapHeart, setDoubleTapHeart] = useState<Record<string, boolean>>({});
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
-  const touchStartYRef = useRef(0);
+  const [activeTabInModal, setActiveTabInModal] = useState<'overview' | 'career' | 'family' | 'kundli' | 'lifestyle'>('overview');
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (window.scrollY <= 5) {
-      touchStartYRef.current = e.touches[0].clientY;
-    } else {
-      touchStartYRef.current = 0;
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartYRef.current > 0 && window.scrollY <= 5 && !isRefreshing) {
-      const currentY = e.touches[0].clientY;
-      const diff = currentY - touchStartYRef.current;
-      if (diff > 0) {
-        setPullDistance(Math.min(diff * 0.45, 80));
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (pullDistance > 45 && !isRefreshing) {
-      setIsRefreshing(true);
-      setPullDistance(50);
-      setTimeout(() => {
-        setIsRefreshing(false);
-        setPullDistance(0);
-        triggerToast('Profiles Refreshed ✨', 'sparkle');
-      }, 900);
-    } else {
-      setPullDistance(0);
-    }
-    touchStartYRef.current = 0;
-  };
 
   const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {
     setToastMessage(msg);
@@ -92,8 +89,8 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const toggleLike = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleLike = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     const isLiked = !likedProfiles[id];
     const updated = { ...likedProfiles, [id]: isLiked };
     setLikedProfiles(updated);
@@ -103,9 +100,9 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
       console.warn('Error saving favorites:', err);
     }
     if (isLiked) {
-      triggerToast('Added to your Saved Favorites! 💕', 'heart');
+      triggerToast('Candidate added to your Shortlist 💕', 'heart');
     } else {
-      triggerToast('Removed from Saved Favorites', 'success');
+      triggerToast('Removed from Shortlist', 'success');
     }
   };
 
@@ -122,47 +119,27 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     triggerToast(nextMuted ? 'Sound Muted 🔇' : 'Sound Enabled 🔊', 'sparkle');
   };
 
-  const handleVideoTap = (id: string) => {
-    const videoEl = videoRefs.current[id];
-    if (videoEl) {
-      if (videoEl.paused) {
-        videoEl.play();
-        setPausedVideos((prev) => ({ ...prev, [id]: false }));
-      } else {
-        videoEl.pause();
-        setPausedVideos((prev) => ({ ...prev, [id]: true }));
-      }
-    }
-  };
-
-  const handleDoubleTapVideo = (id: string, e: React.MouseEvent) => {
+  const handleNextPhoto = (profileId: string, totalPhotos: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    setDoubleTapHeart((prev) => ({ ...prev, [id]: true }));
-    const updated = { ...likedProfiles, [id]: true };
-    setLikedProfiles(updated);
-    try {
-      localStorage.setItem('mannat_favorites', JSON.stringify(updated));
-    } catch (err) {
-      console.warn('Error saving favorites:', err);
-    }
-    triggerToast('Added to your Favorites! 💕', 'heart');
-    setTimeout(() => {
-      setDoubleTapHeart((prev) => ({ ...prev, [id]: false }));
-    }, 900);
+    setActivePhotoIndices((prev) => ({
+      ...prev,
+      [profileId]: ((prev[profileId] || 0) + 1) % totalPhotos
+    }));
   };
 
-  const toggleBioDropdown = (id: string, e: React.MouseEvent) => {
+  const handlePrevPhoto = (profileId: string, totalPhotos: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    setExpandedBios((prev) => ({ ...prev, [id]: !prev[id] }));
+    setActivePhotoIndices((prev) => ({
+      ...prev,
+      [profileId]: ((prev[profileId] || 0) - 1 + totalPhotos) % totalPhotos
+    }));
   };
 
-  // Log Interest Wave to Supabase Database & Persistent Storage
   const handleSendWave = async (targetProfile: Profile) => {
-    setConnectModalProfile(null);
     try {
       const stored = localStorage.getItem('mannat_sent_waves');
       const list: Profile[] = stored ? JSON.parse(stored) : [];
-      if (!list.some(p => p.id === targetProfile.id)) {
+      if (!list.some((p) => p.id === targetProfile.id)) {
         list.unshift(targetProfile);
         localStorage.setItem('mannat_sent_waves', JSON.stringify(list));
       }
@@ -185,620 +162,992 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
     triggerToast(`Interest Wave Sent to ${targetProfile.display_name}! 👋`, 'sparkle');
   };
 
-  // Detailed profile view with luxury editorial layout
-  if (selectedDetailProfile) {
-    const p = selectedDetailProfile;
-    const isBioExpanded = expandedBios[p.id] ?? false;
+  const handleResetFilters = () => {
+    setFilterAgeMin(21);
+    setFilterAgeMax(40);
+    setFilterReligion('All');
+    setFilterDiet('All');
+    setFilterManglik('All');
+    setFilterMinGunMilan(0);
+    setSearchQuery('');
+    setActiveQuickChip('all');
+    triggerToast('Filters Reset', 'success');
+  };
 
-    return (
-      <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-md md:max-w-4xl lg:max-w-5xl mx-auto flex flex-col justify-between pb-24 select-none relative font-sans">
-        <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
+  // Filtered profiles for desktop and mobile feeds
+  const processedProfiles = useMemo(() => {
+    return profiles.filter((p) => {
+      if (blockedProfileIds.includes(p.id)) return false;
 
-        {/* Full Screen Edge-to-Edge Vertical Video Hero */}
-        <div
-          className="relative w-full h-[580px] bg-[#161412] overflow-hidden cursor-pointer"
-          onClick={() => handleVideoTap(p.id)}
-          onDoubleClick={(e) => handleDoubleTapVideo(p.id, e)}
-        >
-          <video
-            ref={(el) => { videoRefs.current[p.id] = el; }}
-            src={p.bio_video_url}
-            autoPlay
-            loop
-            muted={isMuted}
-            playsInline
-            className={`w-full h-full object-cover ${(p.lifestyle_details as any)?.video_mirrored ? 'scale-x-[-1]' : ''}`}
-          />
+      // Search Query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchesName = p.display_name?.toLowerCase().includes(q);
+        const matchesCity = p.city?.toLowerCase().includes(q);
+        const matchesOccupation = p.occupation?.toLowerCase().includes(q);
+        const matchesEducation = p.education?.toLowerCase().includes(q);
+        const matchesCommunity = p.community?.toLowerCase().includes(q) || p.sub_community?.toLowerCase().includes(q);
+        if (!matchesName && !matchesCity && !matchesOccupation && !matchesEducation && !matchesCommunity) {
+          return false;
+        }
+      }
 
-          {/* Double Tap Heart Animation */}
-          <AnimatePresence>
-            {doubleTapHeart[p.id] && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1.4, opacity: 1 }}
-                exit={{ scale: 2, opacity: 0 }}
-                className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-              >
-                <Heart className="w-24 h-24 text-[#A17B5E] fill-[#A17B5E] drop-shadow-2xl" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+      // Quick Chips
+      if (activeQuickChip === 'high_match' && (p.compatibility_score || 0) < 95) return false;
+      if (activeQuickChip === 'gun_milan' && (p.gun_milan_score || 0) < 30) return false;
+      if (activeQuickChip === 'vouched' && !p.is_vouched) return false;
+      if (activeQuickChip === 'ivy_founders') {
+        const txt = `${p.education} ${p.occupation}`.toLowerCase();
+        if (!txt.includes('stanford') && !txt.includes('columbia') && !txt.includes('harvard') && !txt.includes('iit') && !txt.includes('founder') && !txt.includes('entrepreneur') && !txt.includes('wharton')) {
+          return false;
+        }
+      }
+      if (activeQuickChip === 'banking_pe') {
+        const txt = `${p.occupation} ${p.company_name}`.toLowerCase();
+        if (!txt.includes('banking') && !txt.includes('equity') && !txt.includes('goldman') && !txt.includes('blackstone') && !txt.includes('finance')) {
+          return false;
+        }
+      }
+      if (activeQuickChip === 'doctors') {
+        const txt = `${p.occupation} ${p.education}`.toLowerCase();
+        if (!txt.includes('doctor') && !txt.includes('dermatologist') && !txt.includes('mbbs') && !txt.includes('md') && !txt.includes('surgeon')) {
+          return false;
+        }
+      }
+      if (activeQuickChip === 'mumbai' && !p.city?.toLowerCase().includes('mumbai')) return false;
+      if (activeQuickChip === 'delhi' && !p.city?.toLowerCase().includes('delhi')) return false;
+      if (activeQuickChip === 'global' && !p.city?.toLowerCase().includes('london') && !p.city?.toLowerCase().includes('singapore') && !p.city?.toLowerCase().includes('us')) return false;
 
-          {/* Pause Badge */}
-          {pausedVideos[p.id] && (
-            <div className="absolute inset-0 bg-[#260102]/40 flex items-center justify-center pointer-events-none z-30">
-              <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl">
-                <Play className="w-8 h-8 fill-white ml-1" />
-              </div>
-            </div>
-          )}
+      // Sidebar Filters
+      if (p.age < filterAgeMin || p.age > filterAgeMax) return false;
+      if (filterReligion !== 'All' && p.religion !== filterReligion) return false;
+      if (filterDiet !== 'All' && p.diet !== filterDiet) return false;
+      if (filterMinGunMilan > 0 && (p.gun_milan_score || 0) < filterMinGunMilan) return false;
+      if (filterManglik !== 'All' && p.horoscope?.manglik !== filterManglik) return false;
 
-          {/* Video Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/40 pointer-events-none" />
+      return true;
+    });
+  }, [
+    profiles,
+    blockedProfileIds,
+    searchQuery,
+    activeQuickChip,
+    filterAgeMin,
+    filterAgeMax,
+    filterReligion,
+    filterDiet,
+    filterManglik,
+    filterMinGunMilan
+  ]);
 
-          {/* Top Floating Header Controls */}
-          <div className="absolute top-5 left-4 right-4 flex items-center justify-between z-30">
-            <button
-              type="button"
-              onClick={() => setSelectedDetailProfile(null)}
-              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
-            >
-              <ArrowLeft className="w-5 h-5 text-[#560406]" />
-            </button>
+  const spotlightProfile = useMemo(() => {
+    return profiles.find((p) => p.is_spotlight) || profiles[0] || null;
+  }, [profiles]);
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={toggleSound}
-                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
-                title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-              >
-                {isMuted ? <VolumeX className="w-4 h-4 text-[#6E6259]" /> : <Volume2 className="w-4 h-4 text-[#560406]" />}
-              </button>
-              <button
-                type="button"
-                onClick={(e) => toggleLike(p.id, e)}
-                className={`w-10 h-10 rounded-full backdrop-blur-xl border flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
-                  likedProfiles[p.id]
-                    ? 'bg-[#560406] border-[#560406] text-[#A17B5E] shadow-md'
-                    : 'bg-white/90 border-[#E8DDD0] text-[#161412] hover:bg-white'
-                }`}
-              >
-                <Heart className={`w-4 h-4 ${likedProfiles[p.id] ? 'fill-[#A17B5E]' : 'text-[#560406]'}`} />
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenSharePortal(p);
-                }}
-                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-[#161412] shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
-                title="Share Bio-Data"
-              >
-                <Share2 className="w-4 h-4 text-[#161412]" />
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setReportModalProfile(p);
-                }}
-                className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-xl border border-[#E8DDD0] flex items-center justify-center text-rose-700 shadow-md hover:bg-white active:scale-95 transition-all cursor-pointer"
-                title="Report or Block Candidate"
-              >
-                <Flag className="w-4 h-4 text-rose-700" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Profile Details Sheet */}
-        <div className="p-6 bg-[#F8F6F2] text-[#161412] rounded-t-[36px] -mt-8 relative z-20 space-y-5 border-t border-[#E8DDD0] shadow-2xl">
-          <div className="flex items-center justify-end">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] bg-white px-3.5 py-1.5 rounded-full border border-[#E8DDD0] flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-[#560406]" />
-              {p.compatibility_score}% MUTUAL MATCH
-            </span>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-[#161412] tracking-tight flex items-center gap-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                <span>{p.display_name}</span>
-                <span className="text-[#A17B5E] font-sans font-extrabold text-xl">· {p.age}</span>
-              </h1>
-              {p.is_vouched && (
-                <span className="text-xs font-black text-[#560406] bg-white px-3.5 py-1.5 rounded-full border border-[#E8DDD0] flex items-center gap-1.5 shadow-xs">
-                  <ShieldCheck className="w-4 h-4 text-[#A17B5E]" />
-                  <span>Vouched</span>
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-              <span className="text-xs text-[#6E6259] font-bold bg-white px-2.5 py-1 rounded-md border border-[#E8DDD0]">
-                📏 {p.height || "5'6\""}
-              </span>
-              <span className="text-xs text-[#6E6259] font-bold bg-white px-2.5 py-1 rounded-md border border-[#E8DDD0]">
-                🙏 {p.religion} {p.sub_community ? `· ${p.sub_community}` : ''}
-              </span>
-              <span className="text-xs text-[#161412] font-extrabold bg-white px-2.5 py-1 rounded-md border border-[#E8DDD0]">
-                📍 {p.city}
-              </span>
-            </div>
-          </div>
-
-          {/* Privacy Locked Salary & Credentials Pill */}
-          <div className="p-4 rounded-2xl bg-white border border-[#E8DDD0] flex items-center justify-between shadow-xs">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#560406] block">
-                ANNUAL INCOME & DOSSIER
-              </span>
-              <span className="text-xs font-mono font-bold text-[#6E6259] blur-xs select-none">
-                ₹50,00,000 - ₹75,00,000 / yr
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={onOpenPaywall}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-extrabold flex items-center gap-1.5 shadow transition-all cursor-pointer border border-[#A17B5E]/40"
-            >
-              <Lock className="w-3.5 h-3.5 text-[#D8B486]" />
-              <span>Unlock Info</span>
-            </button>
-          </div>
-
-          {/* 3 Small Picture Placeholders Below Video */}
-          <div className="space-y-2">
-            <span className="text-[11px] font-black uppercase tracking-widest text-[#C5A059] flex items-center gap-1.5">
-              <ImageIcon className="w-3.5 h-3.5" />
-              <span>Photo Gallery (3 Pictures)</span>
-            </span>
-            <div className="grid grid-cols-3 gap-2.5">
-              {(p.photos || []).map((photoUrl, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSelectedPhotoPreview(photoUrl)}
-                  className="aspect-square rounded-2xl overflow-hidden border border-[#EADBCE] bg-[#F6F2E9] hover:opacity-90 active:scale-95 transition-all shadow-xs group cursor-pointer relative"
-                >
-                  <img
-                    src={photoUrl}
-                    alt={`${p.display_name} photo ${idx + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Collapsible Profile Description Dropdown */}
-          <div className="border-t border-[#EADBCE] pt-3">
-            <button
-              type="button"
-              onClick={(e) => toggleBioDropdown(p.id, e)}
-              className="w-full py-3 px-4 rounded-2xl bg-white border border-[#EADBCE] flex items-center justify-between text-xs font-extrabold text-[#161412] hover:bg-[#F6F2E9] transition-all cursor-pointer shadow-xs"
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-serif-editorial text-sm">About & Bio Description</span>
-              </div>
-              {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#C5A059]" /> : <ChevronDown className="w-4 h-4 text-[#7E776F]" />}
-            </button>
-
-            {isBioExpanded && (
-              <div className="mt-3 p-4 rounded-2xl bg-white border border-[#EADBCE] space-y-3 animate-fadeIn shadow-xs">
-                <div>
-                  <span className="text-[10px] uppercase font-black tracking-wider text-[#C5A059] block mb-1">
-                    Personal Bio
-                  </span>
-                  <p className="text-xs text-[#55504A] font-medium leading-relaxed">
-                    {p.bio_text || 'No bio text provided yet.'}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Connect Action CTA Button */}
-          <div className="pt-2">
-            <button
-              type="button"
-              onClick={() => setConnectModalProfile(p)}
-              className="w-full py-3 px-5 rounded-2xl btn-vara-gold text-white font-extrabold text-xs tracking-wider uppercase shadow-md active:scale-98 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>Connect Now</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Home Dashboard Feed
   return (
-    <div
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans relative px-4 sm:px-6 lg:px-8"
-    >
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] font-sans pb-24 select-none">
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
-      {/* Pull to Refresh Visual Indicator */}
-      {(pullDistance > 0 || isRefreshing) && (
-        <div
-          style={{ height: `${Math.max(pullDistance, isRefreshing ? 52 : 0)}px` }}
-          className="w-full flex items-center justify-center overflow-hidden transition-all duration-150 py-2"
-        >
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#560406] bg-white px-5 py-2 rounded-full border border-[#E8DDD0] shadow-sm">
-            <RefreshCw className={`w-3.5 h-3.5 text-[#A17B5E] ${isRefreshing ? 'animate-spin' : ''}`} style={{ transform: `rotate(${pullDistance * 4}deg)` }} />
-            <span>{isRefreshing ? 'Refreshing Profiles...' : pullDistance > 45 ? 'Release to Refresh' : 'Pull to Refresh'}</span>
-          </div>
-        </div>
-      )}
+      {/* Report Modal */}
+      <ReportBlockModal
+        isOpen={!!reportModalProfile}
+        profile={reportModalProfile}
+        onClose={() => setReportModalProfile(null)}
+        onBlockSuccess={(blockedId: string) => {
+          setBlockedProfileIds((prev) => {
+            const updated = [...prev, blockedId];
+            try {
+              localStorage.setItem('mannat_blocked_profiles', JSON.stringify(updated));
+            } catch { }
+            return updated;
+          });
+          triggerToast('Candidate has been blocked 🚫', 'success');
+          setSelectedDetailProfile(null);
+          setReportModalProfile(null);
+        }}
+        onReportSuccess={(_id: string, reason: string) => {
+          triggerToast(`Report submitted: "${reason}". Thank you.`, 'success');
+          setSelectedDetailProfile(null);
+          setReportModalProfile(null);
+        }}
+      />
 
-      {/* Interactive Connect Action Sheet Modal */}
-      <AnimatePresence>
-        {connectModalProfile && (
-          <div className="fixed inset-0 z-[70] bg-[#2D2824]/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              className="w-full max-w-sm bg-[#FAF8F5] rounded-3xl p-6 border border-[#EADBCE] shadow-2xl space-y-4 text-[#161412] mb-2"
+      {/* Main Web App Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-6">
+        
+        {/* Top Search & Filter Bar */}
+        <div className="bg-white rounded-2xl border border-[#E8DDD0] p-3 sm:p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
+          {/* Search Input */}
+          <div className="relative w-full md:max-w-md">
+            <Search className="w-4 h-4 text-[#A17B5E] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name, city, profession, alma mater..."
+              className="w-full pl-10 pr-4 py-2 text-xs bg-[#FAF8F5] rounded-xl border border-[#E8DDD0] text-[#161412] placeholder-[#A89F91] focus:outline-none focus:border-[#560406] transition"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8C827A] hover:text-[#161412]"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {/* Quick Metrics */}
+          <div className="flex items-center gap-4 text-xs text-[#6E6259] w-full md:w-auto justify-between md:justify-end">
+            <span className="font-medium">
+              Showing <strong className="text-[#560406]">{processedProfiles.length}</strong> Verified Candidates
+            </span>
+            <button
+              type="button"
+              onClick={onOpenFilters}
+              className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#560406] text-[#F5E6D3] text-xs font-bold shadow-xs cursor-pointer"
             >
-              <div className="flex items-center justify-between border-b border-[#EADBCE] pb-3">
-                <h3 className="text-lg font-serif-editorial font-bold text-[#161412]">
-                  Connect with {connectModalProfile.display_name}
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setConnectModalProfile(null)}
-                  className="p-2 rounded-full hover:bg-[#F6F2E9] text-[#7E776F] cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="space-y-2.5">
-                <button
-                  type="button"
-                  onClick={() => handleSendWave(connectModalProfile)}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-[#161412] hover:bg-[#C5A059] active:scale-95 text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md whitespace-nowrap"
-                >
-                  <Send className="w-4 h-4 text-[#DFBE7E]" />
-                  <span className="whitespace-nowrap">Send Interest Wave 👋</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setConnectModalProfile(null);
-                    onOpenSharePortal(connectModalProfile);
-                  }}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-white border border-[#EADBCE] hover:bg-[#F6F2E9] active:scale-95 text-[#161412] text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
-                >
-                  <User className="w-4 h-4 text-[#C5A059]" />
-                  <span className="whitespace-nowrap truncate">View Full Profile</span>
-                </button>
-              </div>
-            </motion.div>
+              <Filter className="w-3 h-3" />
+              <span>Filters</span>
+            </button>
           </div>
-        )}
-      </AnimatePresence>
-
-      {/* Photo Preview Modal */}
-      {selectedPhotoPreview && (
-        <div className="fixed inset-0 z-50 bg-[#2D2824]/85 backdrop-blur-md flex flex-col items-center justify-center p-4">
-          <button
-            type="button"
-            onClick={() => setSelectedPhotoPreview(null)}
-            className="absolute top-6 right-6 p-3 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors cursor-pointer"
-          >
-            <X className="w-6 h-6" />
-          </button>
-          <img
-            src={selectedPhotoPreview}
-            alt="Expanded preview"
-            className="max-w-full max-h-[75vh] object-contain rounded-2xl border-2 border-white/20 shadow-2xl"
-          />
         </div>
-      )}
 
-      {/* Hero Banner (First-time Login / Introductory Slide-Out to Left) */}
-      {/* Recommended Vertical Video Profiles List */}
-      <div className="px-4 sm:px-5 flex-1 pt-3">
-        {(() => {
-          const visibleProfiles = profiles.filter((p) => !blockedProfileIds.includes(p.id));
-          if (visibleProfiles.length === 0) {
-            return (
-              <div className="bg-white rounded-[32px] p-8 sm:p-10 border border-[#E8DDD0] shadow-xs text-center space-y-5 my-6">
-                <div className="w-16 h-16 rounded-full bg-[#560406]/10 text-[#560406] flex items-center justify-center mx-auto shadow-inner border border-[#A17B5E]/30">
+        {/* Quick Filter Chips Carousel */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
+          {[
+            { id: 'all', label: 'All Candidates' },
+            { id: 'high_match', label: '⭐ Top Match (>95%)' },
+            { id: 'gun_milan', label: '🪐 Gun Milan > 30' },
+            { id: 'vouched', label: '🛡️ Vouched by Family' },
+            { id: 'ivy_founders', label: '🎓 Ivy League & Founders' },
+            { id: 'banking_pe', label: '💼 Investment Banking & PE' },
+            { id: 'doctors', label: '🩺 Physicians & Specialists' },
+            { id: 'mumbai', label: '📍 Mumbai' },
+            { id: 'delhi', label: '📍 Delhi NCR' },
+            { id: 'global', label: '🌍 Global / NRI' },
+          ].map((chip) => (
+            <button
+              key={chip.id}
+              type="button"
+              onClick={() => setActiveQuickChip(chip.id as any)}
+              className={`px-3.5 py-1.5 rounded-full font-bold whitespace-nowrap transition-all duration-200 cursor-pointer border ${
+                activeQuickChip === chip.id
+                  ? 'bg-[#560406] text-[#F5E6D3] border-[#560406] shadow-xs'
+                  : 'bg-white text-[#6E6259] border-[#E8DDD0] hover:bg-[#FAF8F5] hover:text-[#560406]'
+              }`}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Main Desktop Grid + Sidebars Layout */}
+        <div className="flex gap-8 items-start">
+          
+          {/* Left Desktop Filter Sidebar */}
+          <aside className="hidden lg:block w-64 shrink-0 bg-white rounded-3xl border border-[#E8DDD0] p-5 shadow-xs space-y-6 sticky top-24">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E8DDD0]">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-[#560406]" />
+                <h3 className="text-sm font-bold text-[#161412] uppercase tracking-wider">
+                  Refine Bio-Datas
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="text-[11px] text-[#A17B5E] hover:text-[#560406] font-bold flex items-center gap-1 cursor-pointer"
+                title="Reset Filters"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset</span>
+              </button>
+            </div>
+
+            {/* Age Range */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="font-bold text-[#6E6259]">Age Range</span>
+                <span className="font-bold text-[#560406]">{filterAgeMin} - {filterAgeMax} yrs</span>
+              </div>
+              <input
+                type="range"
+                min="21"
+                max="45"
+                value={filterAgeMax}
+                onChange={(e) => setFilterAgeMax(Number(e.target.value))}
+                className="w-full accent-[#560406] cursor-pointer"
+              />
+            </div>
+
+            {/* Minimum Gun Milan Score */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="font-bold text-[#6E6259]">Kundli Gun Milan</span>
+                <span className="font-bold text-[#560406]">{filterMinGunMilan > 0 ? `≥ ${filterMinGunMilan} / 36` : 'Any Score'}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="36"
+                step="2"
+                value={filterMinGunMilan}
+                onChange={(e) => setFilterMinGunMilan(Number(e.target.value))}
+                className="w-full accent-[#560406] cursor-pointer"
+              />
+            </div>
+
+            {/* Religion Filter */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-[#6E6259]">Religion</label>
+              <select
+                value={filterReligion}
+                onChange={(e) => setFilterReligion(e.target.value)}
+                className="w-full text-xs bg-[#FAF8F5] border border-[#E8DDD0] rounded-xl px-3 py-2 text-[#161412] focus:outline-none focus:border-[#560406]"
+              >
+                <option value="All">All Religions</option>
+                <option value="Hindu">Hindu</option>
+                <option value="Jain">Jain</option>
+                <option value="Sikh">Sikh</option>
+                <option value="Muslim">Muslim</option>
+                <option value="Christian">Christian</option>
+                <option value="Parsi">Parsi</option>
+              </select>
+            </div>
+
+            {/* Diet Preference */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-[#6E6259]">Diet Preference</label>
+              <select
+                value={filterDiet}
+                onChange={(e) => setFilterDiet(e.target.value)}
+                className="w-full text-xs bg-[#FAF8F5] border border-[#E8DDD0] rounded-xl px-3 py-2 text-[#161412] focus:outline-none focus:border-[#560406]"
+              >
+                <option value="All">All Diets</option>
+                <option value="Vegetarian">Strictly Vegetarian</option>
+                <option value="Eggetarian">Eggetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Jain">Jain Diet</option>
+              </select>
+            </div>
+
+            {/* Manglik Filter */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-[#6E6259]">Manglik Status</label>
+              <select
+                value={filterManglik}
+                onChange={(e) => setFilterManglik(e.target.value)}
+                className="w-full text-xs bg-[#FAF8F5] border border-[#E8DDD0] rounded-xl px-3 py-2 text-[#161412] focus:outline-none focus:border-[#560406]"
+              >
+                <option value="All">Doesn't Matter</option>
+                <option value="No">Non-Manglik Only</option>
+                <option value="Yes">Manglik Only</option>
+              </select>
+            </div>
+
+            {/* VIP Concierge Banner */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-[#560406] to-[#730C0F] text-[#F5E6D3] space-y-2 text-center shadow-md">
+              <Gem className="w-5 h-5 text-[#D8B486] mx-auto" />
+              <h4 className="text-xs font-bold tracking-wide uppercase text-white">
+                Bespoke Matchmaker
+              </h4>
+              <p className="text-[11px] text-[#E8DDD0]/90 leading-tight">
+                Want our elite matchmaking council to hand-pick verified alliances?
+              </p>
+              <button
+                type="button"
+                onClick={onOpenPaywall}
+                className="w-full py-2 bg-gradient-to-r from-[#DFBE7E] to-[#C5A059] text-[#2D2824] rounded-xl text-xs font-black uppercase tracking-wider shadow-sm hover:brightness-105 active:scale-95 transition cursor-pointer mt-1"
+              >
+                Unlock VIP Access
+              </button>
+            </div>
+          </aside>
+
+          {/* Center Main Candidate Cards Grid */}
+          <main className="flex-1 min-w-0">
+            {processedProfiles.length === 0 ? (
+              <div className="bg-white rounded-3xl p-12 border border-[#E8DDD0] shadow-xs text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-[#560406]/10 text-[#560406] flex items-center justify-center mx-auto border border-[#A17B5E]/30">
                   <Sparkles className="w-8 h-8 text-[#A17B5E]" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-serif-editorial font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>No Candidate Profiles Yet</h3>
-                  <p className="text-xs text-[#6E6259] max-w-xs mx-auto leading-relaxed">
-                    As new users register, complete their bio-data, and upload video intros, their verified profiles will appear here in real-time.
-                  </p>
-                </div>
+                <h3 className="text-2xl font-serif-editorial font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                  No Candidates Match Filters
+                </h3>
+                <p className="text-xs text-[#6E6259] max-w-sm mx-auto leading-relaxed">
+                  Try broadening your age range or selecting "All Candidates" to explore our full directory of verified members.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="px-5 py-2.5 rounded-full bg-[#560406] text-[#F5E6D3] text-xs font-bold uppercase tracking-wider hover:bg-[#730C0F] transition cursor-pointer shadow-sm"
+                >
+                  Reset All Filters
+                </button>
               </div>
-            );
-          }
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-6 sm:gap-7">
+                {processedProfiles.map((profile) => {
+                  const photos = profile.photos && profile.photos.length > 0
+                    ? profile.photos
+                    : ['https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000'];
+                  const currentPhotoIdx = activePhotoIndices[profile.id] || 0;
+                  const activePhoto = photos[currentPhotoIdx % photos.length];
+                  const isLiked = likedProfiles[profile.id] || false;
 
-          return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pb-12 max-w-7xl mx-auto">
-              {visibleProfiles.map((profile) => {
-                const isBioExpanded = expandedBios[profile.id] ?? false;
-
-                return (
-                  <div
-                    key={profile.id}
-                    onClick={() => {
-                      nativeService.haptic.light();
-                      setSelectedDetailProfile(profile);
-                    }}
-                    className="bg-white rounded-[32px] overflow-hidden border border-[#E8DDD0] shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 group p-4 sm:p-5 space-y-4 relative"
-                  >
-                    {/* Full-bleed Tall Vertical 9:16 / h-[490px] Video Stream */}
+                  return (
                     <div
-                      className="relative w-full h-[490px] bg-[#260102] rounded-[26px] overflow-hidden cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleVideoTap(profile.id);
+                      key={profile.id}
+                      onClick={() => {
+                        nativeService.haptic.light();
+                        setSelectedDetailProfile(profile);
+                        setModalActivePhotoIndex(0);
                       }}
-                      onDoubleClick={(e) => handleDoubleTapVideo(profile.id, e)}
+                      className="bg-white rounded-3xl overflow-hidden border border-[#E8DDD0] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer relative"
                     >
-                      <video
-                        ref={(el) => { videoRefs.current[profile.id] = el; }}
-                        src={profile.bio_video_url}
-                        poster={profile.photos?.[0]}
-                        autoPlay
-                        loop
-                        muted={isMuted}
-                        playsInline
-                        className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${(profile.lifestyle_details as any)?.video_mirrored ? 'scale-x-[-1]' : ''}`}
-                      />
-
-                      {/* Double Tap Floating Heart */}
-                      <AnimatePresence>
-                        {doubleTapHeart[profile.id] && (
-                          <motion.div
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1.4, opacity: 1 }}
-                            exit={{ scale: 2, opacity: 0 }}
-                            className="absolute inset-0 flex items-center justify-center pointer-events-none z-40"
-                          >
-                            <Heart className="w-24 h-24 text-[#A17B5E] fill-[#A17B5E] drop-shadow-2xl" />
-                          </motion.div>
+                      {/* Photo & Video Container with Carousel Controls */}
+                      <div className="relative w-full aspect-[4/5] bg-[#161412] overflow-hidden">
+                        {profile.bio_video_url && currentPhotoIdx === 0 ? (
+                          <div className="relative w-full h-full">
+                            <video
+                              ref={(el) => { videoRefs.current[profile.id] = el; }}
+                              src={profile.bio_video_url}
+                              poster={activePhoto}
+                              autoPlay
+                              loop
+                              muted={isMuted}
+                              playsInline
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            />
+                            {/* Video Sound Action */}
+                            <button
+                              type="button"
+                              onClick={toggleSound}
+                              className="absolute bottom-3 right-3 z-30 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-black/80 transition"
+                              title={isMuted ? 'Unmute' : 'Mute'}
+                            >
+                              {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-[#DFBE7E]" />}
+                            </button>
+                          </div>
+                        ) : (
+                          <img
+                            src={activePhoto}
+                            alt={profile.display_name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
                         )}
-                      </AnimatePresence>
 
-                      {/* Pause Overlay Indicator */}
-                      {pausedVideos[profile.id] && (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none z-30">
-                          <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white shadow-2xl">
-                            <Play className="w-8 h-8 fill-white ml-1" />
+                        {/* Top Badges Bar */}
+                        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-20">
+                          {/* Mutual Match Gauge */}
+                          <div className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-black text-[#560406] shadow-sm border border-[#E8DDD0] flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-[#A17B5E]" />
+                            <span>{profile.compatibility_score}% Match</span>
+                          </div>
+
+                          {/* Quick Actions (Favorite & Report) */}
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={(e) => toggleLike(profile.id, e)}
+                              className={`w-8 h-8 rounded-full backdrop-blur-md border flex items-center justify-center shadow-sm transition-all active:scale-95 cursor-pointer ${
+                                isLiked
+                                  ? 'bg-[#560406] border-[#560406] text-[#A17B5E]'
+                                  : 'bg-white/90 border-[#E8DDD0] text-[#560406] hover:bg-white'
+                              }`}
+                              title={isLiked ? 'Remove from Shortlist' : 'Add to Shortlist'}
+                            >
+                              <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-[#A17B5E]' : ''}`} />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReportModalProfile(profile);
+                              }}
+                              className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/30 flex items-center justify-center text-rose-300 hover:bg-black/60 transition cursor-pointer"
+                              title="Report / Block"
+                            >
+                              <Flag className="w-3.5 h-3.5" />
+                            </button>
                           </div>
                         </div>
-                      )}
 
-                      {/* Video Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30 pointer-events-none" />
+                        {/* Photo Carousel Arrows */}
+                        {photos.length > 1 && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={(e) => handlePrevPhoto(profile.id, photos.length, e)}
+                              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                            >
+                              <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => handleNextPhoto(profile.id, photos.length, e)}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                            >
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
 
-                      {/* Top Badges */}
-                      <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
-                        {/* eMatchMaker 2-Way Match Score Pill */}
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowMatchScoreTooltip(showMatchScoreTooltip === profile.id ? null : profile.id);
-                          }}
-                          className="bg-white/95 backdrop-blur-xl px-4 py-2 rounded-full text-xs font-black text-[#560406] shadow-md border border-[#E8DDD0] flex items-center gap-1.5 cursor-pointer hover:bg-white transition-colors"
-                        >
-                          <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
-                          <span>{profile.compatibility_score}% Match</span>
-                          <Info className="w-3 h-3 text-[#6E6259] ml-0.5" />
+                            {/* Carousel Dots */}
+                            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 z-20">
+                              {photos.map((_, i) => (
+                                <span
+                                  key={i}
+                                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                                    i === currentPhotoIdx ? 'bg-white w-3' : 'bg-white/50'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Card Content & Bio Data Excerpt */}
+                      <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                        <div className="space-y-2.5">
+                          
+                          {/* Name, Age, Vouched Badge */}
+                          <div className="flex items-start justify-between gap-2">
+                            <h3
+                              className="text-xl font-bold text-[#161412] tracking-tight group-hover:text-[#560406] transition-colors leading-snug"
+                              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                            >
+                              <span>{profile.display_name}</span>
+                              <span className="text-[#A17B5E] font-sans font-extrabold text-base ml-1.5">
+                                · {profile.age}
+                              </span>
+                            </h3>
+
+                            {profile.is_vouched && (
+                              <span className="shrink-0 text-[10px] font-black text-[#560406] bg-[#560406]/5 px-2 py-0.5 rounded-full border border-[#E8DDD0] flex items-center gap-1">
+                                <ShieldCheck className="w-3 h-3 text-[#A17B5E]" />
+                                <span>Vouched</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Role & Organization */}
+                          <div className="flex items-start gap-2 text-xs text-[#161412] font-semibold">
+                            <Briefcase className="w-3.5 h-3.5 text-[#A17B5E] shrink-0 mt-0.5" />
+                            <span className="line-clamp-1">
+                              {profile.occupation} {profile.company_name ? `· ${profile.company_name}` : ''}
+                            </span>
+                          </div>
+
+                          {/* Education & Alma Mater */}
+                          {profile.education && (
+                            <div className="flex items-start gap-2 text-xs text-[#6E6259]">
+                              <GraduationCap className="w-3.5 h-3.5 text-[#A17B5E] shrink-0 mt-0.5" />
+                              <span className="line-clamp-1">{profile.education}</span>
+                            </div>
+                          )}
+
+                          {/* Location & Height */}
+                          <div className="flex items-center gap-4 text-xs text-[#6E6259] pt-0.5">
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-3.5 h-3.5 text-[#A17B5E]" />
+                              {profile.city}
+                            </span>
+                            {profile.height && (
+                              <span className="font-bold text-[#8C827A]">
+                                📏 {profile.height}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Astrological & Community Badges */}
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {profile.gun_milan_score && (
+                              <span className="text-[10px] font-black text-[#560406] bg-[#FAF8F5] border border-[#E8DDD0] px-2 py-0.5 rounded-md flex items-center gap-1">
+                                <Sparkles className="w-2.5 h-2.5 text-[#A17B5E]" />
+                                {profile.gun_milan_score}/36 Gun Milan
+                              </span>
+                            )}
+                            {profile.community && (
+                              <span className="text-[10px] font-bold text-[#6E6259] bg-[#FAF8F5] border border-[#E8DDD0] px-2 py-0.5 rounded-md">
+                                {profile.community}
+                              </span>
+                            )}
+                            {profile.diet && (
+                              <span className="text-[10px] font-bold text-[#6E6259] bg-[#FAF8F5] border border-[#E8DDD0] px-2 py-0.5 rounded-md">
+                                {profile.diet}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Bio Excerpt */}
+                          {profile.bio_text && (
+                            <p className="text-[11px] text-[#6E6259] line-clamp-2 italic pt-1 leading-relaxed border-t border-[#F0EAE1]">
+                              "{profile.bio_text}"
+                            </p>
+                          )}
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        {/* Dual Web Action Buttons */}
+                        <div className="grid grid-cols-2 gap-2 pt-3 border-t border-[#E8DDD0]">
                           <button
                             type="button"
-                            onClick={toggleSound}
-                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-white shadow-md hover:bg-black/70 active:scale-95 transition-all cursor-pointer"
-                            title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
-                          >
-                            {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-[#A17B5E]" />}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              nativeService.haptic.light();
-                              toggleLike(profile.id, e);
+                            onClick={() => {
+                              setSelectedDetailProfile(profile);
+                              setModalActivePhotoIndex(0);
                             }}
-                            className={`w-10 h-10 rounded-full backdrop-blur-xl border flex items-center justify-center shadow-md transition-all active:scale-95 cursor-pointer ${
-                              likedProfiles[profile.id]
-                                ? 'bg-[#560406] border-[#560406] text-[#A17B5E]'
-                                : 'bg-white/90 border-[#E8DDD0] text-[#560406] hover:bg-white'
-                            }`}
+                            className="py-2.5 px-2 rounded-xl bg-white border border-[#560406] text-[#560406] hover:bg-[#FAF8F5] text-[11px] font-bold uppercase tracking-wider transition cursor-pointer text-center truncate"
                           >
-                            <Heart className={`w-4 h-4 ${likedProfiles[profile.id] ? 'fill-[#A17B5E]' : 'text-[#560406]'}`} />
+                            Full Dossier 📄
                           </button>
 
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              nativeService.haptic.light();
-                              setReportModalProfile(profile);
+                              handleSendWave(profile);
                             }}
-                            className="w-10 h-10 rounded-full bg-black/50 backdrop-blur-xl border border-white/40 flex items-center justify-center text-rose-300 shadow-md hover:bg-black/70 active:scale-95 transition-all cursor-pointer"
-                            title="Report or Block Candidate"
+                            className="py-2.5 px-2 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-[11px] font-bold uppercase tracking-wider transition shadow-xs cursor-pointer flex items-center justify-center gap-1 truncate"
                           >
-                            <Flag className="w-4 h-4 text-rose-300" />
+                            <Send className="w-3 h-3 text-[#DFBE7E] shrink-0" />
+                            <span>Connect 👋</span>
                           </button>
                         </div>
                       </div>
-
-                  {/* Mutual Match Score Breakdown Tooltip */}
-                  {showMatchScoreTooltip === profile.id && (
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="absolute top-16 left-4 right-4 z-40 bg-[#161412] text-white p-5 rounded-2xl border border-[#A17B5E]/40 shadow-2xl space-y-2.5 text-xs animate-fadeIn"
-                    >
-                      <div className="flex items-center justify-between pb-2 border-b border-gray-700">
-                        <span className="font-serif-editorial text-sm font-bold text-[#A17B5E]">eMatchMaker 2-Way Score</span>
-                        <button type="button" onClick={() => setShowMatchScoreTooltip(null)} className="text-gray-400 hover:text-white">
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="space-y-1.5 text-[11px]">
-                        <div className="flex justify-between">
-                          <span className="text-gray-300">You meet {profile.display_name}'s criteria:</span>
-                          <span className="font-bold text-emerald-400">100% (Age, Religion, Diet)</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-300">{profile.display_name} meets your criteria:</span>
-                          <span className="font-bold text-emerald-400">96% (Income, City, Education)</span>
-                        </div>
-                      </div>
                     </div>
-                  )}
+                  );
+                })}
+              </div>
+            )}
+          </main>
 
-                  {/* Bottom Overlay Info & Action Button */}
-                  <div className="absolute bottom-4 left-4 right-4 z-20 space-y-3.5">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-2xl font-serif-editorial font-bold text-white tracking-tight drop-shadow-md" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                          {profile.display_name} · {profile.age}
-                        </h4>
-                        {profile.is_vouched && (
-                          <span className="text-[10px] font-black text-[#560406] bg-white px-3 py-0.5 rounded-full border border-[#E8DDD0]">
-                            Vouched
-                          </span>
-                        )}
-                      </div>
+          {/* Right Desktop Matchmaking Spotlight & Concierge Panel */}
+          {spotlightProfile && (
+            <aside className="hidden xl:block w-72 shrink-0 space-y-6 sticky top-24">
+              
+              {/* Daily Matchmaker Recommendation Card */}
+              <div className="bg-white rounded-3xl border border-[#E8DDD0] p-5 shadow-xs space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#560406]">
+                  <Sparkles className="w-4 h-4 text-[#A17B5E]" />
+                  <span>Spotlight Alliance</span>
+                </div>
 
-                      <p className="text-xs text-gray-200 font-semibold drop-shadow-sm flex items-center gap-1.5">
-                        <span>{profile.height || "5'6\""}</span>
-                        <span>•</span>
-                        <span>{profile.religion}</span>
-                        <span>•</span>
-                        <span className="text-white font-bold">{profile.occupation}</span>
-                      </p>
-                      <p className="text-[11px] text-gray-300 font-medium">📍 {profile.city}, India</p>
-                    </div>
-
-                    <div className="flex items-center gap-2.5 pt-1">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedDetailProfile(profile);
-                        }}
-                        className="flex-1 py-3 px-4 rounded-xl bg-white hover:bg-[#F8F6F2] text-[#560406] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-md border border-[#E8DDD0] cursor-pointer"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
-                        <span>View Bio-Data</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-[#560406]" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setConnectModalProfile(profile);
-                        }}
-                        className="py-3 px-4 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider active:scale-98 transition-all duration-200 flex items-center justify-center gap-1 shadow-md cursor-pointer border border-[#A17B5E]/40"
-                      >
-                        <span>Connect</span>
-                      </button>
-                    </div>
+                <div
+                  onClick={() => {
+                    setSelectedDetailProfile(spotlightProfile);
+                    setModalActivePhotoIndex(0);
+                  }}
+                  className="rounded-2xl overflow-hidden border border-[#E8DDD0] relative cursor-pointer group"
+                >
+                  <img
+                    src={spotlightProfile.photos?.[0] || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1000'}
+                    alt={spotlightProfile.display_name}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <h4 className="text-lg font-bold font-serif-editorial" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                      {spotlightProfile.display_name}, {spotlightProfile.age}
+                    </h4>
+                    <p className="text-[11px] text-[#E8DDD0] line-clamp-1">
+                      {spotlightProfile.occupation}
+                    </p>
                   </div>
                 </div>
 
-                {/* 3 Small Picture Placeholders Below Video */}
-                <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between px-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-                      <ImageIcon className="w-3.5 h-3.5 text-[#A17B5E]" />
-                      <span>Photos (3)</span>
-                    </span>
-                    <span className="text-[10px] text-[#6E6259] font-semibold">Click to preview</span>
+                <div className="space-y-1.5 text-xs text-[#6E6259]">
+                  <div className="flex justify-between">
+                    <span>Gun Milan Synergy:</span>
+                    <strong className="text-[#560406] font-bold">{spotlightProfile.gun_milan_score || 34}/36</strong>
                   </div>
-                  <div className="grid grid-cols-3 gap-2.5">
-                    {(profile.photos || []).map((photoUrl, idx) => (
-                      <div
-                        key={idx}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedPhotoPreview(photoUrl);
-                        }}
-                        className="aspect-square rounded-2xl overflow-hidden border border-[#E8DDD0] bg-[#F8F6F2] hover:opacity-90 active:scale-95 transition-all shadow-xs relative group cursor-pointer"
-                      >
-                        <img
-                          src={photoUrl}
-                          alt={`${profile.display_name} thumbnail ${idx + 1}`}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ))}
+                  <div className="flex justify-between">
+                    <span>Education:</span>
+                    <span className="truncate max-w-[130px] font-medium">{spotlightProfile.education?.split('|')[0] || 'University'}</span>
                   </div>
                 </div>
 
-                {/* Collapsible Profile Description Dropdown */}
-                <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedDetailProfile(spotlightProfile);
+                    setModalActivePhotoIndex(0);
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-[#FAF8F5] hover:bg-[#F0EAE1] text-[#560406] text-xs font-bold uppercase tracking-wider border border-[#E8DDD0] transition cursor-pointer"
+                >
+                  Inspect Dossier
+                </button>
+              </div>
+
+              {/* Direct VIP Matchmaker Concierge Card */}
+              <div className="bg-gradient-to-br from-[#161412] to-[#2D2824] rounded-3xl p-5 text-white shadow-md space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#DFBE7E]">
+                  <Gem className="w-4 h-4 text-[#DFBE7E]" />
+                  <span>VIP Concierge Desk</span>
+                </div>
+
+                <p className="text-xs text-[#E8DDD0] leading-relaxed">
+                  Have specific family, gotra, or astrological requirements? Connect directly with our Senior Matchmakers.
+                </p>
+
+                <div className="space-y-2">
+                  <a
+                    href="https://wa.me/919999999999?text=Hello%20Mannat%20Matchmaking%20Concierge"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-xs"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>WhatsApp Concierge</span>
+                  </a>
+
                   <button
                     type="button"
-                    onClick={(e) => toggleBioDropdown(profile.id, e)}
-                    className="w-full py-3 px-4 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0] flex items-center justify-between text-xs font-extrabold text-[#161412] hover:bg-white transition-all cursor-pointer shadow-xs"
+                    onClick={onOpenPaywall}
+                    className="w-full py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold flex items-center justify-center gap-2 transition"
                   >
-                    <span className="font-serif-editorial text-sm" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>About & Bio Description</span>
-                    {isBioExpanded ? <ChevronUp className="w-4 h-4 text-[#560406]" /> : <ChevronDown className="w-4 h-4 text-[#6E6259]" />}
+                    <PhoneCall className="w-3.5 h-3.5 text-[#DFBE7E]" />
+                    <span>Request Callback</span>
                   </button>
-
-                  {isBioExpanded && (
-                    <div
-                      onClick={(e) => e.stopPropagation()}
-                      className="mt-2.5 p-4 rounded-2xl bg-white border border-[#E8DDD0] space-y-2.5 text-left shadow-xs animate-fadeIn"
-                    >
-                      <div>
-                        <span className="text-[10px] uppercase font-black tracking-wider text-[#560406] block mb-1">
-                          Personal Bio
-                        </span>
-                        <p className="text-xs text-[#6E6259] font-medium leading-relaxed">
-                          {profile.bio_text || 'Design lead by day, classical dancer by weekend. Looking for an empathetic, ambitious partner.'}
-                        </p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
-            );
-          })}
-        </div>
-      );
-    })()}
-    </div>
 
-      {/* Safety & Moderation Report / Block Modal (Apple Guideline 1.2 Compliance) */}
-      <ReportBlockModal
-        isOpen={!!reportModalProfile}
-        profile={reportModalProfile}
-        onClose={() => setReportModalProfile(null)}
-        onBlockSuccess={(blockedId) => {
-          setBlockedProfileIds((prev) => [...prev, blockedId]);
-          if ((selectedDetailProfile as Profile | null)?.id === blockedId) {
-            setSelectedDetailProfile(null);
-          }
-          triggerToast('Candidate blocked and removed from feed', 'success');
-        }}
-        onReportSuccess={(_id, _reason) => {
-          triggerToast('Report submitted to Trust & Safety', 'sparkle');
-        }}
-      />
+            </aside>
+          )}
+
+        </div>
+      </div>
+
+      {/* GRAND 2-COLUMN LUXURY CANDIDATE DOSSIER MODAL (Desktop & Tablet) */}
+      <AnimatePresence>
+        {selectedDetailProfile && (
+          <div className="fixed inset-0 z-50 bg-[#161412]/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 md:p-8 overflow-y-auto">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-[#FAF8F5] w-full max-w-5xl max-h-[92vh] rounded-[32px] border border-[#E8DDD0] shadow-2xl overflow-hidden flex flex-col md:flex-row relative text-[#161412]"
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedDetailProfile(null)}
+                className="absolute top-4 right-4 z-50 w-9 h-9 rounded-full bg-white/90 hover:bg-white border border-[#E8DDD0] flex items-center justify-center text-[#161412] shadow-md cursor-pointer transition"
+              >
+                <X className="w-5 h-5 text-[#560406]" />
+              </button>
+
+              {/* Left Column: Photo Carousel, Video & Visual Metrics (md:w-5/12) */}
+              <div className="md:w-5/12 bg-[#161412] text-white p-6 flex flex-col justify-between relative overflow-hidden">
+                <div className="space-y-4">
+                  
+                  {/* Photo Display / Video */}
+                  <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-black/50 border border-white/10">
+                    {selectedDetailProfile.bio_video_url && modalActivePhotoIndex === 0 ? (
+                      <video
+                        src={selectedDetailProfile.bio_video_url}
+                        controls
+                        autoPlay
+                        loop
+                        playsInline
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={
+                          selectedDetailProfile.photos?.[modalActivePhotoIndex] ||
+                          'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000'
+                        }
+                        alt={selectedDetailProfile.display_name}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+
+                    {/* Vouched Badge */}
+                    {selectedDetailProfile.is_vouched && (
+                      <div className="absolute top-3 left-3 bg-white/95 text-[#560406] px-3 py-1 rounded-full text-xs font-black shadow-md flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#A17B5E]" />
+                        <span>Verified & Vouched</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Thumbnail Selector */}
+                  {selectedDetailProfile.photos && selectedDetailProfile.photos.length > 1 && (
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {selectedDetailProfile.photos.map((pUrl, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setModalActivePhotoIndex(idx)}
+                          className={`w-14 h-14 rounded-xl overflow-hidden border-2 transition cursor-pointer shrink-0 ${
+                            modalActivePhotoIndex === idx ? 'border-[#DFBE7E] scale-105' : 'border-white/20 opacity-60'
+                          }`}
+                        >
+                          <img src={pUrl} alt="Thumbnail" className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Astrological & Compatibility Meter */}
+                  <div className="grid grid-cols-2 gap-2 text-center pt-2">
+                    <div className="p-3 rounded-xl bg-white/10 border border-white/10">
+                      <span className="text-[10px] uppercase tracking-wider text-[#DFBE7E] block">Mutual Match</span>
+                      <strong className="text-lg font-bold text-white">{selectedDetailProfile.compatibility_score}%</strong>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/10 border border-white/10">
+                      <span className="text-[10px] uppercase tracking-wider text-[#DFBE7E] block">Gun Milan</span>
+                      <strong className="text-lg font-bold text-white">{selectedDetailProfile.gun_milan_score || 34} / 36</strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Left Bottom Controls */}
+                <div className="flex items-center justify-between pt-4 border-t border-white/10 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => toggleLike(selectedDetailProfile.id)}
+                    className={`flex items-center gap-1.5 font-bold transition cursor-pointer ${
+                      likedProfiles[selectedDetailProfile.id] ? 'text-rose-400' : 'text-[#E8DDD0] hover:text-white'
+                    }`}
+                  >
+                    <Heart className={`w-4 h-4 ${likedProfiles[selectedDetailProfile.id] ? 'fill-rose-400' : ''}`} />
+                    <span>{likedProfiles[selectedDetailProfile.id] ? 'Saved to Shortlist' : 'Add to Shortlist'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onOpenSharePortal(selectedDetailProfile)}
+                    className="flex items-center gap-1.5 text-[#E8DDD0] hover:text-white font-bold cursor-pointer"
+                  >
+                    <Share2 className="w-4 h-4 text-[#DFBE7E]" />
+                    <span>Share Bio-Data</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: Comprehensive Bio-Data Dossier (md:w-7/12) */}
+              <div className="md:w-7/12 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto bg-[#FAF8F5]">
+                <div className="space-y-6">
+                  
+                  {/* Candidate Header */}
+                  <div className="border-b border-[#E8DDD0] pb-4">
+                    <h2
+                      className="text-3xl sm:text-4xl font-bold text-[#161412] tracking-tight"
+                      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                    >
+                      {selectedDetailProfile.display_name}
+                      <span className="text-[#A17B5E] font-sans font-extrabold text-2xl ml-2">
+                        · {selectedDetailProfile.age} yrs
+                      </span>
+                    </h2>
+
+                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-[#6E6259]">
+                      <span className="flex items-center gap-1 font-semibold text-[#161412]">
+                        <Briefcase className="w-3.5 h-3.5 text-[#A17B5E]" />
+                        {selectedDetailProfile.occupation}
+                      </span>
+                      <span>·</span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-[#A17B5E]" />
+                        {selectedDetailProfile.city}
+                      </span>
+                      <span>·</span>
+                      <span className="font-bold text-[#560406]">
+                        📏 {selectedDetailProfile.height || "5'7\""}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Dossier Navigation Tabs */}
+                  <div className="flex items-center gap-2 border-b border-[#E8DDD0] pb-2 overflow-x-auto text-xs">
+                    {[
+                      { id: 'overview', label: 'Personal & Bio' },
+                      { id: 'career', label: 'Education & Career' },
+                      { id: 'family', label: 'Family & Legacy' },
+                      { id: 'kundli', label: 'Kundli & Horoscope' },
+                      { id: 'lifestyle', label: 'Lifestyle & Social' }
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveTabInModal(tab.id as any)}
+                        className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap cursor-pointer ${
+                          activeTabInModal === tab.id
+                            ? 'bg-[#560406] text-[#F5E6D3]'
+                            : 'text-[#6E6259] hover:bg-[#F0EAE1] hover:text-[#161412]'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Tab Content Display */}
+                  <div className="space-y-4 text-xs">
+                    {activeTabInModal === 'overview' && (
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-2xl bg-white border border-[#E8DDD0] space-y-2">
+                          <h4 className="font-bold text-[#560406] uppercase tracking-wider text-[11px]">
+                            About {selectedDetailProfile.display_name}
+                          </h4>
+                          <p className="text-[#6E6259] leading-relaxed text-xs">
+                            {selectedDetailProfile.bio_text ||
+                              'A grounded, ambitious professional passionate about family values, cultural heritage, and intellectual pursuits.'}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Marital Status</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.marital_status || 'Never Married'}</strong>
+                          </div>
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Religion & Community</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.religion} · {selectedDetailProfile.community}</strong>
+                          </div>
+                        </div>
+
+                        {selectedDetailProfile.marriage_expectations && (
+                          <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E8DDD0] space-y-1">
+                            <span className="font-bold text-[#560406] uppercase tracking-wider text-[10px]">
+                              Expectations in a Life Partner
+                            </span>
+                            <p className="text-[#6E6259] italic text-xs">
+                              "{selectedDetailProfile.marriage_expectations}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {activeTabInModal === 'career' && (
+                      <div className="space-y-3">
+                        <div className="p-4 bg-white rounded-2xl border border-[#E8DDD0] space-y-2">
+                          <span className="font-bold text-[#560406] uppercase tracking-wider text-[10px]">Alma Mater & Degrees</span>
+                          <p className="text-[#161412] font-semibold">{selectedDetailProfile.education || 'Master of Science'}</p>
+                        </div>
+
+                        <div className="p-4 bg-white rounded-2xl border border-[#E8DDD0] space-y-2">
+                          <span className="font-bold text-[#560406] uppercase tracking-wider text-[10px]">Current Organization & Role</span>
+                          <p className="text-[#161412] font-semibold">{selectedDetailProfile.occupation} at {selectedDetailProfile.company_name || 'Reputed Firm'}</p>
+                        </div>
+
+                        <div className="p-4 bg-white rounded-2xl border border-[#E8DDD0] space-y-2">
+                          <span className="font-bold text-[#560406] uppercase tracking-wider text-[10px]">Income & Financial Standing</span>
+                          <p className="text-emerald-800 font-bold">{selectedDetailProfile.salary_bracket || '₹75L - ₹1Cr+ / Verified High Net Worth'}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTabInModal === 'family' && (
+                      <div className="space-y-3">
+                        <div className="p-4 bg-white rounded-2xl border border-[#E8DDD0] space-y-2">
+                          <span className="font-bold text-[#560406] uppercase tracking-wider text-[10px]">Family Lineage & Background</span>
+                          <p className="text-[#161412] leading-relaxed">
+                            {selectedDetailProfile.family_background || 'Distinguished family background with high cultural and professional reputation.'}
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Managed By</span>
+                            <strong className="text-[#161412] capitalize">{selectedDetailProfile.managed_by || 'Self'}</strong>
+                          </div>
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Family Location</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.city}, India</strong>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTabInModal === 'kundli' && (
+                      <div className="space-y-3">
+                        <div className="p-4 bg-white rounded-2xl border border-[#E8DDD0] space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-[#560406] uppercase tracking-wider text-[10px]">Astrological Gun Milan</span>
+                            <strong className="text-sm font-black text-[#560406]">{selectedDetailProfile.gun_milan_score || 34} / 36 (High Synergy)</strong>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Manglik Status</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.horoscope?.manglik || 'No'}</strong>
+                          </div>
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Time of Birth</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.horoscope?.time_of_birth || '08:45 AM'}</strong>
+                          </div>
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Place of Birth</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.horoscope?.place_of_birth || selectedDetailProfile.city}</strong>
+                          </div>
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Zodiac / Rashi</span>
+                            <strong className="text-[#161412]">Kanya (Virgo)</strong>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTabInModal === 'lifestyle' && (
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Dietary Habits</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.diet || 'Vegetarian'}</strong>
+                          </div>
+                          <div className="p-3 bg-white rounded-xl border border-[#E8DDD0]">
+                            <span className="text-[#8C827A] block text-[10px] uppercase">Travel Frequency</span>
+                            <strong className="text-[#161412]">{selectedDetailProfile.lifestyle_details?.travel_freq || 'Frequently'}</strong>
+                          </div>
+                        </div>
+
+                        {selectedDetailProfile.lifestyle_details?.private_clubs && (
+                          <div className="p-4 bg-white rounded-2xl border border-[#E8DDD0] space-y-1">
+                            <span className="font-bold text-[#560406] uppercase tracking-wider text-[10px]">Private Memberships & Clubs</span>
+                            <p className="text-[#161412] font-semibold">{selectedDetailProfile.lifestyle_details.private_clubs}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+
+                {/* Bottom Action Sheet */}
+                <div className="pt-6 border-t border-[#E8DDD0] flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleSendWave(selectedDetailProfile)}
+                    className="flex-1 py-3 px-5 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-bold uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Send className="w-4 h-4 text-[#DFBE7E]" />
+                    <span>Send Interest Wave 👋</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onOpenSharePortal(selectedDetailProfile);
+                    }}
+                    className="py-3 px-5 rounded-2xl bg-white border border-[#E8DDD0] hover:bg-[#FAF8F5] text-[#161412] text-xs font-bold uppercase tracking-wider transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Share2 className="w-4 h-4 text-[#A17B5E]" />
+                    <span>Share PDF Dossier</span>
+                  </button>
+                </div>
+
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };

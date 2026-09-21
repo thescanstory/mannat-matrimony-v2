@@ -43,10 +43,12 @@ export const MainApp: React.FC = () => {
 
   const [currentView, setCurrentView] = useState<ViewType>(() => {
     try {
-      const stored = localStorage.getItem('mannat_active_user');
-      return stored ? 'splash' : 'splash';
+      if (typeof window !== 'undefined' && !window.location.search.includes('splash=true')) {
+        return 'home';
+      }
+      return 'home';
     } catch {
-      return 'splash';
+      return 'home';
     }
   });
 
