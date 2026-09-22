@@ -10,8 +10,6 @@ import {
   MessageSquare,
   Crown,
   ArrowRight,
-  Star,
-  Heart,
   ExternalLink,
   Menu,
   Sparkles,
@@ -140,105 +138,103 @@ export const LandingPage: React.FC = () => {
     }
   };
 
-  // Testimonials
-  const testimonials = [
+  // Four Pillars of Confidential Matchmaking (Authentic, trustworthy values)
+  const matchmakingPillars = [
     {
-      name: 'Rohan & Sonali Jindal',
-      verified: '100% Verified Alliance',
-      alliance: 'Solemnized in Mumbai · Dec 2025',
-      location: 'Mumbai & New York',
-      community: 'Baniya / Agarwal Circle',
-      quote: 'Finding a partner who truly understood our family heritage and global aspirations seemed difficult until we consulted Shalini at Mannat Matrimony. The discretion and personal attention made the journey effortless.',
-      family: 'Jindal Family (Manufacturing & Real Estate Conglomerate)',
+      title: 'Mandatory Identity & Background Verification',
+      badge: '100% Verified Candidates',
+      subtitle: 'Integrity First',
+      location: 'Pan-India & Global NRI',
+      community: 'Rigorous Vetting',
+      description: 'Every applicant is reviewed with mandatory credential, education, and family background checks to ensure an exclusive community of authentic, high-caliber individuals.',
+      highlight: 'Government ID & Professional Credential Check',
       image: '/images/vip/hero_palace_couple.jpg'
     },
     {
-      name: 'Dr. Kabir & Tanya Malhotra',
-      verified: '100% Verified Alliance',
-      alliance: 'Solemnized in Delhi · Feb 2026',
-      location: 'Delhi NCR & London',
-      community: 'Punjabi Khatri Lineage',
-      quote: 'As practicing medical specialists across two continents, privacy was our top priority. Mannat Matrimony’s BlurShield™ and offline concierge introduced our families with immense dignity and zero public exposure.',
-      family: 'Malhotra Family (Eminent Healthcare & Hospital Chain Lineage)',
+      title: 'BlurShield™ Privacy & Confidentiality Controls',
+      badge: 'Privacy-First Architecture',
+      subtitle: 'Zero Public Exposure',
+      location: 'Discrete & Secure',
+      community: 'Mutual Consent',
+      description: 'Your portraits, contact numbers, and confidential family details remain protected. Photos are softly blurred until you choose to grant direct access to matched candidates.',
+      highlight: 'Controlled Unblurring on Mutual Wave Acceptance',
       image: '/images/vip/couple_window_red.jpg'
     },
     {
-      name: 'Meera & Siddharth Varma',
-      verified: '100% Verified Alliance',
-      alliance: 'Solemnized in Bangalore · Nov 2025',
-      location: 'Bangalore & Singapore',
-      community: 'Brahmin Tech Leadership',
-      quote: 'Our senior matchmaker took the time to listen to our core values, intellectual wavelength, and personal lifestyles. We were guided like trusted family friends rather than clients of an algorithm.',
-      family: 'Varma Family (Established Estates & Civil Services Background)',
+      title: 'Family-Centric WhatsApp Bio-Data Sharing',
+      badge: 'Dignified Introductions',
+      subtitle: 'Elder-Friendly Design',
+      location: 'Direct Family Connect',
+      community: 'Cultural Harmony',
+      description: 'Instantly generate elegant, verified bio-data cards and horoscopes formatted specifically for sharing with family elders and decision-makers over WhatsApp.',
+      highlight: '1-Click WhatsApp Alliance Dossier Cards',
       image: '/images/vip/couple_floral_saree.jpg'
     },
     {
-      name: 'Ananya & Aditya Singhania',
-      verified: '100% Verified Alliance',
-      alliance: 'Solemnized in Kolkata · Jan 2026',
-      location: 'Kolkata & Dubai',
-      community: 'Marwari / Jain Circle',
-      quote: 'The caliber of circles and the meticulous verification gave our parents complete peace of mind. We are deeply grateful to Mannat Matrimony for bringing our two worlds together so harmoniously.',
-      family: 'Singhania Family (Heritage Industrialist & Global Export Circle)',
+      title: 'Dedicated Human Matchmaking Concierge',
+      badge: 'Personalized Support',
+      subtitle: 'Bespoke Advisory',
+      location: 'Mumbai · Delhi · Bangalore · NRI',
+      community: 'Tailored Curation',
+      description: 'Experience human-led matchmaking where our experienced relationship advisors understand your lifestyle, intellectual wavelength, and family values.',
+      highlight: 'Direct Human Advisory & Curated Introductions',
       image: '/images/vip/couple_silk_saree.jpg'
     }
   ];
-
-
 
   // Instagram Curated Journal Posts
   const instagramPosts = [
     {
       id: 1,
       image: '/images/vip/hero_vip_mansion_couple.jpg',
-      caption: 'Celebrating timeless elegance and royal unions. When two extraordinary lineages align.',
-      tag: '#EliteWeddings',
-      likes: '1,420',
+      caption: 'Celebrating timeless elegance and royal unions. Where two extraordinary lineages align.',
+      tag: '#MannatMatrimony',
       link: 'https://www.instagram.com/mannatmatrimony_/'
     },
     {
       id: 2,
       image: '/images/vip/couple_floral_saree.jpg',
-      caption: 'Behind the velvet ropes: Bespoke consultations crafted with 100% discretion.',
-      tag: '#MannatMatrimony',
-      likes: '985',
+      caption: 'Bespoke introductions crafted with discretion, intellect, and timeless cultural values.',
+      tag: '#BespokeAlliances',
       link: 'https://www.instagram.com/mannatmatrimony_/'
     },
     {
       id: 3,
       image: '/images/vip/couple_window_red.jpg',
-      caption: 'Where heritage meets modern intellect. Redefining high-net-worth matchmaking.',
-      tag: '#RoyalAlliances',
-      likes: '2,130',
+      caption: 'Where heritage meets modern intellect. Redefining confidential matchmaking for elites.',
+      tag: '#RoyalHeritage',
       link: 'https://www.instagram.com/mannatmatrimony_/'
     },
     {
       id: 4,
       image: '/images/vip/couple_silk_saree.jpg',
-      caption: 'A heartfelt new chapter begins. Wishing our newly solemnized couple a lifetime of joy.',
-      tag: '#SuccessStories',
-      likes: '1,890',
+      caption: 'A heartfelt new chapter begins. Dignified matchmaking tailored for discerning families.',
+      tag: '#TimelessElegance',
       link: 'https://www.instagram.com/mannatmatrimony_/'
     }
   ];
 
-  // FAQs
+  // FAQs - Accurate, transparent, and product-aligned
   const faqs = [
     {
-      q: 'How is Mannat Matrimony different from regular matrimony portals?',
-      a: 'Mannat Matrimony is a 100% offline, bespoke matchmaking consultancy designed for elite, high-net-worth, and distinguished families. Your biodata is strictly private and presented only by senior consultants upon mutual verification.'
+      q: 'How does Mannat Matrimony work?',
+      a: 'Mannat combines a private, verified mobile app and web platform with personalized matchmaking concierge support. You can explore curated profiles, send interest waves, and request dedicated assistance from our relationship advisors.'
     },
     {
       q: 'How does BlurShield™ protect our family privacy?',
-      a: 'BlurShield™ guarantees that no photos, contact details, or family identifiers are ever indexed by search engines or viewable publicly. Details are exchanged one-to-one strictly with your prior consent.'
+      a: 'BlurShield™ ensures your profile photos and contact details are never indexed publicly by search engines. Photos remain softly blurred and are only unlocked upon mutual expression of interest.'
     },
     {
-      q: 'What is the verification process for candidates?',
-      a: 'Every profile undergoes a 4-point verification check: Government ID authentication, educational credential vetting, company/business registry check, and family background assessment by our senior advisors.'
+      q: 'What is the verification process for members?',
+      a: 'Every profile undergoes a multi-point verification check: Government ID authentication, educational credential vetting, professional registry validation, and family background assessment.'
     },
     {
-      q: 'How quickly does the Senior Matchmaker contact us?',
-      a: 'Once you submit the consultation request, your assigned Senior Matchmaker contacts you via phone or WhatsApp within 15 minutes to 2 business hours for an initial confidential briefing.'
+      q: 'What does it cost to join Mannat?',
+      a: 'Joining Mannat and exploring verified candidate profiles is completely free. We also offer optional VIP membership tiers starting from ₹1,499 for expanded contact quotas, profile spotlights, and dedicated concierge support.'
+    },
+    {
+      q: 'Can Android or Desktop users access Mannat?',
+      a: 'Yes! Android and desktop users can access the full platform instantly through our secure Member Web App at mannatmatrimony.com/app with Google or Apple authentication.'
     }
   ];
 
@@ -286,10 +282,10 @@ export const LandingPage: React.FC = () => {
           <div className="flex items-center justify-between gap-3 h-16 sm:h-20">
             
             {/* Brand Typographic Lockup */}
-            <a href="#" className="flex items-center gap-3 group shrink-0">
+            <a href="/" className="flex items-center gap-3 group shrink-0">
               <img
                 src="/images/mannat-logo-square.png"
-                alt="Mannat"
+                alt="Mannat Matrimony"
                 className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover shadow-sm ring-1 ring-[#560406]/20 group-hover:scale-105 transition-transform"
               />
               <div className="flex flex-col text-left">
@@ -307,10 +303,10 @@ export const LandingPage: React.FC = () => {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#6E6259]">
-              <a href="#about" className="hover:text-[#560406] transition">Why At Mannat</a>
+              <a href="#about" className="hover:text-[#560406] transition">Why Mannat</a>
               <a href="#experience" className="hover:text-[#560406] transition text-[#560406]">Experience App</a>
-              <a href="#stories" className="hover:text-[#560406] transition">Portfolios</a>
-              <a href="#instagram" className="hover:text-[#560406] transition">Journal</a>
+              <a href="#principles" className="hover:text-[#560406] transition">Our Principles</a>
+              <a href="#values" className="hover:text-[#560406] transition">Values</a>
               <a href="#faq" className="hover:text-[#560406] transition">FAQ</a>
             </nav>
 
@@ -364,7 +360,7 @@ export const LandingPage: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-3 bg-white rounded-xl border border-[#E8DDD0] text-[#161412] flex items-center justify-between"
                 >
-                  <span>★ Why At Mannat</span>
+                  <span>★ Why Mannat</span>
                 </a>
                 <a
                   href="#experience"
@@ -374,11 +370,11 @@ export const LandingPage: React.FC = () => {
                   <span>📱 Experience App</span>
                 </a>
                 <a
-                  href="#stories"
+                  href="#principles"
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-3 bg-white rounded-xl border border-[#E8DDD0] text-[#161412] flex items-center justify-between"
                 >
-                  <span>💍 Portfolios</span>
+                  <span>💍 Our Principles</span>
                 </a>
                 <a
                   href="#faq"
@@ -408,7 +404,7 @@ export const LandingPage: React.FC = () => {
         </AnimatePresence>
       </header>
 
-      {/* 2. Hero Section: High Impact, Crisp, Snappy */}
+      {/* 2. Hero Section: Authentic, Trustworthy, Refined */}
       <section className="relative overflow-hidden bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/images/vip/hero_vip_mansion_couple.jpg')" }}>
         <div className="absolute inset-0 bg-gradient-to-b from-[#260102]/92 via-[#3A0204]/80 to-[#1C0102]/95 pointer-events-none" />
 
@@ -416,7 +412,7 @@ export const LandingPage: React.FC = () => {
           
           <div className="flex items-center justify-center gap-2 text-[#A17B5E]">
             <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-[#A17B5E]" />
-            <span className="text-[8.5px] sm:text-[10px] uppercase tracking-[0.26em] sm:tracking-[0.32em] font-semibold text-[#A17B5E]">THE HOUSE OF MANNAT · BESPOKE ALLIANCES</span>
+            <span className="text-[8.5px] sm:text-[10px] uppercase tracking-[0.26em] sm:tracking-[0.32em] font-semibold text-[#A17B5E]">MANNAT MATRIMONY · PRIVATE &amp; VERIFIED</span>
             <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-[#A17B5E]" />
           </div>
 
@@ -424,18 +420,18 @@ export const LandingPage: React.FC = () => {
             className="text-3xl sm:text-5xl md:text-6xl font-normal text-white tracking-[0.02em] drop-shadow-md leading-[1.15]"
             style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
           >
-            No. 1 Matchmaking Service for Elites
+            Private, Verified Matchmaking for Discerning Families
           </h1>
 
           <div
             className="text-xs sm:text-base text-neutral-100 font-normal tracking-[0.04em] max-w-2xl mx-auto flex flex-wrap items-center justify-center gap-2 sm:gap-3 leading-relaxed"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
-            <span className="font-semibold text-white">5x Higher Success Rates</span>
+            <span className="font-semibold text-white">100% Verified Biodatas</span>
             <span className="text-[#A17B5E]">◆</span>
-            <span className="font-semibold text-white">Assured Meetings</span>
+            <span className="font-semibold text-white">Complete Privacy Control</span>
             <span className="text-[#A17B5E]">◆</span>
-            <span className="font-semibold text-white">100% Discretion</span>
+            <span className="font-semibold text-white">Dedicated Concierge Support</span>
           </div>
 
           {/* Snappy Consultation Form Dock */}
@@ -521,7 +517,7 @@ export const LandingPage: React.FC = () => {
                   href="/app"
                   className="font-bold text-[#D8B486] hover:text-white underline underline-offset-4 flex items-center gap-1 transition"
                 >
-                  <span>Web App</span>
+                  <span>Android &amp; Desktop: Open Web App</span>
                   <ArrowRight className="w-3 h-3 text-[#D8B486]" />
                 </a>
               </div>
@@ -531,20 +527,20 @@ export const LandingPage: React.FC = () => {
             {/* Metrics Strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 p-2.5 sm:p-3.5 mt-3 rounded-2xl bg-[#1C0102]/85 backdrop-blur-md border border-[#A17B5E]/30 text-center shadow-lg">
               <div className="space-y-0.5 border-r border-[#A17B5E]/20 pr-1">
-                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>₹500Cr+</div>
-                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">Matched Lineages</div>
+                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>100%</div>
+                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">Verified Biodatas</div>
               </div>
               <div className="space-y-0.5 sm:border-r border-[#A17B5E]/20 sm:pr-1">
-                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>100%</div>
-                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">Offline Discretion</div>
+                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Privacy-First</div>
+                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">BlurShield™ Access</div>
               </div>
               <div className="space-y-0.5 border-r border-[#A17B5E]/20 pr-1">
-                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>5x Higher</div>
-                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">Success Rates</div>
+                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Bespoke</div>
+                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">Concierge Advisory</div>
               </div>
               <div className="space-y-0.5">
-                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>1-on-1</div>
-                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">Principal Matchmaker</div>
+                <div className="text-base sm:text-xl font-bold text-[#FDFCFC]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Zero Spam</div>
+                <div className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-[#A17B5E] font-semibold truncate">Mutual Consent Only</div>
               </div>
             </div>
 
@@ -553,28 +549,18 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. The 3 Pillars (Compact Strip) */}
+      {/* 3. The 3 Core Commitments */}
       <section id="about" className="py-8 sm:py-12 bg-white border-b border-[#E8DDD0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-6">
             <div className="bg-[#F8F6F2] p-4 sm:p-6 rounded-2xl border border-[#E8DDD0] flex items-start gap-3.5 text-left">
               <div className="w-10 h-10 rounded-xl bg-[#560406] text-[#A17B5E] flex items-center justify-center font-bold text-lg shrink-0 shadow-sm">
-                ★
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>5x Higher Success Rates</h3>
-                <p className="text-xs text-[#6E6259] leading-relaxed pt-0.5">Curated high-compatibility matches based on family pedigree and lifestyle harmony.</p>
-              </div>
-            </div>
-
-            <div className="bg-[#F8F6F2] p-4 sm:p-6 rounded-2xl border border-[#E8DDD0] flex items-start gap-3.5 text-left">
-              <div className="w-10 h-10 rounded-xl bg-[#560406] text-[#A17B5E] flex items-center justify-center font-bold text-lg shrink-0 shadow-sm">
                 🛡️
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>100% Verified Circles</h3>
-                <p className="text-xs text-[#6E6259] leading-relaxed pt-0.5">Mandatory credentials, business background, and family reputation verification.</p>
+                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>100% Verified Members</h3>
+                <p className="text-xs text-[#6E6259] leading-relaxed pt-0.5">Mandatory identity, educational, and professional verification for every registered candidate.</p>
               </div>
             </div>
 
@@ -583,8 +569,18 @@ export const LandingPage: React.FC = () => {
                 🔒
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>BlurShield™ Confidentiality</h3>
-                <p className="text-xs text-[#6E6259] leading-relaxed pt-0.5">Zero public profiles. Biodatas and portraits shared 1-on-1 only after mutual consent.</p>
+                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>BlurShield™ Privacy Controls</h3>
+                <p className="text-xs text-[#6E6259] leading-relaxed pt-0.5">Zero public search engine indexing. Portraits and contact details revealed strictly upon mutual consent.</p>
+              </div>
+            </div>
+
+            <div className="bg-[#F8F6F2] p-4 sm:p-6 rounded-2xl border border-[#E8DDD0] flex items-start gap-3.5 text-left">
+              <div className="w-10 h-10 rounded-xl bg-[#560406] text-[#A17B5E] flex items-center justify-center font-bold text-lg shrink-0 shadow-sm">
+                👑
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Family &amp; NRI Friendly</h3>
+                <p className="text-xs text-[#6E6259] leading-relaxed pt-0.5">WhatsApp bio-data cards, detailed horoscope matching, and global candidate profiles.</p>
               </div>
             </div>
           </div>
@@ -621,9 +617,9 @@ export const LandingPage: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center">
                     <ShieldCheck className="w-5 h-5 text-[#560406]" />
                   </div>
-                  <h4 className="font-bold text-sm text-[#161412]">Biometric Face ID Shield</h4>
+                  <h4 className="font-bold text-sm text-[#161412]">BlurShield™ Privacy Protection</h4>
                   <p className="text-xs text-[#6E6259] leading-relaxed">
-                    Hardware-level encryption prevents screenshots, leaks, and unauthorized viewing of candidate profiles.
+                    Candidate portraits and contact information remain discreetly protected until you approve interest.
                   </p>
                 </div>
 
@@ -633,7 +629,7 @@ export const LandingPage: React.FC = () => {
                   </div>
                   <h4 className="font-bold text-sm text-[#161412]">Real-Time Interest Waves</h4>
                   <p className="text-xs text-[#6E6259] leading-relaxed">
-                    Instant push notifications when matched lineages send interest waves or request in-app voice/video calls.
+                    Instant push notifications when matched candidates express interest or respond to your alliance requests.
                   </p>
                 </div>
 
@@ -641,9 +637,9 @@ export const LandingPage: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center">
                     <Lock className="w-5 h-5 text-[#560406]" />
                   </div>
-                  <h4 className="font-bold text-sm text-[#161412]">1-Tap Apple StoreKit</h4>
+                  <h4 className="font-bold text-sm text-[#161412]">Apple StoreKit In-App Purchases</h4>
                   <p className="text-xs text-[#6E6259] leading-relaxed">
-                    Seamless and secure In-App Purchases and monthly memberships billed directly to your Apple ID.
+                    Transparent, secure optional VIP subscriptions and contact passes billed safely through Apple ID.
                   </p>
                 </div>
 
@@ -651,9 +647,9 @@ export const LandingPage: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-[#560406]/10 text-[#560406] flex items-center justify-center">
                     <MessageSquare className="w-5 h-5 text-[#560406]" />
                   </div>
-                  <h4 className="font-bold text-sm text-[#161412]">WhatsApp Family Cards</h4>
+                  <h4 className="font-bold text-sm text-[#161412]">WhatsApp Family Bio-Datas</h4>
                   <p className="text-xs text-[#6E6259] leading-relaxed">
-                    Instantly generate elegant, verified bio-data cards to share securely with family elders via WhatsApp.
+                    Instantly generate elegant, formatted candidate dossiers for quick sharing with family decision-makers.
                   </p>
                 </div>
 
@@ -663,16 +659,14 @@ export const LandingPage: React.FC = () => {
               <div className="p-6 rounded-3xl bg-gradient-to-r from-[#260102] via-[#3A0204] to-[#1C0102] text-white border border-[#A17B5E]/40 shadow-xl space-y-5">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-1 text-[#D8B486] text-xs">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className="w-3.5 h-3.5 fill-[#D8B486] text-[#D8B486]" />
-                      ))}
-                      <span className="font-bold ml-1 text-white">4.9 / 5.0 Rating</span>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#D8B486]/20 border border-[#D8B486]/30 text-[#D8B486] text-[10px] font-bold uppercase tracking-wider mb-1">
+                      <Sparkles className="w-3 h-3 text-[#D8B486]" />
+                      <span>Official Apple App Store Release</span>
                     </div>
                     <h3 className="text-lg font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                       Download Free on iOS App Store
                     </h3>
-                    <p className="text-xs text-neutral-300">Requires iOS 15.0 or later. Compatible with iPhone &amp; iPad.</p>
+                    <p className="text-xs text-neutral-300">Requires iOS 15.0 or later. Free to download and explore.</p>
                   </div>
 
                   <a
@@ -699,7 +693,7 @@ export const LandingPage: React.FC = () => {
                   </span>
                   <span className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
-                    <span>Encrypted &amp; Ad-Free</span>
+                    <span>Private &amp; Verified</span>
                   </span>
                 </div>
               </div>
@@ -722,11 +716,11 @@ export const LandingPage: React.FC = () => {
                   <div className="pt-4 flex items-center justify-between text-[10px] text-[#A17B5E] border-b border-white/10 pb-2">
                     <div className="flex items-center gap-1">
                       <Crown className="w-3 h-3 text-[#D8B486]" />
-                      <span className="font-extrabold uppercase tracking-widest text-[#D8B486]">MANNAT VIP</span>
+                      <span className="font-extrabold uppercase tracking-widest text-[#D8B486]">MANNAT APP</span>
                     </div>
                     <div className="flex items-center gap-1 text-[9px] text-[#6E6259]">
                       <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                      <span className="text-white font-bold">Encrypted</span>
+                      <span className="text-white font-bold">Verified</span>
                     </div>
                   </div>
 
@@ -734,28 +728,28 @@ export const LandingPage: React.FC = () => {
                   <div className="my-auto space-y-3 bg-gradient-to-b from-[#2A0204] to-[#1C0102] p-3.5 rounded-2xl border border-[#A17B5E]/40 shadow-lg text-left">
                     <div className="relative aspect-[4/4.5] rounded-xl overflow-hidden border border-[#A17B5E]/30">
                       <img
-                        src="/images/vip/portfolio_kavya_singhania.png"
-                        alt="Candidate Preview"
+                        src="/images/vip/couple_floral_saree.jpg"
+                        alt="Sample Candidate Preview"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-[#560406]/90 backdrop-blur-md text-[#D8B486] text-[9px] font-bold border border-[#A17B5E]/50 flex items-center gap-1">
                         <Crown className="w-2.5 h-2.5" />
-                        <span>Singhania Lineage</span>
+                        <span>Sample Candidate Profile</span>
                       </div>
                       <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black via-black/60 to-transparent p-2.5 text-left">
-                        <h5 className="font-bold text-xs text-white">Kavya S., 27</h5>
-                        <p className="text-[10px] text-neutral-300">Columbia Univ • VC Principal • Mumbai</p>
+                        <h5 className="font-bold text-xs text-white">Ananya K., 27</h5>
+                        <p className="text-[10px] text-neutral-300">Master's Graduate • Tech Lead • Mumbai</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-center text-[10px]">
                       <div className="p-2 rounded-xl bg-[#1C0102] border border-[#A17B5E]/20">
-                        <span className="text-neutral-400 text-[9px] block">Kundli Match</span>
+                        <span className="text-neutral-400 text-[9px] block">Kundli Compatibility</span>
                         <span className="font-extrabold text-[#D8B486]">32 / 36 (Uttam)</span>
                       </div>
                       <div className="p-2 rounded-xl bg-[#1C0102] border border-[#A17B5E]/20">
-                        <span className="text-neutral-400 text-[9px] block">Family Worth</span>
-                        <span className="font-extrabold text-[#D8B486]">₹150Cr+ Verified</span>
+                        <span className="text-neutral-400 text-[9px] block">Verification Status</span>
+                        <span className="font-extrabold text-emerald-400">100% Verified</span>
                       </div>
                     </div>
 
@@ -785,33 +779,33 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. Success Stories & Distinguished Alliances: Compact Carousel */}
-      <section id="stories" className="py-10 sm:py-16 bg-white border-b border-[#E8DDD0]">
+      {/* 5. Four Pillars of Confidential Matchmaking: Compact Carousel */}
+      <section id="principles" className="py-10 sm:py-16 bg-white border-b border-[#E8DDD0]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
           
           <div className="flex items-end justify-between gap-4">
             <div className="space-y-1 text-left">
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
                 <Crown className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>VERIFIED ALLIANCES</span>
+                <span>OUR CORE PRINCIPLES</span>
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                Distinguished Matches
+                Four Pillars of Confidential Matchmaking
               </h2>
             </div>
 
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setActiveStoryIdx((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
+                onClick={() => setActiveStoryIdx((prev) => (prev === 0 ? matchmakingPillars.length - 1 : prev - 1))}
                 className="w-9 h-9 rounded-full bg-[#F8F6F2] border border-[#E8DDD0] hover:bg-[#560406] hover:text-[#A17B5E] text-[#161412] flex items-center justify-center transition"
-                aria-label="Previous"
+                aria-label="Previous Principle"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
-                onClick={() => setActiveStoryIdx((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
+                onClick={() => setActiveStoryIdx((prev) => (prev === matchmakingPillars.length - 1 ? 0 : prev + 1))}
                 className="w-9 h-9 rounded-full bg-[#F8F6F2] border border-[#E8DDD0] hover:bg-[#560406] hover:text-[#A17B5E] text-[#161412] flex items-center justify-center transition"
-                aria-label="Next"
+                aria-label="Next Principle"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -831,44 +825,42 @@ export const LandingPage: React.FC = () => {
                 {/* Photo */}
                 <div className="md:col-span-5 relative h-56 sm:h-80 md:min-h-[360px] overflow-hidden bg-neutral-900">
                   <img
-                    src={testimonials[activeStoryIdx].image}
-                    alt={testimonials[activeStoryIdx].name}
+                    src={matchmakingPillars[activeStoryIdx].image}
+                    alt={matchmakingPillars[activeStoryIdx].title}
                     className="w-full h-full object-cover object-top"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#260102]/90 via-black/20 to-transparent" />
                   
                   <div className="absolute top-3 left-3 bg-[#3A0204]/90 px-3 py-1 rounded-full border border-[#A17B5E]/40 text-[10px] font-bold text-[#A17B5E] flex items-center gap-1 shadow">
                     <ShieldCheck className="w-3.5 h-3.5 text-[#A17B5E]" />
-                    <span>{testimonials[activeStoryIdx].verified}</span>
+                    <span>{matchmakingPillars[activeStoryIdx].badge}</span>
                   </div>
 
                   <div className="absolute bottom-3 left-3 right-3 text-white text-left space-y-0.5">
-                    <div className="text-[9px] uppercase font-bold text-[#A17B5E]">{testimonials[activeStoryIdx].alliance}</div>
-                    <div className="text-lg font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{testimonials[activeStoryIdx].name}</div>
-                    <div className="text-[11px] text-neutral-300">{testimonials[activeStoryIdx].location}</div>
+                    <div className="text-[9px] uppercase font-bold text-[#A17B5E]">{matchmakingPillars[activeStoryIdx].subtitle}</div>
+                    <div className="text-lg font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{matchmakingPillars[activeStoryIdx].title}</div>
+                    <div className="text-[11px] text-neutral-300">{matchmakingPillars[activeStoryIdx].location}</div>
                   </div>
                 </div>
 
-                {/* Quote Content */}
+                {/* Content */}
                 <div className="md:col-span-7 p-4 sm:p-8 flex flex-col justify-between text-left space-y-4 bg-white md:bg-transparent">
                   <div className="space-y-3">
                     <div className="flex items-center gap-1 text-[#A17B5E]">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-[#A17B5E] text-[#A17B5E]" />
-                      ))}
-                      <span className="text-[11px] font-bold text-[#560406] ml-2">{testimonials[activeStoryIdx].community}</span>
+                      <Crown className="w-4 h-4 text-[#A17B5E]" />
+                      <span className="text-[11px] font-bold text-[#560406] ml-1">{matchmakingPillars[activeStoryIdx].community}</span>
                     </div>
 
-                    <blockquote
-                      className="text-sm sm:text-lg text-[#161412] font-medium leading-relaxed italic"
-                      style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
+                    <p
+                      className="text-sm sm:text-base text-[#161412] font-medium leading-relaxed"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                     >
-                      "{testimonials[activeStoryIdx].quote}"
-                    </blockquote>
+                      {matchmakingPillars[activeStoryIdx].description}
+                    </p>
 
-                    <div className="text-[11px] text-[#6E6259]">
-                      <strong className="text-[#161412] block">{testimonials[activeStoryIdx].family}</strong>
-                      Facilitated confidentially under mutual non-disclosure agreement.
+                    <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#E8DDD0] text-xs text-[#560406] font-semibold flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-[#A17B5E] shrink-0" />
+                      <span>{matchmakingPillars[activeStoryIdx].highlight}</span>
                     </div>
                   </div>
 
@@ -876,7 +868,7 @@ export const LandingPage: React.FC = () => {
                     onClick={() => setShowConsultModal(true)}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#560406] hover:bg-[#730C0F] text-[#A17B5E] text-xs font-bold transition shadow-sm cursor-pointer"
                   >
-                    <span>Request Similar Match</span>
+                    <span>Connect with Our Concierge</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -887,18 +879,18 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. Instagram Journal Grid (Compact 2x2) */}
-      <section id="instagram" className="py-10 sm:py-16 bg-[#F8F6F2] border-b border-[#E8DDD0]">
+      {/* 6. Curated Gallery Grid */}
+      <section id="values" className="py-10 sm:py-16 bg-[#F8F6F2] border-b border-[#E8DDD0]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           
           <div className="flex items-center justify-between gap-4 text-left">
             <div>
               <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#560406]">
                 <InstagramIcon className="w-3.5 h-3.5 text-[#560406]" />
-                <span>FOLLOW JOURNAL</span>
+                <span>VALUES &amp; AESTHETICS</span>
               </div>
               <h2 className="text-xl sm:text-3xl font-bold text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
-                Glimpses from @mannatmatrimony_
+                Glimpses of Timeless Matchmaking
               </h2>
             </div>
 
@@ -908,7 +900,7 @@ export const LandingPage: React.FC = () => {
               rel="noreferrer"
               className="px-4 py-2 rounded-xl bg-[#560406] text-[#A17B5E] text-xs font-bold flex items-center gap-1.5 hover:bg-[#730C0F] transition shadow-xs shrink-0"
             >
-              <span>Follow</span>
+              <span>Follow @mannatmatrimony_</span>
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
@@ -929,10 +921,9 @@ export const LandingPage: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white text-left space-y-0.5">
-                  <div className="text-[9px] font-bold text-[#A17B5E]">{post.tag}</div>
-                  <div className="flex items-center gap-1 text-[10px] text-neutral-300">
-                    <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
-                    <span>{post.likes}</span>
+                  <div className="text-[10px] font-bold text-[#D8B486]">{post.tag}</div>
+                  <div className="text-[10px] text-neutral-300 line-clamp-2 leading-tight">
+                    {post.caption}
                   </div>
                 </div>
               </a>
@@ -1004,7 +995,7 @@ export const LandingPage: React.FC = () => {
             <div className="flex items-center gap-3">
               <img
                 src="/images/mannat-logo-square.png"
-                alt="Mannat"
+                alt="Mannat Matrimony"
                 className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover shadow-md ring-1 ring-[#D8B486]/30"
               />
               <div className="flex flex-col items-start text-left">
@@ -1015,7 +1006,7 @@ export const LandingPage: React.FC = () => {
                   MANNAT
                 </div>
                 <span className="text-[7px] uppercase tracking-[0.34em] font-bold text-[#A17B5E] mt-0.5">
-                  Bespoke Elite Matchmaking
+                  Private &amp; Verified Matrimony
                 </span>
               </div>
             </div>
@@ -1042,29 +1033,12 @@ export const LandingPage: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#A89CAE] gap-3 text-center sm:text-left">
             <div>
-              © 2026 Mannat Matrimony. All rights reserved. Strict Non-Disclosure &amp; BlurShield Protected.
+              © 2026 Mannat Matrimony. All rights reserved. Encrypted &amp; BlurShield™ Protected.
             </div>
             <div className="flex items-center gap-3.5 flex-wrap justify-center sm:justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  setLegalInitialDoc('privacy');
-                  setShowLegal(true);
-                }}
-                className="hover:text-white transition cursor-pointer"
-              >
-                Privacy Policy
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setLegalInitialDoc('terms');
-                  setShowLegal(true);
-                }}
-                className="hover:text-white transition cursor-pointer"
-              >
-                Terms &amp; EULA
-              </button>
+              <a href="/privacy.html" className="hover:text-white transition">Privacy Policy</a>
+              <a href="/terms.html" className="hover:text-white transition">Terms &amp; EULA</a>
+              <a href="/support.html" className="hover:text-white transition">Support &amp; Safety</a>
               <button
                 type="button"
                 onClick={() => {
@@ -1073,14 +1047,13 @@ export const LandingPage: React.FC = () => {
                 }}
                 className="hover:text-white transition cursor-pointer"
               >
-                UGC Guidelines
+                Community Guidelines
               </button>
               <a href="https://apps.apple.com/app/id6812288373" target="_blank" rel="noreferrer" className="text-white font-semibold hover:underline flex items-center gap-1">
                 <span>iOS App Store</span>
                 <ExternalLink className="w-3 h-3 text-[#D8B486]" />
               </a>
               <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Web App</a>
-              <a href="/admin" className="text-[#A17B5E] hover:underline">Admin Portal</a>
             </div>
           </div>
 
