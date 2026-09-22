@@ -58,8 +58,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       appleProductId: 'vip.mannat.sub.silver1m',
       name: 'Silver (Base Only)',
       tierBadge: '1 Month Base',
-      price: '₹1,500',
-      amount: 1500,
+      price: '₹1,499',
+      amount: 1499,
       period: '/ 1 Month',
       quota: 'Strict Cap: 15 Contacts',
       popular: false,
@@ -75,8 +75,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       appleProductId: 'vip.mannat.sub.gold3m',
       name: 'Gold (Standard)',
       tierBadge: '3 Months Standard',
-      price: '₹4,500',
-      amount: 4500,
+      price: '₹4,499',
+      amount: 4499,
       period: '/ 3 Months',
       quota: '50 Contacts',
       popular: false,
@@ -92,8 +92,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       appleProductId: 'vip.mannat.sub.goldplus3m',
       name: 'Gold Plus (Premium Tier)',
       tierBadge: '3 Months Premium',
-      price: '₹5,500',
-      amount: 5500,
+      price: '₹5,499',
+      amount: 5499,
       period: '/ 3 Months',
       quota: '50 Contacts + Spotlight',
       popular: false,
@@ -109,8 +109,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       appleProductId: 'vip.mannat.sub.diamond6m',
       name: 'Diamond (Standard)',
       tierBadge: '6 Months Standard',
-      price: '₹6,500',
-      amount: 6500,
+      price: '₹6,499',
+      amount: 6499,
       period: '/ 6 Months',
       quota: '60 Contacts',
       popular: true,
@@ -126,15 +126,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       appleProductId: 'vip.mannat.sub.diamondplus6m',
       name: 'Diamond Plus (Premium Tier)',
       tierBadge: '6 Months Premium',
-      price: '₹7,500',
-      amount: 7500,
+      price: '₹7,499',
+      amount: 7499,
       period: '/ 6 Months',
-      quota: 'Aggressive 100+ Contacts',
+      quota: '100+ Contacts + Spotlight',
       popular: false,
       features: [
-        'Aggressive 100+ contacts quota',
-        'Free Mode Response (unpaid members can view & reply for free)',
-        'Bold profile layout designation'
+        '100+ contacts allocation',
+        'Free Mode Response (free members can reply to your chats/calls)',
+        'Bold Profile layout with badge in search results'
       ]
     },
     {
@@ -143,15 +143,15 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       appleProductId: 'vip.mannat.sub.platinum12m',
       name: 'Platinum (Standard)',
       tierBadge: '12 Months Standard',
-      price: '₹11,000',
-      amount: 11000,
+      price: '₹10,999',
+      amount: 10999,
       period: '/ 12 Months',
-      quota: 'Generous 300+ Contacts',
+      quota: '300+ Contacts',
       popular: false,
       features: [
-        'Generous 300+ contacts quota',
-        'Long-term plan with lowest month-on-month cost',
-        'Continuous priority algorithm indexing across target demographic'
+        'Bumps up to 300+ contacts',
+        'Continuous priority indexing across full 1-year search cycle',
+        'Lowest effective monthly rate'
       ]
     },
     {
@@ -159,16 +159,16 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       durationTag: '12m' as const,
       appleProductId: 'vip.mannat.sub.platinumplus12m',
       name: 'Platinum Plus (Premium Tier)',
-      tierBadge: '12 Months Ultimate',
-      price: '₹13,000',
-      amount: 13000,
+      tierBadge: '12 Months Premium',
+      price: '₹12,999',
+      amount: 12999,
       period: '/ 12 Months',
-      quota: 'Maximum 600 Contacts',
+      quota: '600 Contacts (Unlimited Cap)',
       popular: false,
       features: [
-        'Maximum 600 contacts quota',
-        'Continuous Spotlight pinning & Free Mode Response for full year',
-        'Priority customer care escalation line'
+        'Highest quota allowance: 600 contacts',
+        'Full-year Spotlight + Free Mode Response',
+        'Priority Dispute & Relationship Escalation Handling'
       ]
     }
   ];
