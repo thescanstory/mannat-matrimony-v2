@@ -84,6 +84,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
   const toggleLike = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    nativeService.haptic.light();
     const isLiked = !likedProfiles[id];
     const updated = { ...likedProfiles, [id]: isLiked };
     setLikedProfiles(updated);
@@ -101,6 +102,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
   const toggleSound = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    nativeService.haptic.light();
     const nextMuted = !isMuted;
     setIsMuted(nextMuted);
     Object.values(videoRefs.current).forEach((v) => {
@@ -114,6 +116,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
   const handleNextPhoto = (profileId: string, totalPhotos: number, e: React.MouseEvent) => {
     e.stopPropagation();
+    nativeService.haptic.light();
     setActivePhotoIndices((prev) => ({
       ...prev,
       [profileId]: ((prev[profileId] || 0) + 1) % totalPhotos
@@ -122,6 +125,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
 
   const handlePrevPhoto = (profileId: string, totalPhotos: number, e: React.MouseEvent) => {
     e.stopPropagation();
+    nativeService.haptic.light();
     setActivePhotoIndices((prev) => ({
       ...prev,
       [profileId]: ((prev[profileId] || 0) - 1 + totalPhotos) % totalPhotos
@@ -129,6 +133,7 @@ export const InstaVibeFeed: React.FC<InstaVibeFeedProps> = ({
   };
 
   const handleSendWave = async (targetProfile: Profile) => {
+    nativeService.haptic.medium();
     try {
       const stored = localStorage.getItem('mannat_sent_waves');
       const list: Profile[] = stored ? JSON.parse(stored) : [];

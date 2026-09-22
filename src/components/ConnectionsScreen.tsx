@@ -203,16 +203,17 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans px-4 sm:px-6 lg:px-8 pt-3 space-y-6">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans px-4 sm:px-6 lg:px-8 space-y-4">
       <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E8DDD0] pb-4">
+      {/* Sticky Fixed Header & Segmented Pill Controls */}
+      <div className="sticky top-16 sm:top-20 z-20 bg-[#F8F6F2]/98 backdrop-blur-xl border-b border-[#E8DDD0] py-3 -mx-4 px-4 sm:mx-0 sm:px-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-xs">
         <div className="px-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Connections &amp; Alliances</h1>
-          <p className="text-xs text-[#6E6259] font-semibold">Mutual Waves, Introductions &amp; Direct Discussions</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#161412] tracking-tight leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Connections</h1>
+          <p className="text-[11px] text-[#6E6259] font-medium">Mutual Waves &amp; Direct Discussions</p>
         </div>
 
-        <div className="bg-white p-1.5 rounded-2xl border border-[#E8DDD0] grid grid-cols-3 gap-1.5 shadow-xs shrink-0 max-w-md w-full sm:w-auto">
+        <div className="bg-white/90 p-1 rounded-full border border-[#E8DDD0] flex items-center justify-between gap-1 shadow-xs shrink-0 max-w-xs sm:max-w-sm w-full sm:w-auto">
           {(['Accepted', 'Sent', 'Received'] as const).map((tab) => {
             const isActive = activeTab === tab;
             const count = tab === 'Accepted' ? acceptedList.length : tab === 'Sent' ? sentList.length : receivedList.length;
@@ -221,13 +222,16 @@ export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = ({
               <button
                 key={tab}
                 type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`py-2 px-3 sm:px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
-                  isActive ? 'bg-[#560406] text-[#A17B5E] shadow-sm' : 'text-[#6E6259] hover:text-[#161412]'
+                onClick={() => {
+                  nativeService.haptic.light();
+                  setActiveTab(tab);
+                }}
+                className={`flex-1 py-1.5 px-3 rounded-full text-[11px] font-semibold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-95 ${
+                  isActive ? 'bg-[#560406] text-[#F5E6D3] shadow-xs' : 'text-[#6E6259] hover:text-[#161412]'
                 }`}
               >
                 <span>{tab}</span>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold ${
                   isActive ? 'bg-[#A17B5E] text-[#260102]' : 'bg-[#F8F6F2] text-[#6E6259] border border-[#E8DDD0]'
                 }`}>
                   {count}

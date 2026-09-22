@@ -4,6 +4,7 @@ import metadataOptions from '../data/metadata_options.json';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { FilterCriteria } from '../types';
 import { DEFAULT_FILTERS } from '../data/filterDefaults';
+import { nativeService } from '../services/nativeService';
 
 export const RELIGION_COMMUNITIES_MAP: Record<string, string[]> = {
   Hindu: [
@@ -329,110 +330,110 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
-                onClick={onClose}
-                className="flex items-center gap-1 text-xs font-bold text-[#560406] hover:text-[#730C0F] transition-all px-3 py-1.5 rounded-full bg-white border border-[#E8DDD0] active:scale-95 cursor-pointer shadow-xs"
+                onClick={() => {
+                  nativeService.haptic.light();
+                  onClose();
+                }}
+                className="flex items-center gap-1 text-[11px] font-bold text-[#560406] hover:text-[#730C0F] transition-all px-2.5 py-1.5 rounded-full bg-white border border-[#E8DDD0] active:scale-95 cursor-pointer shadow-xs"
                 title="Go Back"
               >
-                <ArrowLeft className="w-3.5 h-3.5 text-[#560406]" />
-                <span className="text-[11px] font-extrabold">Back</span>
+                <ArrowLeft className="w-3 h-3 text-[#560406]" />
+                <span>Back</span>
               </button>
               <div className="flex items-center gap-2">
                 <img
                   src="/images/mannat-logo-square.png"
                   alt="Mannat"
-                  className="w-7 h-7 rounded-lg object-cover shadow-xs ring-1 ring-[#560406]/20"
+                  className="w-6 h-6 rounded-md object-cover shadow-xs ring-1 ring-[#560406]/20"
                 />
                 <div className="flex flex-col text-left">
-                  <span className="text-xs italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
-                  <span className="text-base font-normal tracking-[0.2em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>MANNAT</span>
+                  <span className="text-[10px] italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>At</span>
+                  <span className="text-sm font-normal tracking-[0.2em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>MANNAT</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
-                onClick={handleReset}
-                className="text-xs font-bold text-[#560406] hover:text-[#161412] bg-white px-3 py-1.5 rounded-full border border-[#E8DDD0] flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+                onClick={() => {
+                  nativeService.haptic.light();
+                  handleReset();
+                }}
+                className="text-[11px] font-semibold text-[#560406] hover:text-[#161412] bg-white px-2.5 py-1.5 rounded-full border border-[#E8DDD0] flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
               >
                 <RotateCcw className="w-3 h-3 text-[#A17B5E]" />
                 <span>Reset</span>
               </button>
               <button
                 type="button"
-                onClick={onClose}
-                className="p-1.5 rounded-full hover:bg-white text-gray-400 hover:text-[#161412] transition-colors cursor-pointer border border-[#E8DDD0]"
+                onClick={() => {
+                  nativeService.haptic.light();
+                  onClose();
+                }}
+                className="p-1.5 rounded-full hover:bg-white text-gray-400 hover:text-[#161412] transition-colors cursor-pointer border border-[#E8DDD0] active:scale-95"
                 title="Close"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          {/* Filter Category Tabs */}
-          <div className="bg-white px-4 py-2 border-b border-[#E8DDD0] flex items-center justify-between gap-1.5 text-xs font-bold shadow-xs">
-            <button
-              type="button"
-              onClick={() => setActiveTab('basic')}
-              className={`flex-1 py-2 px-1 rounded-xl transition-all cursor-pointer text-center text-xs font-bold ${
-                activeTab === 'basic'
-                  ? 'bg-[#560406] text-[#A17B5E] shadow-sm'
-                  : 'text-[#6E6259] hover:text-[#161412] bg-[#F8F6F2]'
-              }`}
-            >
-              Religion &amp; Age
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('horoscope')}
-              className={`flex-1 py-2 px-1 rounded-xl transition-all cursor-pointer text-center text-xs font-bold ${
-                activeTab === 'horoscope'
-                  ? 'bg-[#560406] text-[#A17B5E] shadow-sm'
-                  : 'text-[#6E6259] hover:text-[#161412] bg-[#F8F6F2]'
-              }`}
-            >
-              Horoscope &amp; Location
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('lifestyle')}
-              className={`flex-1 py-2 px-1 rounded-xl transition-all cursor-pointer text-center text-xs font-bold ${
-                activeTab === 'lifestyle'
-                  ? 'bg-[#560406] text-[#A17B5E] shadow-sm'
-                  : 'text-[#6E6259] hover:text-[#161412] bg-[#F8F6F2]'
-              }`}
-            >
-              Net Worth &amp; Career
-            </button>
+          {/* Filter Category Tabs (Refined Sleek Pills) */}
+          <div className="bg-white px-3 py-2 border-b border-[#E8DDD0] flex items-center justify-between gap-1.5 shadow-xs">
+            {[
+              { id: 'basic', label: 'Religion & Age' },
+              { id: 'horoscope', label: 'Horoscope & City' },
+              { id: 'lifestyle', label: 'Wealth & Career' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  nativeService.haptic.light();
+                  setActiveTab(tab.id as any);
+                }}
+                className={`flex-1 py-1.5 px-2 rounded-lg transition-all cursor-pointer text-center text-[11px] font-semibold active:scale-95 ${
+                  activeTab === tab.id
+                    ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                    : 'text-[#6E6259] hover:text-[#161412] bg-[#F8F6F2]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
           {/* Form Options Content */}
-          <div className="p-5 sm:p-6 space-y-6 flex-1 overflow-y-auto scrollbar-none bg-[#F8F6F2]">
+          <div className="p-4 sm:p-5 space-y-5 flex-1 overflow-y-auto scrollbar-none bg-[#F8F6F2]">
             {activeTab === 'basic' && (
-              <div className="space-y-6">
-                {/* 1. Religion Selection Grid (Cleanly aligned 3-column / 4-column grid) */}
-                <div className="space-y-2.5">
+              <div className="space-y-5">
+                {/* 1. Religion Selection Grid */}
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-black uppercase tracking-widest text-[#560406]">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#560406]">
                       Religion &amp; Faith
                     </label>
-                    <span className="text-[10px] text-[#A17B5E] font-bold">Select 1 or more</span>
+                    <span className="text-[10px] text-[#A17B5E] font-medium">Select 1 or more</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-1.5">
                     {metadataOptions.religions.map((rel) => {
                       const isSelected = selectedReligion.includes(rel);
                       return (
                         <button
                           key={rel}
                           type="button"
-                          onClick={() => handleReligionChange(rel)}
-                          className={`py-2.5 px-2 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs text-center ${
+                          onClick={() => {
+                            nativeService.haptic.light();
+                            handleReligionChange(rel);
+                          }}
+                          className={`py-2 px-2 rounded-xl text-[11px] font-medium flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs text-center active:scale-95 ${
                             isSelected
-                              ? 'bg-[#560406] text-[#F5E6D3] shadow-md border border-[#560406]'
-                              : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                              ? 'bg-[#560406] text-[#F5E6D3] shadow-xs border border-[#560406]'
+                              : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                           }`}
                         >
-                          {isSelected && <Check className="w-3 h-3 text-[#D8B486] shrink-0" />}
+                          {isSelected && <Check className="w-2.5 h-2.5 text-[#D8B486] shrink-0" />}
                           <span className="truncate">{rel}</span>
                         </button>
                       );
@@ -440,32 +441,35 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                   </div>
                 </div>
 
-                {/* 2. Dynamic Sub-Community / Caste Grid mapped to Selected Religion */}
-                <div className="space-y-2.5">
+                {/* 2. Dynamic Sub-Community / Caste Grid */}
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-black uppercase tracking-widest text-[#560406]">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#560406]">
                       Sub-Community / Caste
                     </label>
-                    <span className="text-[10px] text-[#6E6259] font-bold">
+                    <span className="text-[10px] text-[#6E6259] font-medium">
                       {selectedReligion.join(', ')} Communities
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1 bg-white/50 rounded-2xl border border-[#E8DDD0]">
+                  <div className="grid grid-cols-2 gap-1.5 max-h-52 overflow-y-auto p-1.5 bg-white/60 rounded-xl border border-[#E8DDD0]">
                     {dynamicSubCommunities.map((sub) => {
                       const isSelected = selectedSubCommunity.includes(sub);
                       return (
                         <button
                           key={sub}
                           type="button"
-                          onClick={() => toggleSelection(selectedSubCommunity, sub, setSelectedSubCommunity)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer shadow-xs text-left ${
+                          onClick={() => {
+                            nativeService.haptic.light();
+                            toggleSelection(selectedSubCommunity, sub, setSelectedSubCommunity);
+                          }}
+                          className={`py-1.5 px-2.5 rounded-lg text-[11px] font-medium flex items-center justify-between transition-all cursor-pointer shadow-xs text-left active:scale-95 ${
                             isSelected
-                              ? 'bg-[#560406] text-[#F5E6D3] shadow-sm border border-[#560406]'
-                              : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                              ? 'bg-[#560406] text-[#F5E6D3] border border-[#560406]'
+                              : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                           }`}
                         >
                           <span className="truncate pr-1">{sub}</span>
-                          {isSelected && <Check className="w-3 h-3 text-[#D8B486] shrink-0" />}
+                          {isSelected && <Check className="w-2.5 h-2.5 text-[#D8B486] shrink-0" />}
                         </button>
                       );
                     })}
@@ -473,32 +477,32 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                 </div>
 
                 {/* 3. Age Slider Section */}
-                <div className="bg-white p-5 rounded-2xl border border-[#E8DDD0] space-y-4 shadow-xs">
+                <div className="bg-white p-4 rounded-xl border border-[#E8DDD0] space-y-3 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-black uppercase tracking-widest text-[#560406]">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#560406]">
                       Age Preference Range
                     </label>
-                    <span className="text-xs font-bold bg-[#F8F6F2] px-3 py-1 rounded-full border border-[#E8DDD0] text-[#560406]">
+                    <span className="text-[11px] font-bold bg-[#F8F6F2] px-2.5 py-0.5 rounded-full border border-[#E8DDD0] text-[#560406]">
                       {ageMin} yrs – {ageMax} yrs
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3.5 rounded-xl bg-[#F8F6F2] border border-[#E8DDD0] text-center">
-                      <span className="text-[10px] text-[#6E6259] font-bold uppercase block mb-0.5">Minimum Age</span>
-                      <span className="text-lg font-black text-[#161412]">{ageMin} Years</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2.5 rounded-lg bg-[#F8F6F2] border border-[#E8DDD0] text-center">
+                      <span className="text-[9px] text-[#6E6259] font-semibold uppercase block mb-0.5">Minimum Age</span>
+                      <span className="text-base font-bold text-[#161412]">{ageMin} Years</span>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-[#F8F6F2] border border-[#E8DDD0] text-center">
-                      <span className="text-[10px] text-[#6E6259] font-bold uppercase block mb-0.5">Maximum Age</span>
-                      <span className="text-lg font-black text-[#161412]">{ageMax} Years</span>
+                    <div className="p-2.5 rounded-lg bg-[#F8F6F2] border border-[#E8DDD0] text-center">
+                      <span className="text-[9px] text-[#6E6259] font-semibold uppercase block mb-0.5">Maximum Age</span>
+                      <span className="text-base font-bold text-[#161412]">{ageMax} Years</span>
                     </div>
                   </div>
 
-                  <div className="space-y-3 pt-1">
+                  <div className="space-y-2 pt-1">
                     <div>
-                      <div className="flex justify-between text-[10px] font-bold text-[#6E6259] mb-1">
+                      <div className="flex justify-between text-[10px] font-medium text-[#6E6259] mb-1">
                         <span>Min Age</span>
-                        <span className="text-[#560406]">{ageMin} yrs</span>
+                        <span className="text-[#560406] font-bold">{ageMin} yrs</span>
                       </div>
                       <input
                         type="range"
@@ -514,9 +518,9 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                       />
                     </div>
                     <div>
-                      <div className="flex justify-between text-[10px] font-bold text-[#6E6259] mb-1">
+                      <div className="flex justify-between text-[10px] font-medium text-[#6E6259] mb-1">
                         <span>Max Age</span>
-                        <span className="text-[#560406]">{ageMax} yrs</span>
+                        <span className="text-[#560406] font-bold">{ageMax} yrs</span>
                       </div>
                       <input
                         type="range"
@@ -537,14 +541,14 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
             )}
 
             {activeTab === 'horoscope' && (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {/* 1. Manglik Preference Grid */}
-                <div className="space-y-2.5">
-                  <label className="block text-xs font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-                    <Star className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#560406] flex items-center gap-1.5">
+                    <Star className="w-3 h-3 text-[#A17B5E]" />
                     <span>Manglik Preference</span>
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                     {(['Non-Manglik', 'Manglik', 'Anshik / Mild', "Doesn't Matter"] as const).map((m) => {
                       const isSelected =
                         manglikPref === m ||
@@ -556,14 +560,15 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                           key={m}
                           type="button"
                           onClick={() => {
+                            nativeService.haptic.light();
                             if (m === 'Non-Manglik') setManglikPref('No');
                             else if (m === 'Manglik') setManglikPref('Yes');
                             else setManglikPref(m);
                           }}
-                          className={`py-2.5 px-2 rounded-2xl text-xs font-bold transition-all cursor-pointer shadow-xs text-center ${
+                          className={`py-2 px-2 rounded-xl text-[11px] font-medium transition-all cursor-pointer shadow-xs text-center active:scale-95 ${
                             isSelected
-                              ? 'bg-[#560406] text-[#F5E6D3] shadow-md border border-[#560406]'
-                              : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                              ? 'bg-[#560406] text-[#F5E6D3] shadow-xs border border-[#560406]'
+                              : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                           }`}
                         >
                           {m}
@@ -573,13 +578,13 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                   </div>
                 </div>
 
-                {/* 2. Minimum Gun Milan Score with Qualitative Rating */}
-                <div className="bg-white p-5 rounded-2xl border border-[#E8DDD0] space-y-3 shadow-xs">
+                {/* 2. Minimum Gun Milan Score */}
+                <div className="bg-white p-4 rounded-xl border border-[#E8DDD0] space-y-2.5 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-black uppercase tracking-widest text-[#560406]">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#560406]">
                       Minimum Gun Milan Score
                     </label>
-                    <span className="text-xs font-bold bg-[#F8F6F2] px-3 py-1 rounded-full border border-[#E8DDD0] text-[#560406]">
+                    <span className="text-[11px] font-bold bg-[#F8F6F2] px-2.5 py-0.5 rounded-full border border-[#E8DDD0] text-[#560406]">
                       {gunMilanMin} / 36 Gunas
                     </span>
                   </div>
@@ -593,29 +598,32 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                     className="w-full accent-[#560406] cursor-pointer"
                   />
 
-                  <div className="flex justify-between text-[10px] font-bold text-[#6E6259]">
+                  <div className="flex justify-between text-[10px] font-medium text-[#6E6259]">
                     <span>18 (Acceptable)</span>
-                    <span className="text-[#560406]">24+ (Recommended)</span>
+                    <span className="text-[#560406] font-bold">24+ (Recommended)</span>
                     <span>32+ (Uttam Milan)</span>
                   </div>
                 </div>
 
                 {/* 3. Kundli Matching Requirement */}
-                <div className="space-y-2.5">
-                  <label className="block text-xs font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-                    <Compass className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#560406] flex items-center gap-1.5">
+                    <Compass className="w-3 h-3 text-[#A17B5E]" />
                     <span>Kundli Matching Requirement</span>
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-3 gap-1.5">
                     {(['Mandatory', 'Flexible', "Doesn't Matter"] as const).map((req) => (
                       <button
                         key={req}
                         type="button"
-                        onClick={() => setKundliRequirement(req)}
-                        className={`py-2.5 px-2 rounded-2xl text-xs font-bold transition-all cursor-pointer shadow-xs text-center ${
+                        onClick={() => {
+                          nativeService.haptic.light();
+                          setKundliRequirement(req);
+                        }}
+                        className={`py-2 px-2 rounded-xl text-[11px] font-medium transition-all cursor-pointer shadow-xs text-center active:scale-95 ${
                           kundliRequirement === req
-                            ? 'bg-[#560406] text-[#F5E6D3] shadow-md border border-[#560406]'
-                            : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                            ? 'bg-[#560406] text-[#F5E6D3] shadow-xs border border-[#560406]'
+                            : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                         }`}
                       >
                         {req}
@@ -624,31 +632,34 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                   </div>
                 </div>
 
-                {/* 4. Rashi / Moon Sign (12 Signs Grid) */}
-                <div className="space-y-2.5">
+                {/* 4. Rashi / Moon Sign */}
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-                      <Moon className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#560406] flex items-center gap-1.5">
+                      <Moon className="w-3 h-3 text-[#A17B5E]" />
                       <span>Rashi / Moon Sign</span>
                     </label>
-                    <span className="text-[10px] text-[#6E6259] font-bold">Optional filter</span>
+                    <span className="text-[10px] text-[#6E6259] font-medium">Optional filter</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 bg-white/50 rounded-2xl border border-[#E8DDD0]">
+                  <div className="grid grid-cols-3 gap-1.5 max-h-44 overflow-y-auto p-1.5 bg-white/60 rounded-xl border border-[#E8DDD0]">
                     {RASHI_OPTIONS.map((rashi) => {
                       const isSelected = selectedRashi.includes(rashi.id);
                       return (
                         <button
                           key={rashi.id}
                           type="button"
-                          onClick={() => toggleSelection(selectedRashi, rashi.id, setSelectedRashi)}
-                          className={`py-2 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs text-center ${
+                          onClick={() => {
+                            nativeService.haptic.light();
+                            toggleSelection(selectedRashi, rashi.id, setSelectedRashi);
+                          }}
+                          className={`py-1.5 px-2 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs text-center active:scale-95 ${
                             isSelected
-                              ? 'bg-[#560406] text-[#F5E6D3] shadow-sm border border-[#560406]'
-                              : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                              ? 'bg-[#560406] text-[#F5E6D3] border border-[#560406]'
+                              : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                           }`}
                         >
                           <span>{rashi.symbol}</span>
-                          <span className="truncate text-[11px]">{rashi.name.split(' ')[0]}</span>
+                          <span className="truncate">{rashi.name.split(' ')[0]}</span>
                         </button>
                       );
                     })}
@@ -656,27 +667,30 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                 </div>
 
                 {/* 5. Dosha Filters */}
-                <div className="space-y-2.5">
-                  <label className="block text-xs font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#560406] flex items-center gap-1.5">
+                    <ShieldCheck className="w-3 h-3 text-[#A17B5E]" />
                     <span>Astrological Dosha Filters</span>
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-1.5">
                     {DOSHA_OPTIONS.map((dosha) => {
                       const isSelected = doshaFilters.includes(dosha);
                       return (
                         <button
                           key={dosha}
                           type="button"
-                          onClick={() => toggleSelection(doshaFilters, dosha, setDoshaFilters)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer shadow-xs ${
+                          onClick={() => {
+                            nativeService.haptic.light();
+                            toggleSelection(doshaFilters, dosha, setDoshaFilters);
+                          }}
+                          className={`py-1.5 px-2.5 rounded-lg text-[11px] font-medium flex items-center justify-between transition-all cursor-pointer shadow-xs active:scale-95 ${
                             isSelected
-                              ? 'bg-[#560406] text-[#F5E6D3] shadow-sm border border-[#560406]'
-                              : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                              ? 'bg-[#560406] text-[#F5E6D3] border border-[#560406]'
+                              : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                           }`}
                         >
-                          <span className="truncate pr-1 text-[11px]">{dosha}</span>
-                          {isSelected && <Check className="w-3 h-3 text-[#D8B486] shrink-0" />}
+                          <span className="truncate pr-1">{dosha}</span>
+                          {isSelected && <Check className="w-2.5 h-2.5 text-[#D8B486] shrink-0" />}
                         </button>
                       );
                     })}
@@ -684,27 +698,30 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                 </div>
 
                 {/* 6. Location Intent */}
-                <div className="space-y-2.5">
-                  <label className="block text-xs font-black uppercase tracking-widest text-[#560406] flex items-center gap-1.5">
-                    <Globe className="w-3.5 h-3.5 text-[#A17B5E]" />
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#560406] flex items-center gap-1.5">
+                    <Globe className="w-3 h-3 text-[#A17B5E]" />
                     <span>Location Intent &amp; Relocation</span>
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['Only Same City', 'Open to Relocate to Metro Cities', 'Open to Relocate to US', 'Open to Long Distance'].map((loc) => {
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {['Only Same City', 'Open to Metro Cities', 'Open to Relocate (US/UK)', 'Open to Long Distance'].map((loc) => {
                       const isSelected = locationIntent.includes(loc);
                       return (
                         <button
                           key={loc}
                           type="button"
-                          onClick={() => toggleSelection(locationIntent, loc, setLocationIntent)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer shadow-xs text-left ${
+                          onClick={() => {
+                            nativeService.haptic.light();
+                            toggleSelection(locationIntent, loc, setLocationIntent);
+                          }}
+                          className={`py-1.5 px-2.5 rounded-lg text-[11px] font-medium flex items-center justify-between transition-all cursor-pointer shadow-xs text-left active:scale-95 ${
                             isSelected
-                              ? 'bg-[#560406] text-[#F5E6D3] shadow-md border border-[#560406]'
-                              : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                              ? 'bg-[#560406] text-[#F5E6D3] border border-[#560406]'
+                              : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                           }`}
                         >
-                          <span className="truncate pr-1 text-[11px]">{loc}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-[#D8B486] shrink-0" />}
+                          <span className="truncate pr-1">{loc}</span>
+                          {isSelected && <Check className="w-2.5 h-2.5 text-[#D8B486] shrink-0" />}
                         </button>
                       );
                     })}
@@ -714,28 +731,31 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
             )}
 
             {activeTab === 'lifestyle' && (
-              <div className="space-y-6">
-                {/* Net Worth Range (Clean 2-Column Aligned Grid) */}
-                <div className="space-y-2.5">
-                  <label className="block text-xs font-black uppercase tracking-widest text-[#560406]">
+              <div className="space-y-5">
+                {/* Net Worth Range */}
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#560406]">
                     Family Net Worth Bracket
                   </label>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-2">
                     {['₹2Cr - ₹5Cr', '₹5Cr - ₹10Cr', '₹15Cr - ₹30Cr', '₹50Cr+ Ultra HNI'].map((nw) => {
                       const isSelected = selectedNetWorth.includes(nw);
                       return (
                         <button
                           key={nw}
                           type="button"
-                          onClick={() => toggleSelection(selectedNetWorth, nw, setSelectedNetWorth)}
-                          className={`p-3.5 rounded-2xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-between shadow-xs ${
+                          onClick={() => {
+                            nativeService.haptic.light();
+                            toggleSelection(selectedNetWorth, nw, setSelectedNetWorth);
+                          }}
+                          className={`py-2 px-3 rounded-xl border text-[11px] font-medium transition-all cursor-pointer flex items-center justify-between shadow-xs active:scale-95 ${
                             isSelected
-                              ? 'bg-[#560406] text-[#F5E6D3] border-[#560406] shadow-md'
-                              : 'bg-white text-[#6E6259] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                              ? 'bg-[#560406] text-[#F5E6D3] border-[#560406] shadow-xs'
+                              : 'bg-white text-[#564E46] border border-[#E8DDD0] hover:bg-[#F8F6F2]'
                           }`}
                         >
                           <span>{nw}</span>
-                          {isSelected && <Check className="w-4 h-4 text-[#D8B486]" />}
+                          {isSelected && <Check className="w-3 h-3 text-[#D8B486]" />}
                         </button>
                       );
                     })}
@@ -743,18 +763,18 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
                 </div>
 
                 {/* Income / Salary Preference */}
-                <div className="space-y-2.5">
-                  <label className="block text-xs font-black uppercase tracking-widest text-[#560406]">
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#560406]">
                     Candidate Annual Income Range
                   </label>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-2 gap-2">
                     {['₹15L - ₹25L', '₹25L - ₹50L', '₹50L - ₹1Cr', '₹1Cr+ / HNWI'].map((inc) => (
                       <div
                         key={inc}
-                        className="p-3.5 rounded-2xl bg-white border border-[#E8DDD0] text-xs font-bold text-[#6E6259] flex items-center justify-between shadow-xs"
+                        className="py-2 px-3 rounded-xl bg-white border border-[#E8DDD0] text-[11px] font-medium text-[#564E46] flex items-center justify-between shadow-xs"
                       >
                         <span>{inc}</span>
-                        <Check className="w-3.5 h-3.5 text-[#A17B5E]" />
+                        <Check className="w-3 h-3 text-[#A17B5E]" />
                       </div>
                     ))}
                   </div>
@@ -764,13 +784,16 @@ export const SearchFiltersModal: React.FC<SearchFiltersModalProps> = ({
           </div>
 
           {/* Sticky Bottom Apply Button */}
-          <div className="p-4 sm:p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg flex items-center gap-3">
+          <div className="p-3.5 sm:p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-md flex items-center gap-3">
             <button
               type="button"
-              onClick={handleApplyClick}
-              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] text-[#F5E6D3] font-black text-xs uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-[#A17B5E]/40"
+              onClick={() => {
+                nativeService.haptic.medium();
+                handleApplyClick();
+              }}
+              className="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] text-[#F5E6D3] font-bold text-xs uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer border border-[#A17B5E]/40"
             >
-              <Sparkles className="w-4 h-4 text-[#D8B486]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
               <span>Apply Filters &amp; Discover</span>
             </button>
           </div>

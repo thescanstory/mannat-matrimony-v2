@@ -58,15 +58,27 @@ export const MainApp: React.FC = () => {
   const [slideDirection, setSlideDirection] = useState<number>(1);
 
   const navigateTo = useCallback((view: ViewType) => {
+    nativeService.haptic.light();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
     if (view === currentView) return;
-    nativeService.haptic.selection();
     setHistory((prev) => [...prev, currentView]);
     setSlideDirection(1);
     setCurrentView(view);
   }, [currentView]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  }, [currentView]);
+
   const goBack = useCallback(() => {
-    nativeService.haptic.selection();
+    nativeService.haptic.light();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
     if (history.length > 0) {
       const prevView = history[history.length - 1];
       setHistory((prev) => prev.slice(0, -1));
@@ -719,58 +731,31 @@ export const MainApp: React.FC = () => {
 
       {/* Ultra-Luxury Frosted Floating Bottom Dock Navigation Bar (Mobile Only - Desktop uses Top Header Nav) */}
       {(currentView === 'home' || currentView === 'for-you' || currentView === 'connections' || currentView === 'profile') && !showFiltersModal && !showPrivacyModal && !showPaywallModal && (
-        <div className="md:hidden fixed bottom-[max(1rem,calc(env(safe-area-inset-bottom)+0.5rem))] left-1/2 -translate-x-1/2 w-[92%] max-w-sm glass-dock-vara rounded-full z-40 px-3.5 py-2 flex items-center justify-around shadow-2xl border border-[#E8DDD0]">
-          <button
-            type="button"
-            onClick={() => navigateTo('home')}
-            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-full transition-all cursor-pointer ${
-              currentView === 'home' 
-                ? 'text-[#560406] bg-white shadow-sm scale-105 font-bold' 
-                : 'text-[#6E6259] hover:text-[#560406] font-semibold'
-            }`}
-          >
-            <Home className="w-4 h-4" />
-            <span className="text-[10px] tracking-tight">Discover</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigateTo('for-you')}
-            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-full transition-all cursor-pointer ${
-              currentView === 'for-you' 
-                ? 'text-[#560406] bg-white shadow-sm scale-105 font-bold' 
-                : 'text-[#6E6259] hover:text-[#560406] font-semibold'
-            }`}
-          >
-            <Eye className="w-4 h-4" />
-            <span className="text-[10px] tracking-tight">For You</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigateTo('connections')}
-            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-full transition-all cursor-pointer ${
-              currentView === 'connections' 
-                ? 'text-[#560406] bg-white shadow-sm scale-105 font-bold' 
-                : 'text-[#6E6259] hover:text-[#560406] font-semibold'
-            }`}
-          >
-            <Heart className="w-4 h-4" />
-            <span className="text-[10px] tracking-tight">Alliances</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => navigateTo('profile')}
-            className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-full transition-all cursor-pointer ${
-              currentView === 'profile' 
-                ? 'text-[#560406] bg-white shadow-sm scale-105 font-bold' 
-                : 'text-[#6E6259] hover:text-[#560406] font-semibold'
-            }`}
-          >
-            <User className="w-4 h-4" />
-            <span className="text-[10px] tracking-tight">Profile</span>
-          </button>
+        <div className="md:hidden fixed bottom-[max(0.75rem,calc(env(safe-area-inset-bottom)+0.25rem))] left-1/2 -translate-x-1/2 w-[90%] max-w-xs glass-dock-vara rounded-full z-40 px-2 py-1.5 flex items-center justify-around shadow-xl border border-[#E8DDD0]/80">
+          {[
+            { id: 'home', label: 'Discover', icon: Home },
+            { id: 'for-you', label: 'For You', icon: Eye },
+            { id: 'connections', label: 'Alliances', icon: Heart },
+            { id: 'profile', label: 'Profile', icon: User }
+          ].map((item) => {
+            const Icon = item.icon;
+            const isActive = currentView === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => navigateTo(item.id as ViewType)}
+                className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-full transition-all cursor-pointer active:scale-95 ${
+                  isActive
+                    ? 'text-[#560406] bg-[#560406]/10 font-bold'
+                    : 'text-[#6E6259] hover:text-[#560406] font-medium'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 transition-transform ${isActive ? 'scale-110 text-[#560406]' : ''}`} />
+                <span className="text-[9.5px] tracking-tight">{item.label}</span>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

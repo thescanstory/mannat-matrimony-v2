@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
-import {
-  ShieldCheck,
-  LogOut,
-  LogIn,
-  User,
-  ChevronRight,
-  Lock,
-  CheckCircle2,
-  Edit3,
+import { 
+  User, 
+  ShieldCheck, 
+  Lock, 
+  Edit3, 
+  Trash2, 
+  CheckCircle2, 
+  MapPin, 
+  LogIn, 
+  ChevronRight, 
+  Crown, 
+  AlertTriangle, 
+  Mail, 
+  Sparkles, 
+  LogOut, 
   Check,
-  Mail,
-  Trash2,
-  AlertTriangle,
-  MapPin,
-  Sparkles,
-  Camera,
-  Crown
+  Camera
 } from 'lucide-react';
 import type { UserSession } from '../services/authService';
 import type { Profile, PrivacySettings } from '../types';
 import { LegalModal, type LegalDocType } from './LegalModal';
+import { nativeService } from '../services/nativeService';
 
 interface ProfileScreenProps {
   currentUser: UserSession | null;
@@ -152,12 +153,15 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
               </div>
 
               {/* Action Row */}
-              <div className="pt-2 flex items-center justify-center gap-2.5 flex-wrap">
+              <div className="pt-1 flex items-center justify-center gap-2 flex-wrap">
                 {onEditBioData && (
                   <button
                     type="button"
-                    onClick={onEditBioData}
-                    className="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-98 border border-[#A17B5E]/40 whitespace-nowrap"
+                    onClick={() => {
+                      nativeService.haptic.light();
+                      onEditBioData();
+                    }}
+                    className="flex-1 py-2.5 px-3.5 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] hover:brightness-110 text-[#F5E6D3] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95 border border-[#A17B5E]/40 whitespace-nowrap"
                   >
                     <Edit3 className="w-3.5 h-3.5 text-[#D8B486]" />
                     <span>Edit Bio-Data</span>
@@ -168,11 +172,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                   <button
                     type="button"
                     onClick={() => {
+                      nativeService.haptic.light();
                       setEditName(currentUser.user_metadata?.full_name || displayName);
                       setEditEmail(currentUser.email || '');
                       setShowEditAccountModal(true);
                     }}
-                    className="py-3 px-4 rounded-2xl bg-[#F8F6F2] hover:bg-white text-[#560406] border border-[#E8DDD0] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs whitespace-nowrap"
+                    className="py-2.5 px-3.5 rounded-xl bg-[#F8F6F2] hover:bg-white text-[#560406] border border-[#E8DDD0] text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs whitespace-nowrap active:scale-95"
                   >
                     <User className="w-3.5 h-3.5 text-[#A17B5E]" />
                     <span>Account</span>
@@ -180,8 +185,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
                 ) : (
                   <button
                     type="button"
-                    onClick={onOpenAuth}
-                    className="py-3 px-5 rounded-2xl bg-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs active:scale-98"
+                    onClick={() => {
+                      nativeService.haptic.light();
+                      onOpenAuth();
+                    }}
+                    className="py-2.5 px-4 rounded-xl bg-[#560406] text-[#F5E6D3] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95"
                   >
                     <LogIn className="w-3.5 h-3.5 text-[#D8B486]" />
                     <span>Sign In</span>
@@ -192,25 +200,28 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
 
             {/* 2. VIP Membership Status Banner */}
             <div 
-              onClick={onOpenPaywall}
-              className="rounded-[28px] p-6 bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#400204] text-[#F8F6F2] shadow-xl border border-[#A17B5E]/40 relative overflow-hidden cursor-pointer hover:brightness-105 transition-all group"
+              onClick={() => {
+                nativeService.haptic.medium();
+                onOpenPaywall();
+              }}
+              className="rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-[#560406] via-[#730C0F] to-[#400204] text-[#F8F6F2] shadow-md border border-[#A17B5E]/40 relative overflow-hidden cursor-pointer hover:brightness-105 transition-all group active:scale-98"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#A17B5E]/10 rounded-full blur-2xl pointer-events-none" />
               <div className="flex items-center justify-between relative z-10">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#A17B5E] flex items-center gap-1.5">
-                    <Crown className="w-3.5 h-3.5 text-[#A17B5E]" />
-                    <span>MANNAT VIP PASS</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#A17B5E] flex items-center gap-1">
+                    <Crown className="w-3 h-3 text-[#A17B5E]" />
+                    <span>Mannat VIP Pass</span>
                   </span>
-                  <h3 className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                  <h3 className="text-lg font-bold text-white tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                     Diamond Membership
                   </h3>
-                  <p className="text-xs text-amber-100/80 font-medium">
+                  <p className="text-[11px] text-amber-100/80 font-medium">
                     Direct phone requests &amp; verified matchmaking concierge
                   </p>
                 </div>
-                <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-[#A17B5E] group-hover:scale-110 transition-transform">
-                  <ChevronRight className="w-5 h-5 text-white" />
+                <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-[#A17B5E] group-hover:scale-110 transition-transform">
+                  <ChevronRight className="w-4 h-4 text-white" />
                 </div>
               </div>
             </div>

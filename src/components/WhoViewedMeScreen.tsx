@@ -1,6 +1,7 @@
 import React from 'react';
 import { Lock, Crown, Sparkles } from 'lucide-react';
 import type { Profile } from '../types';
+import { nativeService } from '../services/nativeService';
 
 interface WhoViewedMeScreenProps {
   profiles: Profile[];
@@ -14,38 +15,41 @@ export const WhoViewedMeScreen: React.FC<WhoViewedMeScreenProps> = ({
   onOpenProfile
 }) => {
   return (
-    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans px-4 sm:px-6 lg:px-8 pt-3 space-y-6">
+    <div className="min-h-screen bg-[#F8F6F2] text-[#161412] w-full max-w-7xl mx-auto flex flex-col justify-start pb-32 md:pb-20 select-none font-sans px-4 sm:px-6 lg:px-8 pt-3 space-y-5">
       {/* Paywall Banner Card */}
-      <div className="bg-white rounded-[32px] p-6 sm:p-8 lg:p-10 border border-[#E8DDD0] shadow-xs relative overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="space-y-2 text-left max-w-2xl">
+      <div className="bg-white rounded-3xl p-5 sm:p-7 border border-[#E8DDD0] shadow-xs relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div className="space-y-1.5 text-left max-w-2xl">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#560406] bg-[#560406]/10 px-3 py-1 rounded-full border border-[#A17B5E]/30">
-                RECENT PROFILE VISITORS
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#560406] bg-[#560406]/10 px-2.5 py-0.5 rounded-full border border-[#A17B5E]/30">
+                Recent Profile Visitors
               </span>
-              <span className="px-3 py-1 rounded-full bg-[#560406] text-[#A17B5E] text-[10px] font-extrabold flex items-center gap-1 shadow-xs border border-[#A17B5E]/30">
-                <Crown className="w-3 h-3 text-[#A17B5E]" />
+              <span className="px-2.5 py-0.5 rounded-full bg-[#560406] text-[#A17B5E] text-[10px] font-bold flex items-center gap-1 shadow-xs border border-[#A17B5E]/30">
+                <Crown className="w-2.5 h-2.5 text-[#A17B5E]" />
                 <span>VIP Priority</span>
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#161412] tracking-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
               Who's interested in your profile?
             </h1>
-            <p className="text-xs sm:text-sm text-[#6E6259] font-medium leading-relaxed">
+            <p className="text-xs text-[#6E6259] font-medium leading-relaxed">
               12 Premium verified candidates recently viewed your dossier. Upgrade to Gold or Diamond to unlock unblurred high-resolution photos, financial bio-data, and direct contact numbers.
             </p>
           </div>
 
-          <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-3">
+          <div className="shrink-0 flex flex-col sm:flex-row md:flex-col gap-2">
             <button
               type="button"
-              onClick={onOpenPaywall}
-              className="py-4 px-6 rounded-2xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-black uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap border border-[#A17B5E]/40"
+              onClick={() => {
+                nativeService.haptic.medium();
+                onOpenPaywall();
+              }}
+              className="py-3 px-5 rounded-xl bg-gradient-to-r from-[#730C0F] to-[#560406] text-[#F5E6D3] text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-98 transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap border border-[#A17B5E]/40"
             >
-              <Sparkles className="w-4 h-4 text-[#D8B486]" />
-              <span>Unlock All 12 Profiles (₹499/mo)</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
+              <span>Unlock All 12 Profiles (From ₹1,499)</span>
             </button>
-            <p className="text-[11px] text-center text-[#6E6259]">Instant unblur &amp; direct concierge access</p>
+            <p className="text-[10px] text-center text-[#6E6259]">Instant unblur &amp; direct concierge access</p>
           </div>
         </div>
       </div>
