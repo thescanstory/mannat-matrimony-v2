@@ -12,13 +12,17 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
 
     private var activeCall: CAPPluginCall?
     private var restoreCall: CAPPluginCall?
+    private var currentProductsRequest: SKProductsRequest?
+    private var purchaseTimeoutWorkItem: DispatchWorkItem?
 
     override public func load() {
+        super.load()
         SKPaymentQueue.default().add(self)
     }
 
     deinit {
         SKPaymentQueue.default().remove(self)
+        purchaseTimeoutWorkItem?.cancel()
     }
 
     @objc func purchase(_ call: CAPPluginCall) {
@@ -27,60 +31,99 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
             return
         }
 
+        // Cancel any pending timeout
+        purchaseTimeoutWorkItem?.cancel()
+        self.activeCall = call
+
+        // Setup a 20-second safety timeout so the app never gets permanently stuck
+        let timeoutWorkItem = DispatchWorkItem { [weak self] in
+            guard let self = self, let activeCall = self.activeCall else { return }
+            self.currentProductsRequest?.cancel()
+            self.currentProductsRequest = nil
+            self.activeCall = nil
+            activeCall.reject("StoreKit transaction timed out. Please check your App Store connection and try again.")
+        }
+        self.purchaseTimeoutWorkItem = timeoutWorkItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 20.0, execute: timeoutWorkItem)
+
         if #available(iOS 15.0, *) {
             Task {
                 do {
                     let products = try await Product.products(for: [productId])
                     if let product = products.first {
                         let result = try await product.purchase()
+                        self.purchaseTimeoutWorkItem?.cancel()
+                        self.purchaseTimeoutWorkItem = nil
+                        
                         switch result {
                         case .success(let verification):
                             switch verification {
                             case .verified(let transaction):
                                 await transaction.finish()
-                                call.resolve([
+                                self.resolveActiveCall([
                                     "success": true,
                                     "transactionId": "\(transaction.id)",
                                     "productId": transaction.productID
                                 ])
                             case .unverified(let transaction, _):
                                 await transaction.finish()
-                                call.resolve([
+                                self.resolveActiveCall([
                                     "success": true,
                                     "transactionId": "\(transaction.id)",
                                     "productId": transaction.productID
                                 ])
                             }
                         case .userCancelled:
-                            call.reject("Purchase cancelled by user")
+                            self.rejectActiveCall("Payment cancelled by user")
                         case .pending:
-                            call.resolve([
+                            self.resolveActiveCall([
                                 "success": true,
                                 "transactionId": "pending_\(Date().timeIntervalSince1970)",
                                 "productId": productId
                             ])
                         @unknown default:
-                            call.reject("Unknown purchase state")
+                            self.rejectActiveCall("Unknown purchase state")
                         }
                     } else {
                         // Fallback to legacy StoreKit 1
-                        self.fallbackLegacyPurchase(call: call, productId: productId)
+                        self.fallbackLegacyPurchase(productId: productId)
                     }
                 } catch {
-                    self.fallbackLegacyPurchase(call: call, productId: productId)
+                    self.fallbackLegacyPurchase(productId: productId)
                 }
             }
         } else {
-            self.fallbackLegacyPurchase(call: call, productId: productId)
+            self.fallbackLegacyPurchase(productId: productId)
         }
     }
 
-    private func fallbackLegacyPurchase(call: CAPPluginCall, productId: String) {
+    private func fallbackLegacyPurchase(productId: String) {
         DispatchQueue.main.async {
-            self.activeCall = call
+            self.currentProductsRequest?.cancel()
             let request = SKProductsRequest(productIdentifiers: [productId])
+            self.currentProductsRequest = request
             request.delegate = self
             request.start()
+        }
+    }
+
+    private func resolveActiveCall(_ data: [String: Any]) {
+        DispatchQueue.main.async {
+            self.purchaseTimeoutWorkItem?.cancel()
+            self.purchaseTimeoutWorkItem = nil
+            self.currentProductsRequest = nil
+            self.activeCall?.resolve(data)
+            self.activeCall = nil
+        }
+    }
+
+    private func rejectActiveCall(_ message: String) {
+        DispatchQueue.main.async {
+            self.purchaseTimeoutWorkItem?.cancel()
+            self.purchaseTimeoutWorkItem = nil
+            self.currentProductsRequest = nil
+            self.activeCall?.reject(message)
+            self.activeCall = nil
         }
     }
 
@@ -93,10 +136,12 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
                         activeIds.append(transaction.productID)
                     }
                 }
-                call.resolve([
-                    "restored": true,
-                    "activeProducts": activeIds
-                ])
+                DispatchQueue.main.async {
+                    call.resolve([
+                        "restored": true,
+                        "activeProducts": activeIds
+                    ])
+                }
             }
         } else {
             self.restoreCall = call
@@ -109,25 +154,13 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
             let payment = SKPayment(product: product)
             SKPaymentQueue.default().add(payment)
         } else {
-            // If live App Store servers don't return unapproved products yet, return mock success in sandbox
-            let simulatedTx = "sim_tx_\(UUID().uuidString.prefix(8))"
-            activeCall?.resolve([
-                "success": true,
-                "transactionId": simulatedTx,
-                "productId": "simulated"
-            ])
-            activeCall = nil
+            // Product not yet propagated or sandbox unavailable
+            rejectActiveCall("Product not available in App Store. Please ensure In-App Purchases are approved.")
         }
     }
 
     public func request(_ request: SKRequest, didFailWithError error: Error) {
-        let simulatedTx = "sim_tx_\(UUID().uuidString.prefix(8))"
-        activeCall?.resolve([
-            "success": true,
-            "transactionId": simulatedTx,
-            "productId": "simulated"
-        ])
-        activeCall = nil
+        rejectActiveCall(error.localizedDescription)
     }
 
     public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
@@ -136,18 +169,16 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
             case .purchased:
                 SKPaymentQueue.default().finishTransaction(transaction)
                 let txId = transaction.transactionIdentifier ?? "tx_\(UUID().uuidString)"
-                activeCall?.resolve([
+                resolveActiveCall([
                     "success": true,
                     "transactionId": txId,
                     "productId": transaction.payment.productIdentifier
                 ])
-                activeCall = nil
 
             case .failed:
                 SKPaymentQueue.default().finishTransaction(transaction)
-                let errorMsg = transaction.error?.localizedDescription ?? "Purchase cancelled"
-                activeCall?.reject(errorMsg)
-                activeCall = nil
+                let errorMsg = transaction.error?.localizedDescription ?? "Payment cancelled by user"
+                rejectActiveCall(errorMsg)
 
             case .restored:
                 SKPaymentQueue.default().finishTransaction(transaction)
@@ -164,18 +195,22 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
     public func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
         let productIds = queue.transactions
             .compactMap { $0.payment.productIdentifier }
-        restoreCall?.resolve([
-            "restored": true,
-            "activeProducts": productIds
-        ])
-        restoreCall = nil
+        DispatchQueue.main.async {
+            self.restoreCall?.resolve([
+                "restored": true,
+                "activeProducts": productIds
+            ])
+            self.restoreCall = nil
+        }
     }
 
     public func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
-        restoreCall?.resolve([
-            "restored": true,
-            "activeProducts": []
-        ])
-        restoreCall = nil
+        DispatchQueue.main.async {
+            self.restoreCall?.resolve([
+                "restored": true,
+                "activeProducts": []
+            ])
+            self.restoreCall = nil
+        }
     }
 }

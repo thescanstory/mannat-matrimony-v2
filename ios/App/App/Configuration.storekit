@@ -85,63 +85,147 @@
         {
           "adHocOffers" : [ ],
           "codeOffers" : [ ],
-          "displayPrice" : "499",
+          "displayPrice" : "1500",
           "familyShareable" : false,
           "groupNumber" : 1,
+          "internalID" : "20000001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Strict cap of 15 contacts • Basic direct text chatting • Mobile app only",
+              "displayName" : "Silver (Base Only)",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vip.mannat.sub.silver1m",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Silver (Base Only)",
+          "subscriptionGroupID" : "20000001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "4500",
+          "familyShareable" : false,
+          "groupNumber" : 2,
           "internalID" : "20000002",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Unlimited Interest Waves & Verified Phone Numbers",
-              "displayName" : "Mannat Gold Membership",
+              "description" : "50 contacts • Verified details • Secure in-app audio/video calling",
+              "displayName" : "Gold (Standard)",
               "locale" : "en_US"
             }
           ],
-          "productID" : "vip.mannat.sub.gold",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Mannat Gold Membership",
+          "productID" : "vip.mannat.sub.gold3m",
+          "recurringSubscriptionPeriod" : "P3M",
+          "referenceName" : "Gold (Standard)",
           "subscriptionGroupID" : "20000001",
           "type" : "RecurringSubscription"
         },
         {
           "adHocOffers" : [ ],
           "codeOffers" : [ ],
-          "displayPrice" : "999",
+          "displayPrice" : "5500",
           "familyShareable" : false,
-          "groupNumber" : 2,
+          "groupNumber" : 3,
           "internalID" : "20000003",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "In-App Video Calls, Concierge Priority & Gold Verified Badge",
-              "displayName" : "Mannat Diamond Membership",
+              "description" : "50 contacts + Profile Spotlight + 20-30% boost in inbound views",
+              "displayName" : "Gold Plus (Premium Tier)",
               "locale" : "en_US"
             }
           ],
-          "productID" : "vip.mannat.sub.diamond",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Mannat Diamond Membership",
+          "productID" : "vip.mannat.sub.goldplus3m",
+          "recurringSubscriptionPeriod" : "P3M",
+          "referenceName" : "Gold Plus (Premium Tier)",
           "subscriptionGroupID" : "20000001",
           "type" : "RecurringSubscription"
         },
         {
           "adHocOffers" : [ ],
           "codeOffers" : [ ],
-          "displayPrice" : "1499",
+          "displayPrice" : "6500",
           "familyShareable" : false,
-          "groupNumber" : 3,
+          "groupNumber" : 4,
           "internalID" : "20000004",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Profile Spotlight, Golden Halo Ring & Personal Concierge",
-              "displayName" : "Mannat Platinum Membership",
+              "description" : "60 contacts • Permanent search-index priority • In-app calling",
+              "displayName" : "Diamond (Standard)",
               "locale" : "en_US"
             }
           ],
-          "productID" : "vip.mannat.sub.platinum",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Mannat Platinum Membership",
+          "productID" : "vip.mannat.sub.diamond6m",
+          "recurringSubscriptionPeriod" : "P6M",
+          "referenceName" : "Diamond (Standard)",
+          "subscriptionGroupID" : "20000001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "7500",
+          "familyShareable" : false,
+          "groupNumber" : 5,
+          "internalID" : "20000005",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Aggressive 100+ contacts • Free Mode Response • Bold layout",
+              "displayName" : "Diamond Plus (Premium Tier)",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vip.mannat.sub.diamondplus6m",
+          "recurringSubscriptionPeriod" : "P6M",
+          "referenceName" : "Diamond Plus (Premium Tier)",
+          "subscriptionGroupID" : "20000001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "11000",
+          "familyShareable" : false,
+          "groupNumber" : 6,
+          "internalID" : "20000006",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Generous 300+ contacts • Continuous priority algorithm indexing",
+              "displayName" : "Platinum (Standard)",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vip.mannat.sub.platinum12m",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Platinum (Standard)",
+          "subscriptionGroupID" : "20000001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [ ],
+          "codeOffers" : [ ],
+          "displayPrice" : "13000",
+          "familyShareable" : false,
+          "groupNumber" : 7,
+          "internalID" : "20000007",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Maximum 600 contacts • Spotlight & Free Mode • Priority Escalation",
+              "displayName" : "Platinum Plus (Premium Tier)",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vip.mannat.sub.platinumplus12m",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Platinum Plus (Premium Tier)",
           "subscriptionGroupID" : "20000001",
           "type" : "RecurringSubscription"
         }

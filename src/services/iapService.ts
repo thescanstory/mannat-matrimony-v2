@@ -19,41 +19,105 @@ export interface IAPProduct {
 }
 
 export const APPLE_IAP_PRODUCTS: Record<string, IAPProduct> = {
-  // Consumable Sachet Unlocks
+  // Consumable Sachet Unlock
   'vip.mannat.sachet49': {
     id: 'vip.mannat.sachet49',
-    title: 'Instant Profile Unlock',
-    description: 'Unlock 1 candidate profile with full bio-data & salary reveal',
+    title: 'Single Profile Unlock',
+    description: 'Instant Unlock of 1 Candidate Biodata & Salary Reveal',
     price: '₹49',
     priceAmount: 49,
     type: 'consumable'
   },
-  // Auto-Renewing Subscriptions
+  // Subscriptions
+  'vip.mannat.sub.silver1m': {
+    id: 'vip.mannat.sub.silver1m',
+    title: 'Silver (Base Only)',
+    description: '15 Contacts • Direct text chatting • Mobile app access',
+    price: '₹1,500',
+    priceAmount: 1500,
+    period: '/ 1 Month',
+    type: 'subscription'
+  },
+  'vip.mannat.sub.gold3m': {
+    id: 'vip.mannat.sub.gold3m',
+    title: 'Gold (Standard)',
+    description: '50 Contacts • Verified details • In-app Audio/Video calling',
+    price: '₹4,500',
+    priceAmount: 4500,
+    period: '/ 3 Months',
+    type: 'subscription'
+  },
+  'vip.mannat.sub.goldplus3m': {
+    id: 'vip.mannat.sub.goldplus3m',
+    title: 'Gold Plus (Premium Tier)',
+    description: '50 Contacts • Profile Spotlight • 20-30% boost in views',
+    price: '₹5,500',
+    priceAmount: 5500,
+    period: '/ 3 Months',
+    type: 'subscription'
+  },
+  'vip.mannat.sub.diamond6m': {
+    id: 'vip.mannat.sub.diamond6m',
+    title: 'Diamond (Standard)',
+    description: '60 Contacts • Search-index priority • In-app calling',
+    price: '₹6,500',
+    priceAmount: 6500,
+    period: '/ 6 Months',
+    type: 'subscription'
+  },
+  'vip.mannat.sub.diamondplus6m': {
+    id: 'vip.mannat.sub.diamondplus6m',
+    title: 'Diamond Plus (Premium Tier)',
+    description: '100+ Contacts • Free Mode Response • Bold Profile layout',
+    price: '₹7,500',
+    priceAmount: 7500,
+    period: '/ 6 Months',
+    type: 'subscription'
+  },
+  'vip.mannat.sub.platinum12m': {
+    id: 'vip.mannat.sub.platinum12m',
+    title: 'Platinum (Standard)',
+    description: '300+ Contacts • Continuous priority indexing • Lowest monthly rate',
+    price: '₹11,000',
+    priceAmount: 11000,
+    period: '/ 12 Months',
+    type: 'subscription'
+  },
+  'vip.mannat.sub.platinumplus12m': {
+    id: 'vip.mannat.sub.platinumplus12m',
+    title: 'Platinum Plus (Premium Tier)',
+    description: '600 Contacts • Full-year Spotlight & Free Mode • Priority Escalation',
+    price: '₹13,000',
+    priceAmount: 13000,
+    period: '/ 12 Months',
+    type: 'subscription'
+  },
+  // Legacy aliases for backward compatibility
   'vip.mannat.sub.gold': {
-    id: 'vip.mannat.sub.gold',
-    title: 'Mannat Gold Membership',
-    description: 'Unlimited Interest Waves & Verified Phone Numbers',
-    price: '₹499',
-    priceAmount: 499,
-    period: '/ month',
+    id: 'vip.mannat.sub.gold3m',
+    title: 'Gold (Standard)',
+    description: '50 Contacts • Verified details • In-app Audio/Video calling',
+    price: '₹4,500',
+    priceAmount: 4500,
+    period: '/ 3 Months',
     type: 'subscription'
   },
   'vip.mannat.sub.diamond': {
-    id: 'vip.mannat.sub.diamond',
-    title: 'Mannat Diamond Membership',
-    description: 'In-App Video Calls, Concierge Priority & Gold Verified Badge',
-    price: '₹999',
-    priceAmount: 999,
-    period: '/ month',
+    id: 'vip.mannat.sub.diamond6m',
+    title: 'Diamond (Standard)',
+    description: '60 Contacts • Search-index priority • In-app calling',
+    price: '₹6,500',
+    priceAmount: 6500,
+    period: '/ 6 Months',
     type: 'subscription'
   },
   'vip.mannat.sub.platinum': {
-    id: 'vip.mannat.sub.platinum',
-    title: 'Mannat Platinum Membership',
-    description: 'Profile Spotlight, Golden Halo Ring & Personal Concierge',
-    price: '₹1,499',
-    priceAmount: 1499,
-    period: '/ month',
+    id: 'vip.mannat.sub.platinum12m',
+    title: 'Platinum (Standard)',
+    description: '300+ Contacts • Continuous priority indexing',
+    price: '₹11,000',
+    priceAmount: 11000,
+    period: '/ 12 Months',
     type: 'subscription'
   }
 };
@@ -88,23 +152,35 @@ export const iapService = {
     // On native iOS Capacitor app, trigger native StoreKit payment sheet
     if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios') {
       try {
-        const result = await StoreKit.purchase({ productId });
-        if (result && result.transactionId) {
-          localStorage.setItem(`apple_receipt_${productId}`, JSON.stringify({
-            productId,
-            transactionId: result.transactionId,
-            purchaseDate: new Date().toISOString(),
-            status: 'active'
-          }));
+        const timeoutPromise = new Promise<{ success: false; error: string }>((resolve) => {
+          setTimeout(() => {
+            resolve({
+              success: false,
+              error: 'StoreKit transaction timed out. Please verify your App Store connection.'
+            });
+          }, 22000);
+        });
 
-          return {
-            success: true,
-            paymentId: result.transactionId,
-            orderId: `apple_order_${productId}`
-          };
-        } else {
-          return { success: false, error: 'StoreKit transaction was not completed.' };
-        }
+        const purchasePromise = StoreKit.purchase({ productId }).then((result) => {
+          if (result && result.transactionId) {
+            localStorage.setItem(`apple_receipt_${productId}`, JSON.stringify({
+              productId,
+              transactionId: result.transactionId,
+              purchaseDate: new Date().toISOString(),
+              status: 'active'
+            }));
+
+            return {
+              success: true,
+              paymentId: result.transactionId,
+              orderId: `apple_order_${productId}`
+            };
+          } else {
+            return { success: false, error: 'StoreKit transaction was not completed.' };
+          }
+        });
+
+        return await Promise.race([purchasePromise, timeoutPromise]);
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err || 'StoreKit transaction failed');
         return { success: false, error: message };

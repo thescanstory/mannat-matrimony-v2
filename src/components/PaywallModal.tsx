@@ -19,7 +19,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   onClose,
   onSelectTier
 }) => {
-  const [selectedPlan, setSelectedPlan] = useState<'sachet' | 'gold' | 'diamond' | 'platinum'>('diamond');
+  const [selectedPlan, setSelectedPlan] = useState<string>('diamond6m');
+  const [durationFilter, setDurationFilter] = useState<'all' | '1m' | '3m' | '6m' | '12m' | 'sachet'>('all');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [upgrading, setUpgrading] = useState(false);
   const [upgradeSuccess, setUpgradeSuccess] = useState(false);
@@ -36,63 +37,147 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const PLANS = [
     {
       id: 'sachet',
+      durationTag: 'sachet' as const,
       appleProductId: 'vip.mannat.sachet49',
       name: 'Single Profile Unlock',
+      tierBadge: 'Micro-Unlock',
       price: '₹49',
       amount: 49,
       period: ' (One-Time)',
+      quota: '1 Contact Unlock',
       popular: false,
       features: [
         'Instant Unlock of 1 Candidate Biodata',
-        'Reveal Full Name & Salary Bracket',
+        'Reveal Full Name & Verified Salary',
         'Direct WhatsApp Family Sharing Card'
       ]
     },
     {
-      id: 'gold',
-      appleProductId: 'vip.mannat.sub.gold',
-      name: 'Gold Member Pass',
-      price: '₹1,999',
-      amount: 1999,
-      period: '/month',
+      id: 'silver1m',
+      durationTag: '1m' as const,
+      appleProductId: 'vip.mannat.sub.silver1m',
+      name: 'Silver (Base Only)',
+      tierBadge: '1 Month Base',
+      price: '₹1,500',
+      amount: 1500,
+      period: '/ 1 Month',
+      quota: 'Strict Cap: 15 Contacts',
       popular: false,
       features: [
-        'Unlock up to 10 Candidate Profiles / mo',
-        'Direct Phone & Horoscope Sharing',
-        'Gold Verified Member Badge'
+        'Strict cap of 15 contacts',
+        'Unlocks basic direct text chatting',
+        'Mobile app access only'
       ]
     },
     {
-      id: 'diamond',
-      appleProductId: 'vip.mannat.sub.diamond',
-      name: 'Diamond VIP Pass',
-      price: '₹4,999',
-      amount: 4999,
-      period: '/month',
+      id: 'gold3m',
+      durationTag: '3m' as const,
+      appleProductId: 'vip.mannat.sub.gold3m',
+      name: 'Gold (Standard)',
+      tierBadge: '3 Months Standard',
+      price: '₹4,500',
+      amount: 4500,
+      period: '/ 3 Months',
+      quota: '50 Contacts',
+      popular: false,
+      features: [
+        'Bumps up to 50 contacts',
+        'Access to verified educational & employment details',
+        'Secure in-app audio/video calling without sharing phone number'
+      ]
+    },
+    {
+      id: 'goldplus3m',
+      durationTag: '3m' as const,
+      appleProductId: 'vip.mannat.sub.goldplus3m',
+      name: 'Gold Plus (Premium Tier)',
+      tierBadge: '3 Months Premium',
+      price: '₹5,500',
+      amount: 5500,
+      period: '/ 3 Months',
+      quota: '50 Contacts + Spotlight',
+      popular: false,
+      features: [
+        '50 contacts + all standard Gold features',
+        'Profile Spotlight (pins profile to top of search results)',
+        '20–30% average boost in inbound views'
+      ]
+    },
+    {
+      id: 'diamond6m',
+      durationTag: '6m' as const,
+      appleProductId: 'vip.mannat.sub.diamond6m',
+      name: 'Diamond (Standard)',
+      tierBadge: '6 Months Standard',
+      price: '₹6,500',
+      amount: 6500,
+      period: '/ 6 Months',
+      quota: '60 Contacts',
       popular: true,
       features: [
-        'Unlimited Bio-Data Profile Unlocks',
-        'Priority Matchmaker Introductions',
-        'BlurShield™ Unrestricted Access'
+        'Bumps up to 60 contacts',
+        'Permanent search-index priority over free members',
+        'Standard in-app calling and verified info access'
       ]
     },
     {
-      id: 'platinum',
-      appleProductId: 'vip.mannat.sub.platinum',
-      name: 'Royal Concierge Pass',
-      price: '₹9,999',
-      amount: 9999,
-      period: '/month',
+      id: 'diamondplus6m',
+      durationTag: '6m' as const,
+      appleProductId: 'vip.mannat.sub.diamondplus6m',
+      name: 'Diamond Plus (Premium Tier)',
+      tierBadge: '6 Months Premium',
+      price: '₹7,500',
+      amount: 7500,
+      period: '/ 6 Months',
+      quota: 'Aggressive 100+ Contacts',
       popular: false,
       features: [
-        'Dedicated Private Matchmaker',
-        'Private In-Person Meeting Arrangements',
-        'Horoscope & Kundli Consultation'
+        'Aggressive 100+ contacts quota',
+        'Free Mode Response (unpaid members can view & reply for free)',
+        'Bold profile layout designation'
+      ]
+    },
+    {
+      id: 'platinum12m',
+      durationTag: '12m' as const,
+      appleProductId: 'vip.mannat.sub.platinum12m',
+      name: 'Platinum (Standard)',
+      tierBadge: '12 Months Standard',
+      price: '₹11,000',
+      amount: 11000,
+      period: '/ 12 Months',
+      quota: 'Generous 300+ Contacts',
+      popular: false,
+      features: [
+        'Generous 300+ contacts quota',
+        'Long-term plan with lowest month-on-month cost',
+        'Continuous priority algorithm indexing across target demographic'
+      ]
+    },
+    {
+      id: 'platinumplus12m',
+      durationTag: '12m' as const,
+      appleProductId: 'vip.mannat.sub.platinumplus12m',
+      name: 'Platinum Plus (Premium Tier)',
+      tierBadge: '12 Months Ultimate',
+      price: '₹13,000',
+      amount: 13000,
+      period: '/ 12 Months',
+      quota: 'Maximum 600 Contacts',
+      popular: false,
+      features: [
+        'Maximum 600 contacts quota',
+        'Continuous Spotlight pinning & Free Mode Response for full year',
+        'Priority customer care escalation line'
       ]
     }
   ];
 
-  const currentPlanObj = PLANS.find(p => p.id === selectedPlan) || PLANS[2];
+  const filteredPlans = durationFilter === 'all' 
+    ? PLANS 
+    : PLANS.filter(p => p.durationTag === durationFilter);
+
+  const currentPlanObj = PLANS.find(p => p.id === selectedPlan) || PLANS[4];
 
   const handleOpenConfirmation = () => {
     setRestoreMessage(null);
@@ -299,15 +384,40 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                   </p>
                 </NudgeBanner>
 
+                {/* Duration Filter Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+                  {[
+                    { id: 'all', label: 'All Plans' },
+                    { id: '1m', label: '1 Month' },
+                    { id: '3m', label: '3 Months' },
+                    { id: '6m', label: '6 Months' },
+                    { id: '12m', label: '12 Months' },
+                    { id: 'sachet', label: 'Single Unlock' }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setDurationFilter(tab.id as any)}
+                      className={`px-3 py-1.5 rounded-full font-bold whitespace-nowrap text-[11px] transition-all cursor-pointer border ${
+                        durationFilter === tab.id
+                          ? 'bg-[#560406] text-[#D8B486] border-[#A17B5E] shadow-xs'
+                          : 'bg-white text-[#6E6259] border-[#E8DDD0] hover:bg-[#F8F6F2]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
                 {/* Plan Selector Grid */}
                 <div className="space-y-3">
-                  {PLANS.map((plan) => {
+                  {filteredPlans.map((plan) => {
                     const isSelected = selectedPlan === plan.id;
 
                     return (
                       <div
                         key={plan.id}
-                        onClick={() => setSelectedPlan(plan.id as any)}
+                        onClick={() => setSelectedPlan(plan.id)}
                         className={`p-4 sm:p-5 rounded-3xl border transition-all cursor-pointer relative ${
                           isSelected
                             ? 'bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#260102] text-white border-2 border-[#A17B5E] shadow-xl scale-[1.01]'
@@ -320,14 +430,23 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
                           </span>
                         )}
 
-                        <div className="flex items-center justify-between pb-2.5 border-b border-white/10">
+                        <div className="flex items-start justify-between pb-2.5 border-b border-white/10 gap-2">
                           <div>
-                            <h3 className="text-lg sm:text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{plan.name}</h3>
-                            <span className={`text-[11px] font-extrabold ${isSelected ? 'text-[#D8B486]' : 'text-[#A17B5E]'}`}>
-                              {isNativeIOS ? 'Apple In-App Pass' : 'Razorpay Verified Pass'}
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <h3 className="text-lg sm:text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{plan.name}</h3>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                                isSelected 
+                                  ? 'bg-[#A17B5E]/30 text-[#D8B486] border-[#A17B5E]/50' 
+                                  : 'bg-[#560406]/10 text-[#560406] border-[#560406]/20'
+                              }`}>
+                                {plan.tierBadge}
+                              </span>
+                            </div>
+                            <span className={`text-[11px] font-extrabold block mt-0.5 ${isSelected ? 'text-[#D8B486]' : 'text-[#A17B5E]'}`}>
+                              {plan.quota} • {isNativeIOS ? 'Apple StoreKit' : 'Razorpay Verified'}
                             </span>
                           </div>
-                          <div className="text-right">
+                          <div className="text-right shrink-0">
                             <span className={`text-xl font-black ${isSelected ? 'text-[#D8B486]' : 'text-[#560406]'}`}>{plan.price}</span>
                             <span className={`text-[10px] block ${isSelected ? 'text-neutral-300' : 'text-[#6E6259]'}`}>
                               {plan.period}
