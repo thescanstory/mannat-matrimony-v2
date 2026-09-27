@@ -1,0 +1,32 @@
+{
+  "totalPagesCrawled": 657,
+  "healthScore": 100,
+  "errors": [],
+  "warnings": [
+    {
+      "url": "https://mannatmatrimony.com",
+      "issue": "Title too long (72 chars): \"Mannat Matrimony — Private, Verified Mat...\""
+    },
+    {
+      "url": "https://mannatmatrimony.com",
+      "issue": "Meta description too short (23 chars)"
+    }
+  ],
+  "notices": [],
+  "stats": {
+    "valid200Pages": 657,
+    "missingTitles": 0,
+    "titlesTooLong": 1,
+    "titlesTooShort": 0,
+    "missingDescriptions": 0,
+    "descriptionsTooLong": 0,
+    "descriptionsTooShort": 1,
+    "missingH1": 0,
+    "multipleH1": 0,
+    "missingCanonicals": 0,
+    "missingOpenGraph": 0,
+    "missingTwitterCards": 0,
+    "validJsonLdSchema": 657,
+    "missingAltTags": 0
+  }
+}
