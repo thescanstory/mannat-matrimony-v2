@@ -19,4 +19,12 @@ Allow: /
 
 Sitemap: https://mannatmatrimony.com/sitemap.xml
 Sitemap: https://mannatmatrimony.com/rss.xml
+Sitemap: https://mannatmatrimony.com/feed.xml
+
+# AI & LLM Knowledge Base references (AEO)
+# https://mannatmatrimony.com/llms.txt
+# https://mannatmatrimony.com/llms-full.txt
+# https://mannatmatrimony.com/aeo
+
 Host: https://mannatmatrimony.com
+
