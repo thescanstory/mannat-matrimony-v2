@@ -1,155 +1,576 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://mannatmatrimony.com/</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/about</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/safety</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/privacy</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/terms</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/punjabi-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/sikh-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/marwari-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/agarwal-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/maheshwari-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/gujarati-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/patel-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/jain-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/brahmin-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/rajput-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/maratha-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/sindhi-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/kayastha-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://mannatmatrimony.com/delhi-matrimony</loc>
+    <loc>https://mannatmatrimony.com/telugu-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://mannatmatrimony.com/mumbai-matrimony</loc>
+    <loc>https://mannatmatrimony.com/reddy-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://mannatmatrimony.com/matchmaking-bangalore</loc>
+    <loc>https://mannatmatrimony.com/tamil-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://mannatmatrimony.com/hyderabad-matrimony</loc>
+    <loc>https://mannatmatrimony.com/iyer-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
-    <loc>https://mannatmatrimony.com/pune-matrimony</loc>
+    <loc>https://mannatmatrimony.com/kannada-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/malayalam-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/bengali-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/kashmiri-pandit-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/nri-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/usa-nri-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/uk-nri-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/canada-nri-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/australia-nri-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/dubai-nri-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/delhi-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/mumbai-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/matchmaking-bangalore</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/hyderabad-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/pune-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/chandigarh-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/kolkata-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/chennai-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/jaipur-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/elite-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/matrimony-for-doctors</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/iit-iim-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/ca-finance-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/ias-ips-civil-services-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/marriage-biodata-maker</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/kundali-matching-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/30-plus-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://mannatmatrimony.com/second-marriage-divorced-matrimony</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/verified-matrimony</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://mannatmatrimony.com/photo-privacy-blurshield</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://mannatmatrimony.com/support.html</loc>
-    <lastmod>2026-09-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mannatmatrimony.com/privacy.html</loc>
-    <lastmod>2026-09-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mannatmatrimony.com/terms.html</loc>
-    <lastmod>2026-09-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://mannatmatrimony.com/eula.html</loc>
-    <lastmod>2026-09-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://mannatmatrimony.com/og-image.jpg</image:loc>
+      <image:title>Mannat Matrimony - Verified Matchmaking</image:title>
+      <image:caption>Confidential and Verified Indian Matrimonial Matchmaking</image:caption>
+    </image:image>
   </url>
 </urlset>

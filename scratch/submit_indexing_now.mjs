@@ -1,38 +1,19 @@
-// Automated script to ping IndexNow and Search Engines with all sitemap URLs
+import fs from 'fs';
+import path from 'path';
+
 const host = 'mannatmatrimony.com';
 const key = '6343a4e2360e1f19a0c62d1b12eb32ab';
 const keyLocation = `https://${host}/${key}.txt`;
 
-const urlList = [
-  'https://mannatmatrimony.com/',
-  'https://mannatmatrimony.com/about',
-  'https://mannatmatrimony.com/safety',
-  'https://mannatmatrimony.com/privacy',
-  'https://mannatmatrimony.com/terms',
-  'https://mannatmatrimony.com/punjabi-matrimony',
-  'https://mannatmatrimony.com/marwari-matrimony',
-  'https://mannatmatrimony.com/agarwal-matrimony',
-  'https://mannatmatrimony.com/gujarati-matrimony',
-  'https://mannatmatrimony.com/jain-matrimony',
-  'https://mannatmatrimony.com/brahmin-matrimony',
-  'https://mannatmatrimony.com/rajput-matrimony',
-  'https://mannatmatrimony.com/sindhi-matrimony',
-  'https://mannatmatrimony.com/kayastha-matrimony',
-  'https://mannatmatrimony.com/delhi-matrimony',
-  'https://mannatmatrimony.com/mumbai-matrimony',
-  'https://mannatmatrimony.com/matchmaking-bangalore',
-  'https://mannatmatrimony.com/hyderabad-matrimony',
-  'https://mannatmatrimony.com/pune-matrimony',
-  'https://mannatmatrimony.com/nri-matrimony',
-  'https://mannatmatrimony.com/elite-matrimony',
-  'https://mannatmatrimony.com/matrimony-for-doctors',
-  'https://mannatmatrimony.com/iit-iim-matrimony',
-  'https://mannatmatrimony.com/verified-matrimony',
-  'https://mannatmatrimony.com/photo-privacy-blurshield',
-];
+// Read all URLs from sitemap.xml
+const sitemapContent = fs.readFileSync(path.resolve('public/sitemap.xml'), 'utf-8');
+const locMatches = [...sitemapContent.matchAll(/<loc>(https:\/\/[^<]+)<\/loc>/g)];
+const urlList = locMatches.map(m => m[1]);
+
+console.log(`Found ${urlList.length} total URLs to submit.`);
 
 async function submitIndexNow() {
-  console.log('Submitting ' + urlList.length + ' URLs to IndexNow API...');
+  console.log(`Submitting ${urlList.length} URLs to IndexNow API endpoints...`);
   
   const endpoints = [
     'https://api.indexnow.org/indexnow',
@@ -61,10 +42,10 @@ async function submitIndexNow() {
     }
   }
 
-  // Ping Google Sitemap endpoint
+  // Ping Google Sitemap
   try {
     const sitemapUrl = `https://${host}/sitemap.xml`;
-    console.log(`Pinging Google sitemap for ${sitemapUrl}...`);
+    console.log(`Pinging Google sitemap endpoint for ${sitemapUrl}...`);
     const googleRes = await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`);
     console.log(`Google ping status: ${googleRes.status}`);
   } catch (err) {

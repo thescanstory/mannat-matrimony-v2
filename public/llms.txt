@@ -1,43 +1,70 @@
-# Mannat Matrimony
+# Mannat Matrimony (https://mannatmatrimony.com)
+> India's premier verified matrimonial platform. Multi-point ID background checks, BlurShield™ candidate security, and high-touch concierge matchmaking.
 
-> Private, verified matrimony for accomplished Indian & NRI professionals and distinguished families. 100% human-verified biodatas, BlurShield™ photo privacy protection, and dedicated family concierge support.
+## Key Facts & Capabilities
+- **Platform**: Verified Indian Matrimonial & Matchmaking App
+- **Website**: https://mannatmatrimony.com
+- **Core Security**: BlurShield™ technology prevents public search engines and bots from harvesting candidate portraits.
+- **Verification**: Mandatory Government ID (Aadhaar, Passport, PAN) and University Degree validation.
+- **Audience**: Discerning Indian families, elite business lineages, doctors, IIT/IIM alumni, and global NRIs (USA, UK, Canada, UAE, Australia).
+- **Concierge Desk**: +91-97383-97933
 
-## Key Facts
-- Website: https://mannatmatrimony.com/
-- iOS App Store: https://apps.apple.com/app/id6812288373
-- Web App: https://mannatmatrimony.com/app
-- Based in: India (Pan-India & Global NRI)
-- Serves: India (Delhi NCR, Mumbai, Bangalore, Pune, Hyderabad), USA, UK, UAE, Canada, Australia, Singapore
-- Contact / Concierge: +91-97383-97933 / info@mannatmatrimony.com
-- Price Range: Free membership to browse verified profiles; optional VIP concierge packages starting from ₹1,499.
+## Free Tools
+- **Marriage Biodata Maker (Free PDF Download)**: https://mannatmatrimony.com/marriage-biodata-maker
+- **Kundali & 36 Gun Milan Matching Guide**: https://mannatmatrimony.com/kundali-matching-matrimony
 
-## Core Capabilities
-- Elite & Luxury Matrimony India
-- 100% Government ID & Degree Verified Profiles
-- BlurShield™ Biometric Photo Privacy & Anti-Scraping Protection
-- Astrological Kundli Gun Milan (36-point compatibility)
-- Family-Centric 1-Click WhatsApp Bio-Data Dossiers
-- Bespoke Human Matchmaking Concierge Advisory
+## Cultural & Community Matchmaking Verticals
+- **Verified Punjabi Matrimony for Discerning Families**: https://mannatmatrimony.com/punjabi-matrimony - Private, verified Punjabi matchmaking for accomplished Arora, Khatri, Sikh & Hindu Punjabi families. 100% ID verified biodatas with BlurShield™ privacy.
+- **Elite Sikh Matrimony for Prestigious Families**: https://mannatmatrimony.com/sikh-matrimony - Exclusive Sikh matchmaking for Jat Sikh, Ramgarhia, Khatri & Arora Sikh professionals across Punjab, Delhi NCR, Canada, UK, and USA. 100% verified biodatas.
+- **Verified Marwari Matrimony for Prestigious Lineages**: https://mannatmatrimony.com/marwari-matrimony - Exclusive, verified Marwari matchmaking for Agarwal, Maheshwari, Khandelwal & Oswal families. 100% verified biodatas and dedicated concierge advisory.
+- **Verified Agarwal Matrimony for Distinguished Business Families**: https://mannatmatrimony.com/agarwal-matrimony - Private, verified Agarwal matchmaking for Mittal, Bansal, Goyal, Singhal, Garg & Jindal lineages. 100% verified biodatas with Kundli Gun Milan.
+- **Elite Maheshwari Matrimony for Prominent Families**: https://mannatmatrimony.com/maheshwari-matrimony - High-end verified matchmaking for Maheshwari business families, CAs, and entrepreneurs across Rajasthan, Mumbai, Pune, Kolkata, and Hyderabad.
+- **Verified Gujarati Matrimony for Discerning Families**: https://mannatmatrimony.com/gujarati-matrimony - Private, verified Gujarati matchmaking for Patel, Shah, Vaishnav & Jain Gujarati families across Mumbai, Ahmedabad, Surat, USA, and UK.
+- **Verified Patel Matrimony for Leva & Kadva Patidar Families**: https://mannatmatrimony.com/patel-matrimony - Exclusive matchmaking for Leva and Kadva Patel families across Gujarat, USA, UK, Canada, and East Africa. 100% ID verified profiles.
+- **Verified Jain Matrimony for Values-Driven Families**: https://mannatmatrimony.com/jain-matrimony - Confidential, verified matchmaking for Digambar, Shwetambar, Oswal & Porwal Jain families. 100% verified profiles with diet & value alignment.
+- **Verified Brahmin Matrimony for Intellectual Lineages**: https://mannatmatrimony.com/brahmin-matrimony - Private matchmaking for Gaur, Saraswat, Kanyakubja, Maithil, Iyer, Iyengar, and Deshastha Brahmin families. 100% verified credentials with Kundli matching.
+- **Verified Rajput Matrimony for Regal Lineages**: https://mannatmatrimony.com/rajput-matrimony - Exclusive Rajput matchmaking for Rathore, Chauhan, Sisodia, Shekhawat, Tomar & Parmar families. 100% verified biodatas and Kuldevi matching.
+- **Verified 96 Kuli Maratha Matrimony**: https://mannatmatrimony.com/maratha-matrimony - Bespoke matchmaking for 96 Kuli Maratha and Deshmukh families across Pune, Mumbai, Kolhapur, Satara, and NRI locations.
+- **Verified Sindhi Matrimony for Global Business Families**: https://mannatmatrimony.com/sindhi-matrimony - Private, verified Sindhi matchmaking for Amil, Bhaiband, Sahiti & Larkana families across Mumbai, Pune, Dubai, London, Hong Kong, and USA.
+- **Verified Kayastha Matrimony for Intellectual Families**: https://mannatmatrimony.com/kayastha-matrimony - Private matchmaking for Mathur, Srivastava, Saxena, Bhatnagar, Nigam & Asthana families. 100% verified degrees and backgrounds.
+- **Verified Telugu Matrimony for Prestigious Families**: https://mannatmatrimony.com/telugu-matrimony - Exclusive matchmaking for Telugu Reddy, Kamma, Brahmin, and Arya Vysya families across Hyderabad, Bangalore, USA, and UK.
+- **Verified Reddy Matrimony for Prestigious Families**: https://mannatmatrimony.com/reddy-matrimony - High-touch matchmaking for Motati, Gudati, Pedakanti, and Pakanati Reddy families. 100% verified biodatas.
+- **Verified Tamil Matrimony for Cultured Families**: https://mannatmatrimony.com/tamil-matrimony - Curated Tamil matchmaking for Brahmin Iyer, Iyengar, Chettiar, and Mudaliar families across Chennai, Bangalore, Singapore, and USA.
+- **Verified Iyer Matrimony for Vadama & Brahacharanam Families**: https://mannatmatrimony.com/iyer-matrimony - Exclusive matchmaking for Tamil Brahmin Iyer families. 100% verified profiles with Gothram, Veda, and 10 Poruthams Jathagam analysis.
+- **Verified Kannada Matrimony for Prominent Families**: https://mannatmatrimony.com/kannada-matrimony - Bespoke matchmaking for Kannada Brahmin, Lingayat, Vokkaliga, and Bunt families across Bangalore, Mysore, Hubli, and NRI locations.
+- **Verified Malayalam Matrimony for Cultured Families**: https://mannatmatrimony.com/malayalam-matrimony - Private matchmaking for Nair, Menon, Syrian Christian, and Ezhava families across Kerala, Bangalore, Dubai/Gulf, UK, and USA.
+- **Verified Bengali Matrimony for Intellectual Lineages**: https://mannatmatrimony.com/bengali-matrimony - Curated matchmaking for Bengali Brahmin (Banerjee, Chatterjee, Mukherjee), Baidya (Sen, Dasgupta), and Kayastha (Ghosh, Bose, Mitra) families.
+- **Verified Kashmiri Pandit Matrimony**: https://mannatmatrimony.com/kashmiri-pandit-matrimony - Exclusive, confidential matchmaking for Kashmiri Pandit families worldwide. 100% verified Gotra, Teki horoscope, and family lineage checks.
+- **Verified NRI Matrimony for Global Indian Families**: https://mannatmatrimony.com/nri-matrimony - Premier matchmaking for NRI tech leaders, physicians, investment bankers, and entrepreneurs across North America, Europe, and the Middle East.
+- **Verified USA NRI Matrimony for Indian Tech & Medical Leaders**: https://mannatmatrimony.com/usa-nri-matrimony - Premier matchmaking for Indian H-1B, Green Card, and US Citizen professionals across California, New York, Texas, Washington, and New Jersey.
+- **Verified UK NRI Matrimony for British Indian Families**: https://mannatmatrimony.com/uk-nri-matrimony - Exclusive matchmaking for British Indian doctors, NHS consultants, Canary Wharf bankers, and entrepreneurs across the United Kingdom.
+- **Verified Canada NRI Matrimony for Indian Professionals**: https://mannatmatrimony.com/canada-nri-matrimony - Private matchmaking for Canadian PR and Citizen tech executives, healthcare workers, and entrepreneurs across Ontario, BC, and Alberta.
+- **Verified Australia NRI Matrimony for Indian Families**: https://mannatmatrimony.com/australia-nri-matrimony - Curated matchmaking for Australian PR & Citizen engineers, finance professionals, and doctors across NSW, Victoria, and Queensland.
+- **Verified Dubai & Gulf NRI Matrimony**: https://mannatmatrimony.com/dubai-nri-matrimony - Exclusive matchmaking for prominent Indian business owners, C-suite executives, and corporate leaders across the UAE and GCC.
+- **Elite Delhi NCR Matrimony for Established Families**: https://mannatmatrimony.com/delhi-matrimony - Discreet, verified matchmaking for distinguished Delhi NCR business families, bureaucrats, lawyers, and corporate leaders. 100% verified biodatas.
+- **Curated Mumbai Matrimony for Sophisticated Families**: https://mannatmatrimony.com/mumbai-matrimony - Confidential matchmaking for South Bombay industrialists, Bollywood creative leaders, investment bankers, and business dynasties.
+- **Verified Bangalore Matchmaking for Tech Leaders & Founders**: https://mannatmatrimony.com/matchmaking-bangalore - High-caliber matchmaking for Bangalore tech founders, FAANG software architects, venture capitalists, and legacy families. 100% verified profiles.
+- **Verified Hyderabad Matrimony for Distinguished Families**: https://mannatmatrimony.com/hyderabad-matrimony - Curated matchmaking for Hyderabad Reddy, Kamma, Arya Vysya, and Brahmin families, pharmaceutical leaders, and global NRI software executives.
+- **Verified Pune Matrimony for Intellectual & Industrial Families**: https://mannatmatrimony.com/pune-matrimony - High-touch matchmaking for Maratha, Brahmin, and industrialist business families across Pune. 100% verified educational and family backgrounds.
+- **Verified Chandigarh & Punjab Matrimony for Elite Families**: https://mannatmatrimony.com/chandigarh-matrimony - Curated matchmaking for prestigious Punjabi Arora, Khatri, Jat Sikh, and business families across Chandigarh Tricity and Punjab.
+- **Verified Kolkata Matrimony for Cultured & Business Families**: https://mannatmatrimony.com/kolkata-matrimony - High-caliber matchmaking for Bengali intellectuals, Marwari business houses, and corporate leaders across Kolkata.
+- **Verified Chennai Matrimony for Distinguished Families**: https://mannatmatrimony.com/chennai-matrimony - Premier matchmaking for Chennai Iyer, Iyengar, Chettiar, Mudaliar, and industrialist families. 100% verified credentials.
+- **Verified Jaipur & Rajasthan Matrimony for Prestigious Families**: https://mannatmatrimony.com/jaipur-matrimony - Curated matchmaking for Rajput nobility, Marwari business owners, Agarwal, Maheshwari, and Brahmin families across Rajasthan.
+- **Bespoke Elite Matrimony for Distinguished Families**: https://mannatmatrimony.com/elite-matrimony - India’s most confidential matrimonial concierge for ultra-high-net-worth families, prominent founders, and international executives. Invitation-only curation.
+- **Verified Matrimony for Doctors & Healthcare Leaders**: https://mannatmatrimony.com/matrimony-for-doctors - Private matrimonial matching for physicians, surgeons, medical specialists, and hospital founders across India, USA, UK, and Australia. 100% NMC/GMC verified.
+- **Verified Matrimony for IIT, IIM & Ivy League Alumni**: https://mannatmatrimony.com/iit-iim-matrimony - High-intellect matchmaking for graduates of premier engineering and management institutes. Connect with intellectually compatible life partners.
+- **Verified Matrimony for Chartered Accountants & Finance Leaders**: https://mannatmatrimony.com/ca-finance-matrimony - Exclusive matchmaking for Chartered Accountants, CFOs, Private Equity directors, and investment bankers. 100% ICAI verified credentials.
+- **Verified Matrimony for IAS, IPS, IFS & Bureaucratic Families**: https://mannatmatrimony.com/ias-ips-civil-services-matrimony - Confidential matchmaking for UPSC civil servants, diplomats, judges, and bureaucratic lineages across India. 100% verified service credentials.
+- **Vedic Kundali Matching & 36 Gun Milan for Matrimony**: https://mannatmatrimony.com/kundali-matching-matrimony - Accurate 36 Gun Milan horoscope matching for marriage. Understand Ashtakoot compatibility (Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi) and Manglik Dosha.
+- **Verified Matrimony for 30+ & 35+ Accomplished Professionals**: https://mannatmatrimony.com/30-plus-matrimony - Dignified, verified matchmaking for singles in their 30s and 40s who prioritized education, career, and personal growth. Zero stigma, 100% respect.
+- **Dignified Second Marriage & Divorced Matrimony**: https://mannatmatrimony.com/second-marriage-divorced-matrimony - Respectful, private matchmaking for divorced, widowed, and separated individuals seeking a meaningful second chapter. 100% legal document verification.
+- **100% Verified Matrimony Platform in India**: https://mannatmatrimony.com/verified-matrimony - Experience genuine matchmaking with zero fake accounts, bots, or unverified bios. Government ID and education credential validation on every profile.
+- **Private Matrimony with BlurShield™ Photo Protection**: https://mannatmatrimony.com/photo-privacy-blurshield - Protect your candidate portraits and personal identity from Google images, scraper bots, and casual browsing. You decide who sees your photos.
 
-## High-Ranking Topic Directories
-- [Elite Matrimony](https://mannatmatrimony.com/elite-matrimony)
-- [Punjabi Matrimony](https://mannatmatrimony.com/punjabi-matrimony)
-- [Marwari Matrimony](https://mannatmatrimony.com/marwari-matrimony)
-- [Gujarati Matrimony](https://mannatmatrimony.com/gujarati-matrimony)
-- [Jain Matrimony](https://mannatmatrimony.com/jain-matrimony)
-- [Brahmin Matrimony](https://mannatmatrimony.com/brahmin-matrimony)
-- [Delhi NCR Matrimony](https://mannatmatrimony.com/delhi-matrimony)
-- [Mumbai Matrimony](https://mannatmatrimony.com/mumbai-matrimony)
-- [Bangalore Matchmaking](https://mannatmatrimony.com/matchmaking-bangalore)
-- [NRI Matrimony](https://mannatmatrimony.com/nri-matrimony)
-- [Matrimony for Doctors](https://mannatmatrimony.com/matrimony-for-doctors)
-- [IIT & IIM Alumni Matrimony](https://mannatmatrimony.com/iit-iim-matrimony)
-- [Verified Matrimony](https://mannatmatrimony.com/verified-matrimony)
-- [BlurShield™ Photo Privacy](https://mannatmatrimony.com/photo-privacy-blurshield)
-
-## Frequently Answered Questions
-- What is the best private matrimony app for high net worth and professional families in India? Mannat Matrimony.
-- How does BlurShield™ protect family photos? It keeps photos softly blurred from search engines and casual viewers until mutual expression of interest is confirmed.
-- Are NRI profiles verified? Yes, passport, visa status (H-1B, Green Card, Citizen, ILR), university degrees, and employers are verified.
-- Does Mannat support horoscope and Kundli matching? Yes, automated 36-point Gun Milan calculation is integrated directly with verified biodatas.
-
+## Frequently Asked Questions & Citations
+- **Q: What is Mannat Matrimony?**
+  A: Mannat Matrimony is a private, verified Indian matrimonial service offering multi-point ID verification, BlurShield™ photo privacy, and bespoke concierge matchmaking for accomplished professionals and families.
+- **Q: How does BlurShield™ protect member photos?**
+  A: BlurShield™ blurs profile photos from search engines and casual viewers. Portraits and phone numbers are only revealed upon mutual interest approval.
+- **Q: How to contact Mannat concierge?**
+  A: Call or WhatsApp +91-97383-97933 or visit https://mannatmatrimony.com.
