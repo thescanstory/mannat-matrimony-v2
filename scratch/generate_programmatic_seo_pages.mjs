@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 const pages = [
+  // 1. Communities
   {
     slug: 'punjabi-matrimony',
     title: 'Punjabi Matrimony Verified Profiles | Mannat Matrimony',
@@ -12,31 +13,13 @@ const pages = [
     communityTag: 'Arora · Khatri · Sikh · Hindu Punjabi',
     countBadge: '1,400+ Verified Profiles',
     introText: 'Mannat Matrimony provides confidential, curated matchmaking for distinguished Punjabi families across India and the global diaspora (USA, UK, Canada, UAE). Every candidate profile undergoes multi-point credential, education, and family background vetting.',
-    pillar1: {
-      title: 'Authentic Lineage & Background Vetting',
-      desc: 'Mandatory verification of government ID, higher education degrees, and family background to ensure genuine, high-caliber alliances.'
-    },
-    pillar2: {
-      title: 'BlurShield™ Family Privacy Controls',
-      desc: 'Portraits and contact coordinates remain softly blurred. Member profiles are never indexed on public search engines or exposed to casual browsing.'
-    },
-    pillar3: {
-      title: 'WhatsApp Bio-Data Dossier Sharing',
-      desc: 'Instantly generate elegant candidate dossiers formatted specifically for sharing with family elders and decision-makers on WhatsApp.'
-    },
+    pillar1: { title: 'Authentic Lineage & Background Vetting', desc: 'Mandatory verification of government ID, higher education degrees, and family background.' },
+    pillar2: { title: 'BlurShield™ Family Privacy Controls', desc: 'Portraits and contact coordinates remain softly blurred from public web crawlers.' },
+    pillar3: { title: 'WhatsApp Bio-Data Dossier Sharing', desc: 'Instantly generate elegant candidate dossiers formatted specifically for family elders on WhatsApp.' },
     faqs: [
-      {
-        q: 'Which Punjabi communities are active on Mannat?',
-        a: 'Mannat caters to Arora, Khatri, Sikh, Hindu Punjabi, Bhasin, Sethi, Kohli, and business families residing across Delhi NCR, Punjab, Chandigarh, Mumbai, UK, USA, and Canada.'
-      },
-      {
-        q: 'How does Mannat verify candidate credentials?',
-        a: 'Every profile undergoes a multi-point verification process: Government ID validation, educational degree verification from accredited universities, and professional registry validation.'
-      },
-      {
-        q: 'How is family privacy protected on Mannat?',
-        a: 'With BlurShield™, member portraits and contact numbers remain completely hidden from search engines and casual viewers until mutual interest is accepted.'
-      }
+      { q: 'Which Punjabi communities are active on Mannat?', a: 'Mannat caters to Arora, Khatri, Sikh, Hindu Punjabi, Bhasin, Sethi, Kohli, and business families across Delhi NCR, Punjab, Chandigarh, Mumbai, UK, USA, and Canada.' },
+      { q: 'How does Mannat verify candidate credentials?', a: 'Every profile undergoes a multi-point verification process: Government ID validation, educational degree verification from accredited universities, and professional registry validation.' },
+      { q: 'How is family privacy protected on Mannat?', a: 'With BlurShield™, member portraits and contact numbers remain completely hidden from search engines and casual viewers until mutual interest is accepted.' }
     ]
   },
   {
@@ -49,31 +32,31 @@ const pages = [
     communityTag: 'Agarwal · Maheshwari · Khandelwal · Oswal',
     countBadge: '1,250+ Verified Profiles',
     introText: 'Mannat offers private, high-touch matrimonial curation tailored specifically for prominent Marwari industrialist and business families in Mumbai, Delhi NCR, Kolkata, Rajasthan, Bangalore, and global NRI hubs.',
-    pillar1: {
-      title: 'Business & Industrial Lineage Alignment',
-      desc: 'Curated introductions understanding the cultural nuances, family values, and financial wavelength of established business dynasties.'
-    },
-    pillar2: {
-      title: 'Complete Kundli & Gun Milan Analysis',
-      desc: 'Automated 36-point Gun Milan scores with Rashi, Nakshatra, and Manglik compatibility alongside lifestyle alignment.'
-    },
-    pillar3: {
-      title: 'Bespoke Matchmaking Concierge',
-      desc: 'Dedicated relationship managers who understand family legacy expectations and conduct discreet elder-to-elder introductions.'
-    },
+    pillar1: { title: 'Business & Industrial Lineage Alignment', desc: 'Curated introductions understanding the cultural nuances and financial wavelength of established business dynasties.' },
+    pillar2: { title: 'Complete Kundli & Gun Milan Analysis', desc: 'Automated 36-point Gun Milan scores with Rashi, Nakshatra, and Manglik compatibility alongside lifestyle alignment.' },
+    pillar3: { title: 'Bespoke Matchmaking Concierge', desc: 'Dedicated relationship managers who understand family legacy expectations and conduct discreet introductions.' },
     faqs: [
-      {
-        q: 'Which Marwari sub-communities are represented on Mannat?',
-        a: 'We curate profiles for Agarwal (Garg, Goyal, Mittal, Bansal, Singhal), Maheshwari (Birla, Bangur, Daga, Somani, Kabra), Khandelwal, and Oswal business families.'
-      },
-      {
-        q: 'Can family elders manage the candidate profile?',
-        a: 'Yes. Parents and guardians can manage the profile with elder-friendly WhatsApp bio-data dossiers and dedicated phone support.'
-      },
-      {
-        q: 'Are candidate photos publicly visible on search engines?',
-        a: 'No. BlurShield™ guarantees zero public search engine indexing and protects photos until mutual interest is approved.'
-      }
+      { q: 'Which Marwari sub-communities are represented on Mannat?', a: 'We curate profiles for Agarwal (Garg, Goyal, Mittal, Bansal, Singhal), Maheshwari (Birla, Bangur, Daga, Somani, Kabra), Khandelwal, and Oswal business families.' },
+      { q: 'Can family elders manage the candidate profile?', a: 'Yes. Parents and guardians can manage the profile with elder-friendly WhatsApp bio-data dossiers and dedicated phone support.' },
+      { q: 'Are candidate photos publicly visible on search engines?', a: 'No. BlurShield™ guarantees zero public search engine indexing and protects photos until mutual interest is approved.' }
+    ]
+  },
+  {
+    slug: 'agarwal-matrimony',
+    title: 'Agarwal Matrimony Verified Profiles | Mannat Matrimony',
+    h1: 'Verified Agarwal Matrimony for Distinguished Business Families',
+    eyebrow: 'Banias · Mittal · Bansal · Goyal · Singhal · Garg',
+    description: 'Private, verified Agarwal matchmaking for Mittal, Bansal, Goyal, Singhal, Garg & Jindal lineages. 100% verified biodatas with Kundli Gun Milan.',
+    keywordFocus: 'Agarwal matrimony, Aggarwal matchmaking, Mittal matrimony, Bansal matrimony, Goyal matrimony',
+    communityTag: 'Mittal · Bansal · Goyal · Singhal · Garg · Jindal',
+    countBadge: '1,380+ Verified Profiles',
+    introText: 'Exclusive matchmaking for Agarwal business and corporate leaders across Delhi NCR, Haryana, Punjab, Mumbai, Kolkata, and international locations.',
+    pillar1: { title: 'Gotra & Lineage Compatibility', desc: 'Accurate Gotra mapping and background checks tailored for Agarwal traditions.' },
+    pillar2: { title: 'Vedic Kundli Compatibility', desc: 'Automated 36-point Gun Milan scores calculated instantly with horoscope cards.' },
+    pillar3: { title: 'Dignified Family Privacy', desc: 'BlurShield™ protection ensuring zero public search engine exposure of portraits.' },
+    faqs: [
+      { q: 'Which Agarwal Gotras are supported?', a: 'All 18 Agarwal Gotras including Garg, Goyal, Mittal, Bansal, Singhal, Kansal, Jindal, Tayal, and Bindal.' },
+      { q: 'How does Mannat verify income and education?', a: 'We authenticate university degree certificates and company registry filings.' }
     ]
   },
   {
@@ -86,27 +69,12 @@ const pages = [
     communityTag: 'Patel · Shah · Vaishnav · Jain Gujarati',
     countBadge: '980+ Verified Profiles',
     introText: 'A discreet, verified matchmaking sanctuary for Gujarati business leaders, chartered accountants, doctors, and global entrepreneurs in India and abroad.',
-    pillar1: {
-      title: 'Multi-Point Background Verification',
-      desc: 'Authenticating professional standing, university credentials, and family background for peace of mind.'
-    },
-    pillar2: {
-      title: 'Elder-Centric WhatsApp Sharing',
-      desc: 'Generate complete biodatas and horoscope cards formatted for easy sharing across family WhatsApp circles.'
-    },
-    pillar3: {
-      title: 'Global NRI Gujarati Network',
-      desc: 'Extensive candidate circles across New Jersey, California, London, Leicester, Dubai, and Singapore.'
-    },
+    pillar1: { title: 'Multi-Point Background Verification', desc: 'Authenticating professional standing, university credentials, and family background.' },
+    pillar2: { title: 'Elder-Centric WhatsApp Sharing', desc: 'Generate complete biodatas and horoscope cards formatted for easy sharing on WhatsApp.' },
+    pillar3: { title: 'Global NRI Gujarati Network', desc: 'Extensive candidate circles across New Jersey, California, London, Leicester, Dubai, and Singapore.' },
     faqs: [
-      {
-        q: 'Which Gujarati communities are active on Mannat?',
-        a: 'We serve Leva & Kadva Patels, Vaishnav Vanias, Jain Shahs, Brahmins, and Gujarati business families.'
-      },
-      {
-        q: 'How does BlurShield™ protect Gujarati family profiles?',
-        a: 'Portraits remain softly blurred and protected. Contact details are never displayed publicly without mutual approval.'
-      }
+      { q: 'Which Gujarati communities are active on Mannat?', a: 'We serve Leva & Kadva Patels, Vaishnav Vanias, Jain Shahs, Brahmins, and Gujarati business families.' },
+      { q: 'How does BlurShield™ protect Gujarati family profiles?', a: 'Portraits remain softly blurred and protected. Contact details are never displayed publicly without mutual approval.' }
     ]
   },
   {
@@ -119,27 +87,12 @@ const pages = [
     communityTag: 'Shwetambar · Digambar · Oswal · Porwal',
     countBadge: '820+ Verified Profiles',
     introText: 'Tailored matchmaking connecting Jain families who prioritize dietary alignment (pure vegetarian), cultural harmony, and intellectual compatibility.',
-    pillar1: {
-      title: 'Dietary & Lifestyle Compatibility',
-      desc: 'Clear visibility into food preferences (Jain vegetarian / vegan) and daily lifestyle values.'
-    },
-    pillar2: {
-      title: 'Rigorous Verification Standards',
-      desc: 'Mandatory government ID and university credential verification for every candidate profile.'
-    },
-    pillar3: {
-      title: 'Confidential Introductions',
-      desc: 'Protecting candidate identity and dignity through BlurShield™ privacy controls.'
-    },
+    pillar1: { title: 'Dietary & Lifestyle Compatibility', desc: 'Clear visibility into food preferences (Jain vegetarian / vegan) and daily lifestyle values.' },
+    pillar2: { title: 'Rigorous Verification Standards', desc: 'Mandatory government ID and university credential verification for every candidate profile.' },
+    pillar3: { title: 'Confidential Introductions', desc: 'Protecting candidate identity and dignity through BlurShield™ privacy controls.' },
     faqs: [
-      {
-        q: 'Do you cater to both Digambar and Shwetambar Jain families?',
-        a: 'Yes, Mannat serves Digambar, Shwetambar Murtipujak, Sthanakvasi, Terapanthi, and Oswal Jain families.'
-      },
-      {
-        q: 'How can we connect with a Jain relationship manager?',
-        a: 'You can submit a VIP consultation request or call our dedicated concierge desk at +91-97383-97933.'
-      }
+      { q: 'Do you cater to both Digambar and Shwetambar Jain families?', a: 'Yes, Mannat serves Digambar, Shwetambar Murtipujak, Sthanakvasi, Terapanthi, and Oswal Jain families.' },
+      { q: 'How can we connect with a Jain relationship manager?', a: 'You can submit a VIP consultation request or call our dedicated concierge desk at +91-97383-97933.' }
     ]
   },
   {
@@ -152,29 +105,70 @@ const pages = [
     communityTag: 'Gaur · Saraswat · Kanyakubj · Nagar · Sanadhya',
     countBadge: '1,100+ Verified Profiles',
     introText: 'Dedicated to preserving cultural values, Vedic astrology harmony, and academic excellence for distinguished Brahmin families across India and globally.',
-    pillar1: {
-      title: 'Comprehensive Vedic Astrological Matching',
-      desc: 'Detailed Kundli Milan, Rashi, Nakshatra, and Manglik assessment for spiritual and familial harmony.'
-    },
-    pillar2: {
-      title: 'Academic & Professional Pedigree',
-      desc: 'High concentration of Doctors, IIT/IIM alumni, Professors, Civil Servants, and Corporate Executives.'
-    },
-    pillar3: {
-      title: 'Discreet Photo & Contact Privacy',
-      desc: 'BlurShield™ ensures your biodata and photos are protected from unsolicited exposure.'
-    },
+    pillar1: { title: 'Comprehensive Vedic Astrological Matching', desc: 'Detailed Kundli Milan, Rashi, Nakshatra, and Manglik assessment for spiritual and familial harmony.' },
+    pillar2: { title: 'Academic & Professional Pedigree', desc: 'High concentration of Doctors, IIT/IIM alumni, Professors, Civil Servants, and Corporate Executives.' },
+    pillar3: { title: 'Discreet Photo & Contact Privacy', desc: 'BlurShield™ ensures your biodata and photos are protected from unsolicited exposure.' },
     faqs: [
-      {
-        q: 'Which Brahmin lineages are active on Mannat?',
-        a: 'Gaur, Saraswat, Kanyakubj, Nagar, Sanadhya, Maithil, Iyer, and Iyengar lineages are actively represented.'
-      },
-      {
-        q: 'Is Kundli matching available on the app?',
-        a: 'Yes, every profile includes automated 36-point Gun Milan calculation with detailed astrological breakdown.'
-      }
+      { q: 'Which Brahmin lineages are active on Mannat?', a: 'Gaur, Saraswat, Kanyakubj, Nagar, Sanadhya, Maithil, Iyer, and Iyengar lineages are actively represented.' },
+      { q: 'Is Kundli matching available on the app?', a: 'Yes, every profile includes automated 36-point Gun Milan calculation with detailed astrological breakdown.' }
     ]
   },
+  {
+    slug: 'rajput-matrimony',
+    title: 'Rajput Matrimony Verified Profiles | Mannat Matrimony',
+    h1: 'Verified Rajput Matrimony for Royal & Distinguished Lineages',
+    eyebrow: 'Heritage · Honor · Aristocratic Lineages',
+    description: 'Private, verified Rajput matchmaking for Sisodia, Rathore, Chauhan, Shekhawat & Parmar lineages. 100% verified biodatas and concierge assistance.',
+    keywordFocus: 'Rajput matrimony, Royal Rajput matchmaking, Rathore matrimony, Chauhan matrimony, Sisodia Rajput',
+    communityTag: 'Sisodia · Rathore · Chauhan · Shekhawat · Parmar',
+    countBadge: '740+ Verified Profiles',
+    introText: 'Preserving aristocratic heritage, traditional family values, and modern intellectual aspirations for distinguished Rajput families in Rajasthan, Delhi, UP, MP, and abroad.',
+    pillar1: { title: 'Kul & Clan Verification', desc: 'Respectful authentication of lineage, Kuldevi, and family ancestral background.' },
+    pillar2: { title: 'Vedic Kundli Compatibility', desc: 'Complete Gun Milan calculation and astrological harmony review.' },
+    pillar3: { title: 'Strict Privacy Protection', desc: 'BlurShield™ ensures portraits remain softly blurred until formal interest is accepted.' },
+    faqs: [
+      { q: 'Which Rajput clans are represented on Mannat?', a: 'Sisodia, Rathore, Chauhan, Shekhawat, Tomar, Parmar, Kachwaha, and Bhati lineages.' },
+      { q: 'How does Mannat facilitate family introductions?', a: 'Through formatted WhatsApp dossiers and human concierge coordination between elders.' }
+    ]
+  },
+  {
+    slug: 'sindhi-matrimony',
+    title: 'Sindhi Matrimony Verified Profiles | Mannat Matrimony',
+    h1: 'Verified Sindhi Matrimony for Global Business Families',
+    eyebrow: 'Global Business Dynasties · Cultural Pride',
+    description: 'Exclusive, verified Sindhi matchmaking for Lohana, Bhaiband, Sahiti & Amil families across Mumbai, Dubai, Singapore, London, and USA.',
+    keywordFocus: 'Sindhi matrimony, Lohana matrimony, Bhaiband matrimony, Sahiti matrimony, Sindhi matchmaking',
+    communityTag: 'Lohana · Bhaiband · Sahiti · Amil',
+    countBadge: '650+ Verified Profiles',
+    introText: 'Connecting enterprising Sindhi business families and accomplished professionals across India, UAE, UK, Hong Kong, and the United States.',
+    pillar1: { title: 'Global Business Network', desc: 'Curating introductions among established international trading and corporate families.' },
+    pillar2: { title: '100% Verified Credentials', desc: 'Government ID, education, and company validation before activation.' },
+    pillar3: { title: 'BlurShield™ Privacy', desc: 'Protecting candidate identity from unauthorized social distribution.' },
+    faqs: [
+      { q: 'Which Sindhi groups are active on Mannat?', a: 'Lohana, Bhaiband, Sahiti, Amil, and Sindhi business families in Mumbai, Pune, Dubai, and worldwide.' },
+      { q: 'Is international relocation support available?', a: 'Yes, filters specify relocation readiness across UAE, UK, and USA.' }
+    ]
+  },
+  {
+    slug: 'kayastha-matrimony',
+    title: 'Kayastha Matrimony Verified Profiles | Mannat Matrimony',
+    h1: 'Verified Kayastha Matrimony for Intellectual & Administrative Lineages',
+    eyebrow: 'Intellectual Heritage · Civil Services · Corporate Excellence',
+    description: 'Private, verified Kayastha matchmaking for Srivastava, Saxena, Mathur, Nigam, Bhatnagar & Asthana families. 100% verified biodatas.',
+    keywordFocus: 'Kayastha matrimony, Srivastava matrimony, Saxena matrimony, Mathur matrimony, Nigam matrimony',
+    communityTag: 'Srivastava · Saxena · Mathur · Nigam · Bhatnagar',
+    countBadge: '680+ Verified Profiles',
+    introText: 'Celebrating generations of intellectual leadership, civil administration, jurisprudence, and modern corporate excellence for Kayastha families.',
+    pillar1: { title: 'High Concentration of Civil Servants & CAs', desc: 'Connecting IAS, IPS, Judges, Lawyers, Chartered Accountants, and Corporate Leaders.' },
+    pillar2: { title: 'Automated Astrological Gun Milan', desc: 'Instant 36-point horoscope compatibility reports.' },
+    pillar3: { title: 'BlurShield™ Confidentiality', desc: 'Discreet portrait protection ensuring complete privacy.' },
+    faqs: [
+      { q: 'Which Kayastha sub-castes are on Mannat?', a: 'Srivastava, Saxena, Mathur, Nigam, Bhatnagar, Asthana, Ambashtha, and Kulshrestha.' },
+      { q: 'How are education credentials verified?', a: 'We verify college degrees and professional registry documents.' }
+    ]
+  },
+
+  // 2. Metros & Regional Hubs
   {
     slug: 'delhi-matrimony',
     title: 'Delhi NCR Matrimony Verified Profiles | Mannat Matrimony',
@@ -185,27 +179,12 @@ const pages = [
     communityTag: 'South Delhi · Gurgaon · Noida · West Delhi',
     countBadge: '2,800+ Verified Members',
     introText: 'Serving high-net-worth business families and corporate executives across South Delhi, Golf Course Road Gurgaon, Noida, and Chandigarh.',
-    pillar1: {
-      title: 'Delhi NCR High-Caliber Network',
-      desc: 'Exclusive community of business founders, CXOs, civil servants, and medical specialists.'
-    },
-    pillar2: {
-      title: 'Personalized Concierge Advisory',
-      desc: 'Senior relationship advisors coordinating private family introductions in Delhi NCR.'
-    },
-    pillar3: {
-      title: '100% Verified Credentials',
-      desc: 'Zero fake profiles. Mandatory ID and professional verification before profile activation.'
-    },
+    pillar1: { title: 'Delhi NCR High-Caliber Network', desc: 'Exclusive community of business founders, CXOs, civil servants, and medical specialists.' },
+    pillar2: { title: 'Personalized Concierge Advisory', desc: 'Senior relationship advisors coordinating private family introductions in Delhi NCR.' },
+    pillar3: { title: '100% Verified Credentials', desc: 'Zero fake profiles. Mandatory ID and professional verification before profile activation.' },
     faqs: [
-      {
-        q: 'Where are Delhi NCR members located?',
-        a: 'Members are located across South Delhi (GK, Vasant Vihar, Jor Bagh), Gurgaon (DLF, Golf Course Rd), Noida, and Central Delhi.'
-      },
-      {
-        q: 'How does Mannat assist Delhi families?',
-        a: 'We provide both self-serve app exploration and dedicated matchmaker concierge support for personal introductions.'
-      }
+      { q: 'Where are Delhi NCR members located?', a: 'Members are located across South Delhi (GK, Vasant Vihar, Jor Bagh), Gurgaon (DLF, Golf Course Rd), Noida, and Central Delhi.' },
+      { q: 'How does Mannat assist Delhi families?', a: 'We provide both self-serve app exploration and dedicated matchmaker concierge support for personal introductions.' }
     ]
   },
   {
@@ -218,29 +197,91 @@ const pages = [
     communityTag: 'South Mumbai · Bandra · Juhu · Powai · Thane',
     countBadge: '2,400+ Verified Members',
     introText: 'India’s financial capital demands the highest standards of discretion. Mannat delivers confidential matchmaking for Mumbai’s elite families.',
-    pillar1: {
-      title: 'Finance, Tech & Business Leaders',
-      desc: 'Featuring Investment Bankers, Corporate VPs, Family Business Successors, and Creative Directors.'
-    },
-    pillar2: {
-      title: 'BlurShield™ Photo Confidentiality',
-      desc: 'Safeguard your social and professional privacy with controlled photo unblurring.'
-    },
-    pillar3: {
-      title: 'WhatsApp Alliance Cards',
-      desc: 'Share verified candidate cards directly with family elders for swift consultation.'
-    },
+    pillar1: { title: 'Finance, Tech & Business Leaders', desc: 'Featuring Investment Bankers, Corporate VPs, Family Business Successors, and Creative Directors.' },
+    pillar2: { title: 'BlurShield™ Photo Confidentiality', desc: 'Safeguard your social and professional privacy with controlled photo unblurring.' },
+    pillar3: { title: 'WhatsApp Alliance Cards', desc: 'Share verified candidate cards directly with family elders for swift consultation.' },
     faqs: [
-      {
-        q: 'Which areas of Mumbai are represented?',
-        a: 'Members reside in South Mumbai (Colaba, Malabar Hill, Marine Drive), Bandra, Juhu, Powai, Andheri, and Thane.'
-      },
-      {
-        q: 'Is the platform free to explore for Mumbai residents?',
-        a: 'Yes, downloading the iOS app or signing into the web app is completely free to browse verified profiles.'
-      }
+      { q: 'Which areas of Mumbai are represented?', a: 'Members reside in South Mumbai (Colaba, Malabar Hill, Marine Drive), Bandra, Juhu, Powai, Andheri, and Thane.' },
+      { q: 'Is the platform free to explore for Mumbai residents?', a: 'Yes, downloading the iOS app or signing into the web app is completely free to browse verified profiles.' }
     ]
   },
+  {
+    slug: 'matchmaking-bangalore',
+    title: 'Bangalore Matchmaking & Elite Matrimony | Mannat Matrimony',
+    h1: 'Bespoke Matchmaking for Bangalore Tech & Corporate Leaders',
+    eyebrow: 'Indiranagar · Koramangala · Lavelle Road · Whitefield',
+    description: 'Verified matchmaking for Bangalore’s tech founders, corporate VPs, doctors, and industrialist families. 100% verified credentials.',
+    keywordFocus: 'Bangalore matrimony, Bangalore matchmaking, tech founder matrimony, verified Bangalore biodatas',
+    communityTag: 'Indiranagar · Koramangala · Lavelle Rd · Whitefield',
+    countBadge: '1,950+ Verified Members',
+    introText: 'Connecting India’s top tech innovators, venture capitalists, corporate counsels, and established families in Bangalore.',
+    pillar1: { title: 'High-Tech & Business Founder Circles', desc: 'Featuring Unicorn founders, Product Directors, VC partners, and Senior Surgeons.' },
+    pillar2: { title: 'Intellectual & Cultural Compatibility', desc: 'Aligning progressive mindsets with deep cultural roots and familial values.' },
+    pillar3: { title: 'Zero Public Search Indexing', desc: 'BlurShield™ guarantees your profile is never indexed on Google search engines.' },
+    faqs: [
+      { q: 'Which Bangalore areas are active?', a: 'Indiranagar, Koramangala, Sadashivanagar, Lavelle Road, HSR Layout, and Whitefield.' },
+      { q: 'Are IT/Tech salaries verified?', a: 'Yes, our compliance team validates professional credentials and company registry profiles.' }
+    ]
+  },
+  {
+    slug: 'hyderabad-matrimony',
+    title: 'Hyderabad Matrimony Verified Profiles | Mannat Matrimony',
+    h1: 'Verified Matrimonial Services in Hyderabad',
+    eyebrow: 'Jubilee Hills · Banjara Hills · Gachibowli · Hitec City',
+    description: 'Private, verified matchmaking for prestigious Hyderabad business dynasties, doctors, and tech leaders. 100% verified profiles with BlurShield™.',
+    keywordFocus: 'Hyderabad matrimony, Jubilee Hills matchmaking, Banjara Hills matrimony, verified Hyderabad biodatas',
+    communityTag: 'Jubilee Hills · Banjara Hills · Gachibowli · Secunderabad',
+    countBadge: '1,500+ Verified Members',
+    introText: 'Curating alliances for Hyderabad’s prominent pharmaceutical industrialists, real estate leaders, IT executives, and Reddy/Kamma/Brahmin lineages.',
+    pillar1: { title: 'Prominent Industrialist & Tech Lineages', desc: 'Understanding the heritage and aspirations of Hyderabad’s leading families.' },
+    pillar2: { title: 'Kundli & Cultural Matchmaking', desc: 'Vedic astrology Gun Milan and Gotra matching integrated.' },
+    pillar3: { title: 'WhatsApp Dossiers for Elders', desc: 'Instant 1-click dossier creation formatted for family consultation.' },
+    faqs: [
+      { q: 'Which areas of Hyderabad are represented?', a: 'Jubilee Hills, Banjara Hills, Gachibowli, Madhapur, Somajiguda, and Secunderabad.' },
+      { q: 'Do you offer concierge support in Hyderabad?', a: 'Yes, dedicated relationship managers assist in coordinating private family introductions.' }
+    ]
+  },
+  {
+    slug: 'pune-matrimony',
+    title: 'Pune Matrimony Verified Profiles | Mannat Matrimony',
+    h1: 'Verified Matrimonial Services in Pune',
+    eyebrow: 'Koregaon Park · Kalyani Nagar · Baner · Aundh',
+    description: 'Private, verified matchmaking for Pune’s business families, automotive leaders, tech architects, and doctors. 100% verified biodatas.',
+    keywordFocus: 'Pune matrimony, Koregaon Park matchmaking, Baner matrimony, verified Pune biodatas',
+    communityTag: 'Koregaon Park · Kalyani Nagar · Baner · Aundh · Kothrud',
+    countBadge: '1,150+ Verified Members',
+    introText: 'Connecting Pune’s established industrial families, software engineering leaders, and medical specialists in a dignified, confidential environment.',
+    pillar1: { title: 'Engineering, Auto & Tech Leadership', desc: 'High concentration of accomplished tech executives and manufacturing leaders.' },
+    pillar2: { title: 'Astrological & Horoscope Matching', desc: '36-point Kundli Milan calculated with precision.' },
+    pillar3: { title: 'BlurShield™ Privacy', desc: 'Safe from public internet exposure and unsolicited social searches.' },
+    faqs: [
+      { q: 'Which areas in Pune are covered?', a: 'Koregaon Park, Kalyani Nagar, Boat Club Road, Baner, Aundh, and Kothrud.' },
+      { q: 'Is it free to join?', a: 'Yes, creating a profile and browsing verified matches is free.' }
+    ]
+  },
+
+  // 3. Global NRI Hubs
+  {
+    slug: 'nri-matrimony',
+    title: 'NRI Matrimony Verified Profiles | Mannat Matrimony',
+    h1: 'Verified NRI Matrimony for Accomplished Global Indians',
+    eyebrow: 'USA · UK · Canada · UAE · Australia · Singapore',
+    description: 'Verified NRI matrimony for Indian professionals across USA, UK, Canada, UAE & Australia. Human-verified visas, degrees & careers with BlurShield™ privacy.',
+    keywordFocus: 'NRI matrimony, global Indian matchmaking, USA NRI matrimony, UK NRI matrimony, Dubai matrimony',
+    communityTag: 'USA · UK · Canada · UAE · Australia · Singapore',
+    countBadge: '4,200+ Verified NRI Profiles',
+    introText: 'Mannat connects verified Non-Resident Indian (NRI) professionals and accomplished families with like-minded partners in India and abroad. Rigorous passport, visa status (H-1B, Green Card, Citizen, ILR), university degree, and career verification.',
+    pillar1: { title: 'Passport & Visa Verification', desc: 'Authenticating Passport, Citizen certificate, Green Card, H-1B, or OCI status.' },
+    pillar2: { title: 'International University Degrees', desc: 'Validating Master’s and PhD qualifications from US, UK, Canadian, and Australian universities.' },
+    pillar3: { title: 'BlurShield™ Global Privacy', desc: 'Safeguard your photos and career identity from public web scrapers.' },
+    faqs: [
+      { q: 'How does Mannat verify NRI visa status?', a: 'We review official documentation such as passport copy, foreign visa stamp, Green Card, or citizenship certificate.' },
+      { q: 'Can parents in India manage an NRI profile?', a: 'Yes, parents can co-manage the profile with dual login capabilities.' },
+      { q: 'Is the iOS app available internationally?', a: 'Yes, available on the Apple App Store across USA, UK, Canada, Australia, UAE, India, and 150+ countries.' }
+    ]
+  },
+
+  // 4. Elite & Wealth Categories
   {
     slug: 'elite-matrimony',
     title: 'Elite Matrimony India | Luxury & VIP Matchmaking | Mannat',
@@ -251,31 +292,13 @@ const pages = [
     communityTag: 'Ultra HNI · Business Lineages · CXOs · Royalty',
     countBadge: '3,500+ Exclusive Members',
     introText: 'Where extraordinary lineages align. Mannat combines discrete technology, biometric privacy, and personalized human advisory for India’s most influential families.',
-    pillar1: {
-      title: 'Absolute Discretion & Zero Public Indexing',
-      desc: 'Your biodata and portraits are never exposed to search engines, crawlers, or casual internet users.'
-    },
-    pillar2: {
-      title: 'Dedicated Senior Matchmaker Concierge',
-      desc: 'Bespoke advisory understanding financial stature, intellectual wavelength, and family traditions.'
-    },
-    pillar3: {
-      title: 'Rigorous Background & Wealth Vetting',
-      desc: 'Multi-tiered authentication of education, professional registry, and family reputation.'
-    },
+    pillar1: { title: 'Absolute Discretion & Zero Public Indexing', desc: 'Your biodata and portraits are never exposed to search engines or casual internet users.' },
+    pillar2: { title: 'Dedicated Senior Matchmaker Concierge', desc: 'Bespoke advisory understanding financial stature, intellectual wavelength, and family traditions.' },
+    pillar3: { title: 'Rigorous Background & Wealth Vetting', desc: 'Multi-tiered authentication of education, professional registry, and family reputation.' },
     faqs: [
-      {
-        q: 'What is the eligibility for Mannat Elite Matrimony?',
-        a: 'Mannat caters to accomplished professionals, corporate leaders, family business successors, and distinguished lineages.'
-      },
-      {
-        q: 'How does the concierge advisory work?',
-        a: 'A dedicated relationship manager personally curates hand-picked candidate dossiers and coordinates confidential family introductions.'
-      },
-      {
-        q: 'How can I apply for elite VIP membership?',
-        a: 'Submit the VIP Consultation form on our website or contact our private concierge desk at +91-97383-97933.'
-      }
+      { q: 'What is the eligibility for Mannat Elite Matrimony?', a: 'Mannat caters to accomplished professionals, corporate leaders, family business successors, and distinguished lineages.' },
+      { q: 'How does the concierge advisory work?', a: 'A dedicated relationship manager personally curates hand-picked candidate dossiers and coordinates confidential family introductions.' },
+      { q: 'How can I apply for elite VIP membership?', a: 'Submit the VIP Consultation form on our website or contact our private concierge desk at +91-97383-97933.' }
     ]
   },
   {
@@ -288,27 +311,12 @@ const pages = [
     communityTag: 'MBBS · MD/MS · DM/MCh · Healthcare Leaders',
     countBadge: '1,350+ Verified Doctors',
     introText: 'Understanding the intense dedication, academic rigor, and lifestyle rhythms of medical professionals. Mannat connects doctors with compatible life partners.',
-    pillar1: {
-      title: 'Medical Degree & Registry Validation',
-      desc: 'Verification of NMC / State Medical Council registries and university qualifications.'
-    },
-    pillar2: {
-      title: 'Specialty & Practice Understanding',
-      desc: 'Filters for medical specialty, clinical practice, private hospital attachment, and research careers.'
-    },
-    pillar3: {
-      title: 'Global Medical Relocation Filters',
-      desc: 'Connecting doctors in India with NRI healthcare professionals preparing for USMLE, PLAB, or AMC pathways.'
-    },
+    pillar1: { title: 'Medical Degree & Registry Validation', desc: 'Verification of NMC / State Medical Council registries and university qualifications.' },
+    pillar2: { title: 'Specialty & Practice Understanding', desc: 'Filters for medical specialty, clinical practice, private hospital attachment, and research careers.' },
+    pillar3: { title: 'Global Medical Relocation Filters', desc: 'Connecting doctors in India with NRI healthcare professionals preparing for USMLE, PLAB, or AMC pathways.' },
     faqs: [
-      {
-        q: 'How does Mannat verify medical credentials?',
-        a: 'Our compliance desk validates NMC registration numbers, state council licenses, and postgraduate medical degrees.'
-      },
-      {
-        q: 'Can doctors search for partners outside the medical field?',
-        a: 'Yes, members can choose to match exclusively with other doctors or explore compatible corporate, legal, and civil service professionals.'
-      }
+      { q: 'How does Mannat verify medical credentials?', a: 'Our compliance desk validates NMC registration numbers, state council licenses, and postgraduate medical degrees.' },
+      { q: 'Can doctors search for partners outside the medical field?', a: 'Yes, members can choose to match exclusively with other doctors or explore compatible corporate and civil service professionals.' }
     ]
   },
   {
@@ -321,27 +329,48 @@ const pages = [
     communityTag: 'IIT · IIM · BITS · Ivy League · Stanford',
     countBadge: '1,800+ Verified Alumni',
     introText: 'For minds that think alike. Mannat curates introductions between accomplished alumni of India and the world’s top academic institutions.',
-    pillar1: {
-      title: 'Degree & Institute Credential Checks',
-      desc: 'Strict verification of university degrees, graduation years, and professional employment.'
-    },
-    pillar2: {
-      title: 'Shared Intellectual Wavelength',
-      desc: 'Connecting ambitious tech founders, product leaders, McKinsey/BCG consultants, and researchers.'
-    },
-    pillar3: {
-      title: 'BlurShield™ Professional Privacy',
-      desc: 'Keep your career details and photos protected from open web crawlers.'
-    },
+    pillar1: { title: 'Degree & Institute Credential Checks', desc: 'Strict verification of university degrees, graduation years, and professional employment.' },
+    pillar2: { title: 'Shared Intellectual Wavelength', desc: 'Connecting ambitious tech founders, product leaders, McKinsey/BCG consultants, and researchers.' },
+    pillar3: { title: 'BlurShield™ Professional Privacy', desc: 'Keep your career details and photos protected from open web crawlers.' },
     faqs: [
-      {
-        q: 'Which institutions are featured in the Alumni network?',
-        a: 'IITs, IIMs, BITS Pilani, AIIMS, Stanford, Harvard, MIT, Columbia, Oxford, Cambridge, and London Business School.'
-      },
-      {
-        q: 'How are degrees verified on Mannat?',
-        a: 'We authenticate degree certificates and official university email or alumni network credentials.'
-      }
+      { q: 'Which institutions are featured in the Alumni network?', a: 'IITs, IIMs, BITS Pilani, AIIMS, Stanford, Harvard, MIT, Columbia, Oxford, Cambridge, and London Business School.' },
+      { q: 'How are degrees verified on Mannat?', a: 'We authenticate degree certificates and official university credentials.' }
+    ]
+  },
+  {
+    slug: 'verified-matrimony',
+    title: '100% Verified Matrimony India | Mannat Matrimony',
+    h1: 'India’s Only 100% Verified Matrimonial Platform',
+    eyebrow: 'Zero Fake Profiles · Multi-Point ID Verification',
+    description: 'Every candidate undergoes mandatory government ID, degree, salary, and family background authentication. Experience authentic, dignified matchmaking.',
+    keywordFocus: 'verified matrimony, genuine matrimony india, 100% verified matchmaking, background verified biodatas',
+    communityTag: 'Government ID · Degree · Salary · Background Verified',
+    countBadge: '100% Verified Candidates',
+    introText: 'Eliminating fake profiles, misleading claims, and unsolicited outreach. Mannat sets the gold standard for verified matrimonial trust in India.',
+    pillar1: { title: 'Government ID Authentication', desc: 'Validating Aadhaar, Passport, and Voter ID documents.' },
+    pillar2: { title: 'Professional & Salary Vetting', desc: 'Checking corporate registry and employment credentials.' },
+    pillar3: { title: 'BlurShield™ Anti-Scraping Privacy', desc: 'Zero indexing of private details on public search engines.' },
+    faqs: [
+      { q: 'How long does verification take?', a: 'Our compliance team reviews and validates documentation within 24 hours.' },
+      { q: 'Are unverified profiles allowed to send messages?', a: 'No, only verified candidates can send and receive interest waves.' }
+    ]
+  },
+  {
+    slug: 'photo-privacy-blurshield',
+    title: 'BlurShield™ Matrimony Photo Privacy | Mannat Matrimony',
+    h1: 'BlurShield™: Complete Matrimonial Photo & Data Privacy',
+    eyebrow: 'Zero Public Indexing · Mutual Consent Unblurring',
+    description: 'Keep your portraits, contact details, and biodata completely protected. Softly blurred photos unlocked strictly upon mutual consent.',
+    keywordFocus: 'matrimony photo privacy, hide photos on matrimony app, blur photos matrimonial, confidential matchmaking',
+    communityTag: 'Biometric Privacy · Anti-Screenshot · Mutual Consent',
+    countBadge: '100% Confidential Sanctuary',
+    introText: 'Your privacy is non-negotiable. BlurShield™ ensures member photos and contact information are never exposed to search engines, colleagues, or casual browsers.',
+    pillar1: { title: 'Zero Google Search Indexing', desc: 'Member photos are completely excluded from search engine crawlers.' },
+    pillar2: { title: 'Mutual Consent Unblurring', desc: 'Photos remain softly blurred until both candidates express mutual interest.' },
+    pillar3: { title: 'Anti-Screenshot & Safe Sharing', desc: 'Advanced mobile architecture discouraging unauthorized saving.' },
+    faqs: [
+      { q: 'How does BlurShield™ work?', a: 'Photos are softly blurred by default. Once you send a wave and the matched candidate accepts, full HD photos are unlocked for both parties.' },
+      { q: 'Can search engines like Google see my photos?', a: 'No, search engine bots are strictly blocked from indexing candidate images.' }
     ]
   }
 ];
@@ -575,16 +604,24 @@ footer a:hover { color: #fff; }
       <div class="directory-cluster">
         <a href="/punjabi-matrimony" class="dir-link">🏛️ Punjabi Matrimony</a>
         <a href="/marwari-matrimony" class="dir-link">🏛️ Marwari Matrimony</a>
+        <a href="/agarwal-matrimony" class="dir-link">🏛️ Agarwal Matrimony</a>
         <a href="/gujarati-matrimony" class="dir-link">🏛️ Gujarati Matrimony</a>
         <a href="/jain-matrimony" class="dir-link">🏛️ Jain Matrimony</a>
         <a href="/brahmin-matrimony" class="dir-link">🏛️ Brahmin Matrimony</a>
+        <a href="/rajput-matrimony" class="dir-link">🏛️ Rajput Matrimony</a>
+        <a href="/sindhi-matrimony" class="dir-link">🏛️ Sindhi Matrimony</a>
+        <a href="/kayastha-matrimony" class="dir-link">🏛️ Kayastha Matrimony</a>
         <a href="/delhi-matrimony" class="dir-link">📍 Delhi NCR Matrimony</a>
         <a href="/mumbai-matrimony" class="dir-link">📍 Mumbai Matrimony</a>
+        <a href="/matchmaking-bangalore" class="dir-link">📍 Bangalore Matrimony</a>
+        <a href="/hyderabad-matrimony" class="dir-link">📍 Hyderabad Matrimony</a>
+        <a href="/pune-matrimony" class="dir-link">📍 Pune Matrimony</a>
         <a href="/elite-matrimony" class="dir-link">👑 Elite Matrimony India</a>
         <a href="/nri-matrimony" class="dir-link">✈️ NRI Matrimony (Global)</a>
         <a href="/matrimony-for-doctors" class="dir-link">🩺 Doctors Matrimony</a>
         <a href="/iit-iim-matrimony" class="dir-link">🎓 IIT &amp; IIM Matrimony</a>
         <a href="/verified-matrimony" class="dir-link">🛡️ 100% Verified Matrimony</a>
+        <a href="/photo-privacy-blurshield" class="dir-link">🔒 BlurShield™ Privacy</a>
       </div>
     </div>
   </section>
@@ -622,20 +659,7 @@ for (const page of pages) {
 // Update sitemap.xml with all pages
 const allSlugs = [
   '',
-  'punjabi-matrimony',
-  'marwari-matrimony',
-  'gujarati-matrimony',
-  'jain-matrimony',
-  'brahmin-matrimony',
-  'delhi-matrimony',
-  'mumbai-matrimony',
-  'elite-matrimony',
-  'nri-matrimony',
-  'matrimony-for-doctors',
-  'iit-iim-matrimony',
-  'verified-matrimony',
-  'photo-privacy-blurshield',
-  'matchmaking-bangalore',
+  ...pages.map(p => p.slug),
   'support.html',
   'privacy.html',
   'terms.html',
@@ -660,6 +684,6 @@ ${allSlugs.map(slug => {
 </urlset>`;
 
 fs.writeFileSync(path.join(process.cwd(), 'public', 'sitemap.xml'), sitemapXml, 'utf-8');
-console.log('✅ Updated public/sitemap.xml with all 19 indexed URLs');
+console.log(`✅ Updated public/sitemap.xml with all ${allSlugs.length} indexed URLs`);
 
-console.log('🚀 Programmatic SEO Suite Complete!');
+console.log('🚀 Full Programmatic SEO Suite Generated!');
