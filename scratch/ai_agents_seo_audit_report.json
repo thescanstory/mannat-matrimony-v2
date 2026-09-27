@@ -1,0 +1,321 @@
+{
+  "generatedAt": "2026-09-27T18:16:13.185Z",
+  "agent1_ClickGapReport": [
+    {
+      "url": "https://mannatmatrimony.com/marriage-biodata-maker",
+      "query": "free marriage biodata maker pdf",
+      "metrics": {
+        "position": 2.1,
+        "impressions": 24500,
+        "clicks": 420,
+        "ctr": "1.71%"
+      },
+      "diagnosis": "Ranking in dominant position #2.1 with 24,500 impressions, but only capturing 1.71% CTR due to missing instant-action hooks (e.g. \"Free Download\", \"No Login\", \"PDF\") in the SERP snippet.",
+      "titles": [
+        {
+          "title": "Free Marriage Biodata Maker: Download PDF (No Login)",
+          "lever": "Frictionless Action: Eliminates sign-up hesitation and highlights instant utility."
+        },
+        {
+          "title": "Marriage Biodata Format (PDF) - 4 Luxury Royal Themes",
+          "lever": "Curiosity & Quality: Signals premium aesthetic value over basic black-and-white templates."
+        },
+        {
+          "title": "Create Marriage Biodata in 2 Mins | Instant WhatsApp PDF",
+          "lever": "Speed & Convenience: Targets mobile users looking to forward biodatas immediately to elders."
+        }
+      ],
+      "descriptions": [
+        {
+          "desc": "Create elegant matrimonial biodatas in 2 minutes. Choose from Royal Gold & Emerald themes, add photo & horoscope, and download instant print-ready PDF free.",
+          "lever": "Comprehensive Feature Clarity: Answers all user questions in the SERP snippet."
+        },
+        {
+          "desc": "100% Free Marriage Biodata Maker with Ganesh sloka & Gotra details. No signup required. Generate high-resolution A4 PDF ready for WhatsApp family sharing.",
+          "lever": "Cultural Authority & Zero Risk: Appeals directly to Indian family values and instant sharing."
+        },
+        {
+          "desc": "Looking for a royal marriage biodata format? Customize personal, educational & family details in 4 luxury templates. Download free PDF instantly.",
+          "lever": "Direct Problem-Solution Match: Hooks users searching for modern templates."
+        }
+      ]
+    },
+    {
+      "url": "https://mannatmatrimony.com/kundali-matching-matrimony",
+      "query": "kundali matching for marriage 36 gun milan",
+      "metrics": {
+        "position": 3.4,
+        "impressions": 18200,
+        "clicks": 390,
+        "ctr": "2.14%"
+      },
+      "diagnosis": "Ranking at position #3.4 with high volume (18,200 impressions) but suffering from a 2.14% CTR because competing snippets advertise instant online Gun Milan scores while our snippet read like a static article.",
+      "titles": [
+        {
+          "title": "Kundali Matching for Marriage: Free 36 Gun Milan Online",
+          "lever": "Direct Intent Fulfillment: Guarantees interactive calculation without paywalls."
+        },
+        {
+          "title": "36 Gun Milan Calculator: Instant Vedic Horoscope Match",
+          "lever": "Scientific & Astrological Authority: Focuses on Vedic precision and speed."
+        },
+        {
+          "title": "Vedic Kundli Matching: Check 36 Gunas & Manglik Dosha Free",
+          "lever": "Fear/Relief Lever: Directly addresses the Manglik & Nadi Dosha check searchers care about."
+        }
+      ],
+      "descriptions": [
+        {
+          "desc": "Calculate accurate 36 Gun Milan scores instantly online. Get complete Ashtakoot breakdown (Nadi, Bhakoot, Gana) with Manglik Dosha analysis for free.",
+          "lever": "Completeness: Explains the exact 8 Vedic factors calculated."
+        },
+        {
+          "desc": "Free Vedic Kundali matching tool for bride and groom. Instant 36 Guna score, Manglik check, and astrological compatibility report. No registration needed.",
+          "lever": "Friction Reduction: Immediate value without login barriers."
+        },
+        {
+          "desc": "Check marital compatibility with authentic 36 Gun Milan. Detailed report on emotional harmony, health, and prosperity for prospective alliances.",
+          "lever": "Benefit-Driven: Highlights the real-life benefits of marital harmony."
+        }
+      ]
+    },
+    {
+      "url": "https://mannatmatrimony.com/photo-privacy-blurshield",
+      "query": "matrimony app with photo privacy without public photos",
+      "metrics": {
+        "position": 1.8,
+        "impressions": 3200,
+        "clicks": 72,
+        "ctr": "2.25%"
+      },
+      "diagnosis": "Holding prime position #1.8 for high-intent privacy queries, but low CTR (2.25%) indicates searchers want explicit proof that photos are protected from Google.",
+      "titles": [
+        {
+          "title": "Private Matrimony: Blur Photo Protection (BlurShield™)",
+          "lever": "USP Highlight: Positions BlurShield™ as the proprietary solution to photo theft."
+        },
+        {
+          "title": "Matrimonial App Without Public Photos | 100% Private",
+          "lever": "Negative Avoidance: Eliminates the fear of relatives or scrapers seeing photos."
+        },
+        {
+          "title": "Private Matrimony for Elite Families: Zero Google Indexing",
+          "lever": "Exclusivity & Discretion: Targets HNI and professional families who demand privacy."
+        }
+      ],
+      "descriptions": [
+        {
+          "desc": "Tired of public matrimony sites indexing your photos? BlurShield™ ensures candidate portraits remain blurred until mutual interest is approved. Join free.",
+          "lever": "Agitate & Solve: Speaks directly to user frustrations with Shaadi.com."
+        },
+        {
+          "desc": "Experience 100% confidential Indian matchmaking. Candidate photos and contact details are never shared without explicit mutual consent.",
+          "lever": "Trust & Safety: Reassures privacy-conscious parents and candidates."
+        },
+        {
+          "desc": "India’s only private matrimonial sanctuary with BlurShield™ protection. Multi-point ID verification, zero fake accounts, and private introductions.",
+          "lever": "Category Leadership: Differentiates Mannat from mass-market portals."
+        }
+      ]
+    }
+  ],
+  "agent2_ContentDecayAudit": [
+    {
+      "url": "https://mannatmatrimony.com/punjabi-matrimony-delhi",
+      "query": "punjabi matrimony delhi ncr",
+      "metrics": {
+        "historicalClicks": 98,
+        "recentClicks": 62,
+        "clickDelta": "-36.7%",
+        "positionDelta": "0.2"
+      },
+      "recoveryPlan": {
+        "primaryDecayVector": "Intent Shift & Competitor Freshness",
+        "diagnosisSummary": "Clicks dropped by -36.7% over 14 days while average position stayed stable (4.1 -> 4.3). Competitors refreshed their 2026 sub-caste directories (Arora, Khatri, Sikh) and added WhatsApp CTA widgets in their snippets.",
+        "actionPlan": [
+          {
+            "vector": "Freshness",
+            "action": "Update H1 and meta title with '2026 Verified Directory' and add 'Updated Weekly' badge."
+          },
+          {
+            "vector": "On-Page Experience",
+            "action": "Add 1-click WhatsApp concierge button and direct sample profile previews with blurred VIP badges."
+          },
+          {
+            "vector": "Internal Linking",
+            "action": "Build 5 contextual in-content internal links from /delhi-matrimony and /punjabi-matrimony to this sub-cluster page."
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://mannatmatrimony.com/doctors-matrimony-delhi",
+      "query": "doctor matrimony delhi",
+      "metrics": {
+        "historicalClicks": 128,
+        "recentClicks": 82,
+        "clickDelta": "-35.9%",
+        "positionDelta": "0.2"
+      },
+      "recoveryPlan": {
+        "primaryDecayVector": "On-Page Friction & Missing Medical Sub-Specialties",
+        "diagnosisSummary": "Clicks dropped by -35.9% with position remaining steady at ~#3.8. Searchers seeking doctor matrimony in Delhi want specific specialty filters (Cardiologists, Surgeons, AIIMS Alumni) rather than generic text.",
+        "actionPlan": [
+          {
+            "vector": "Topical Completeness",
+            "action": "Insert dedicated specialty modules for MBBS/MD, AIIMS/MAMC Alumni, and Hospital Consultants in Delhi NCR."
+          },
+          {
+            "vector": "UX & Conversion",
+            "action": "Embed a 'Doctor Matrimony Verified Badge' proof section and link directly to the Doctor Marriage Biodata Template."
+          },
+          {
+            "vector": "Internal Linking",
+            "action": "Link from /marriage-biodata-for-doctors-format-example directly back to /doctors-matrimony-delhi."
+          }
+        ]
+      }
+    }
+  ],
+  "agent3A_StrikingDistancePages": [
+    {
+      "url": "https://mannatmatrimony.com/nri-matrimony",
+      "keyword": "usa nri matrimony for engineers and doctors",
+      "reason": "High impression volume (14,200) with strong transactional/commercial intent; currently hovering at position #8.4."
+    },
+    {
+      "url": "https://mannatmatrimony.com/iit-iim-matrimony",
+      "keyword": "iit iim alumni matrimony matchmaking",
+      "reason": "High impression volume (11,400) with strong transactional/commercial intent; currently hovering at position #11.6."
+    },
+    {
+      "url": "https://mannatmatrimony.com/marwari-matrimony-mumbai",
+      "keyword": "marwari business family matchmaking mumbai",
+      "reason": "High impression volume (9,800) with strong transactional/commercial intent; currently hovering at position #7.2."
+    }
+  ],
+  "agent3B_SemanticGapBlueprints": [
+    {
+      "targetUrl": "https://mannatmatrimony.com/nri-matrimony",
+      "primaryKeyword": "usa nri matrimony for engineers and doctors",
+      "competitorsAnalyzed": [
+        "Shaadi.com/nri-matrimony",
+        "BharatMatrimony.com/nri",
+        "EliteMatrimony.com/nri-matchmaking"
+      ],
+      "semanticDepthGapDiagnosis": "Top 3 competitors rank above us because they cover specific country visa categories (H-1B, Green Card, Canadian PR, UK ILR) and salary benchmarks ($200k+), whereas our page was purely high-level introductory text.",
+      "exactHeadingsToInsert": [
+        {
+          "tag": "H2",
+          "heading": "NRI Matrimony by Country & Immigration Status (USA, UK, Canada, UAE)",
+          "placement": "Insert directly after the Hero Introduction section.",
+          "writerContext": "Detail H-1B, L-1, Green Card, and US Citizen candidate profiles in Silicon Valley, NYC, Texas, and Toronto. Mention time-zone coordinated family calls."
+        },
+        {
+          "tag": "H3",
+          "heading": "Essential Verification Protocol for Global NRI Alliances",
+          "placement": "Insert under the Three Pillars section.",
+          "writerContext": "Explain multi-point authentication of international Master's degrees, foreign employment verification, and single-status affidavit checks."
+        }
+      ],
+      "requiredEntitiesAndKeywords": [
+        "H-1B Approval (I-797)",
+        "Green Card Holders",
+        "Canadian Express Entry PR",
+        "UK Skilled Worker Visa",
+        "Silicon Valley Tech Leads",
+        "USMLE Physicians",
+        "Timezone Coordination (IST / EST / PST)"
+      ],
+      "highIntentFaqsToAppend": [
+        {
+          "q": "How does Mannat verify international employment and salary for NRI candidates?",
+          "targetAnswerAngle": "Explain that corporate email domains, university degree validation, and LinkedIn longevity are cross-checked before conferring the Gold Verified NRI badge."
+        },
+        {
+          "q": "Can family elders in India manage the NRI candidate profile?",
+          "targetAnswerAngle": "Highlight elder-friendly WhatsApp bio-data dossiers and dedicated relationship managers bridging time zone gaps."
+        }
+      ],
+      "interactiveAssetRecommendation": "Embed a 'Global NRI Timezone & Visa Verification Widget' allowing users to filter matches by US East Coast, West Coast, London, and Toronto."
+    },
+    {
+      "targetUrl": "https://mannatmatrimony.com/iit-iim-matrimony",
+      "primaryKeyword": "iit iim alumni matrimony matchmaking",
+      "competitorsAnalyzed": [
+        "IITIIMShaadi.com",
+        "EliteMatrimony.com/iit-iim",
+        "Jeevansathi.com/premium"
+      ],
+      "semanticDepthGapDiagnosis": "Competitors capture position 1-3 because they list accredited institute tiers (IIT Bombay, Delhi, Madras, IIM-A, IIM-B, ISB, Stanford) and founder/executive career tracks, which builds intense topical authority.",
+      "exactHeadingsToInsert": [
+        {
+          "tag": "H2",
+          "heading": "Premier Institute Circles: IIT, IIM, BITS Pilani, ISB & Ivy League",
+          "placement": "Insert above the Pillars grid.",
+          "writerContext": "List specific engineering, management, and global Ivy League institutes supported. Highlight shared intellectual wavelength and career parity."
+        },
+        {
+          "tag": "H3",
+          "heading": "Career & Lifestyle Harmony for Tech Founders & Corporate Leaders",
+          "placement": "Insert after the Institute Circles section.",
+          "writerContext": "Discuss work-life balance, mutual respect for ambitious careers, and equal intellectual partnerships."
+        }
+      ],
+      "requiredEntitiesAndKeywords": [
+        "IIT Bombay",
+        "IIT Delhi",
+        "IIM Ahmedabad",
+        "IIM Bangalore",
+        "ISB Hyderabad",
+        "BITS Pilani",
+        "Tech Co-founders",
+        "McKinsey/BCG Consultants",
+        "Alumni Verification"
+      ],
+      "highIntentFaqsToAppend": [
+        {
+          "q": "How is premier institute alumni status verified on Mannat?",
+          "targetAnswerAngle": "Mandatory official institute alumni email verification and university degree validation."
+        }
+      ],
+      "interactiveAssetRecommendation": "Embed an 'Alumni Institute Compatibility Matrix' allowing candidates to search matches by alma mater (IIT/IIM/Ivy League)."
+    },
+    {
+      "targetUrl": "https://mannatmatrimony.com/marwari-matrimony-mumbai",
+      "primaryKeyword": "marwari business family matchmaking mumbai",
+      "competitorsAnalyzed": [
+        "MarwariShaadi.com",
+        "AgarwalMatrimony.com",
+        "Shaadi.com/marwari-mumbai"
+      ],
+      "semanticDepthGapDiagnosis": "Stuck at #7.2 due to lack of Gotra mapping (Garg, Goyal, Mittal, Birla, Bangur, Daga) and Mumbai localized business hubs (South Mumbai, BKC, Nariman Point).",
+      "exactHeadingsToInsert": [
+        {
+          "tag": "H2",
+          "heading": "Prominent Marwari Business Dynasties & Gotra Alignment in Mumbai",
+          "placement": "Insert directly below the Hero Section.",
+          "writerContext": "Cover Agarwal, Maheshwari, Khandelwal, and Oswal lineages across South Bombay, Bandra, and BKC. Emphasize strict Gotra compatibility."
+        }
+      ],
+      "requiredEntitiesAndKeywords": [
+        "Agarwal",
+        "Maheshwari",
+        "Oswal",
+        "South Mumbai",
+        "BKC",
+        "Gotra Mapping",
+        "Birla/Bangur Lineages",
+        "Vegetarian Matchmaking",
+        "Gun Milan 36"
+      ],
+      "highIntentFaqsToAppend": [
+        {
+          "q": "Do you cater to both traditional Marwari joint families and nuclear business families in Mumbai?",
+          "targetAnswerAngle": "Affirm that Mannat curates introductions understanding the unique expectations of traditional business houses and modern professionals."
+        }
+      ],
+      "interactiveAssetRecommendation": "Embed an instant 'Marwari Gotra & Kuldevi Compatibility Checker'."
+    }
+  ]
+}
