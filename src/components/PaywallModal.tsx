@@ -184,6 +184,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     setShowConfirmModal(true);
   };
 
+  const handleAction = () => {
+    if (isNativeIOS) {
+      handleConfirmPurchase();
+    } else {
+      handleOpenConfirmation();
+    }
+  };
+
   const handleConfirmPurchase = async () => {
     setUpgrading(true);
     setRestoreMessage(null);
@@ -222,14 +230,14 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         }
 
         setTransactionReceipt({
-          id: payment.paymentId || `TXN-RZP-${Date.now()}`,
+          id: payment.paymentId || `TXN-IAP-${Date.now()}`,
           date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
         });
         setShowConfirmModal(false);
         setUpgradeSuccess(true);
         if (onSelectTier) onSelectTier(selectedPlan);
       } else if (payment && payment.error && payment.error !== 'Payment cancelled by user') {
-        setRestoreMessage(`Payment notice: ${payment.error}`);
+        setRestoreMessage(`Notice: ${payment.error}`);
         setShowConfirmModal(false);
       } else {
         // User cancelled modal
@@ -237,7 +245,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
       }
     } catch (err: any) {
       console.warn('Payment execution error:', err);
-      setRestoreMessage('Payment could not be completed. Please try again.');
+      setRestoreMessage('Purchase could not be completed. Please try again.');
       setShowConfirmModal(false);
     } finally {
       setUpgrading(false);
@@ -515,19 +523,29 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
               <div className="p-4 sm:p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg space-y-2">
                 <button
                   type="button"
-                  onClick={handleOpenConfirmation}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs uppercase tracking-wider hover:brightness-105 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40"
+                  disabled={upgrading}
+                  onClick={handleAction}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs uppercase tracking-wider hover:brightness-105 active:scale-98 transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40 disabled:opacity-75"
                 >
-                  {isNativeIOS ? (
-                    <Apple className="w-4 h-4 text-[#1C0102] shrink-0" />
+                  {upgrading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-[#1C0102] border-t-transparent rounded-full animate-spin" />
+                      <span>{isNativeIOS ? 'Opening Apple StoreKit...' : 'Processing...'}</span>
+                    </div>
                   ) : (
-                    <ShieldCheck className="w-4 h-4 text-[#1C0102] shrink-0" />
+                    <>
+                      {isNativeIOS ? (
+                        <Apple className="w-4 h-4 text-[#1C0102] shrink-0" />
+                      ) : (
+                        <ShieldCheck className="w-4 h-4 text-[#1C0102] shrink-0" />
+                      )}
+                      <span className="truncate">
+                        {selectedPlan === 'sachet' 
+                          ? (isNativeIOS ? `Unlock Profile • ${currentPlanObj.price}` : `Pay with Razorpay • ${currentPlanObj.price}`)
+                          : (isNativeIOS ? `Subscribe • ${currentPlanObj.name} (${currentPlanObj.price}${currentPlanObj.period})` : `Upgrade with Razorpay • ${currentPlanObj.price}${currentPlanObj.period}`)}
+                      </span>
+                    </>
                   )}
-                  <span className="truncate">
-                    {selectedPlan === 'sachet' 
-                      ? (isNativeIOS ? `Unlock Profile • ${currentPlanObj.price}` : `Pay with Razorpay • ${currentPlanObj.price}`)
-                      : (isNativeIOS ? `Subscribe • ${currentPlanObj.name} (${currentPlanObj.price}${currentPlanObj.period})` : `Upgrade with Razorpay • ${currentPlanObj.price}${currentPlanObj.period}`)}
-                  </span>
                 </button>
 
                 <button

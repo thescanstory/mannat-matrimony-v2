@@ -18,18 +18,24 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
   onClose,
   onSuccess
 }) => {
-  const [selectedApp, setSelectedApp] = useState<'gpay' | 'phonepe' | 'paytm' | 'apple'>('gpay');
+  const [selectedApp, setSelectedApp] = useState<'gpay' | 'phonepe' | 'paytm' | 'apple'>(isIOSDevice() ? 'apple' : 'gpay');
   const [showConfirm, setShowConfirm] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const isIOS = isIOSDevice();
 
-  const handleOpenConfirm = () => {
-    setShowConfirm(true);
+  const handleAction = () => {
+    if (isIOS) {
+      handleConfirmPay();
+    } else {
+      setShowConfirm(true);
+    }
   };
 
   const handleConfirmPay = async () => {
     setIsProcessing(true);
+    setErrorMessage(null);
 
     try {
       let result;
@@ -47,11 +53,16 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
       if (result.success) {
         setShowConfirm(false);
         setIsSuccess(true);
+      } else if (result.error && result.error !== 'Payment cancelled by user') {
+        setErrorMessage(result.error);
+        setShowConfirm(false);
+      } else {
+        setShowConfirm(false);
       }
-    } catch (e) {
-      console.warn('Payment failed or cancelled:', e);
+    } catch (e: any) {
+      console.warn('Payment failed or error:', e);
+      setErrorMessage(e?.message || 'Payment could not be completed.');
       setShowConfirm(false);
-      setIsSuccess(true);
     } finally {
       setIsProcessing(false);
     }
@@ -107,6 +118,12 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
 
           {!isSuccess ? (
             <div className="mt-5 space-y-5">
+              {errorMessage && (
+                <div className="p-3 bg-red-950/60 border border-red-500/40 text-red-200 text-xs rounded-xl text-center">
+                  {errorMessage}
+                </div>
+              )}
+
               {/* Profile Preview Card */}
               <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-[#1C0102]/60 border border-[#A17B5E]/30">
                 <img
@@ -132,11 +149,11 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
               <div className="space-y-2 text-xs text-neutral-200 bg-[#1C0102]/40 p-3.5 rounded-xl border border-[#A17B5E]/20 text-left">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#D8B486] flex-shrink-0" />
-                  <span>Reveal Full Name, Company & Specific Salary Bracket</span>
+                  <span>Reveal Full Name, Company &amp; Specific Salary Bracket</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#D8B486] flex-shrink-0" />
-                  <span>Unlock Traditional Bio-data & Family Background Card</span>
+                  <span>Unlock Traditional Bio-data &amp; Family Background Card</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[#D8B486] flex-shrink-0" />
@@ -144,46 +161,67 @@ export const SachetPaywallModal: React.FC<SachetPaywallModalProps> = ({
                 </div>
               </div>
 
-              {/* Payment Method Selector */}
-              <div className="text-left">
-                <label className="block text-xs font-bold text-[#A17B5E] uppercase tracking-wider mb-2.5">
-                  Payment Method
-                </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[
-                    { id: 'apple', name: ' Apple IAP' },
-                    { id: 'gpay', name: 'GPay' },
-                    { id: 'phonepe', name: 'PhonePe' },
-                    { id: 'paytm', name: 'Paytm' },
-                  ].map((app) => (
-                    <button
-                      key={app.id}
-                      onClick={() => setSelectedApp(app.id as any)}
-                      className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 cursor-pointer ${
-                        selectedApp === app.id
-                          ? 'border-[#A17B5E] bg-[#560406] shadow-[0_0_12px_rgba(161,123,94,0.4)] text-[#D8B486]'
-                          : 'border-white/10 bg-white/5 hover:border-[#A17B5E]/40 text-neutral-300'
-                      }`}
-                    >
-                      <span className="text-[11px] font-bold">{app.name}</span>
-                    </button>
-                  ))}
+              {/* Payment Method Selector (Web only) */}
+              {!isIOS && (
+                <div className="text-left">
+                  <label className="block text-xs font-bold text-[#A17B5E] uppercase tracking-wider mb-2.5">
+                    Payment Method
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'gpay', name: 'GPay' },
+                      { id: 'phonepe', name: 'PhonePe' },
+                      { id: 'paytm', name: 'Paytm' },
+                    ].map((app) => (
+                      <button
+                        key={app.id}
+                        type="button"
+                        onClick={() => setSelectedApp(app.id as any)}
+                        className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                          selectedApp === app.id
+                            ? 'border-[#A17B5E] bg-[#560406] shadow-[0_0_12px_rgba(161,123,94,0.4)] text-[#D8B486]'
+                            : 'border-white/10 bg-white/5 hover:border-[#A17B5E]/40 text-neutral-300'
+                        }`}
+                      >
+                        <span className="text-[11px] font-bold">{app.name}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Pay Action Button */}
               <button
                 type="button"
-                onClick={handleOpenConfirm}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs shadow-[0_4px_25px_rgba(161,123,94,0.35)] hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40"
+                disabled={isProcessing}
+                onClick={handleAction}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#D8B486] via-[#C5A880] to-[#A17B5E] text-[#1C0102] font-black text-xs shadow-[0_4px_25px_rgba(161,123,94,0.35)] hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border border-[#F5E6D3]/40 disabled:opacity-75"
               >
-                <span>Unlock Profile for ₹49</span>
-                <ArrowRight className="w-4 h-4" />
+                {isProcessing ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-[#1C0102] border-t-transparent rounded-full animate-spin" />
+                    <span>{isIOS ? 'Opening Apple StoreKit...' : 'Processing...'}</span>
+                  </div>
+                ) : (
+                  <>
+                    <span>Unlock Profile for ₹49</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
 
               <div className="text-center text-[11px] text-neutral-400 flex items-center justify-center gap-1.5">
-                <Apple className="w-3.5 h-3.5 text-[#A17B5E]" />
-                <span>Apple StoreKit & 256-bit Encrypted Checkout</span>
+                {isIOS ? (
+                  <>
+                    <Apple className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <span>Apple StoreKit &amp; 256-bit Encrypted Checkout</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#A17B5E]" />
+                    <span>Secure 256-bit SSL Encrypted Payment</span>
+                  </>
+                )}
               </div>
             </div>
           ) : (

@@ -1,4 +1,4 @@
-import Capacitor
+@preconcurrency import Capacitor
 import StoreKit
 
 @objc(StoreKitPlugin)
@@ -31,26 +31,31 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
             return
         }
 
-        // Cancel any pending timeout
+        print("[StoreKitPlugin] purchase initiated for productId: \(productId)")
         purchaseTimeoutWorkItem?.cancel()
         self.activeCall = call
 
-        // Setup a 20-second safety timeout so the app never gets permanently stuck
+        // Setup a 45-second safety timeout for Apple ID / Sandbox auth dialogs
         let timeoutWorkItem = DispatchWorkItem { [weak self] in
             guard let self = self, let activeCall = self.activeCall else { return }
+            print("[StoreKitPlugin] purchase timed out after 45s for: \(productId)")
             self.currentProductsRequest?.cancel()
             self.currentProductsRequest = nil
             self.activeCall = nil
             activeCall.reject("StoreKit transaction timed out. Please check your App Store connection and try again.")
         }
         self.purchaseTimeoutWorkItem = timeoutWorkItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + 20.0, execute: timeoutWorkItem)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 45.0, execute: timeoutWorkItem)
 
         if #available(iOS 15.0, *) {
             Task {
                 do {
+                    print("[StoreKitPlugin] Querying Product.products for: \(productId)")
                     let products = try await Product.products(for: [productId])
+                    print("[StoreKitPlugin] Found \(products.count) products matching \(productId)")
+                    
                     if let product = products.first {
+                        print("[StoreKitPlugin] Launching purchase flow for: \(product.id) (\(product.displayName))")
                         let result = try await product.purchase()
                         self.purchaseTimeoutWorkItem?.cancel()
                         self.purchaseTimeoutWorkItem = nil
@@ -60,13 +65,15 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
                             switch verification {
                             case .verified(let transaction):
                                 await transaction.finish()
+                                print("[StoreKitPlugin] Transaction verified successfully: \(transaction.id)")
                                 self.resolveActiveCall([
                                     "success": true,
                                     "transactionId": "\(transaction.id)",
                                     "productId": transaction.productID
                                 ])
-                            case .unverified(let transaction, _):
+                            case .unverified(let transaction, let error):
                                 await transaction.finish()
+                                print("[StoreKitPlugin] Transaction unverified: \(transaction.id), error: \(error.localizedDescription)")
                                 self.resolveActiveCall([
                                     "success": true,
                                     "transactionId": "\(transaction.id)",
@@ -74,21 +81,25 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
                                 ])
                             }
                         case .userCancelled:
+                            print("[StoreKitPlugin] User cancelled purchase")
                             self.rejectActiveCall("Payment cancelled by user")
                         case .pending:
+                            print("[StoreKitPlugin] Transaction is pending approval")
                             self.resolveActiveCall([
                                 "success": true,
                                 "transactionId": "pending_\(Date().timeIntervalSince1970)",
                                 "productId": productId
                             ])
                         @unknown default:
+                            print("[StoreKitPlugin] Unknown transaction state")
                             self.rejectActiveCall("Unknown purchase state")
                         }
                     } else {
-                        // Fallback to legacy StoreKit 1
+                        print("[StoreKitPlugin] Product \(productId) not returned by StoreKit 2, attempting legacy StoreKit 1 fallback...")
                         self.fallbackLegacyPurchase(productId: productId)
                     }
                 } catch {
+                    print("[StoreKitPlugin] StoreKit 2 purchase error: \(error.localizedDescription), attempting legacy fallback...")
                     self.fallbackLegacyPurchase(productId: productId)
                 }
             }
@@ -150,16 +161,20 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
     }
 
     public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        print("[StoreKitPlugin] SKProductsRequest received \(response.products.count) products, invalid: \(response.invalidProductIdentifiers)")
         if let product = response.products.first {
+            print("[StoreKitPlugin] SKProductsRequest adding payment for \(product.productIdentifier)")
             let payment = SKPayment(product: product)
             SKPaymentQueue.default().add(payment)
         } else {
             // Product not yet propagated or sandbox unavailable
-            rejectActiveCall("Product not available in App Store. Please ensure In-App Purchases are approved.")
+            print("[StoreKitPlugin] No products found in SKProductsResponse. Invalid IDs: \(response.invalidProductIdentifiers)")
+            rejectActiveCall("Product not available in App Store. Please ensure In-App Purchases and Paid Apps Agreement are active.")
         }
     }
 
     public func request(_ request: SKRequest, didFailWithError error: Error) {
+        print("[StoreKitPlugin] SKRequest failed with error: \(error.localizedDescription)")
         rejectActiveCall(error.localizedDescription)
     }
 

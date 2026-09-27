@@ -3,6 +3,7 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
+Disallow: /app/
 
 # Allow AI answer engines so ChatGPT, Perplexity, Claude and Gemini can cite you
 User-agent: GPTBot
@@ -17,3 +18,5 @@ User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://mannatmatrimony.com/sitemap.xml
+Host: https://mannatmatrimony.com
+

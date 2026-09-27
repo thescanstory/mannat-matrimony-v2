@@ -63,16 +63,48 @@ export const OnboardingCarousel: React.FC<OnboardingCarouselProps> = ({
       : 'Salaried';
   const cleanOccupation = rawOccupation.replace(/\s*\((Salaried|Self-Employed \/ Business|Self-Employed|Business)\)/i, '');
 
+  // Resolve Candidate Name from initialData, currentUser, or Apple/Social auth session
+  const resolveInitialDisplayName = () => {
+    if (initialData?.display_name) return initialData.display_name;
+    const fromUserMetadata = currentUser?.user_metadata?.full_name;
+    if (fromUserMetadata && fromUserMetadata !== 'Apple Member') return fromUserMetadata;
+    const fromUserName = (currentUser as any)?.name;
+    if (fromUserName && fromUserName !== 'Apple Member') return fromUserName;
+    try {
+      const appleName = localStorage.getItem('mannat_apple_name');
+      if (appleName && appleName !== 'Apple Member') return appleName;
+      const activeUserStr = localStorage.getItem('mannat_active_user');
+      if (activeUserStr) {
+        const parsed = JSON.parse(activeUserStr);
+        if (parsed?.user_metadata?.full_name && parsed.user_metadata.full_name !== 'Apple Member') {
+          return parsed.user_metadata.full_name;
+        }
+        if (parsed?.name && parsed.name !== 'Apple Member') {
+          return parsed.name;
+        }
+      }
+      const authName = localStorage.getItem('mannat_auth_name');
+      if (authName && authName !== 'Apple Member') return authName;
+    } catch {}
+    return '';
+  };
+
   // Form State to build persona - populated from initialData if editing.
-  // All default values are left empty (no pre-filled data) so new users
-  // make their own choices instead of inheriting hidden presets.
   const [gender, setGender] = useState<string>(
     initialData?.gender === 'female' ? 'woman' : initialData?.gender === 'male' ? 'man' : ''
   );
   const managedBy = 'self';
-  const [displayName, setDisplayName] = useState(
-    initialData?.display_name || ''
-  );
+  const [displayName, setDisplayName] = useState<string>(resolveInitialDisplayName);
+
+  // Sync candidate name if auth session resolves or updates
+  useEffect(() => {
+    if (!displayName) {
+      const resolved = resolveInitialDisplayName();
+      if (resolved) {
+        setDisplayName(resolved);
+      }
+    }
+  }, [currentUser]);
   const [age, setAge] = useState(initialData?.age ? String(initialData.age) : '');
   const [height, setHeight] = useState(initialData?.height || '');
   const [city, setCity] = useState(initialData?.city || '');

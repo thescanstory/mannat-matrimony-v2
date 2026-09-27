@@ -6,6 +6,7 @@ import { SocialLogin } from '@capgo/capacitor-social-login';
 export interface UserSession {
   id: string;
   email?: string;
+  name?: string;
   user_metadata?: {
     full_name?: string;
     avatar_url?: string;
@@ -196,6 +197,27 @@ export const authService = {
 
         const appleRes = res?.result as any;
         if (appleRes) {
+          // Extract Apple Given Name & Family Name from AuthenticationServices
+          const appleGivenName = appleRes.profile?.givenName || appleRes.givenName || '';
+          const appleFamilyName = appleRes.profile?.familyName || appleRes.familyName || '';
+          const appleFullName = [appleGivenName, appleFamilyName].filter(Boolean).join(' ').trim();
+
+          // Persist apple name locally (Apple only sends name components on first sign-in)
+          if (appleFullName && appleFullName !== 'Apple Member') {
+            try {
+              localStorage.setItem('mannat_apple_name', appleFullName);
+              if (appleRes.profile?.user) {
+                localStorage.setItem(`apple_name_${appleRes.profile.user}`, appleFullName);
+              }
+            } catch {}
+          }
+
+          const cachedAppleName = appleRes.profile?.user
+            ? localStorage.getItem(`apple_name_${appleRes.profile.user}`)
+            : localStorage.getItem('mannat_apple_name');
+
+          const finalExtractedName = appleFullName || cachedAppleName || '';
+
           if (appleRes.idToken && isSupabaseConfigured()) {
             try {
               const { data } = await supabase.auth.signInWithIdToken({
@@ -203,9 +225,15 @@ export const authService = {
                 token: appleRes.idToken,
               });
               if (data?.user) {
+                const email = data.user.email || appleRes.profile?.email || '';
+                const nameFromMetadata = data.user.user_metadata?.full_name || data.user.user_metadata?.name;
+                const finalName = (nameFromMetadata && nameFromMetadata !== 'Apple Member')
+                  ? nameFromMetadata
+                  : (finalExtractedName || (email ? email.split('@')[0] : 'Apple Member'));
+
                 const u = authService.setUserSession(
-                  data.user.email || appleRes.profile?.email || '',
-                  data.user.user_metadata?.full_name || [appleRes.profile?.givenName, appleRes.profile?.familyName].filter(Boolean).join(' ') || 'Apple Member',
+                  email,
+                  finalName,
                   ''
                 );
                 return { data: u, error: null };
@@ -217,8 +245,8 @@ export const authService = {
 
           if (appleRes.profile?.email || appleRes.profile?.user) {
             const email = appleRes.profile?.email || `${appleRes.profile.user}@privaterelay.appleid.com`;
-            const name = [appleRes.profile?.givenName, appleRes.profile?.familyName].filter(Boolean).join(' ') || 'Apple Member';
-            const u = authService.setUserSession(email, name);
+            const finalName = finalExtractedName || (email ? email.split('@')[0] : 'Apple Member');
+            const u = authService.setUserSession(email, finalName);
             return { data: u, error: null };
           }
         }
@@ -246,7 +274,8 @@ export const authService = {
       return { data: null, error };
     }
 
-    const fallbackUser = authService.setUserSession('member.apple@icloud.com', 'Apple ID Member');
+    const cachedAppleName = localStorage.getItem('mannat_apple_name') || 'Apple ID Member';
+    const fallbackUser = authService.setUserSession('member.apple@icloud.com', cachedAppleName);
     return { data: fallbackUser, error: null };
   },
 
@@ -268,6 +297,7 @@ export const authService = {
     const user: UserSession = {
       id: generateSessionUUID(),
       email: formattedEmail,
+      name: candidateName,
       user_metadata: {
         full_name: candidateName,
         avatar_url: avatarUrl || ''
@@ -275,6 +305,8 @@ export const authService = {
     };
     try {
       localStorage.removeItem('mannat_logged_out');
+      localStorage.setItem('mannat_auth_name', candidateName);
+      localStorage.setItem('mannat_auth_email', formattedEmail);
       localStorage.setItem('mannat_active_user', JSON.stringify(user));
       
       // Keep in saved accounts list

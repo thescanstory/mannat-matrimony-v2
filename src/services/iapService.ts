@@ -158,7 +158,7 @@ export const iapService = {
               success: false,
               error: 'StoreKit transaction timed out. Please verify your App Store connection.'
             });
-          }, 22000);
+          }, 50000);
         });
 
         const purchasePromise = StoreKit.purchase({ productId }).then((result) => {

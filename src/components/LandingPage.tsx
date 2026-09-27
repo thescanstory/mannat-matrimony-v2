@@ -214,19 +214,61 @@ export const LandingPage: React.FC = () => {
     }
   ];
 
-  // FAQs - Accurate, transparent, and product-aligned
+  // High-Intent Communities Directory (SEO & Engagement)
+  const communityList = [
+    { name: 'Punjabi Matrimony', desc: 'Arora, Khatri, Sikh & Hindu Punjabi alliances', count: '1,400+ Profiles', badge: 'High Activity' },
+    { name: 'Marwari Matrimony', desc: 'Agarwal, Maheshwari, Khandelwal & Oswal lineages', count: '1,250+ Profiles', badge: 'Verified' },
+    { name: 'Gujarati Matrimony', desc: 'Patel, Shah, Vaishnav & Jain Gujarati families', count: '980+ Profiles', badge: 'Exclusive' },
+    { name: 'Jain Matrimony', desc: 'Digambar, Shwetambar & Oswal match curation', count: '820+ Profiles', badge: 'Verified' },
+    { name: 'Brahmin Matrimony', desc: 'Gaur, Saraswat, Kanyakubj, Nagar & Sanadhya', count: '1,100+ Profiles', badge: 'High Activity' },
+    { name: 'Rajput Matrimony', desc: 'Royal heritage, Sisodia, Rathore & Chauhan clans', count: '740+ Profiles', badge: 'Exclusive' },
+    { name: 'Sindhi Matrimony', desc: 'Lohana, Bhaiband & Sahiti business lineages', count: '650+ Profiles', badge: 'Verified' },
+    { name: 'South Indian Matrimony', desc: 'Iyer, Iyengar, Reddy, Nair & Chettiar families', count: '890+ Profiles', badge: 'Verified' }
+  ];
+
+  // High-Intent Metros & Global NRI Hubs
+  const cityList = [
+    { name: 'Delhi NCR Matrimony', desc: 'South Delhi, Gurgaon, Noida, West Delhi', count: '2,800+ Members', flag: '🇮🇳' },
+    { name: 'Mumbai Matrimony', desc: 'South Mumbai, Bandra, Juhu, Powai, Thane', count: '2,400+ Members', flag: '🇮🇳' },
+    { name: 'Bangalore & Hyderabad', desc: 'Tech Founders, CXOs, Medical & Corporate', count: '1,900+ Members', flag: '🇮🇳' },
+    { name: 'NRI Matrimony — USA', desc: 'Silicon Valley, New York, Texas, Seattle, Chicago', count: '1,650+ Members', flag: '🇺🇸' },
+    { name: 'NRI Matrimony — UK', desc: 'London, Birmingham, Manchester, Leicester', count: '1,120+ Members', flag: '🇬🇧' },
+    { name: 'NRI Matrimony — UAE', desc: 'Dubai, Abu Dhabi, Sharjah business families', count: '980+ Members', flag: '🇦🇪' },
+    { name: 'NRI Matrimony — Canada', desc: 'Toronto, Vancouver, Calgary, Montreal', count: '860+ Members', flag: '🇨🇦' },
+    { name: 'NRI Matrimony — Singapore & AU', desc: 'Singapore, Sydney, Melbourne corporate leaders', count: '720+ Members', flag: '🌏' }
+  ];
+
+  // Elite Professions & Pedigree
+  const professionList = [
+    { name: 'Entrepreneurs & Industrialists', desc: 'Established family businesses & high-growth founders', badge: 'Ultra HNI' },
+    { name: 'Corporate Leaders & CXOs', desc: 'Directors, VPs, Partners in Fortune 500 & MNCs', badge: 'Leadership' },
+    { name: 'Doctors & Medical Specialists', desc: 'Surgeons, MDs, Dentists & Healthcare Executives', badge: 'Medical' },
+    { name: 'Chartered Accountants & Bankers', desc: 'Big-4 CAs, Investment Bankers, PE/VC Principals', badge: 'Finance' },
+    { name: 'Tech & Product Leaders', desc: 'Engineers, Architects & Leaders from Top Tech', badge: 'Technology' },
+    { name: 'Civil Servants & Judiciary', desc: 'IAS, IPS, IRS, IFS & Judicial Service Officers', badge: 'Civil Services' }
+  ];
+
+  // FAQs - Accurate, transparent, and product-aligned for Rich Snippets & PAA
   const faqs = [
     {
-      q: 'How does Mannat Matrimony work?',
-      a: 'Mannat combines a private, verified mobile app and web platform with personalized matchmaking concierge support. You can explore curated profiles, send interest waves, and request dedicated assistance from our relationship advisors.'
+      q: 'What makes Mannat Matrimony different from conventional matrimonial sites?',
+      a: 'Mannat combines a private, verified platform with human-led concierge advisory. We enforce mandatory government ID and credential checks, protect family privacy with BlurShield™, and never expose member profiles to public search engine indexing.'
     },
     {
       q: 'How does BlurShield™ protect our family privacy?',
-      a: 'BlurShield™ ensures your profile photos and contact details are never indexed publicly by search engines. Photos remain softly blurred and are only unlocked upon mutual expression of interest.'
+      a: 'BlurShield™ ensures your candidate portraits and confidential contact details are never indexed publicly by search engines. Photos remain softly blurred and are unlocked strictly upon mutual expression of interest.'
     },
     {
-      q: 'What is the verification process for members?',
+      q: 'What is the verification process for registered candidates?',
       a: 'Every profile undergoes a multi-point verification check: Government ID authentication, educational credential vetting, professional registry validation, and family background assessment.'
+    },
+    {
+      q: 'Do you offer matchmaking services for NRI families in the USA, UK, UAE, and Canada?',
+      a: 'Yes. Mannat caters extensively to distinguished NRI and global Indian families residing in the United States, United Kingdom, UAE/Dubai, Canada, Singapore, and Australia with dedicated NRI advisors.'
+    },
+    {
+      q: 'Which communities and professions are represented on Mannat?',
+      a: 'Mannat serves families across Punjabi, Marwari, Gujarati, Jain, Brahmin, Rajput, Sindhi, and Agarwal communities, representing doctors, corporate CXOs, tech leaders, chartered accountants, and business families.'
     },
     {
       q: 'What does it cost to join Mannat?',
@@ -237,6 +279,8 @@ export const LandingPage: React.FC = () => {
       a: 'Yes! Android and desktop users can access the full platform instantly through our secure Member Web App at mannatmatrimony.com/app with Google or Apple authentication.'
     }
   ];
+
+  const [directoryTab, setDirectoryTab] = useState<'communities' | 'cities' | 'professions'>('communities');
 
   return (
     <div className="min-h-screen bg-[#F8F6F2] text-[#161412] selection:bg-[#A17B5E]/30 selection:text-[#161412] font-sans overflow-x-hidden pt-16 sm:pt-20">
@@ -304,9 +348,10 @@ export const LandingPage: React.FC = () => {
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#6E6259]">
               <a href="#about" className="hover:text-[#560406] transition">Why Mannat</a>
+              <a href="#how-it-works" className="hover:text-[#560406] transition">How It Works</a>
+              <a href="#communities" className="hover:text-[#560406] transition">Communities &amp; Cities</a>
               <a href="#experience" className="hover:text-[#560406] transition text-[#560406]">Experience App</a>
-              <a href="#principles" className="hover:text-[#560406] transition">Our Principles</a>
-              <a href="#values" className="hover:text-[#560406] transition">Values</a>
+              <a href="#principles" className="hover:text-[#560406] transition">Principles</a>
               <a href="#faq" className="hover:text-[#560406] transition">FAQ</a>
             </nav>
 
@@ -329,7 +374,7 @@ export const LandingPage: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-xs font-bold tracking-wide shadow-md transition cursor-pointer whitespace-nowrap"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
-                <span>Open Web App</span>
+                <span>Log In / Sign In</span>
                 <ArrowRight className="w-3.5 h-3.5 text-[#A17B5E]" />
               </a>
 
@@ -363,18 +408,32 @@ export const LandingPage: React.FC = () => {
                   <span>★ Why Mannat</span>
                 </a>
                 <a
+                  href="#how-it-works"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-3 bg-white rounded-xl border border-[#E8DDD0] text-[#161412] flex items-center justify-between"
+                >
+                  <span>⚡ How It Works</span>
+                </a>
+                <a
+                  href="#communities"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-3 bg-white rounded-xl border border-[#E8DDD0] text-[#161412] flex items-center justify-between"
+                >
+                  <span>🏛️ Communities</span>
+                </a>
+                <a
                   href="#experience"
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-3 bg-white rounded-xl border border-[#E8DDD0] text-[#161412] flex items-center justify-between"
                 >
-                  <span>📱 Experience App</span>
+                  <span>📱 Mobile App</span>
                 </a>
                 <a
                   href="#principles"
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-3 bg-white rounded-xl border border-[#E8DDD0] text-[#161412] flex items-center justify-between"
                 >
-                  <span>💍 Our Principles</span>
+                  <span>💍 Principles</span>
                 </a>
                 <a
                   href="#faq"
@@ -389,7 +448,7 @@ export const LandingPage: React.FC = () => {
                 className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] text-[#F5E6D3] border border-[#A17B5E]/60 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
-                <span>Open Member Web App →</span>
+                <span>Log In / Sign In →</span>
               </a>
               <a
                 href="https://apps.apple.com/app/id6812288373"
@@ -517,7 +576,7 @@ export const LandingPage: React.FC = () => {
                   href="/app"
                   className="font-bold text-[#D8B486] hover:text-white underline underline-offset-4 flex items-center gap-1 transition"
                 >
-                  <span>Android &amp; Desktop: Open Web App</span>
+                  <span>Already a Member? Log In / Sign In</span>
                   <ArrowRight className="w-3 h-3 text-[#D8B486]" />
                 </a>
               </div>
@@ -583,6 +642,94 @@ export const LandingPage: React.FC = () => {
                 <p className="text-xs text-[#6E6259] leading-relaxed pt-0.5">WhatsApp bio-data cards, detailed horoscope matching, and global candidate profiles.</p>
               </div>
             </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 3B. How It Works — The 4-Step Matchmaking Journey (SEO HowTo & Flow) */}
+      <section id="how-it-works" className="py-12 sm:py-20 bg-[#FAF7F2] border-b border-[#E8DDD0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-14">
+          
+          <div className="text-center space-y-3 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#560406]/10 border border-[#560406]/20 text-[#560406] text-xs font-bold uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
+              <span>THE BESPOKE PROCESS</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-normal text-[#161412] tracking-tight leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+              How Mannat Matchmaking Works
+            </h2>
+            <p className="text-xs sm:text-base text-[#6E6259] leading-relaxed max-w-2xl mx-auto">
+              A private, four-pillar matchmaking journey engineered to ensure dignity, verification, and meaningful alliances.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-left">
+            
+            {/* Step 1 */}
+            <div className="bg-white p-6 rounded-2xl border border-[#E8DDD0] shadow-sm relative group hover:border-[#560406]/40 transition space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#560406] text-[#D8B486] font-bold text-sm flex items-center justify-center shadow-xs">
+                01
+              </div>
+              <h3 className="font-bold text-base text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                Mandatory Verification
+              </h3>
+              <p className="text-xs text-[#6E6259] leading-relaxed">
+                Submit candidate bio-data, academic credentials, and government ID. Our compliance team verifies authentic background details within 24 hours.
+              </p>
+              <div className="pt-2 text-[10px] uppercase tracking-wider font-extrabold text-[#560406]">
+                ✓ 100% Verified Profiles
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-white p-6 rounded-2xl border border-[#E8DDD0] shadow-sm relative group hover:border-[#560406]/40 transition space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#560406] text-[#D8B486] font-bold text-sm flex items-center justify-center shadow-xs">
+                02
+              </div>
+              <h3 className="font-bold text-base text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                BlurShield™ Privacy Controls
+              </h3>
+              <p className="text-xs text-[#6E6259] leading-relaxed">
+                Portraits and contact coordinates remain softly blurred. Member profiles are never indexed on public search engines or exposed to casual browsing.
+              </p>
+              <div className="pt-2 text-[10px] uppercase tracking-wider font-extrabold text-[#560406]">
+                🔒 Zero Public Search Indexing
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-white p-6 rounded-2xl border border-[#E8DDD0] shadow-sm relative group hover:border-[#560406]/40 transition space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#560406] text-[#D8B486] font-bold text-sm flex items-center justify-center shadow-xs">
+                03
+              </div>
+              <h3 className="font-bold text-base text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                Private Interest Waves
+              </h3>
+              <p className="text-xs text-[#6E6259] leading-relaxed">
+                Explore curated match portfolios with detailed Kundli &amp; lifestyle parameters. Send private interest waves that notify candidates instantly.
+              </p>
+              <div className="pt-2 text-[10px] uppercase tracking-wider font-extrabold text-[#560406]">
+                ⚡ Mutual Consent Unblurring
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="bg-white p-6 rounded-2xl border border-[#E8DDD0] shadow-sm relative group hover:border-[#560406]/40 transition space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#560406] text-[#D8B486] font-bold text-sm flex items-center justify-center shadow-xs">
+                04
+              </div>
+              <h3 className="font-bold text-base text-[#161412]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                Concierge &amp; Family Connect
+              </h3>
+              <p className="text-xs text-[#6E6259] leading-relaxed">
+                Instantly generate WhatsApp dossier cards formatted for family elders or engage your dedicated Matchmaking Concierge for high-touch introductions.
+              </p>
+              <div className="pt-2 text-[10px] uppercase tracking-wider font-extrabold text-[#560406]">
+                👑 Bespoke Relationship Support
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -933,6 +1080,174 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* 6B. Bespoke Matchmaking Directory: Communities, Metros & NRI Hubs (SEO Semantic Section) */}
+      <section id="communities" className="py-12 sm:py-20 bg-white border-b border-[#E8DDD0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
+          
+          <div className="text-center space-y-3 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#560406]/10 border border-[#560406]/20 text-[#560406] text-xs font-bold uppercase tracking-widest">
+              <Crown className="w-3.5 h-3.5 text-[#A17B5E]" />
+              <span>COMMUNITIES &amp; GLOBAL HUBS</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-normal text-[#161412] tracking-tight leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+              Tailored Introductions by Heritage &amp; City
+            </h2>
+            <p className="text-xs sm:text-base text-[#6E6259] leading-relaxed max-w-2xl mx-auto">
+              Explore private candidate circles across leading business lineages, global metros, and esteemed professions.
+            </p>
+
+            {/* Directory Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              <button
+                onClick={() => setDirectoryTab('communities')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  directoryTab === 'communities'
+                    ? 'bg-[#560406] text-[#D8B486] shadow-sm'
+                    : 'bg-[#F8F6F2] text-[#6E6259] hover:text-[#161412] border border-[#E8DDD0]'
+                }`}
+              >
+                🏛️ Top Communities
+              </button>
+              <button
+                onClick={() => setDirectoryTab('cities')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  directoryTab === 'cities'
+                    ? 'bg-[#560406] text-[#D8B486] shadow-sm'
+                    : 'bg-[#F8F6F2] text-[#6E6259] hover:text-[#161412] border border-[#E8DDD0]'
+                }`}
+              >
+                ✈️ Metros &amp; NRI Hubs
+              </button>
+              <button
+                onClick={() => setDirectoryTab('professions')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  directoryTab === 'professions'
+                    ? 'bg-[#560406] text-[#D8B486] shadow-sm'
+                    : 'bg-[#F8F6F2] text-[#6E6259] hover:text-[#161412] border border-[#E8DDD0]'
+                }`}
+              >
+                🎓 Professions &amp; Pedigree
+              </button>
+            </div>
+          </div>
+
+          {/* Tab 1: Communities */}
+          {directoryTab === 'communities' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 text-left">
+              {communityList.map((item, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    setSelectedPlan(`Community: ${item.name}`);
+                    setShowConsultModal(true);
+                  }}
+                  className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:border-[#560406]/50 hover:bg-[#F4ECE1] transition-all cursor-pointer space-y-2 group shadow-xs"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#560406]/10 text-[#560406]">
+                      {item.badge}
+                    </span>
+                    <span className="text-[11px] font-bold text-[#A17B5E]">{item.count}</span>
+                  </div>
+                  <h3 className="font-bold text-base text-[#161412] group-hover:text-[#560406] transition-colors" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    {item.name}
+                  </h3>
+                  <p className="text-xs text-[#6E6259] leading-relaxed">
+                    {item.desc}
+                  </p>
+                  <div className="pt-2 flex items-center gap-1 text-[11px] font-bold text-[#560406] group-hover:translate-x-1 transition-transform">
+                    <span>Explore Circle</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Tab 2: Metros & NRI Hubs */}
+          {directoryTab === 'cities' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 text-left">
+              {cityList.map((item, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    setSelectedPlan(`Region: ${item.name}`);
+                    setShowConsultModal(true);
+                  }}
+                  className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:border-[#560406]/50 hover:bg-[#F4ECE1] transition-all cursor-pointer space-y-2 group shadow-xs"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm">{item.flag}</span>
+                    <span className="text-[11px] font-bold text-[#A17B5E]">{item.count}</span>
+                  </div>
+                  <h3 className="font-bold text-base text-[#161412] group-hover:text-[#560406] transition-colors" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    {item.name}
+                  </h3>
+                  <p className="text-xs text-[#6E6259] leading-relaxed">
+                    {item.desc}
+                  </p>
+                  <div className="pt-2 flex items-center gap-1 text-[11px] font-bold text-[#560406] group-hover:translate-x-1 transition-transform">
+                    <span>Explore City Registry</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Tab 3: Professions & Pedigree */}
+          {directoryTab === 'professions' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 text-left">
+              {professionList.map((item, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    setSelectedPlan(`Profession: ${item.name}`);
+                    setShowConsultModal(true);
+                  }}
+                  className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] border border-[#E8DDD0] hover:border-[#560406]/50 hover:bg-[#F4ECE1] transition-all cursor-pointer space-y-2 group shadow-xs"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#560406]/10 text-[#560406]">
+                      {item.badge}
+                    </span>
+                    <Crown className="w-3.5 h-3.5 text-[#D8B486]" />
+                  </div>
+                  <h3 className="font-bold text-base text-[#161412] group-hover:text-[#560406] transition-colors" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    {item.name}
+                  </h3>
+                  <p className="text-xs text-[#6E6259] leading-relaxed">
+                    {item.desc}
+                  </p>
+                  <div className="pt-2 flex items-center gap-1 text-[11px] font-bold text-[#560406] group-hover:translate-x-1 transition-transform">
+                    <span>Consult Matchmaker</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Consultation Lead Note */}
+          <div className="p-4 rounded-2xl bg-[#F8F6F2] border border-[#E8DDD0] flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            <div className="space-y-0.5">
+              <span className="text-xs font-bold text-[#161412]">Need a customized community or international NRI search?</span>
+              <p className="text-[11px] text-[#6E6259]">Our senior matchmakers curate bespoke portfolios tailored to your specific family lineage and expectations.</p>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedPlan('Custom Community Search');
+                setShowConsultModal(true);
+              }}
+              className="px-4 py-2 rounded-xl bg-[#560406] text-[#D8B486] text-xs font-bold hover:bg-[#730C0F] transition shadow-xs shrink-0 cursor-pointer"
+            >
+              Request Custom Search →
+            </button>
+          </div>
+
+        </div>
+      </section>
+
       {/* 7. FAQs (Compact Accordion) */}
       <section id="faq" className="py-10 sm:py-16 bg-white border-b border-[#E8DDD0]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
@@ -1017,7 +1332,7 @@ export const LandingPage: React.FC = () => {
                 className="px-4 py-2 rounded-xl bg-[#560406] border border-[#A17B5E]/40 text-[#F5E6D3] text-xs font-bold flex items-center gap-1.5 hover:bg-[#730C0F] transition shadow-xs"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#D8B486]" />
-                <span>Member Web App</span>
+                <span>Log In / Sign In</span>
               </a>
               <a
                 href="https://apps.apple.com/app/id6812288373"
@@ -1053,7 +1368,7 @@ export const LandingPage: React.FC = () => {
                 <span>iOS App Store</span>
                 <ExternalLink className="w-3 h-3 text-[#D8B486]" />
               </a>
-              <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Web App</a>
+              <a href="/app" className="text-[#D8B486] font-semibold hover:underline">Log In / Sign In</a>
             </div>
           </div>
 
@@ -1068,7 +1383,7 @@ export const LandingPage: React.FC = () => {
             className="flex-1 py-3 rounded-xl bg-[#560406] border border-[#A17B5E]/50 text-[#F5E6D3] text-xs font-bold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
-            <span>Open Web App</span>
+            <span>Log In / Sign In</span>
           </a>
           <a
             href="https://apps.apple.com/app/id6812288373"
