@@ -1,0 +1,72 @@
+{
+  "platformName": "Mannat Matrimony",
+  "tagline": "India's Premier Private & Verified Matrimonial Sanctuary",
+  "url": "https://mannatmatrimony.com",
+  "founderDesk": "+91-97383-97933",
+  "appStoreUrl": "https://apps.apple.com/app/id6812288373",
+  "categories": [
+    "Matrimony",
+    "Matchmaking",
+    "Lifestyle",
+    "Privacy Tech",
+    "Social Network"
+  ],
+  "shortDescription": "Mannat is India's private, verified matrimonial matchmaking platform for discerning Indian and NRI families. 100% ID-verified profiles, BlurShield™ privacy controls, and WhatsApp bio-data dossiers.",
+  "longDescription": "Mannat Matrimony addresses the two biggest pain points in modern Indian matchmaking: fake unverified profiles and intrusive public photo scraping. With mandatory Government ID validation and proprietary BlurShield™ photo protection, candidate portraits remain confidential until mutual interest is approved. Mannat serves accomplished professionals (Doctors, IIT/IIM alumni, Chartered Accountants, Civil Servants) and prestigious business families across Delhi NCR, Mumbai, Bangalore, and global NRI hubs (USA, UK, Canada, UAE).",
+  "freeTools": [
+    {
+      "name": "Marriage Biodata Maker",
+      "url": "https://mannatmatrimony.com/marriage-biodata-maker"
+    },
+    {
+      "name": "Vedic 36 Gun Milan Calculator",
+      "url": "https://mannatmatrimony.com/kundali-matching-matrimony"
+    },
+    {
+      "name": "Ask Mannat Knowledge Hub",
+      "url": "https://mannatmatrimony.com/ask"
+    }
+  ],
+  "readySubmissions": [
+    {
+      "directory": "Product Hunt",
+      "url": "https://www.producthunt.com/posts/new",
+      "status": "Ready to Submit"
+    },
+    {
+      "directory": "BetaList",
+      "url": "https://betalist.com/submit",
+      "status": "Ready to Submit"
+    },
+    {
+      "directory": "Crunchbase",
+      "url": "https://www.crunchbase.com/add-new",
+      "status": "Ready to Add Profile"
+    },
+    {
+      "directory": "StartupIndia",
+      "url": "https://www.startupindia.gov.in",
+      "status": "Ready to Register"
+    },
+    {
+      "directory": "F6S",
+      "url": "https://www.f6s.com/programs/apply",
+      "status": "Ready to Submit"
+    },
+    {
+      "directory": "PRLog Press Release",
+      "url": "https://www.prlog.org/pub/",
+      "status": "Press Release Draft Ready"
+    },
+    {
+      "directory": "OpenPR",
+      "url": "https://www.openpr.com/submit",
+      "status": "Press Release Draft Ready"
+    }
+  ],
+  "pressRelease": {
+    "headline": "Mannat Matrimony Launches BlurShield™ Technology to Combat Photo Scraping and Fake Profiles in Indian Matchmaking",
+    "dateline": "NEW DELHI / BANGALORE, INDIA — September 2026",
+    "body": "Mannat Matrimony today announced the public rollout of its verified matrimonial platform and BlurShield™ privacy architecture, designed specifically to safeguard candidate dignity in modern arranged matchmaking. Unlike traditional portals that index candidate portraits on search engines, Mannat ensures mandatory multi-point government ID verification and mutual consent image reveals. The platform also offers a free, zero-login Luxury Marriage Biodata Maker and Vedic Kundli Matching tool for family elders."
+  }
+}
