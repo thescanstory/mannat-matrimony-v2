@@ -1346,6 +1346,88 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
+          {/* SEO Matrimonial Directory & Community Clusters */}
+          <div className="pt-8 pb-6 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-xs">
+            <div className="space-y-2.5">
+              <div className="font-serif text-[#D8B486] font-semibold text-sm uppercase tracking-wider">
+                Communities &amp; Castes
+              </div>
+              <ul className="space-y-1.5 text-[#B8AABF]">
+                <li><a href="/punjabi-matrimony" className="hover:text-white transition">Punjabi Matrimony</a></li>
+                <li><a href="/sikh-matrimony" className="hover:text-white transition">Sikh Matrimony</a></li>
+                <li><a href="/marwari-matrimony" className="hover:text-white transition">Marwari Matrimony</a></li>
+                <li><a href="/agarwal-matrimony" className="hover:text-white transition">Agarwal Matrimony</a></li>
+                <li><a href="/maheshwari-matrimony" className="hover:text-white transition">Maheshwari Matrimony</a></li>
+                <li><a href="/gujarati-matrimony" className="hover:text-white transition">Gujarati Matrimony</a></li>
+                <li><a href="/patel-matrimony" className="hover:text-white transition">Patel Matrimony</a></li>
+                <li><a href="/jain-matrimony" className="hover:text-white transition">Jain Matrimony</a></li>
+                <li><a href="/brahmin-matrimony" className="hover:text-white transition">Brahmin Matrimony</a></li>
+                <li><a href="/rajput-matrimony" className="hover:text-white transition">Rajput Matrimony</a></li>
+                <li><a href="/maratha-matrimony" className="hover:text-white transition">Maratha Matrimony</a></li>
+                <li><a href="/sindhi-matrimony" className="hover:text-white transition">Sindhi Matrimony</a></li>
+                <li><a href="/kayastha-matrimony" className="hover:text-white transition">Kayastha Matrimony</a></li>
+                <li><a href="/telugu-matrimony" className="hover:text-white transition">Telugu Matrimony</a></li>
+                <li><a href="/reddy-matrimony" className="hover:text-white transition">Reddy Matrimony</a></li>
+                <li><a href="/tamil-matrimony" className="hover:text-white transition">Tamil Matrimony</a></li>
+                <li><a href="/iyer-matrimony" className="hover:text-white transition">Iyer Matrimony</a></li>
+                <li><a href="/kannada-matrimony" className="hover:text-white transition">Kannada Matrimony</a></li>
+                <li><a href="/malayalam-matrimony" className="hover:text-white transition">Malayalam Matrimony</a></li>
+                <li><a href="/bengali-matrimony" className="hover:text-white transition">Bengali Matrimony</a></li>
+                <li><a href="/kashmiri-pandit-matrimony" className="hover:text-white transition">Kashmiri Pandit Matrimony</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="font-serif text-[#D8B486] font-semibold text-sm uppercase tracking-wider">
+                Global NRI Hubs
+              </div>
+              <ul className="space-y-1.5 text-[#B8AABF]">
+                <li><a href="/nri-matrimony" className="hover:text-white transition font-medium text-[#D8B486]">NRI Matrimony Global</a></li>
+                <li><a href="/usa-nri-matrimony" className="hover:text-white transition">USA NRI Matrimony</a></li>
+                <li><a href="/uk-nri-matrimony" className="hover:text-white transition">UK NRI Matrimony</a></li>
+                <li><a href="/canada-nri-matrimony" className="hover:text-white transition">Canada NRI Matrimony</a></li>
+                <li><a href="/australia-nri-matrimony" className="hover:text-white transition">Australia NRI Matrimony</a></li>
+                <li><a href="/dubai-nri-matrimony" className="hover:text-white transition">Dubai &amp; Gulf NRI</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="font-serif text-[#D8B486] font-semibold text-sm uppercase tracking-wider">
+                Metro Matchmaking
+              </div>
+              <ul className="space-y-1.5 text-[#B8AABF]">
+                <li><a href="/delhi-matrimony" className="hover:text-white transition">Delhi NCR Matrimony</a></li>
+                <li><a href="/mumbai-matrimony" className="hover:text-white transition">Mumbai Matrimony</a></li>
+                <li><a href="/matchmaking-bangalore" className="hover:text-white transition">Bangalore Matchmaking</a></li>
+                <li><a href="/hyderabad-matrimony" className="hover:text-white transition">Hyderabad Matrimony</a></li>
+                <li><a href="/pune-matrimony" className="hover:text-white transition">Pune Matrimony</a></li>
+                <li><a href="/chandigarh-matrimony" className="hover:text-white transition">Chandigarh Matrimony</a></li>
+                <li><a href="/kolkata-matrimony" className="hover:text-white transition">Kolkata Matrimony</a></li>
+                <li><a href="/chennai-matrimony" className="hover:text-white transition">Chennai Matrimony</a></li>
+                <li><a href="/jaipur-matrimony" className="hover:text-white transition">Jaipur Matrimony</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-2.5">
+              <div className="font-serif text-[#D8B486] font-semibold text-sm uppercase tracking-wider">
+                Free Tools &amp; Elite
+              </div>
+              <ul className="space-y-1.5 text-[#B8AABF]">
+                <li><a href="/marriage-biodata-maker" className="hover:text-white transition text-[#DFBE7E] font-bold">✨ Marriage Biodata Maker</a></li>
+                <li><a href="/kundali-matching-matrimony" className="hover:text-white transition text-[#DFBE7E]">🔮 Kundali 36 Gun Milan</a></li>
+                <li><a href="/elite-matrimony" className="hover:text-white transition font-medium text-[#D8B486]">👑 Elite Matrimony Tier</a></li>
+                <li><a href="/matrimony-for-doctors" className="hover:text-white transition">Doctors Matrimony</a></li>
+                <li><a href="/iit-iim-matrimony" className="hover:text-white transition">IIT &amp; IIM Alumni</a></li>
+                <li><a href="/ca-finance-matrimony" className="hover:text-white transition">CA &amp; Finance Matrimony</a></li>
+                <li><a href="/ias-ips-civil-services-matrimony" className="hover:text-white transition">Civil Services &amp; IAS</a></li>
+                <li><a href="/30-plus-matrimony" className="hover:text-white transition">30+ Matrimony</a></li>
+                <li><a href="/second-marriage-divorced-matrimony" className="hover:text-white transition">Second Marriage &amp; Divorced</a></li>
+                <li><a href="/verified-matrimony" className="hover:text-white transition">100% Verified Profiles</a></li>
+                <li><a href="/photo-privacy-blurshield" className="hover:text-white transition">Photo Privacy &amp; BlurShield™</a></li>
+              </ul>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#A89CAE] gap-3 text-center sm:text-left">
             <div>
               © 2026 Mannat Matrimony. All rights reserved. Encrypted &amp; BlurShield™ Protected.
