@@ -142,16 +142,50 @@ export const MainApp: React.FC<MainAppProps> = ({ initialView = 'home', onNaviga
   // Determine active logged-in user profile strictly from verified live profiles
   const activeUserProfile = useMemo(() => {
     if (!currentUser) return null;
+
+    // 1. Check if user profile is stored locally for this active user
+    try {
+      const stored = localStorage.getItem('mannat_user_profile');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (
+          parsed &&
+          (parsed.id === currentUser.id ||
+           parsed.user_id === currentUser.id ||
+           (parsed.display_name && currentUser.name && parsed.display_name.toLowerCase() === currentUser.name.toLowerCase()) ||
+           (parsed.email && currentUser.email && parsed.email.toLowerCase() === currentUser.email.toLowerCase()))
+        ) {
+          return parsed as Profile;
+        }
+      }
+    } catch {}
+
+    // 2. Check in loaded profiles list
     const found = profiles.find((p) => 
       p.user_id === currentUser.id || 
       p.id === currentUser.id ||
       ((p.lifestyle_details as any)?.user_id === currentUser.id) ||
+      (currentUser.email && p.id === currentUser.email) ||
+      (currentUser.name && p.display_name.toLowerCase() === currentUser.name.toLowerCase()) ||
       (currentUser.email && (
         (currentUser.email.toLowerCase().includes('appreview') && p.id.includes('appreview')) ||
         (currentUser.email.toLowerCase().includes('rahul') && p.display_name.toLowerCase().includes('rahul'))
       ))
     );
-    return found || profiles.find(p => p.id === 'appreview-demo-user-id') || null;
+    if (found) return found;
+
+    // 3. If a local user profile was saved from registration, use it
+    try {
+      const stored = localStorage.getItem('mannat_user_profile');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.display_name) {
+          return parsed as Profile;
+        }
+      }
+    } catch {}
+
+    return profiles.find(p => p.id === 'appreview-demo-user-id') || null;
   }, [currentUser, profiles]);
 
   const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {

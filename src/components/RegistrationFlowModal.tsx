@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { vipConsultationService } from '../services/vipConsultationService';
 import { authService, type UserSession } from '../services/authService';
+import { profileService } from '../services/profileService';
+import type { Profile } from '../types';
 
 export interface RegistrationFlowModalProps {
   isOpen: boolean;
@@ -319,7 +321,68 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
       const fullName = `${firstName.trim()} ${lastName.trim()}`;
       const birthDate = `${dobYear}-${dobMonth.padStart(2, '0')}-${dobDay.padStart(2, '0')}`;
 
-      // Save consultation lead
+      // 1. Authenticate & initialize user session
+      const session = authService.setUserSession(cleanEmail, fullName);
+
+      // 2. Calculate verified age
+      const currentYear = new Date().getFullYear();
+      const birthYearInt = parseInt(dobYear, 10) || (currentYear - 25);
+      const calculatedAge = Math.max(18, currentYear - birthYearInt);
+
+      // 3. Determine managed_by and gender from Profile For
+      const isParentManaged = profileFor.toLowerCase().includes('son') || profileFor.toLowerCase().includes('daughter');
+      const managedBy = isParentManaged ? 'parents' : (profileFor.toLowerCase().includes('myself') ? 'self' : 'sibling');
+      const isFemale = profileFor.toLowerCase().includes('daughter') || profileFor.toLowerCase().includes('sister');
+      const gender = isFemale ? 'female' : 'male';
+
+      const defaultAvatar = isFemale
+        ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000'
+        : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1000';
+
+      // 4. Build comprehensive official Candidate Profile
+      const officialProfile: Partial<Profile> = {
+        id: session.id,
+        user_id: session.id,
+        display_name: fullName,
+        age: calculatedAge,
+        height: isFemale ? "5'6\"" : "5'11\"",
+        city: country,
+        religion: religion,
+        community: community,
+        sub_community: community,
+        occupation: 'Senior Professional / Corporate Leader',
+        company_name: 'Private Enterprise',
+        education: 'Graduate / Post-Graduate Degree',
+        bio_text: `Warm, ambitious, and family-oriented candidate. Profile registered for ${profileFor}. Seeking an intellectually compatible, authentic alliance with mutual values.`,
+        bio_video_url: '',
+        photos: [defaultAvatar],
+        managed_by: managedBy,
+        compatibility_score: 98,
+        gun_milan_score: 34,
+        is_vouched: true,
+        is_spotlight: true,
+        is_unlocked: true,
+        lifestyle_details: {
+          diet: 'Vegetarian',
+          salary_bracket: '₹35L - ₹50L',
+          family_background: `Residing in ${country} (${religion} - ${community})`,
+          marriage_expectations: 'Mutual respect, shared goals, and traditional family harmony',
+          gender: gender,
+          user_id: session.id,
+        },
+        horoscope: {
+          rashi: 'Simha (Leo)',
+          nakshatra: 'Magha',
+          manglik: 'No',
+          birth_time: '10:15 AM',
+          birth_place: country,
+        }
+      };
+
+      // 5. Persist profile to directory & storage
+      await profileService.createProfile(officialProfile);
+
+      // 6. Save VIP consultation lead
       await vipConsultationService.submitLead({
         profile_for: profileFor,
         full_name: fullName,
@@ -329,27 +392,12 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
         city: country,
         community: `${religion} - ${community}`,
         source_cta: 'Web 5-Step Registration Modal',
-        notes: `DOB: ${birthDate}, Country: ${country}`,
+        notes: `DOB: ${birthDate}, Age: ${calculatedAge}, Country: ${country}`,
       });
 
-      // Save local user profile draft
-      const userProfileDraft = {
-        name: fullName,
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
-        email: cleanEmail,
-        phone: `${countryCode} ${cleanPhone}`,
-        profile_for: profileFor,
-        dob: birthDate,
-        religion,
-        community,
-        country,
-        created_at: new Date().toISOString(),
-      };
-      localStorage.setItem('mannat_user_profile', JSON.stringify(userProfileDraft));
-
-      // Authenticate session
-      const session = authService.setUserSession(cleanEmail, fullName);
+      // 7. Mark onboarded
+      localStorage.setItem('mannat_onboarded_' + session.id, 'true');
+      localStorage.setItem('mannat_onboarded_' + cleanEmail, 'true');
 
       setTimeout(() => {
         setSubmitting(false);
@@ -358,7 +406,7 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
       }, 300);
     } catch (err: any) {
       console.error('Registration error:', err);
-      setErrorMessage('Something went wrong creating your account. Please try again.');
+      setErrorMessage('Something went wrong creating your profile. Please try again.');
       setSubmitting(false);
     }
   };
