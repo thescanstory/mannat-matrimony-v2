@@ -38,7 +38,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
   const [authModalMode, setAuthModalMode] = useState<'register' | 'login'>('register');
   const [authModalProfileFor, setAuthModalProfileFor] = useState('Myself');
 
-  // Hero Preference Bar State
+  // Hero Preference Bar State (Desktop)
   const [heroGender, setHeroGender] = useState<'female' | 'male'>('female');
   const [heroReligion, setHeroReligion] = useState('Any');
 
@@ -81,39 +81,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
     };
   }, []);
 
-  // 4 Core Principles — Light, punchy, editorial
+  // 4 Core Principles
   const matchmakingPillars = [
     {
       num: '01',
       title: '100% ID Verified',
-      subtitle: 'Integrity First',
-      desc: 'Mandatory government credential and identity verification before any profile goes live.',
+      desc: 'Mandatory government credential check before any candidate is activated.',
       badge: 'Vetted Candidates'
     },
     {
       num: '02',
       title: 'BlurShield™ Privacy',
-      subtitle: 'Zero Public Indexing',
-      desc: 'Portraits remain softly blurred and protected. Unlocked strictly upon mutual family consent.',
+      desc: 'Portraits remain discreetly blurred until you mutually approve an alliance.',
       badge: 'Discreet by Design'
     },
     {
       num: '03',
       title: 'WhatsApp Dossiers',
-      subtitle: 'Family-Centered',
-      desc: '1-click elegant PDF biodatas and kundlis tailored for sharing with parents and elders.',
+      desc: '1-click formatted PDF biodatas tailored for sharing with parents and elders.',
       badge: 'Parent-Friendly'
     },
     {
       num: '04',
       title: 'Bespoke Advisory',
-      subtitle: 'Human Touch',
-      desc: 'Experienced relationship managers who guide introductions with cultural reverence.',
+      desc: 'Personal relationship advisors who understand your lifestyle and cultural wavelength.',
       badge: 'Concierge Care'
     }
   ];
 
-  // Frequently Asked Questions — Crisp & punchy
+  // Frequently Asked Questions
   const faqs = [
     {
       q: 'How does Mannat verify candidate profiles?',
@@ -134,7 +130,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#241E19] selection:bg-[#560406]/15 selection:text-[#560406] font-sans antialiased overflow-x-hidden pt-12 sm:pt-20">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#241E19] selection:bg-[#560406]/15 selection:text-[#560406] font-sans antialiased overflow-x-hidden">
       
       {/* 0. Top iOS App Banner */}
       <AnimatePresence>
@@ -143,20 +139,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="fixed top-0 left-0 right-0 z-[60] bg-[#2E0507] text-[#EDE4DA] text-[10px] sm:text-xs py-1.5 px-3 sm:px-6 border-b border-[#560406] flex items-center justify-between shadow-xs"
+            className="bg-[#1A0102] text-[#EDE4DA] text-[10px] sm:text-xs py-1.5 px-3 sm:px-6 border-b border-[#560406]/60 flex items-center justify-between"
           >
             <div className="flex-1 text-center flex items-center justify-center gap-1.5 sm:gap-2 truncate pr-1">
               <span className="bg-[#DFBE7E]/20 text-[#DFBE7E] px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] uppercase tracking-wider font-bold border border-[#DFBE7E]/30 shrink-0">
                 iOS App
               </span>
-              <span className="hidden sm:inline text-neutral-300">Mannat is available on the App Store.</span>
+              <span className="text-neutral-300">Available on the App Store.</span>
               <a
                 href="https://apps.apple.com/app/id6812288373"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#DFBE7E] hover:text-white font-medium underline underline-offset-2 inline-flex items-center gap-1 ml-1 truncate"
+                className="text-[#DFBE7E] hover:text-white font-medium underline underline-offset-2 inline-flex items-center gap-1 ml-0.5 truncate"
               >
-                <span>Download for iPhone</span>
+                <span>Download</span>
                 <ExternalLink className="w-2.5 h-2.5 shrink-0" />
               </a>
             </div>
@@ -171,10 +167,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         )}
       </AnimatePresence>
 
-      {/* 1. Header (Ultra-Sleek Editorial Navigation) */}
-      <header className={`fixed left-0 right-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8DDD0] shadow-xs transition-all duration-300 ${showTopAppBanner ? 'top-6 sm:top-7' : 'top-0'}`}>
+      {/* 1. Header (Cohesive Dark Luxury Navbar) */}
+      <header className="sticky top-0 z-50 bg-[#2B0305]/95 backdrop-blur-md border-b border-[#DFBE7E]/20 text-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
-          <div className="flex items-center justify-between h-13 sm:h-18">
+          <div className="flex items-center justify-between h-14 sm:h-18">
             
             {/* Brand Logo */}
             <a
@@ -188,30 +184,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               <img
                 src="/images/mannat-logo-square.png"
                 alt="Mannat"
-                className="w-7 h-7 sm:w-9 sm:h-9 rounded-md object-cover shadow-xs ring-1 ring-[#560406]/15"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-md object-cover ring-1 ring-[#DFBE7E]/40"
               />
               <div className="flex flex-col text-left">
-                <span className="text-[9px] sm:text-[10px] italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
+                <span className="text-[9px] sm:text-[10px] italic font-normal text-[#DFBE7E] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
                   At
                 </span>
-                <span className="font-normal text-base sm:text-xl tracking-[0.2em] uppercase text-[#560406] leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                <span className="font-normal text-base sm:text-xl tracking-[0.2em] uppercase text-white leading-tight" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
                   MANNAT
                 </span>
-                <span className="text-[6px] sm:text-[6.5px] uppercase tracking-[0.25em] font-semibold text-[#8C7355] -mt-0.5">
+                <span className="text-[6px] sm:text-[6.5px] uppercase tracking-[0.25em] font-semibold text-[#DFBE7E]/80 -mt-0.5">
                   Matchmaking
                 </span>
               </div>
             </a>
 
             {/* Editorial Nav Links */}
-            <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-semibold uppercase tracking-widest text-[#5A4F46]">
+            <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-xs font-semibold uppercase tracking-widest text-[#E2D6CA]">
               <a
                 href="#showcase"
                 onClick={(e) => {
                   e.preventDefault();
                   document.getElementById('showcase')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="hover:text-[#560406] transition-colors py-1"
+                className="hover:text-[#DFBE7E] transition-colors py-1"
               >
                 Profiles
               </a>
@@ -221,7 +217,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   e.preventDefault();
                   document.getElementById('principles')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="hover:text-[#560406] transition-colors py-1"
+                className="hover:text-[#DFBE7E] transition-colors py-1"
               >
                 Why Mannat
               </a>
@@ -231,7 +227,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   e.preventDefault();
                   document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="hover:text-[#560406] transition-colors py-1"
+                className="hover:text-[#DFBE7E] transition-colors py-1"
               >
                 Plans
               </a>
@@ -241,18 +237,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   e.preventDefault();
                   document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="hover:text-[#560406] transition-colors py-1"
+                className="hover:text-[#DFBE7E] transition-colors py-1"
               >
                 FAQ
               </a>
             </nav>
 
             {/* Right Action CTAs */}
-            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={handleOpenLogin}
-                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-xs font-semibold text-[#560406] hover:bg-[#560406]/5 rounded-full transition cursor-pointer"
+                className="px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-xs font-semibold text-[#DFBE7E] hover:text-white transition cursor-pointer"
               >
                 Log In
               </button>
@@ -260,17 +256,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               <button
                 type="button"
                 onClick={() => handleOpenRegister('Myself')}
-                className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[#560406] hover:bg-[#6D090C] text-[#FAF7F2] text-xs font-semibold uppercase tracking-wider shadow-xs transition cursor-pointer"
+                className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[#DFBE7E] hover:bg-[#EADBBE] text-[#2B0305] text-xs font-bold uppercase tracking-wider shadow-xs transition cursor-pointer"
               >
                 Register
               </button>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-1 rounded-md text-[#560406] hover:bg-[#560406]/5 cursor-pointer"
+                className="md:hidden p-1 rounded-md text-white hover:bg-white/10 cursor-pointer"
                 aria-label="Open menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-[#560406]" />}
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
             </div>
 
@@ -284,9 +280,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-[#FAF7F2] border-b border-[#E8DDD0] px-4 py-3 space-y-2 shadow-lg"
+              className="md:hidden bg-[#1E0203] border-b border-[#DFBE7E]/20 px-4 py-3 space-y-2 shadow-2xl"
             >
-              <div className="flex flex-col space-y-1 text-xs font-medium text-[#5A4F46] pb-2 border-b border-[#E8DDD0]">
+              <div className="flex flex-col space-y-1 text-xs font-medium text-[#E2D6CA] pb-2 border-b border-white/10">
                 <a
                   href="#showcase"
                   onClick={(e) => {
@@ -294,7 +290,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                     setMobileMenuOpen(false);
                     document.getElementById('showcase')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="py-1.5 px-2 hover:bg-[#560406]/5 rounded text-[#560406]"
+                  className="py-1.5 px-2 hover:bg-white/5 rounded text-[#DFBE7E]"
                 >
                   Verified Profiles
                 </a>
@@ -305,7 +301,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                     setMobileMenuOpen(false);
                     document.getElementById('principles')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="py-1.5 px-2 hover:bg-[#560406]/5 rounded text-[#560406]"
+                  className="py-1.5 px-2 hover:bg-white/5 rounded text-[#DFBE7E]"
                 >
                   Why Mannat
                 </a>
@@ -316,7 +312,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                     setMobileMenuOpen(false);
                     document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="py-1.5 px-2 hover:bg-[#560406]/5 rounded text-[#560406]"
+                  className="py-1.5 px-2 hover:bg-white/5 rounded text-[#DFBE7E]"
                 >
                   Membership Plans
                 </a>
@@ -327,7 +323,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                     setMobileMenuOpen(false);
                     document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="py-1.5 px-2 hover:bg-[#560406]/5 rounded text-[#560406]"
+                  className="py-1.5 px-2 hover:bg-white/5 rounded text-[#DFBE7E]"
                 >
                   FAQ
                 </a>
@@ -337,14 +333,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 <button
                   type="button"
                   onClick={() => { setMobileMenuOpen(false); handleOpenLogin(); }}
-                  className="py-2 bg-white rounded-lg border border-[#E8DDD0] text-[#560406] text-center cursor-pointer shadow-2xs"
+                  className="py-2 bg-white/10 rounded-lg text-[#DFBE7E] text-center cursor-pointer border border-white/10"
                 >
                   Log In
                 </button>
                 <button
                   type="button"
                   onClick={() => { setMobileMenuOpen(false); handleOpenRegister('Myself'); }}
-                  className="py-2 bg-[#560406] rounded-lg text-[#FAF7F2] text-center cursor-pointer shadow-xs"
+                  className="py-2 bg-[#DFBE7E] rounded-lg text-[#2B0305] text-center cursor-pointer font-bold"
                 >
                   Register Free
                 </button>
@@ -354,39 +350,117 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         </AnimatePresence>
       </header>
 
-      {/* 2. HERO: Light, Stylish, High-End Indian Editorial */}
-      <section className="relative bg-[#2B0305] text-[#FAF7F2] pt-6 sm:pt-14 pb-10 sm:pb-20 px-4 sm:px-8 lg:px-12 overflow-hidden">
+      {/* 2. HERO: High-Fashion Luxury Indian Matrimonial Sanctuary */}
+      <section className="relative bg-[#2B0305] text-[#FAF7F2] pt-6 sm:pt-14 pb-10 sm:pb-20 px-4 sm:px-8 lg:px-12 overflow-hidden border-b border-[#560406]">
+        
+        {/* Subtle Background Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-64 bg-[#DFBE7E]/5 blur-3xl rounded-full pointer-events-none" />
+
         <div className="max-w-6xl mx-auto relative z-10">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
+          {/* ================= MOBILE HERO (< lg) ================= */}
+          <div className="lg:hidden flex flex-col items-center text-center space-y-4">
             
-            {/* Left Column: Headline, Subtitle, Stylish Floating Search */}
-            <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
+            {/* Tagline Badge */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#DFBE7E]/15 border border-[#DFBE7E]/30 text-[9px] uppercase tracking-[0.2em] font-semibold text-[#DFBE7E]">
+              <Sparkles className="w-2.5 h-2.5 text-[#DFBE7E]" />
+              <span>Private Matrimonial Sanctuary</span>
+            </div>
+
+            {/* Headline */}
+            <h1
+              className="text-2xl sm:text-3xl font-normal text-white leading-tight"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              Private, Verified Matchmaking for Discerning Families
+            </h1>
+
+            {/* Compact Wedding Couple Hero Visual */}
+            <div className="relative w-full max-w-[280px] my-1">
+              <div className="relative rounded-2xl overflow-hidden border border-[#DFBE7E]/50 shadow-2xl bg-[#1C0102]">
+                <img
+                  src="/images/hero-couple.jpg"
+                  alt="Indian Wedding Couple"
+                  className="w-full aspect-[4/5] object-cover object-center filter brightness-95"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C0102]/95 via-transparent to-black/20 pointer-events-none" />
+                
+                {/* Verified Pill */}
+                <div className="absolute top-2.5 right-2.5 bg-[#2B0305]/90 border border-[#DFBE7E]/60 text-[#DFBE7E] text-[8px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full flex items-center gap-1">
+                  <ShieldCheck className="w-2.5 h-2.5" />
+                  <span>100% Verified</span>
+                </div>
+
+                {/* Bottom Overlay Info */}
+                <div className="absolute bottom-2.5 inset-x-2.5 text-center space-y-0.5">
+                  <span className="text-[8px] uppercase tracking-[0.2em] font-bold text-[#DFBE7E] block">
+                    The House of Mannat
+                  </span>
+                  <div className="text-xs font-semibold text-white font-serif">
+                    Where Sacred Alliances Begin
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Subtitle & Trust Points */}
+            <p className="text-xs text-[#E2D6CA] leading-relaxed max-w-xs font-light">
+              100% ID Verified Bio-datas · BlurShield™ Privacy · WhatsApp Family Dossiers
+            </p>
+
+            {/* Action Buttons */}
+            <div className="w-full max-w-xs space-y-2 pt-1">
+              <button
+                type="button"
+                onClick={() => handleOpenRegister('Myself')}
+                className="w-full py-3 px-6 rounded-xl bg-[#DFBE7E] hover:bg-[#EADBBE] text-[#2B0305] text-xs font-bold uppercase tracking-wider transition cursor-pointer shadow-lg flex items-center justify-center gap-1.5"
+              >
+                <span>Begin Free Matchmaking</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#2B0305]" />
+              </button>
+
+              <button
+                type="button"
+                onClick={handleOpenLogin}
+                className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/15 transition cursor-pointer"
+              >
+                Member Log In
+              </button>
+            </div>
+
+          </div>
+
+          {/* ================= DESKTOP HERO (lg+) ================= */}
+          <div className="hidden lg:grid grid-cols-12 gap-12 items-center">
+            
+            {/* Left Column: Headline, Search Box, Trust Row */}
+            <div className="col-span-7 space-y-6 text-left">
               
-              <div className="space-y-2 sm:space-y-3">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#DFBE7E]/15 border border-[#DFBE7E]/30 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] font-semibold text-[#DFBE7E]">
-                  <Sparkles className="w-2.5 h-2.5 text-[#DFBE7E]" />
-                  <span>Private Matrimonial Network</span>
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DFBE7E]/15 border border-[#DFBE7E]/30 text-xs uppercase tracking-[0.2em] font-semibold text-[#DFBE7E]">
+                  <Sparkles className="w-3 h-3 text-[#DFBE7E]" />
+                  <span>Private Matrimonial Alliance Network</span>
                 </div>
 
                 <h1
-                  className="text-2xl sm:text-4xl lg:text-[46px] font-normal text-white leading-[1.2] tracking-tight"
+                  className="text-4xl lg:text-[48px] font-normal text-white leading-[1.15] tracking-tight"
                   style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
                 >
                   Private, Verified Matchmaking for Discerning Families
                 </h1>
 
-                <p className="text-xs sm:text-sm text-[#E2D6CA] leading-relaxed max-w-lg mx-auto lg:mx-0 font-light">
-                  100% ID Verified Bio-datas · BlurShield™ Photo Privacy · WhatsApp Family Dossiers
+                <p className="text-sm text-[#E2D6CA] leading-relaxed max-w-lg font-light">
+                  A bespoke matrimonial sanctuary tailored for cultured Indian candidates and families. 
+                  Browse verified bio-datas protected by BlurShield™ privacy controls.
                 </p>
               </div>
 
-              {/* Stylish Light Search Bar */}
-              <div className="bg-white text-[#241E19] p-2 sm:p-3 rounded-2xl shadow-xl border border-[#DFBE7E]/40 max-w-xl mx-auto lg:mx-0">
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-left">
+              {/* Desktop Search Bar */}
+              <div className="bg-white text-[#241E19] p-3 rounded-2xl shadow-2xl border border-[#DFBE7E]/40 max-w-xl">
+                <div className="flex items-center gap-3 text-left">
                   
                   {/* Seeking Toggle */}
-                  <div className="w-full sm:w-auto flex-1 flex items-center justify-between sm:justify-start gap-2 bg-[#FAF7F2] p-1.5 sm:p-2 rounded-xl border border-[#E8DDD0]">
+                  <div className="flex-1 flex items-center gap-2 bg-[#FAF7F2] p-2 rounded-xl border border-[#E8DDD0]">
                     <span className="text-[10px] uppercase font-bold text-[#8C7355] pl-1 shrink-0">Seeking:</span>
                     <div className="flex gap-1">
                       <button
@@ -406,8 +480,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                     </div>
                   </div>
 
-                  {/* Religion Quick Select */}
-                  <div className="w-full sm:w-auto flex-1 flex items-center justify-between sm:justify-start gap-2 bg-[#FAF7F2] p-1.5 sm:p-2 rounded-xl border border-[#E8DDD0]">
+                  {/* Religion Select */}
+                  <div className="flex-1 flex items-center gap-2 bg-[#FAF7F2] p-2 rounded-xl border border-[#E8DDD0]">
                     <span className="text-[10px] uppercase font-bold text-[#8C7355] pl-1 shrink-0">Religion:</span>
                     <select
                       value={heroReligion}
@@ -427,7 +501,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   <button
                     type="button"
                     onClick={() => handleOpenRegister('Myself')}
-                    className="w-full sm:w-auto py-2.5 px-5 rounded-xl bg-[#560406] hover:bg-[#6D090C] text-[#FAF7F2] text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs shrink-0"
+                    className="py-2.5 px-5 rounded-xl bg-[#560406] hover:bg-[#6D090C] text-[#FAF7F2] text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1.5 shadow-xs shrink-0"
                   >
                     <span>Search</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#DFBE7E]" />
@@ -436,33 +510,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 </div>
               </div>
 
-              {/* 3 Lightweight Trust Badges */}
-              <div className="flex items-center justify-center lg:justify-start gap-4 sm:gap-6 text-[11px] text-[#DFBE7E] pt-1">
-                <div className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+              {/* 3 Trust Badges */}
+              <div className="flex items-center gap-6 text-xs text-[#DFBE7E] pt-1">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>100% ID Verified</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
                   <span>BlurShield™ Privacy</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Lock className="w-3.5 h-3.5 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-4 h-4 shrink-0" />
                   <span>Zero Google Indexing</span>
                 </div>
               </div>
 
             </div>
 
-            {/* Right Column: Indian Wedding Couple Frame */}
-            <div className="lg:col-span-5 relative flex justify-center mt-2 lg:mt-0">
-              <div className="relative w-full max-w-[240px] sm:max-w-xs">
+            {/* Right Column: Desktop Wedding Couple Frame */}
+            <div className="col-span-5 relative flex justify-center">
+              <div className="relative w-full max-w-sm">
                 
-                {/* Decorative Gold Ring */}
-                <div className="absolute -inset-1 rounded-2xl border border-[#DFBE7E]/40 transform rotate-1 pointer-events-none" />
+                <div className="absolute -inset-1.5 rounded-3xl border border-[#DFBE7E]/40 transform rotate-1 pointer-events-none" />
                 
-                {/* Photo Card */}
-                <div className="relative rounded-2xl overflow-hidden border border-[#DFBE7E]/60 shadow-xl bg-[#1C0102]">
+                <div className="relative rounded-3xl overflow-hidden border-2 border-[#DFBE7E]/60 shadow-2xl bg-[#1C0102]">
                   <img
                     src="/images/hero-couple.jpg"
                     alt="Indian Wedding Couple"
@@ -470,19 +542,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1C0102]/90 via-transparent to-transparent pointer-events-none" />
 
-                  {/* Plaque */}
-                  <div className="absolute bottom-2.5 inset-x-2.5 p-2 rounded-xl bg-[#2B0305]/90 backdrop-blur-xs border border-[#DFBE7E]/40 text-center">
-                    <div className="text-[8px] uppercase tracking-[0.2em] font-bold text-[#DFBE7E]">
+                  <div className="absolute bottom-3 inset-x-3 p-3 rounded-2xl bg-[#2B0305]/95 backdrop-blur-md border border-[#DFBE7E]/40 text-center space-y-0.5">
+                    <div className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#DFBE7E]">
                       The House of Mannat
                     </div>
-                    <div className="text-xs font-semibold text-white font-serif">
+                    <div className="text-sm font-semibold text-white font-serif">
                       Where Sacred Alliances Begin
                     </div>
                   </div>
 
-                  <div className="absolute top-2.5 right-2.5 bg-[#2B0305]/90 border border-[#DFBE7E]/60 text-[#DFBE7E] text-[8px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full flex items-center gap-1">
-                    <ShieldCheck className="w-2.5 h-2.5" />
-                    <span>Verified</span>
+                  <div className="absolute top-3 right-3 bg-[#2B0305]/90 border border-[#DFBE7E]/60 text-[#DFBE7E] text-[9px] font-bold uppercase tracking-wider py-1 px-2.5 rounded-full flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" />
+                    <span>100% Verified</span>
                   </div>
                 </div>
 
@@ -624,7 +695,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
 
                 <div className="pt-2 border-t border-[#E8DDD0]/60 text-[11px] font-semibold text-[#560406] flex items-center gap-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#8C7355] shrink-0" />
-                  <span>{pillar.subtitle}</span>
+                  <span>Verified Standard</span>
                 </div>
               </div>
             ))}
@@ -711,7 +782,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         </div>
       </section>
 
-      {/* 5. MEMBERSHIP PLANS — Light & Clean */}
+      {/* 5. MEMBERSHIP PLANS */}
       <section id="pricing" className="py-10 sm:py-18 bg-[#FAF7F2] border-t border-[#E8DDD0]">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12">
           
@@ -934,7 +1005,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         </div>
       </section>
 
-      {/* 6. FAQ (Clean Accordion) */}
+      {/* 6. FAQ */}
       <section id="faq" className="py-10 sm:py-18 bg-[#FAF7F2] border-t border-[#E8DDD0]">
         <div className="max-w-3xl mx-auto px-4 sm:px-8">
           
