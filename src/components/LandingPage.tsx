@@ -447,7 +447,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 {/* Main Couple Photo Card */}
                 <div className="relative rounded-2xl overflow-hidden border-2 border-[#DFBE7E]/60 shadow-2xl bg-[#1C0102]">
                   <img
-                    src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=900"
+                    src="/images/hero-couple.jpg"
                     alt="Indian Wedding Couple - Blessed Matrimonial Alliances"
                     className="w-full aspect-[4/5] object-cover object-center filter brightness-95 contrast-105"
                   />
