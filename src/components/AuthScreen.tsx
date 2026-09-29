@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ArrowRight, User, Mail, LogIn } from 'lucide-react';
+import { ArrowRight, User, Mail, LogIn, Sparkles } from 'lucide-react';
 import { authService } from '../services/authService';
 import type { UserSession } from '../services/authService';
 import { LegalModal } from './LegalModal';
+import { RegistrationFlowModal } from './RegistrationFlowModal';
 
 interface AuthScreenProps {
   onLoginSuccess: (user?: UserSession) => void;
@@ -13,6 +14,7 @@ interface AuthScreenProps {
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLanding }) => {
   const [loading, setLoading] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
@@ -186,6 +188,18 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLa
             <span className="whitespace-nowrap">{loading ? 'Opening Google...' : 'Continue with Google'}</span>
           </button>
         </div>
+
+        {/* Register In 4 Steps Trigger Button */}
+        <div className="pt-2 border-t border-[#E8DDD0]">
+          <button
+            type="button"
+            onClick={() => setShowRegisterModal(true)}
+            className="w-full py-2.5 px-4 rounded-xl bg-[#00B4C6]/10 hover:bg-[#00B4C6]/20 text-[#008B99] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors border border-[#00B4C6]/30 cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#00B4C6]" />
+            <span>New here? Register Free in 4 Steps</span>
+          </button>
+        </div>
       </div>
 
       {/* Footer Assurance & Legal Links */}
@@ -218,6 +232,17 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLa
           </button>
         </div>
       </div>
+
+      {/* Registration Flow Modal */}
+      <RegistrationFlowModal
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+        onSuccess={(user) => {
+          setShowRegisterModal(false);
+          onLoginSuccess(user);
+        }}
+        initialMode="register"
+      />
 
       <LegalModal
         isOpen={showLegal}

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
@@ -11,17 +11,14 @@ import {
   Menu,
   Sparkles,
   Lock,
-  User,
-  Mail,
   MapPin,
   Briefcase,
-  LogIn,
-  UserPlus
+  LogIn
 } from 'lucide-react';
-import { vipConsultationService, type VipLead } from '../services/vipConsultationService';
-import { authService } from '../services/authService';
+import { type UserSession } from '../services/authService';
 import { LegalModal, type LegalDocType } from './LegalModal';
 import { INITIAL_CURATED_PROFILES } from '../services/profileService';
+import { RegistrationFlowModal } from './RegistrationFlowModal';
 
 interface LandingPageProps {
   onOpenApp?: (initialView?: 'onboarding' | 'auth' | 'home') => void;
@@ -35,24 +32,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [showTopAppBanner, setShowTopAppBanner] = useState(true);
 
-  // Active Hero Tab: 'login' | 'register'
-  const [heroTab, setHeroTab] = useState<'login' | 'register'>('login');
+  // Multi-Step Registration & Login Flow Modal State
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'register' | 'login'>('register');
+  const [authModalProfileFor, setAuthModalProfileFor] = useState('Myself');
 
-  // Login Form State
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
-
-  // Register Form State
-  const [regProfileFor, setRegProfileFor] = useState('My Self');
-  const [regGender, setRegGender] = useState('female');
-  const [regName, setRegName] = useState('');
-  const [regEmail, setRegEmail] = useState('');
-  const [regPhone, setRegPhone] = useState('');
-  const [regCity, setRegCity] = useState('');
-  const [regSubmitting, setRegSubmitting] = useState(false);
-  const [regError, setRegError] = useState<string | null>(null);
-
-  const heroFormRef = useRef<HTMLDivElement>(null);
+  // Hero Quick Finder State
+  const [heroGender, setHeroGender] = useState<'female' | 'male'>('female');
+  const [heroAgeMin, setHeroAgeMin] = useState('21');
+  const [heroAgeMax, setHeroAgeMax] = useState('27');
+  const [heroReligion, setHeroReligion] = useState('Select');
+  const [heroCommunity, setHeroCommunity] = useState('Select');
 
   const navigateToApp = (view: 'onboarding' | 'auth' | 'home' = 'home') => {
     if (onOpenApp) {
@@ -62,110 +52,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
     }
   };
 
-  // Direct Web Login with Email
-  const handleEmailLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const finalEmail = loginEmail.trim().toLowerCase();
-    if (!finalEmail) return;
-
-    setLoginLoading(true);
-    authService.setUserSession(finalEmail, finalEmail.split('@')[0]);
-    setTimeout(() => {
-      setLoginLoading(false);
-      navigateToApp('home');
-    }, 150);
+  const handleOpenRegister = (profileForChoice: string = 'Myself') => {
+    setAuthModalProfileFor(profileForChoice);
+    setAuthModalMode('register');
+    setAuthModalOpen(true);
   };
 
-  // 1-Click Google Sign In on Website
-  const handleGoogleSignIn = async () => {
-    setLoginLoading(true);
-    try {
-      const res = await authService.signInWithGoogle();
-      if (res?.data) {
-        navigateToApp('home');
-      }
-    } catch (err) {
-      console.warn('Google sign-in notice:', err);
-    } finally {
-      setLoginLoading(false);
-    }
+  const handleOpenLogin = () => {
+    setAuthModalMode('login');
+    setAuthModalOpen(true);
   };
 
-  // 1-Click Apple Sign In on Website
-  const handleAppleSignIn = async () => {
-    setLoginLoading(true);
-    try {
-      const res = await authService.signInWithApple();
-      if (res?.data) {
-        navigateToApp('home');
-      }
-    } catch (err) {
-      console.warn('Apple sign-in notice:', err);
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
-  // 1-Click Free Registration on Website
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setRegError(null);
-
-    if (!regName.trim()) {
-      setRegError('Please enter candidate full name');
-      return;
-    }
-    if (!regEmail.trim() || !regEmail.includes('@')) {
-      setRegError('Please enter a valid email address');
-      return;
-    }
-    if (!regPhone.trim() || regPhone.length < 8) {
-      setRegError('Please enter a valid mobile number');
-      return;
-    }
-
-    setRegSubmitting(true);
-    try {
-      const email = regEmail.trim().toLowerCase();
-      const name = regName.trim();
-
-      // Save lead to Supabase in background
-      const leadData: VipLead = {
-        profile_for: regProfileFor,
-        gender: regGender === 'female' ? 'Female (Bride)' : 'Male (Groom)',
-        full_name: name,
-        phone_country_code: '+91',
-        phone_number: regPhone.trim(),
-        email: email,
-        city: regCity.trim() || 'India / Global',
-        annual_income: 'Confidential',
-        source_cta: 'Hero Direct Web Registration'
-      };
-      await vipConsultationService.submitLead(leadData);
-
-      // Create session and seed initial bio
-      authService.setUserSession(email, name);
-      const initialProfile = {
-        display_name: name,
-        gender: regGender,
-        city: regCity.trim() || 'Mumbai',
-        managed_by: regProfileFor.includes('Self') ? 'self' : 'parent',
-        religion: 'Hindu',
-        marital_status: 'Never Married',
-        bio_text: `Bio-data created for ${name}. Seeking a meaningful alliance based on shared values.`
-      };
-      localStorage.setItem('mannat_user_profile', JSON.stringify(initialProfile));
-      localStorage.setItem('mannat_onboarded_' + email, 'true');
-
-      // Launch onboarding directly
-      navigateToApp('onboarding');
-    } catch (err) {
-      console.warn('Registration notice:', err);
-      authService.setUserSession(regEmail.trim().toLowerCase(), regName.trim());
-      navigateToApp('onboarding');
-    } finally {
-      setRegSubmitting(false);
-    }
+  const handleAuthSuccess = (_session?: UserSession) => {
+    setAuthModalOpen(false);
+    navigateToApp('home');
   };
 
   // Top Curated Showcase Profiles
@@ -298,14 +198,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             <nav className="hidden lg:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#6E6259]">
               <button
                 type="button"
-                onClick={() => { setHeroTab('login'); heroFormRef.current?.scrollIntoView({ behavior: 'smooth' }); }}
+                onClick={handleOpenLogin}
                 className="hover:text-[#560406] transition cursor-pointer font-bold"
               >
                 Log In
               </button>
               <button
                 type="button"
-                onClick={() => { setHeroTab('register'); heroFormRef.current?.scrollIntoView({ behavior: 'smooth' }); }}
+                onClick={() => handleOpenRegister('Myself')}
                 className="hover:text-[#560406] transition cursor-pointer font-bold text-[#560406]"
               >
                 Register Free
@@ -319,10 +219,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             <div className="flex items-center gap-2.5 shrink-0">
               <button
                 type="button"
-                onClick={() => {
-                  setHeroTab('login');
-                  heroFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={handleOpenLogin}
                 className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full border border-[#560406] text-xs font-bold text-[#560406] hover:bg-[#560406] hover:text-[#F5E6D3] transition cursor-pointer shadow-2xs active:scale-95"
               >
                 <LogIn className="w-3.5 h-3.5" />
@@ -331,10 +228,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
 
               <button
                 type="button"
-                onClick={() => {
-                  setHeroTab('register');
-                  heroFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }}
+                onClick={() => handleOpenRegister('Myself')}
                 className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-xs font-bold tracking-wide shadow-md transition cursor-pointer whitespace-nowrap active:scale-95"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
@@ -368,8 +262,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    setHeroTab('login');
-                    heroFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+                    handleOpenLogin();
                   }}
                   className="p-3 bg-white rounded-xl border border-[#560406]/30 text-[#560406] font-extrabold text-left flex items-center justify-between cursor-pointer"
                 >
@@ -379,8 +272,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    setHeroTab('register');
-                    heroFormRef.current?.scrollIntoView({ behavior: 'smooth' });
+                    handleOpenRegister('Myself');
                   }}
                   className="p-3 bg-white rounded-xl border border-[#560406]/30 text-[#560406] font-extrabold text-left flex items-center justify-between cursor-pointer"
                 >
@@ -401,335 +293,179 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         </AnimatePresence>
       </header>
 
-      {/* 2. HERO: INTENTION-FIRST MATCHMAKING WITH PROMINENT DUAL LOGIN / REGISTER DOCK */}
-      <section className="relative bg-gradient-to-b from-[#240103] via-[#3A0204] to-[#1C0102] text-white pt-10 sm:pt-16 pb-14 sm:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* 2. HERO: MATCHMAKING SEARCH & FAST REGISTRATION */}
+      <section className="relative bg-gradient-to-b from-[#240103] via-[#3A0204] to-[#1C0102] text-white pt-10 sm:pt-14 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Golden Radial Ambient Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#DFBE7E]/15 via-transparent to-transparent pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="max-w-6xl mx-auto relative z-10 space-y-8 text-center">
           
-          {/* Left Column: Heading & Value Proposition */}
-          <div className="lg:col-span-6 space-y-4 sm:space-y-6 text-center lg:text-left">
-            
+          <div className="max-w-3xl mx-auto space-y-4">
             <div className="inline-flex items-center gap-2 bg-[#DFBE7E]/10 border border-[#DFBE7E]/30 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#DFBE7E] tracking-wide shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
               <span>India's Intention-First Private Matrimonial Network</span>
             </div>
 
             <h1
-              className="text-3xl sm:text-5xl lg:text-[54px] font-normal text-white tracking-[0.01em] leading-[1.12]"
+              className="text-3xl sm:text-5xl lg:text-[52px] font-normal text-white tracking-[0.01em] leading-[1.15]"
               style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
             >
-              Private, Verified Matchmaking for Discerning Families
+              Find Your Forever with Verified Matrimonial Matches
             </h1>
 
-            <p className="text-xs sm:text-base text-[#F4EAE0] leading-relaxed max-w-xl mx-auto lg:mx-0 font-normal">
-              Log in or register on the web to explore verified candidate bio-datas with BlurShield™ privacy controls, WhatsApp family cards, and bespoke concierge introductions.
+            <p className="text-xs sm:text-base text-[#F4EAE0] leading-relaxed max-w-2xl mx-auto font-normal">
+              Over 20 Lakh Success Stories. Register in 4 simple steps to browse verified bio-datas with BlurShield™ privacy controls and direct WhatsApp family sharing.
             </p>
+          </div>
 
-            {/* Trust Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 text-left">
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/5 border border-white/10">
-                <CheckCircle2 className="w-4 h-4 text-[#DFBE7E] shrink-0" />
-                <span className="text-xs font-semibold text-white">100% Verified Members</span>
+          {/* Quick Matchmaking Finder Horizontal Bar (Matching screenshot background) */}
+          <div className="bg-white/95 backdrop-blur-md text-[#161412] p-3 sm:p-4 rounded-2xl sm:rounded-full shadow-2xl border border-[#E8DDD0] max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 items-center">
+              
+              {/* Looking for */}
+              <div className="col-span-1 text-left px-2 sm:px-3 sm:border-r border-gray-200">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  I'm looking for a
+                </label>
+                <select
+                  value={heroGender}
+                  onChange={(e) => setHeroGender(e.target.value as any)}
+                  className="w-full text-xs sm:text-sm font-bold text-[#560406] bg-transparent focus:outline-hidden cursor-pointer"
+                >
+                  <option value="female">Woman</option>
+                  <option value="male">Man</option>
+                </select>
               </div>
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/5 border border-white/10">
-                <ShieldCheck className="w-4 h-4 text-[#DFBE7E] shrink-0" />
-                <span className="text-xs font-semibold text-white">BlurShield™ Privacy</span>
-              </div>
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-white/5 border border-white/10">
-                <Crown className="w-4 h-4 text-[#DFBE7E] shrink-0" />
-                <span className="text-xs font-semibold text-white">Family Dossiers</span>
-              </div>
-            </div>
 
-            {/* Direct App Link */}
-            <div className="pt-2 text-xs text-[#E8DDD0] flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              <span className="text-neutral-400">Also available on mobile:</span>
-              <a
-                href="https://apps.apple.com/app/id6812288373"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 hover:bg-black text-white text-xs font-bold border border-white/20 transition shadow-xs"
-              >
-                <span> Download on App Store</span>
-                <ExternalLink className="w-3 h-3 text-[#DFBE7E]" />
-              </a>
+              {/* Age Range */}
+              <div className="col-span-1 text-left px-2 sm:px-3 sm:border-r border-gray-200">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  aged
+                </label>
+                <div className="flex items-center gap-1 text-xs sm:text-sm font-bold text-gray-800">
+                  <select
+                    value={heroAgeMin}
+                    onChange={(e) => setHeroAgeMin(e.target.value)}
+                    className="bg-transparent focus:outline-hidden cursor-pointer"
+                  >
+                    {[20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 32].map((a) => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+                  <span className="text-gray-400 font-normal text-xs">to</span>
+                  <select
+                    value={heroAgeMax}
+                    onChange={(e) => setHeroAgeMax(e.target.value)}
+                    className="bg-transparent focus:outline-hidden cursor-pointer"
+                  >
+                    {[24, 25, 26, 27, 28, 29, 30, 32, 35, 40].map((a) => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Religion */}
+              <div className="col-span-1 text-left px-2 sm:px-3 sm:border-r border-gray-200">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  of religion
+                </label>
+                <select
+                  value={heroReligion}
+                  onChange={(e) => setHeroReligion(e.target.value)}
+                  className="w-full text-xs sm:text-sm font-bold text-gray-800 bg-transparent focus:outline-hidden cursor-pointer"
+                >
+                  <option value="Select">Select Religion</option>
+                  <option value="Christian">Christian</option>
+                  <option value="Hindu">Hindu</option>
+                  <option value="Muslim">Muslim</option>
+                  <option value="Sikh">Sikh</option>
+                  <option value="Jain">Jain</option>
+                  <option value="Parsi">Parsi</option>
+                </select>
+              </div>
+
+              {/* Community / Mother Tongue */}
+              <div className="col-span-1 text-left px-2 sm:px-3">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  and mother tongue
+                </label>
+                <select
+                  value={heroCommunity}
+                  onChange={(e) => setHeroCommunity(e.target.value)}
+                  className="w-full text-xs sm:text-sm font-bold text-gray-800 bg-transparent focus:outline-hidden cursor-pointer"
+                >
+                  <option value="Select">Select Language</option>
+                  <option value="Tamil">Tamil</option>
+                  <option value="Telugu">Telugu</option>
+                  <option value="Punjabi">Punjabi</option>
+                  <option value="Hindi">Hindi</option>
+                  <option value="Malayalam">Malayalam</option>
+                  <option value="Marathi">Marathi</option>
+                  <option value="Bengali">Bengali</option>
+                  <option value="Gujarati">Gujarati</option>
+                  <option value="Kannada">Kannada</option>
+                </select>
+              </div>
+
+              {/* Action Button: "Let's Begin" */}
+              <div className="col-span-2 sm:col-span-1">
+                <button
+                  type="button"
+                  onClick={() => handleOpenRegister('Myself')}
+                  className="w-full py-3 px-6 rounded-full bg-[#00B4C6] hover:bg-[#009dae] text-white text-sm font-extrabold uppercase tracking-wide shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Let's Begin</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
             </div>
           </div>
 
-          {/* Right Column: High-Clarity Dual-Mode Login / Register Box */}
-          <div ref={heroFormRef} className="lg:col-span-6 w-full max-w-md mx-auto">
-            <div className="bg-[#FDFBF7] text-[#161412] p-5 sm:p-7 rounded-3xl shadow-2xl border border-[#E8DDD0] relative overflow-hidden">
-              
-              {/* Dual Tab Switcher (Log In vs Register Free) */}
-              <div className="grid grid-cols-2 p-1 bg-[#F4EAE0] rounded-2xl border border-[#E8DDD0] mb-5 text-xs font-bold">
-                <button
-                  type="button"
-                  onClick={() => setHeroTab('login')}
-                  className={`py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    heroTab === 'login'
-                      ? 'bg-[#560406] text-[#F5E6D3] shadow-xs font-extrabold'
-                      : 'text-[#6E6259] hover:text-[#560406]'
-                  }`}
-                >
-                  <LogIn className="w-3.5 h-3.5" />
-                  <span>Member Log In</span>
-                </button>
+          {/* Quick Dual Cards: 1-Click Register & Member Sign In */}
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <button
+              type="button"
+              onClick={() => handleOpenRegister('Myself')}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#DFBE7E] via-[#E8DDD0] to-[#DFBE7E] text-[#1C0102] font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-105 transition active:scale-95 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-[#1C0102]" />
+              <span>Create Profile in 4 Steps (Free)</span>
+            </button>
 
-                <button
-                  type="button"
-                  onClick={() => setHeroTab('register')}
-                  className={`py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    heroTab === 'register'
-                      ? 'bg-[#560406] text-[#F5E6D3] shadow-xs font-extrabold'
-                      : 'text-[#6E6259] hover:text-[#560406]'
-                  }`}
-                >
-                  <UserPlus className="w-3.5 h-3.5" />
-                  <span>Register Free</span>
-                </button>
+            <button
+              type="button"
+              onClick={handleOpenLogin}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs uppercase tracking-wider transition active:scale-95 cursor-pointer"
+            >
+              <LogIn className="w-4 h-4 text-[#DFBE7E]" />
+              <span>Existing Member Log In</span>
+            </button>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-4 text-left">
+            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+              <CheckCircle2 className="w-5 h-5 text-[#DFBE7E] shrink-0" />
+              <div>
+                <div className="text-xs font-bold text-white">100% Verified Members</div>
+                <div className="text-[10px] text-neutral-300">Mandatory Government ID verification</div>
               </div>
-
-              {/* TAB 1: MEMBER LOG IN */}
-              {heroTab === 'login' && (
-                <div className="space-y-4 text-left">
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                      Sign In to Your Account
-                    </h2>
-                    <p className="text-xs text-[#6E6259] mt-0.5">
-                      Access your verified bio-data, messages, and partner matches.
-                    </p>
-                  </div>
-
-                  {/* 1-Tap Social Logins */}
-                  <div className="space-y-2">
-                    <button
-                      type="button"
-                      disabled={loginLoading}
-                      onClick={handleAppleSignIn}
-                      className="w-full py-2.5 px-4 rounded-xl bg-[#1C0102] hover:bg-[#260102] active:scale-95 text-xs font-bold text-white border border-[#A17B5E]/30 flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-xs whitespace-nowrap"
-                    >
-                      <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 170 170">
-                        <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.59-7.71-11.72-14.01-6.42-9.79-11.48-20.76-15.17-32.91-3.69-12.16-5.54-23.77-5.54-34.84 0-14.45 3.63-26.47 10.9-36.06 7.27-9.59 16.51-14.44 27.71-14.56 4.91 0 10.42 1.34 16.53 4.02 6.11 2.68 10.15 4.02 12.11 4.02 1.63 0 5.86-1.4 12.69-4.2 6.83-2.8 12.71-4.04 17.65-3.73 13.06.66 23.36 5.62 30.9 14.89-11.54 6.96-17.19 16.64-16.96 29.04.22 9.68 3.86 17.81 10.93 24.39 7.07 6.58 15.46 10.22 25.17 10.92-2.18 6.53-4.8 12.87-7.85 19.01zM119.22 33.64c0-7.39 2.66-14.17 7.99-20.33 5.33-6.17 11.95-10.15 19.86-11.94 1.09 7.61-1.2 14.7-6.87 21.27-5.67 6.57-12.66 10.57-20.98 12-.02-.33-.04-.67-.04-1z" />
-                      </svg>
-                      <span>{loginLoading ? 'Authenticating...' : 'Continue with Apple'}</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      disabled={loginLoading}
-                      onClick={handleGoogleSignIn}
-                      className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-[#F8F6F2] active:scale-95 text-xs font-bold text-[#161412] border border-[#E8DDD0] flex items-center justify-center gap-2.5 transition-all cursor-pointer shadow-2xs whitespace-nowrap"
-                    >
-                      <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                      </svg>
-                      <span>{loginLoading ? 'Opening Google...' : 'Continue with Google'}</span>
-                    </button>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="flex items-center gap-2.5 pt-1">
-                    <div className="flex-1 h-px bg-[#E8DDD0]" />
-                    <span className="text-[9px] font-black uppercase tracking-wider text-[#A17B5E]">OR SIGN IN WITH EMAIL</span>
-                    <div className="flex-1 h-px bg-[#E8DDD0]" />
-                  </div>
-
-                  {/* Email Login Form */}
-                  <form onSubmit={handleEmailLogin} className="space-y-3">
-                    <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-[#560406] mb-1">
-                        Registered Email
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="email"
-                          required
-                          value={loginEmail}
-                          onChange={(e) => setLoginEmail(e.target.value)}
-                          placeholder="name@example.com"
-                          className="w-full h-10 pl-8 pr-3 bg-[#F8F6F2] border border-[#E8DDD0] rounded-xl text-xs font-bold text-[#161412] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#560406]"
-                        />
-                        <Mail className="w-3.5 h-3.5 text-[#A17B5E] absolute left-2.5 top-1/2 -translate-y-1/2" />
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={loginLoading}
-                      className="w-full h-11 rounded-xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 border border-[#A17B5E]/50"
-                    >
-                      <LogIn className="w-3.5 h-3.5 text-[#DFBE7E]" />
-                      <span>{loginLoading ? 'Signing In...' : 'Sign In with Email →'}</span>
-                    </button>
-                  </form>
-
-                  <p className="text-[10px] text-[#8C827A] text-center pt-1">
-                    Don't have an account yet?{' '}
-                    <button type="button" onClick={() => setHeroTab('register')} className="text-[#560406] font-bold underline cursor-pointer">
-                      Register Free Here
-                    </button>
-                  </p>
-                </div>
-              )}
-
-              {/* TAB 2: REGISTER FREE */}
-              {heroTab === 'register' && (
-                <div className="space-y-3.5 text-left">
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                      Register Candidate Profile
-                    </h2>
-                    <p className="text-xs text-[#6E6259] mt-0.5">
-                      Takes 2 minutes · 100% Confidential &amp; Verified
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleRegisterSubmit} className="space-y-3">
-                    {/* Row 1: Profile For & Gender */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-wider text-[#560406] mb-1">
-                          Profile For
-                        </label>
-                        <div className="relative">
-                          <select
-                            value={regProfileFor}
-                            onChange={(e) => setRegProfileFor(e.target.value)}
-                            className="w-full h-9 pl-2.5 pr-6 bg-[#F8F6F2] border border-[#E8DDD0] rounded-xl text-xs font-bold text-[#161412] focus:outline-none focus:ring-2 focus:ring-[#560406] appearance-none cursor-pointer"
-                          >
-                            <option value="My Self">Self</option>
-                            <option value="My Son">Son</option>
-                            <option value="My Daughter">Daughter</option>
-                            <option value="My Brother">Brother</option>
-                            <option value="My Sister">Sister</option>
-                          </select>
-                          <ChevronDown className="w-3 h-3 text-[#8C827A] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-wider text-[#560406] mb-1">
-                          Gender
-                        </label>
-                        <div className="grid grid-cols-2 gap-1 h-9 p-0.5 bg-[#F8F6F2] border border-[#E8DDD0] rounded-xl text-xs font-bold">
-                          <button
-                            type="button"
-                            onClick={() => setRegGender('female')}
-                            className={`rounded-lg transition cursor-pointer flex items-center justify-center ${
-                              regGender === 'female' ? 'bg-[#560406] text-[#F5E6D3] shadow-2xs' : 'text-[#6E6259]'
-                            }`}
-                          >
-                            Female
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setRegGender('male')}
-                            className={`rounded-lg transition cursor-pointer flex items-center justify-center ${
-                              regGender === 'male' ? 'bg-[#560406] text-[#F5E6D3] shadow-2xs' : 'text-[#6E6259]'
-                            }`}
-                          >
-                            Male
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Candidate Name */}
-                    <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-[#560406] mb-1">
-                        Candidate Full Name *
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          required
-                          value={regName}
-                          onChange={(e) => setRegName(e.target.value)}
-                          placeholder="e.g. Rahul Sharma"
-                          className="w-full h-9 pl-7 pr-3 bg-[#F8F6F2] border border-[#E8DDD0] rounded-xl text-xs font-bold text-[#161412] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#560406]"
-                        />
-                        <User className="w-3 h-3 text-[#A17B5E] absolute left-2.5 top-1/2 -translate-y-1/2" />
-                      </div>
-                    </div>
-
-                    {/* Email */}
-                    <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-[#560406] mb-1">
-                        Email Address *
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="email"
-                          required
-                          value={regEmail}
-                          onChange={(e) => setRegEmail(e.target.value)}
-                          placeholder="name@example.com"
-                          className="w-full h-9 pl-7 pr-3 bg-[#F8F6F2] border border-[#E8DDD0] rounded-xl text-xs font-bold text-[#161412] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#560406]"
-                        />
-                        <Mail className="w-3 h-3 text-[#A17B5E] absolute left-2.5 top-1/2 -translate-y-1/2" />
-                      </div>
-                    </div>
-
-                    {/* Mobile & City */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-wider text-[#560406] mb-1">
-                          Mobile Number *
-                        </label>
-                        <input
-                          type="tel"
-                          required
-                          value={regPhone}
-                          onChange={(e) => setRegPhone(e.target.value)}
-                          placeholder="98765 43210"
-                          className="w-full h-9 px-2.5 bg-[#F8F6F2] border border-[#E8DDD0] rounded-xl text-xs font-bold text-[#161412] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#560406]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold uppercase tracking-wider text-[#560406] mb-1">
-                          City
-                        </label>
-                        <input
-                          type="text"
-                          value={regCity}
-                          onChange={(e) => setRegCity(e.target.value)}
-                          placeholder="e.g. Mumbai"
-                          className="w-full h-9 px-2.5 bg-[#F8F6F2] border border-[#E8DDD0] rounded-xl text-xs font-bold text-[#161412] placeholder-[#A89F91] focus:outline-none focus:ring-2 focus:ring-[#560406]"
-                        />
-                      </div>
-                    </div>
-
-                    {regError && (
-                      <div className="text-[11px] text-rose-600 font-bold bg-rose-50 border border-rose-200 p-2 rounded-lg">
-                        ⚠️ {regError}
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={regSubmitting}
-                      className="w-full h-11 rounded-xl bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] text-xs font-extrabold uppercase tracking-wider shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 border border-[#A17B5E]/50 mt-2"
-                    >
-                      <Sparkles className="w-4 h-4 text-[#DFBE7E]" />
-                      <span>{regSubmitting ? 'Creating Profile...' : 'Create Profile & View Matches →'}</span>
-                    </button>
-                  </form>
-
-                  <p className="text-[10px] text-[#8C827A] text-center pt-1">
-                    Already registered?{' '}
-                    <button type="button" onClick={() => setHeroTab('login')} className="text-[#560406] font-bold underline cursor-pointer">
-                      Log In Here
-                    </button>
-                  </p>
-                </div>
-              )}
-
+            </div>
+            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+              <ShieldCheck className="w-5 h-5 text-[#DFBE7E] shrink-0" />
+              <div>
+                <div className="text-xs font-bold text-white">BlurShield™ Privacy</div>
+                <div className="text-[10px] text-neutral-300">Zero search engine photo indexing</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+              <Crown className="w-5 h-5 text-[#DFBE7E] shrink-0" />
+              <div>
+                <div className="text-xs font-bold text-white">Family WhatsApp Cards</div>
+                <div className="text-[10px] text-neutral-300">Designed for parents &amp; match-seekers</div>
+              </div>
             </div>
           </div>
 
@@ -754,10 +490,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
           {showcaseProfiles.map((p) => (
             <div
               key={p.id}
-              onClick={() => {
-                setHeroTab('register');
-                heroFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-              }}
+              onClick={() => handleOpenRegister('Myself')}
               className="bg-white rounded-2xl overflow-hidden border border-[#E8DDD0] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between cursor-pointer group"
             >
               {/* Photo with BlurShield */}
@@ -814,7 +547,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         <div className="text-center pt-8">
           <button
             type="button"
-            onClick={() => navigateToApp('home')}
+            onClick={() => handleOpenRegister('Myself')}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-[#F4EAE0] text-[#560406] border border-[#560406] text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-xs"
           >
             <span>Explore Complete Verified Directory →</span>
@@ -926,21 +659,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
           <button
             type="button"
-            onClick={() => {
-              setHeroTab('register');
-              heroFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onClick={() => handleOpenRegister('Myself')}
             className="px-6 py-3 rounded-full bg-[#DFBE7E] hover:bg-[#E8DDD0] text-[#1C0102] text-xs font-black uppercase tracking-wider shadow-lg transition cursor-pointer flex items-center gap-2"
           >
             <Sparkles className="w-4 h-4 text-[#1C0102]" />
-            <span>Register Free on Web →</span>
+            <span>Register Free in 4 Steps →</span>
           </button>
           <button
             type="button"
-            onClick={() => {
-              setHeroTab('login');
-              heroFormRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onClick={handleOpenLogin}
             className="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition cursor-pointer"
           >
             <span>Member Log In</span>
@@ -967,6 +694,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
           &copy; 2026 The House of Mannat. Confidential matrimonial alliance network. All rights reserved.
         </div>
       </footer>
+
+      {/* Multi-Step Registration & Login Flow Modal */}
+      <RegistrationFlowModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+        initialMode={authModalMode}
+        initialProfileFor={authModalProfileFor}
+        onOpenLegal={(type) => {
+          setLegalInitialDoc(type === 'terms' ? 'terms' : 'privacy');
+          setShowLegal(true);
+        }}
+      />
 
       {/* Legal Modal */}
       <LegalModal
