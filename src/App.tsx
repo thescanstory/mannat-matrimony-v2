@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { MainApp } from './components/MainApp';
 import { App as AdminPortal } from '../admin/src/App';
@@ -63,12 +64,31 @@ export function App() {
     window.location.search.includes('app=true')
   );
 
-  if (isDirectAppRoute) {
-    return <MainApp />;
+  const [webAppActive, setWebAppActive] = useState<boolean>(isDirectAppRoute);
+  const [initialAppView, setInitialAppView] = useState<'home' | 'auth' | 'onboarding'>('home');
+
+  if (webAppActive) {
+    return (
+      <MainApp
+        initialView={initialAppView}
+        onNavigateLanding={() => {
+          setWebAppActive(false);
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }}
+      />
+    );
   }
 
-  // 6. Default Website for www.mannatmatrimony.com
-  return <LandingPage />;
+  // 6. Default Luxury Website for www.mannatmatrimony.com with Web Registration
+  return (
+    <LandingPage
+      onOpenApp={(view = 'home') => {
+        setInitialAppView(view);
+        setWebAppActive(true);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }}
+    />
+  );
 }
 
 export default App;

@@ -21,7 +21,12 @@ import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 
 type ViewType = 'splash' | 'auth' | 'home' | 'for-you' | 'connections' | 'share-portal' | 'profile' | 'onboarding';
 
-export const MainApp: React.FC = () => {
+interface MainAppProps {
+  initialView?: ViewType;
+  onNavigateLanding?: () => void;
+}
+
+export const MainApp: React.FC<MainAppProps> = ({ initialView = 'home', onNavigateLanding }) => {
   const [profiles, setProfiles] = useState<Profile[]>(() => {
     try {
       if (typeof window !== 'undefined' && localStorage.getItem('mannat_admin_deleted') === 'true') {
@@ -44,17 +49,25 @@ export const MainApp: React.FC = () => {
 
   const [currentView, setCurrentView] = useState<ViewType>(() => {
     try {
+      if (initialView) return initialView;
       if (typeof window !== 'undefined' && !window.location.search.includes('splash=true')) {
         return 'home';
       }
       return 'home';
     } catch {
-      return 'home';
+      return initialView || 'home';
     }
   });
 
+  // Sync initialView when passed as prop
+  useEffect(() => {
+    if (initialView && initialView !== currentView) {
+      setCurrentView(initialView);
+    }
+  }, [initialView]);
+
   // Navigation History Stack & Slide Direction
-  const [history, setHistory] = useState<ViewType[]>(['home']);
+  const [history, setHistory] = useState<ViewType[]>([initialView || 'home']);
   const [slideDirection, setSlideDirection] = useState<number>(1);
 
   const navigateTo = useCallback((view: ViewType) => {
@@ -435,7 +448,16 @@ export const MainApp: React.FC = () => {
                   </button>
                 )}
 
-                <a href="/" className="flex items-center gap-2.5 group">
+                <a 
+                  href="/" 
+                  onClick={(e) => {
+                    if (onNavigateLanding) {
+                      e.preventDefault();
+                      onNavigateLanding();
+                    }
+                  }}
+                  className="flex items-center gap-2.5 group cursor-pointer"
+                >
                   <img
                     src="/images/mannat-logo-square.png"
                     alt="Mannat"
@@ -578,7 +600,9 @@ export const MainApp: React.FC = () => {
                     }
                   }}
                   onOpenLanding={() => {
-                    if (typeof window !== 'undefined') {
+                    if (onNavigateLanding) {
+                      onNavigateLanding();
+                    } else if (typeof window !== 'undefined') {
                       window.location.href = '/';
                     }
                   }}
