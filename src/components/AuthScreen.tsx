@@ -189,15 +189,15 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess, onOpenLa
           </button>
         </div>
 
-        {/* Register In 4 Steps Trigger Button */}
+        {/* Register In 5 Steps Trigger Button */}
         <div className="pt-2 border-t border-[#E8DDD0]">
           <button
             type="button"
             onClick={() => setShowRegisterModal(true)}
-            className="w-full py-2.5 px-4 rounded-xl bg-[#00B4C6]/10 hover:bg-[#00B4C6]/20 text-[#008B99] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors border border-[#00B4C6]/30 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-xl bg-[#560406]/10 hover:bg-[#560406]/20 text-[#560406] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors border border-[#560406]/30 cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#00B4C6]" />
-            <span>New here? Register Free in 4 Steps</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#A17B5E]" />
+            <span>New here? Register Free in 5 Steps</span>
           </button>
         </div>
       </div>

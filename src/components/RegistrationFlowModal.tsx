@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   X,
   User,
+  Calendar,
   Users,
   ShieldCheck,
   Info,
@@ -240,24 +241,30 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
     setDobYear(cleaned);
   };
 
-  // Step 1 Validation & Proceed
+  // Step 1: Select Profile For
   const handleSelectProfileFor = (option: string) => {
     setProfileFor(option);
     setErrorMessage(null);
     setStep(2);
   };
 
-  // Step 2 Validation & Proceed
+  // Step 2: Name Validation
   const handleStep2Continue = () => {
     setErrorMessage(null);
     if (!firstName.trim()) {
-      setErrorMessage('Please enter your first name');
+      setErrorMessage('Please enter candidate first name');
       return;
     }
     if (!lastName.trim()) {
-      setErrorMessage('Please enter your last name');
+      setErrorMessage('Please enter candidate last name');
       return;
     }
+    setStep(3);
+  };
+
+  // Step 3: DOB Validation
+  const handleStep3Continue = () => {
+    setErrorMessage(null);
     const day = parseInt(dobDay, 10);
     const month = parseInt(dobMonth, 10);
     const year = parseInt(dobYear, 10);
@@ -276,20 +283,20 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
       return;
     }
 
-    setStep(3);
-  };
-
-  // Step 3 Validation & Proceed
-  const handleStep3Continue = () => {
-    setErrorMessage(null);
-    if (!religion) {
-      setErrorMessage('Please select your religion');
-      return;
-    }
     setStep(4);
   };
 
-  // Step 4 Final Submission
+  // Step 4: Religion & Community Validation
+  const handleStep4Continue = () => {
+    setErrorMessage(null);
+    if (!religion) {
+      setErrorMessage('Please select religion');
+      return;
+    }
+    setStep(5);
+  };
+
+  // Step 5: Final Submission (Email & Phone)
   const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -320,7 +327,7 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
         email: cleanEmail,
         city: country,
         community: `${religion} - ${community}`,
-        source_cta: 'Web Multi-Step Registration Modal',
+        source_cta: 'Web 5-Step Registration Modal',
         notes: `DOB: ${birthDate}, Country: ${country}`,
       });
 
@@ -355,7 +362,7 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
     }
   };
 
-  // Quick Direct Login Handler
+  // Direct Login Handler
   const handleDirectLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -422,21 +429,35 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md overflow-y-auto">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.22, ease: 'easeOut' }}
-        className="relative w-full max-w-[460px] bg-white rounded-3xl shadow-2xl overflow-hidden border border-neutral-100 my-auto"
+        className="relative w-full max-w-[540px] bg-[#FCFAF7] rounded-[32px] shadow-2xl overflow-hidden border border-[#E8DDD0] my-auto"
       >
-        {/* Modal Top Bar */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-2">
+        {/* Step Progress Indicator (when registering) */}
+        {mode === 'register' && (
+          <div className="w-full bg-[#F4EAE0] h-1.5 flex">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <div
+                key={s}
+                className={`flex-1 h-full transition-all duration-300 ${
+                  s <= step ? 'bg-[#560406]' : 'bg-transparent'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Modal Header */}
+        <div className="flex items-center justify-between px-6 sm:px-8 pt-6 pb-2">
           {mode === 'register' ? (
             <button
               type="button"
               onClick={handleBack}
-              className="p-1.5 -ml-1.5 text-gray-500 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors"
+              className="p-2 -ml-2 text-[#560406] hover:bg-[#560406]/10 rounded-full transition-colors cursor-pointer"
               aria-label="Back"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -446,17 +467,17 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
           )}
 
           {/* Mode Switch Pills */}
-          <div className="flex bg-gray-100 p-1 rounded-full text-xs font-semibold">
+          <div className="flex bg-[#EFE7DE] p-1 rounded-full text-xs font-bold border border-[#E8DDD0]">
             <button
               type="button"
               onClick={() => {
                 setMode('register');
                 setErrorMessage(null);
               }}
-              className={`px-3 py-1 rounded-full transition-all ${
+              className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                 mode === 'register'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                  : 'text-[#6E6259] hover:text-[#560406]'
               }`}
             >
               Register
@@ -467,10 +488,10 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                 setMode('login');
                 setErrorMessage(null);
               }}
-              className={`px-3 py-1 rounded-full transition-all ${
+              className={`px-4 py-1.5 rounded-full transition-all cursor-pointer ${
                 mode === 'login'
-                  ? 'bg-white text-gray-900 shadow-xs'
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? 'bg-[#560406] text-[#F5E6D3] shadow-xs'
+                  : 'text-[#6E6259] hover:text-[#560406]'
               }`}
             >
               Log In
@@ -480,46 +501,52 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 -mr-1.5 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-2 -mr-2 text-[#8C827A] hover:text-[#560406] hover:bg-[#560406]/10 rounded-full transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Error Alert if any */}
+        {/* Error Alert */}
         {errorMessage && (
-          <div className="mx-6 mt-2 px-3.5 py-2 bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl flex items-center gap-2">
-            <Info className="w-4 h-4 shrink-0 text-red-500" />
+          <div className="mx-6 sm:mx-8 mt-3 px-4 py-2.5 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold rounded-2xl flex items-center gap-2">
+            <Info className="w-4 h-4 shrink-0 text-rose-600" />
             <span>{errorMessage}</span>
           </div>
         )}
 
-        {/* REGISTER MODE */}
+        {/* ================= REGISTER MODE (5 BIG STEPS) ================= */}
         {mode === 'register' && (
-          <div className="px-6 pb-6 pt-2">
+          <div className="px-6 sm:px-8 pb-8 pt-3">
+            
             {/* STEP 1: "This Profile is for" */}
             {step === 1 && (
               <motion.div
                 key="step-1"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                exit={{ opacity: 0, x: -12 }}
                 className="space-y-6"
               >
-                {/* Top Badge Icon */}
+                {/* Grand Top Badge Icon */}
                 <div className="flex justify-center">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-100/90 to-orange-100/80 flex items-center justify-center shadow-inner">
-                    <User className="w-8 h-8 text-amber-600 fill-amber-500/20" />
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5E6D3] to-[#E8DDD0] flex items-center justify-center shadow-md ring-4 ring-[#560406]/10">
+                    <User className="w-10 h-10 text-[#560406]" />
                   </div>
                 </div>
 
-                <h2 className="text-xl font-bold text-gray-900 text-left">
-                  This Profile is for
-                </h2>
+                <div className="text-left space-y-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#A17B5E]">
+                    Step 1 of 5
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    This Profile is for
+                  </h2>
+                </div>
 
                 {/* Profile For Pill Radios */}
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap gap-3">
                   {PROFILE_FOR_OPTIONS.map((opt) => {
                     const isSelected = profileFor === opt;
                     return (
@@ -527,20 +554,20 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                         key={opt}
                         type="button"
                         onClick={() => handleSelectProfileFor(opt)}
-                        className={`flex items-center gap-2.5 px-4 py-2.5 rounded-full border text-sm font-medium transition-all ${
+                        className={`flex items-center gap-3 px-5 py-3 rounded-full border text-sm sm:text-base font-bold transition-all cursor-pointer ${
                           isSelected
-                            ? 'border-cyan-500 bg-cyan-50/40 text-gray-900 font-semibold shadow-xs ring-1 ring-cyan-500/30'
-                            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                            ? 'border-[#560406] bg-[#560406] text-[#F5E6D3] shadow-md ring-2 ring-[#560406]/30'
+                            : 'border-[#E8DDD0] bg-white text-[#161412] hover:border-[#560406] hover:bg-[#F8F6F2]'
                         }`}
                       >
                         <span
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
+                          className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
                             isSelected
-                              ? 'border-cyan-500 bg-cyan-500'
-                              : 'border-gray-300 bg-white'
+                              ? 'border-[#DFBE7E] bg-[#DFBE7E]'
+                              : 'border-[#C8B8A6] bg-white'
                           }`}
                         >
-                          {isSelected && <span className="w-1.5 h-1.5 bg-white rounded-full" />}
+                          {isSelected && <span className="w-2 h-2 bg-[#560406] rounded-full" />}
                         </span>
                         <span>{opt}</span>
                       </button>
@@ -549,124 +576,77 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                 </div>
 
                 {/* Warning & Genuine Match-seekers Note */}
-                <div className="bg-[#FFF8F2] border border-[#FED7AA] rounded-2xl p-4 flex items-start gap-3 text-left">
-                  <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <Info className="w-3.5 h-3.5 text-orange-600" />
+                <div className="bg-[#FAF5EF] border border-[#DFBE7E]/60 rounded-2xl p-4 sm:p-5 flex items-start gap-3.5 text-left shadow-2xs">
+                  <div className="w-6 h-6 rounded-full bg-[#DFBE7E]/30 flex items-center justify-center shrink-0 mt-0.5">
+                    <Info className="w-4 h-4 text-[#560406]" />
                   </div>
-                  <p className="text-xs text-orange-950/80 leading-relaxed">
-                    Mannat is built for genuine match-seekers. Any falsification, commercial use or marriage bureaus is strictly prohibited & may be reported to law enforcement.
+                  <p className="text-xs sm:text-[13px] text-[#422C1D] leading-relaxed font-medium">
+                    Mannat is built for genuine match-seekers. Any falsification, commercial use or marriage bureaus is strictly prohibited &amp; may be reported to law enforcement.
                   </p>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 2: "Your name" & "Date of birth" */}
+            {/* STEP 2: "Your name" */}
             {step === 2 && (
               <motion.div
                 key="step-2"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="space-y-5"
+                exit={{ opacity: 0, x: -12 }}
+                className="space-y-6"
               >
-                {/* Top Badge Icon */}
+                {/* Grand Top Badge Icon */}
                 <div className="flex justify-center">
-                  <div className="w-16 h-16 rounded-full bg-purple-50 flex items-center justify-center shadow-inner">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5E6D3] to-[#E8DDD0] flex items-center justify-center shadow-md ring-4 ring-[#560406]/10">
                     <div className="relative">
-                      <User className="w-8 h-8 text-purple-600" />
-                      <Sparkles className="w-3.5 h-3.5 text-purple-400 absolute -top-1 -right-1" />
+                      <User className="w-10 h-10 text-[#560406]" />
+                      <Sparkles className="w-4 h-4 text-[#A17B5E] absolute -top-1 -right-1" />
                     </div>
                   </div>
                 </div>
 
-                {/* Name Section */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-bold text-gray-900 text-left">Your name</h3>
-                  
-                  {/* First Name Fieldset Input */}
-                  <div className="relative rounded-lg border border-gray-300 px-3.5 pt-3.5 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                    <label className="absolute -top-2.5 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                      First name
+                <div className="text-left space-y-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#A17B5E]">
+                    Step 2 of 5
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Candidate Full Name
+                  </h2>
+                  <p className="text-xs text-[#6E6259]">
+                    Please enter the legal name as per government ID
+                  </p>
+                </div>
+
+                {/* Name Inputs */}
+                <div className="space-y-4 text-left">
+                  {/* First Name */}
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-4 pt-4 pb-2.5 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                    <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      First name *
                     </label>
                     <input
                       type="text"
+                      autoFocus
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="e.g. Patrick"
-                      className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent"
+                      placeholder="e.g. Rahul"
+                      className="w-full text-lg font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent"
                     />
                   </div>
 
-                  {/* Last Name Fieldset Input */}
-                  <div className="relative rounded-lg border border-gray-300 px-3.5 pt-3.5 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                    <label className="absolute -top-2.5 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                      Last name
+                  {/* Last Name */}
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-4 pt-4 pb-2.5 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                    <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      Last name *
                     </label>
                     <input
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      placeholder="e.g. Abraham"
-                      className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent"
+                      placeholder="e.g. Sharma"
+                      className="w-full text-lg font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent"
                     />
-                  </div>
-                </div>
-
-                {/* Date of Birth Section */}
-                <div className="space-y-3 pt-1">
-                  <h3 className="text-lg font-bold text-gray-900 text-left">Date of birth</h3>
-                  
-                  <div className="grid grid-cols-3 gap-2.5">
-                    {/* Day Input */}
-                    <div className="relative rounded-lg border border-gray-300 px-3 pt-3.5 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                      <label className="absolute -top-2.5 left-2.5 bg-white px-1 text-[11px] font-medium text-gray-500">
-                        Day
-                      </label>
-                      <input
-                        ref={dayRef}
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={2}
-                        value={dobDay}
-                        onChange={(e) => handleDayChange(e.target.value)}
-                        placeholder="DD"
-                        className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent text-center"
-                      />
-                    </div>
-
-                    {/* Month Input */}
-                    <div className="relative rounded-lg border border-gray-300 px-3 pt-3.5 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                      <label className="absolute -top-2.5 left-2.5 bg-white px-1 text-[11px] font-medium text-cyan-600">
-                        Month
-                      </label>
-                      <input
-                        ref={monthRef}
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={2}
-                        value={dobMonth}
-                        onChange={(e) => handleMonthChange(e.target.value)}
-                        placeholder="MM"
-                        className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent text-center"
-                      />
-                    </div>
-
-                    {/* Year Input */}
-                    <div className="relative rounded-lg border border-gray-300 px-3 pt-3.5 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                      <label className="absolute -top-2.5 left-2.5 bg-white px-1 text-[11px] font-medium text-gray-500">
-                        Year
-                      </label>
-                      <input
-                        ref={yearRef}
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={4}
-                        value={dobYear}
-                        onChange={(e) => handleYearChange(e.target.value)}
-                        placeholder="YYYY"
-                        className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent text-center"
-                      />
-                    </div>
                   </div>
                 </div>
 
@@ -675,41 +655,148 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                   <button
                     type="button"
                     onClick={handleStep2Continue}
-                    className="w-full py-3.5 rounded-full font-semibold text-sm bg-[#00B4C6] hover:bg-[#009dae] text-white shadow-md transition-all active:scale-[0.99] cursor-pointer"
+                    className="w-full py-4 rounded-full font-bold text-sm sm:text-base uppercase tracking-wider bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/50 shadow-lg transition-all active:scale-[0.99] cursor-pointer"
                   >
-                    Continue
+                    Continue to Date of Birth →
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 3: "Your religion", "Community", "Living in" */}
+            {/* STEP 3: "Date of birth" */}
             {step === 3 && (
               <motion.div
                 key="step-3"
-                initial={{ opacity: 0, x: 10 }}
+                initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="space-y-4"
+                exit={{ opacity: 0, x: -12 }}
+                className="space-y-6"
               >
-                {/* Top Badge Icon */}
+                {/* Grand Top Badge Icon */}
                 <div className="flex justify-center">
-                  <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center shadow-inner">
-                    <Users className="w-8 h-8 text-emerald-600" />
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5E6D3] to-[#E8DDD0] flex items-center justify-center shadow-md ring-4 ring-[#560406]/10">
+                    <Calendar className="w-10 h-10 text-[#560406]" />
                   </div>
                 </div>
 
-                {/* Religion Section */}
-                <div className="space-y-1.5 text-left">
-                  <h3 className="text-base font-bold text-gray-900">Your religion</h3>
-                  <div className="relative rounded-lg border border-gray-300 px-3.5 pt-3 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                    <label className="absolute -top-2.5 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                      Religion
+                <div className="text-left space-y-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#A17B5E]">
+                    Step 3 of 5
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Date of Birth
+                  </h2>
+                  <p className="text-xs text-[#6E6259]">
+                    Used to calculate astrological compatibility &amp; verified age
+                  </p>
+                </div>
+
+                {/* 3 Boxed Inputs */}
+                <div className="grid grid-cols-3 gap-3.5">
+                  {/* Day */}
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-3.5 pt-4 pb-3 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                    <label className="absolute -top-3 left-3 bg-white px-1.5 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      Day
+                    </label>
+                    <input
+                      ref={dayRef}
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={2}
+                      value={dobDay}
+                      onChange={(e) => handleDayChange(e.target.value)}
+                      placeholder="DD"
+                      className="w-full text-xl font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent text-center"
+                    />
+                  </div>
+
+                  {/* Month */}
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-3.5 pt-4 pb-3 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                    <label className="absolute -top-3 left-3 bg-white px-1.5 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      Month
+                    </label>
+                    <input
+                      ref={monthRef}
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={2}
+                      value={dobMonth}
+                      onChange={(e) => handleMonthChange(e.target.value)}
+                      placeholder="MM"
+                      className="w-full text-xl font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent text-center"
+                    />
+                  </div>
+
+                  {/* Year */}
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-3.5 pt-4 pb-3 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                    <label className="absolute -top-3 left-3 bg-white px-1.5 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      Year
+                    </label>
+                    <input
+                      ref={yearRef}
+                      type="tel"
+                      inputMode="numeric"
+                      maxLength={4}
+                      value={dobYear}
+                      onChange={(e) => handleYearChange(e.target.value)}
+                      placeholder="YYYY"
+                      className="w-full text-xl font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent text-center"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3 bg-[#FAF5EF] rounded-xl text-center text-xs text-[#6E6259]">
+                  Candidate must be at least 18 years old to join Mannat.
+                </div>
+
+                {/* Continue Button */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={handleStep3Continue}
+                    className="w-full py-4 rounded-full font-bold text-sm sm:text-base uppercase tracking-wider bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/50 shadow-lg transition-all active:scale-[0.99] cursor-pointer"
+                  >
+                    Continue to Religion &amp; Community →
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 4: "Your religion", "Community", "Living in" */}
+            {step === 4 && (
+              <motion.div
+                key="step-4"
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -12 }}
+                className="space-y-5"
+              >
+                {/* Grand Top Badge Icon */}
+                <div className="flex justify-center">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5E6D3] to-[#E8DDD0] flex items-center justify-center shadow-md ring-4 ring-[#560406]/10">
+                    <Users className="w-10 h-10 text-[#560406]" />
+                  </div>
+                </div>
+
+                <div className="text-left space-y-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#A17B5E]">
+                    Step 4 of 5
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Religion &amp; Background
+                  </h2>
+                </div>
+
+                <div className="space-y-4 text-left">
+                  {/* Religion Select */}
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-4 pt-3.5 pb-2.5 focus-within:border-[#560406] bg-white transition-all">
+                    <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      Religion *
                     </label>
                     <select
                       value={religion}
                       onChange={(e) => handleReligionChange(e.target.value)}
-                      className="w-full text-base font-medium text-gray-900 bg-transparent focus:outline-hidden appearance-none pr-8 cursor-pointer"
+                      className="w-full text-base font-bold text-[#161412] bg-transparent focus:outline-hidden appearance-none pr-8 cursor-pointer"
                     >
                       {RELIGION_OPTIONS.map((r) => (
                         <option key={r} value={r}>
@@ -717,55 +804,49 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
-                </div>
-
-                {/* Community Section */}
-                <div className="space-y-1.5 text-left">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-base font-bold text-gray-900">Community</h3>
-                    <button
-                      type="button"
-                      onClick={() => setShowCommunityTooltip(!showCommunityTooltip)}
-                      className="text-gray-400 hover:text-gray-600 cursor-pointer"
-                      aria-label="Community Help"
-                    >
-                      <HelpCircle className="w-4 h-4" />
-                    </button>
+                    <ChevronDown className="w-5 h-5 text-[#A17B5E] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
 
-                  {showCommunityTooltip && (
-                    <p className="text-[11px] text-gray-500 bg-gray-50 p-2 rounded-lg border border-gray-100">
-                      Select your cultural sub-community, mother tongue or background to help match you with suitable families.
-                    </p>
-                  )}
+                  {/* Community Select */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-bold text-[#560406] uppercase tracking-wider">Community / Sub-caste</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowCommunityTooltip(!showCommunityTooltip)}
+                        className="text-[#A17B5E] hover:text-[#560406] cursor-pointer"
+                        aria-label="Community Help"
+                      >
+                        <HelpCircle className="w-4 h-4" />
+                      </button>
+                    </div>
 
-                  <div className="relative rounded-lg border border-gray-300 px-3.5 pt-3 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                    <label className="absolute -top-2.5 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                      Community
-                    </label>
-                    <select
-                      value={community}
-                      onChange={(e) => setCommunity(e.target.value)}
-                      className="w-full text-base font-medium text-gray-900 bg-transparent focus:outline-hidden appearance-none pr-8 cursor-pointer"
-                    >
-                      {(COMMUNITY_BY_RELIGION[religion] || DEFAULT_COMMUNITIES).map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    {showCommunityTooltip && (
+                      <p className="text-[11px] text-[#6E6259] bg-[#FAF5EF] p-2.5 rounded-xl border border-[#E8DDD0] mb-2">
+                        Select cultural sub-community, mother tongue or gotra to match with compatible families.
+                      </p>
+                    )}
+
+                    <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-4 pt-3.5 pb-2.5 focus-within:border-[#560406] bg-white transition-all">
+                      <select
+                        value={community}
+                        onChange={(e) => setCommunity(e.target.value)}
+                        className="w-full text-base font-bold text-[#161412] bg-transparent focus:outline-hidden appearance-none pr-8 cursor-pointer"
+                      >
+                        {(COMMUNITY_BY_RELIGION[religion] || DEFAULT_COMMUNITIES).map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="w-5 h-5 text-[#A17B5E] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
                   </div>
-                </div>
 
-                {/* Living In Section */}
-                <div className="space-y-1.5 text-left">
-                  <h3 className="text-base font-bold text-gray-900">Living in</h3>
-                  <div className="relative rounded-lg border border-gray-300 px-3.5 pt-3 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                    <label className="absolute -top-2.5 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                      Country
+                  {/* Country Select */}
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-4 pt-3.5 pb-2.5 focus-within:border-[#560406] bg-white transition-all">
+                    <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      Living In (Country) *
                     </label>
                     <select
                       value={country}
@@ -775,7 +856,7 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                         const matched = COUNTRY_OPTIONS.find((c) => c.name === selectedCountry);
                         if (matched) setCountryCode(matched.code);
                       }}
-                      className="w-full text-base font-medium text-gray-900 bg-transparent focus:outline-hidden appearance-none pr-8 cursor-pointer"
+                      className="w-full text-base font-bold text-[#161412] bg-transparent focus:outline-hidden appearance-none pr-8 cursor-pointer"
                     >
                       {COUNTRY_OPTIONS.map((c) => (
                         <option key={c.name} value={c.name}>
@@ -783,93 +864,96 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <ChevronDown className="w-5 h-5 text-[#A17B5E] absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 </div>
 
                 {/* Continue Button */}
-                <div className="pt-3">
+                <div className="pt-2">
                   <button
                     type="button"
-                    onClick={handleStep3Continue}
-                    className="w-full py-3.5 rounded-full font-semibold text-sm bg-[#00B4C6] hover:bg-[#009dae] text-white shadow-md transition-all active:scale-[0.99] cursor-pointer"
+                    onClick={handleStep4Continue}
+                    className="w-full py-4 rounded-full font-bold text-sm sm:text-base uppercase tracking-wider bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/50 shadow-lg transition-all active:scale-[0.99] cursor-pointer"
                   >
-                    Continue
+                    Continue to Contact Verification →
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 4: "Email ID" & "Mobile no." */}
-            {step === 4 && (
+            {/* STEP 5: "Email ID" & "Mobile no." */}
+            {step === 5 && (
               <motion.div
-                key="step-4"
-                initial={{ opacity: 0, x: 10 }}
+                key="step-5"
+                initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                exit={{ opacity: 0, x: -12 }}
                 className="space-y-5"
               >
-                {/* Top Badge Icon */}
+                {/* Grand Top Badge Icon */}
                 <div className="flex justify-center">
-                  <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center shadow-inner">
-                    <ShieldCheck className="w-8 h-8 text-amber-500" />
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5E6D3] to-[#E8DDD0] flex items-center justify-center shadow-md ring-4 ring-[#560406]/10">
+                    <ShieldCheck className="w-10 h-10 text-[#560406]" />
                   </div>
                 </div>
 
-                <p className="text-sm font-medium text-gray-600 text-center px-4 leading-normal">
-                  An active email ID & phone no. are required to secure your Profile
-                </p>
+                <div className="text-center space-y-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#A17B5E]">
+                    Step 5 of 5
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Secure Your Profile
+                  </h2>
+                  <p className="text-xs text-[#6E6259] px-2">
+                    An active email ID &amp; mobile no. are required to protect your biodata and verified matches.
+                  </p>
+                </div>
 
-                <form onSubmit={handleFinalSubmit} className="space-y-4">
+                <form onSubmit={handleFinalSubmit} className="space-y-4 text-left">
                   {/* Email ID Field */}
-                  <div className="text-left">
-                    <h4 className="text-base font-bold text-gray-900 mb-1.5">Email ID</h4>
-                    <div className="relative rounded-lg border border-gray-300 px-3.5 pt-3.5 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                      <label className="absolute -top-2.5 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                        Email ID
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="name@example.com"
-                        className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent"
-                      />
-                    </div>
+                  <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-4 pt-4 pb-2.5 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                    <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      autoFocus
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@example.com"
+                      className="w-full text-base sm:text-lg font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent"
+                    />
                   </div>
 
                   {/* Mobile No. Field */}
-                  <div className="text-left">
-                    <h4 className="text-base font-bold text-gray-900 mb-1.5">Mobile no.</h4>
-                    <div className="flex gap-2">
-                      {/* Country Code Selector */}
-                      <div className="relative w-28 shrink-0 rounded-lg border border-gray-300 px-3 pt-3.5 pb-2 focus-within:border-cyan-500 bg-white">
-                        <select
-                          value={countryCode}
-                          onChange={(e) => setCountryCode(e.target.value)}
-                          className="w-full text-base font-medium text-gray-900 bg-transparent focus:outline-hidden appearance-none pr-6 cursor-pointer"
-                        >
-                          {COUNTRY_OPTIONS.map((c, i) => (
-                            <option key={`${c.code}-${i}`} value={c.code}>
-                              {c.code} ({c.name.slice(0, 3)})
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown className="w-4 h-4 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
+                  <div className="flex gap-2.5">
+                    {/* Country Code */}
+                    <div className="relative w-32 shrink-0 rounded-2xl border-2 border-[#E8DDD0] px-3.5 pt-4 pb-2.5 focus-within:border-[#560406] bg-white">
+                      <select
+                        value={countryCode}
+                        onChange={(e) => setCountryCode(e.target.value)}
+                        className="w-full text-base font-bold text-[#161412] bg-transparent focus:outline-hidden appearance-none pr-6 cursor-pointer"
+                      >
+                        {COUNTRY_OPTIONS.map((c, i) => (
+                          <option key={`${c.code}-${i}`} value={c.code}>
+                            {c.code} ({c.name.slice(0, 3)})
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-[#A17B5E] absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
 
-                      {/* Mobile Number Input */}
-                      <div className="relative flex-1 rounded-lg border border-gray-300 px-3.5 pt-3.5 pb-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500 bg-white transition-all">
-                        <input
-                          type="tel"
-                          required
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="Mobile no."
-                          className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent"
-                        />
-                      </div>
+                    {/* Mobile Number */}
+                    <div className="relative flex-1 rounded-2xl border-2 border-[#E8DDD0] px-4 pt-4 pb-2.5 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                      <input
+                        type="tel"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Mobile Number"
+                        className="w-full text-base sm:text-lg font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent"
+                      />
                     </div>
                   </div>
 
@@ -878,19 +962,20 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-3.5 rounded-full font-semibold text-sm bg-[#00B4C6] hover:bg-[#009dae] text-white shadow-md transition-all active:scale-[0.99] cursor-pointer"
+                      className="w-full py-4 rounded-full font-bold text-sm sm:text-base uppercase tracking-wider bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/50 shadow-xl transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
                     >
-                      {submitting ? 'Creating Profile...' : 'Submit'}
+                      <Sparkles className="w-4 h-4 text-[#DFBE7E]" />
+                      <span>{submitting ? 'Creating Account...' : 'Complete Registration & Browse'}</span>
                     </button>
                   </div>
 
                   {/* Legal Footer Links */}
-                  <p className="text-[11px] text-gray-500 text-center pt-1">
+                  <p className="text-[11px] text-[#8C827A] text-center pt-1 font-medium">
                     By creating account, you agree to our{' '}
                     <button
                       type="button"
                       onClick={() => onOpenLegal && onOpenLegal('privacy')}
-                      className="text-cyan-600 hover:underline font-medium"
+                      className="text-[#560406] hover:underline font-bold"
                     >
                       Privacy Policy
                     </button>{' '}
@@ -898,70 +983,74 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                     <button
                       type="button"
                       onClick={() => onOpenLegal && onOpenLegal('terms')}
-                      className="text-cyan-600 hover:underline font-medium"
+                      className="text-[#560406] hover:underline font-bold"
                     >
-                      T&C
+                      Terms &amp; Conditions
                     </button>
                     .
                   </p>
                 </form>
               </motion.div>
             )}
+
           </div>
         )}
 
-        {/* LOGIN MODE */}
+        {/* ================= LOGIN MODE ================= */}
         {mode === 'login' && (
-          <div className="px-6 pb-6 pt-3 space-y-4">
+          <div className="px-6 sm:px-8 pb-8 pt-4 space-y-5">
             <div className="flex justify-center">
-              <div className="w-16 h-16 rounded-full bg-[#560406]/10 flex items-center justify-center shadow-inner">
-                <Lock className="w-8 h-8 text-[#560406]" />
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5E6D3] to-[#E8DDD0] flex items-center justify-center shadow-md ring-4 ring-[#560406]/10">
+                <Lock className="w-10 h-10 text-[#560406]" />
               </div>
             </div>
 
             <div className="text-center space-y-1">
-              <h2 className="text-xl font-bold text-gray-900">Welcome Back</h2>
-              <p className="text-xs text-gray-500">Sign in to manage your biodata and verified matches</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                Welcome Back
+              </h2>
+              <p className="text-xs text-[#6E6259]">Sign in to manage your biodata and explore verified matches</p>
             </div>
 
-            <form onSubmit={handleDirectLogin} className="space-y-3.5 text-left">
-              <div className="relative rounded-lg border border-gray-300 px-3.5 pt-3.5 pb-2 focus-within:border-[#560406] focus-within:ring-1 focus-within:ring-[#560406] bg-white transition-all">
-                <label className="absolute -top-2.5 left-3 bg-white px-1 text-[11px] font-medium text-gray-500">
-                  Email Address
+            <form onSubmit={handleDirectLogin} className="space-y-4 text-left">
+              <div className="relative rounded-2xl border-2 border-[#E8DDD0] px-4 pt-4 pb-2.5 focus-within:border-[#560406] focus-within:ring-2 focus-within:ring-[#560406]/20 bg-white transition-all">
+                <label className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-[#560406] uppercase tracking-wider">
+                  Email Address *
                 </label>
                 <input
                   type="email"
                   required
+                  autoFocus
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full text-base font-normal text-gray-900 placeholder:text-gray-400 focus:outline-hidden bg-transparent"
+                  className="w-full text-base sm:text-lg font-bold text-[#161412] placeholder:text-gray-300 focus:outline-hidden bg-transparent"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3.5 rounded-full font-semibold text-sm bg-[#560406] hover:bg-[#430305] text-white shadow-md transition-all active:scale-[0.99]"
+                className="w-full py-4 rounded-full font-bold text-sm sm:text-base uppercase tracking-wider bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/50 shadow-lg transition-all active:scale-[0.99] cursor-pointer"
               >
-                {submitting ? 'Signing In...' : 'Sign In with Email'}
+                {submitting ? 'Signing In...' : 'Sign In with Email →'}
               </button>
             </form>
 
             <div className="relative flex items-center justify-center my-3">
-              <div className="border-t border-gray-200 w-full" />
-              <span className="bg-white px-3 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
-                Or Continue With
+              <div className="border-t border-[#E8DDD0] w-full" />
+              <span className="bg-[#FCFAF7] px-3 text-[10px] font-black uppercase tracking-wider text-[#A17B5E]">
+                OR CONTINUE WITH
               </span>
             </div>
 
             {/* Social 1-Click Buttons */}
-            <div className="grid grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={handleGoogleAuth}
                 disabled={submitting}
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition-colors shadow-xs"
+                className="flex items-center justify-center gap-2.5 py-3 px-4 rounded-2xl border-2 border-[#E8DDD0] bg-white hover:bg-[#F8F6F2] text-xs font-bold text-[#161412] transition-colors shadow-2xs cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path
@@ -981,19 +1070,19 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
                     d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                   />
                 </svg>
-                Google
+                <span>Google</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleAppleAuth}
                 disabled={submitting}
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-xs font-semibold text-gray-700 transition-colors shadow-xs"
+                className="flex items-center justify-center gap-2.5 py-3 px-4 rounded-2xl bg-[#1C0102] hover:bg-[#260102] text-xs font-bold text-white border border-[#A17B5E]/30 transition-colors shadow-2xs cursor-pointer"
               >
-                <svg className="w-4 h-4 fill-black" viewBox="0 0 170 170">
+                <svg className="w-4 h-4 fill-white" viewBox="0 0 170 170">
                   <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.69-7.85-12-14.42-6.53-9.92-11.45-21.05-14.75-33.39-3.3-12.33-4.95-23.77-4.95-34.3 0-14.54 3.69-26.68 11.08-36.42 7.39-9.74 16.53-14.75 27.42-15.03 4.8 0 10.3 1.24 16.5 3.73 6.2 2.49 10.02 3.79 11.46 3.91 2.03-.35 6.13-1.78 12.3-4.29 6.17-2.51 11.39-3.63 15.66-3.35 11.46.73 20.48 4.96 27.06 12.7-9.54 5.76-14.19 13.9-13.95 24.42.24 8.24 3.35 15.15 9.33 20.73 5.98 5.58 13.11 8.84 21.39 9.78-2.24 6.77-4.95 13.43-8.14 19.98zm-29.4-106.84c.14-2.87-.5-5.76-1.92-8.67-1.42-2.91-3.3-5.32-5.64-7.23-2.73-2.24-5.98-3.79-9.75-4.65-.24.7-.36 1.4-.36 2.1 0 2.87.69 5.86 2.07 8.97 1.38 3.11 3.32 5.64 5.82 7.59 2.5 1.95 5.5 3.35 9 4.2.25-.77.5-1.54.78-2.31z" />
                 </svg>
-                Apple
+                <span>Apple</span>
               </button>
             </div>
           </div>

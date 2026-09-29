@@ -413,10 +413,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 <button
                   type="button"
                   onClick={() => handleOpenRegister('Myself')}
-                  className="w-full py-3 px-6 rounded-full bg-[#00B4C6] hover:bg-[#009dae] text-white text-sm font-extrabold uppercase tracking-wide shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3 px-6 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-sm font-extrabold uppercase tracking-wide shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
                 >
                   <span>Let's Begin</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 text-[#DFBE7E]" />
                 </button>
               </div>
 
@@ -431,7 +431,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#DFBE7E] via-[#E8DDD0] to-[#DFBE7E] text-[#1C0102] font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-105 transition active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-[#1C0102]" />
-              <span>Create Profile in 4 Steps (Free)</span>
+              <span>Create Profile in 5 Steps (Free)</span>
             </button>
 
             <button
@@ -663,7 +663,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             className="px-6 py-3 rounded-full bg-[#DFBE7E] hover:bg-[#E8DDD0] text-[#1C0102] text-xs font-black uppercase tracking-wider shadow-lg transition cursor-pointer flex items-center gap-2"
           >
             <Sparkles className="w-4 h-4 text-[#1C0102]" />
-            <span>Register Free in 4 Steps →</span>
+            <span>Register Free in 5 Steps →</span>
           </button>
           <button
             type="button"
