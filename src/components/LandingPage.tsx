@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ShieldCheck,
   CheckCircle2,
   Check,
@@ -13,7 +15,9 @@ import {
   Sparkles,
   Lock,
   MapPin,
-  Briefcase
+  Briefcase,
+  Star,
+  Heart
 } from 'lucide-react';
 import { type UserSession } from '../services/authService';
 import { LegalModal, type LegalDocType } from './LegalModal';
@@ -72,7 +76,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
   // Live real candidate profiles
   const [showcaseProfiles, setShowcaseProfiles] = useState<Profile[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let isMounted = true;
     profileService.getProfiles().then((list) => {
       if (isMounted) {
@@ -128,7 +132,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
     },
     {
       q: 'How do I register a new profile on the website?',
-      a: 'Click the "Register Free" tab in the hero card above, enter your name, email, and phone number, and click "Create Profile". You will immediately be guided through a simple 2-minute setup to add your photo and partner preferences.'
+      a: 'Click the "Register Free" button, enter your name, date of birth, religion, and contact info. You will immediately be guided through a simple 2-minute setup to add your photo and partner preferences.'
     },
     {
       q: 'Can parents or family members manage the account?',
@@ -142,6 +146,58 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
       q: 'Is it free to join and view profiles?',
       a: 'Yes! Creating your bio-data and exploring matching verified profiles is completely free. We also offer optional VIP memberships for extended contact quotas and concierge advisory.'
     }
+  ];
+
+  // Real Couple Success Stories Slider State
+  const [storyIndex, setStoryIndex] = useState(0);
+  const successStories = [
+    {
+      id: 1,
+      couple: 'Natasha & Aman',
+      location: 'South Mumbai · New Delhi',
+      date: 'Alliance Blessed in Nov 2025',
+      quote: 'We were skeptical about digital matchmaking until we experienced Mannat. The BlurShield™ privacy gave my parents the utmost peace of mind, and the verified credentials meant zero awkward verification questions.',
+      detail: 'Chartered Accountant & FinTech VP',
+      image: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800'
+    },
+    {
+      id: 2,
+      couple: 'Priyadarshini & Rohan',
+      location: 'Bangalore · San Francisco',
+      date: 'Alliance Blessed in Jan 2026',
+      quote: 'The WhatsApp dossier card feature made it so seamless for my grandmother to review biodatas with family elders. Within 3 weeks of connecting, both our families met in person in Bangalore.',
+      detail: 'Product Lead & Enterprise Architect',
+      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800'
+    },
+    {
+      id: 3,
+      couple: 'Meenakshi & Siddharth',
+      location: 'Chennai · London',
+      date: 'Alliance Blessed in Feb 2026',
+      quote: 'Mannat feels like an exclusive private club rather than a noisy matrimonial site. The concierge advisory team was exceptional at understanding our cultural background and mutual life goals.',
+      detail: 'Cardiothoracic Surgeon & Management Consultant',
+      image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800'
+    }
+  ];
+
+  // Auto-slide for success stories
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStoryIndex((prev) => (prev + 1) % successStories.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [successStories.length]);
+
+  // Dynamic Marquee items
+  const marqueeItems = [
+    '🔒 Mandatory Government ID Vetting',
+    '✨ BlurShield™ Photo Protection',
+    '💍 20+ Lakh Blessed Alliances',
+    '👑 Verified Income & Education Proof',
+    '💎 Dedicated Concierge Advisory',
+    '🕊️ Zero Public Search Engine Indexing',
+    '📱 1-Click WhatsApp Family Dossiers',
+    '🌟 High-Intent Discreet Community'
   ];
 
   return (
@@ -183,16 +239,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
       </AnimatePresence>
 
       {/* 1. Header (Ultra-Sleek Royal Luxury Navigation) */}
-      <header className={`fixed left-0 right-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8DDD0]/80 shadow-xs transition-all ${showTopAppBanner ? 'top-7 sm:top-8' : 'top-0'}`}>
+      <header className={`fixed left-0 right-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8DDD0]/80 shadow-xs transition-all duration-300 ${showTopAppBanner ? 'top-7 sm:top-8' : 'top-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
             
             {/* Brand Logo Lockup */}
             <a href="/" className="flex items-center gap-3 group shrink-0">
-              <img
+              <motion.img
+                whileHover={{ rotate: 3, scale: 1.05 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 src="/images/mannat-logo-square.png"
                 alt="Mannat Matrimony"
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xs ring-1 ring-[#560406]/15 group-hover:scale-105 transition-transform"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xs ring-1 ring-[#560406]/15"
               />
               <div className="flex flex-col text-left">
                 <span className="text-xs sm:text-sm italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
@@ -207,40 +265,52 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               </div>
             </a>
 
-            {/* Clean Center Navigation Links (No Clutter, No Duplicates) */}
+            {/* Clean Center Navigation Links */}
             <nav className="hidden lg:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-[#6E6259]">
-              <a href="#showcase" className="hover:text-[#560406] transition-colors">
-                Verified Profiles
+              <a href="#showcase" className="hover:text-[#560406] transition-colors relative py-1 group">
+                <span>Verified Profiles</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#560406] group-hover:w-full transition-all duration-300" />
               </a>
-              <a href="#pillars" className="hover:text-[#560406] transition-colors">
-                Why Mannat
+              <a href="#stories" className="hover:text-[#560406] transition-colors relative py-1 group">
+                <span>Success Stories</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#560406] group-hover:w-full transition-all duration-300" />
               </a>
-              <a href="#pricing" className="hover:text-[#560406] transition-colors">
-                Pricing
+              <a href="#pillars" className="hover:text-[#560406] transition-colors relative py-1 group">
+                <span>Why Mannat</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#560406] group-hover:w-full transition-all duration-300" />
               </a>
-              <a href="#faq" className="hover:text-[#560406] transition-colors">
-                FAQ
+              <a href="#pricing" className="hover:text-[#560406] transition-colors relative py-1 group">
+                <span>Pricing</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#560406] group-hover:w-full transition-all duration-300" />
+              </a>
+              <a href="#faq" className="hover:text-[#560406] transition-colors relative py-1 group">
+                <span>FAQ</span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#560406] group-hover:w-full transition-all duration-300" />
               </a>
             </nav>
 
             {/* Right Action Buttons */}
             <div className="flex items-center gap-3 shrink-0">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
                 type="button"
                 onClick={handleOpenLogin}
                 className="px-4 py-2 text-xs font-bold text-[#560406] hover:bg-[#560406]/10 rounded-full transition cursor-pointer"
               >
                 Log In
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.04, boxShadow: '0 8px 20px -4px rgba(86,4,6,0.3)' }}
+                whileTap={{ scale: 0.96 }}
                 type="button"
                 onClick={() => handleOpenRegister('Myself')}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#DFBE7E]/50 text-xs font-bold uppercase tracking-wider shadow-md transition cursor-pointer whitespace-nowrap active:scale-95"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] text-[#F5E6D3] border border-[#DFBE7E]/50 text-xs font-bold uppercase tracking-wider shadow-md cursor-pointer whitespace-nowrap"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
                 <span>Register Free</span>
-              </button>
+              </motion.button>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -261,6 +331,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
               className="lg:hidden bg-[#FDFBF7] border-b border-[#E8DDD0] px-4 py-4 shadow-xl space-y-2.5 text-left"
             >
               <div className="grid grid-cols-2 gap-2 text-xs font-bold">
@@ -300,20 +371,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
       </header>
 
       {/* 2. HERO: MATCHMAKING SEARCH & FAST REGISTRATION */}
-      <section className="relative bg-gradient-to-b from-[#240103] via-[#3A0204] to-[#1C0102] text-white pt-10 sm:pt-14 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Golden Radial Ambient Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#DFBE7E]/15 via-transparent to-transparent pointer-events-none" />
+      <section className="relative bg-gradient-to-b from-[#240103] via-[#3A0204] to-[#1C0102] text-white pt-10 sm:pt-16 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Animated Golden Radial Ambient Glow */}
+        <motion.div
+          animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#DFBE7E] via-transparent to-transparent pointer-events-none"
+        />
 
         <div className="max-w-6xl mx-auto relative z-10 space-y-8 text-center">
           
-          <div className="max-w-3xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 bg-[#DFBE7E]/10 border border-[#DFBE7E]/30 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#DFBE7E] tracking-wide shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="max-w-3xl mx-auto space-y-4"
+          >
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="inline-flex items-center gap-2 bg-[#DFBE7E]/10 border border-[#DFBE7E]/30 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#DFBE7E] tracking-wide shadow-xs cursor-default"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E] animate-pulse" />
               <span>India's Intention-First Private Matrimonial Network</span>
-            </div>
+            </motion.div>
 
             <h1
-              className="text-3xl sm:text-5xl lg:text-[52px] font-normal text-white tracking-[0.01em] leading-[1.15]"
+              className="text-3xl sm:text-5xl lg:text-[54px] font-normal text-white tracking-[0.01em] leading-[1.15]"
               style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}
             >
               Find Your Forever with Verified Matrimonial Matches
@@ -322,10 +405,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             <p className="text-xs sm:text-base text-[#F4EAE0] leading-relaxed max-w-2xl mx-auto font-normal">
               Over 20 Lakh Success Stories. Register in 4 simple steps to browse verified bio-datas with BlurShield™ privacy controls and direct WhatsApp family sharing.
             </p>
-          </div>
+          </motion.div>
 
-          {/* Quick Matchmaking Finder Horizontal Bar (Matching screenshot background) */}
-          <div className="bg-white/95 backdrop-blur-md text-[#161412] p-3 sm:p-4 rounded-2xl sm:rounded-full shadow-2xl border border-[#E8DDD0] max-w-5xl mx-auto">
+          {/* Quick Matchmaking Finder Horizontal Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+            className="bg-white/95 backdrop-blur-md text-[#161412] p-3 sm:p-4 rounded-2xl sm:rounded-full shadow-2xl border border-[#DFBE7E]/40 max-w-5xl mx-auto hover:border-[#DFBE7E] transition-all"
+          >
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 items-center">
               
               {/* Looking for */}
@@ -414,52 +502,90 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 </select>
               </div>
 
-              {/* Action Button: "Let's Begin" */}
+              {/* Action Button */}
               <div className="col-span-2 sm:col-span-1">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
                   type="button"
                   onClick={() => handleOpenRegister('Myself')}
-                  className="w-full py-3 px-6 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-sm font-extrabold uppercase tracking-wide shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3 px-6 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-sm font-extrabold uppercase tracking-wide shadow-md cursor-pointer flex items-center justify-center gap-2"
                 >
                   <span>Let's Begin</span>
                   <ArrowRight className="w-4 h-4 text-[#DFBE7E]" />
-                </button>
+                </motion.button>
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
-          {/* Trust Badges */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-2 text-left">
-            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+          {/* Trust Badges with Staggered Fade */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-2 text-left"
+          >
+            <motion.div
+              whileHover={{ y: -3 }}
+              className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs transition-all"
+            >
               <CheckCircle2 className="w-5 h-5 text-[#DFBE7E] shrink-0" />
               <div>
                 <div className="text-xs font-bold text-white">100% Verified Members</div>
                 <div className="text-[10px] text-neutral-300">Mandatory Government ID verification</div>
               </div>
-            </div>
-            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -3 }}
+              className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs transition-all"
+            >
               <ShieldCheck className="w-5 h-5 text-[#DFBE7E] shrink-0" />
               <div>
                 <div className="text-xs font-bold text-white">BlurShield™ Privacy</div>
                 <div className="text-[10px] text-neutral-300">Zero search engine photo indexing</div>
               </div>
-            </div>
-            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -3 }}
+              className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs transition-all"
+            >
               <Crown className="w-5 h-5 text-[#DFBE7E] shrink-0" />
               <div>
                 <div className="text-xs font-bold text-white">Family WhatsApp Cards</div>
                 <div className="text-[10px] text-neutral-300">Designed for parents &amp; match-seekers</div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
         </div>
       </section>
 
-      {/* 3. VERIFIED PROFILES SHOWCASE */}
-      <section id="showcase" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto space-y-2 mb-8 sm:mb-12">
+      {/* CONTINUOUS LUXURY MARQUEE TICKER */}
+      <div className="bg-[#1C0102] text-[#DFBE7E] border-y border-[#DFBE7E]/20 py-3 overflow-hidden shadow-inner flex whitespace-nowrap select-none">
+        <motion.div
+          animate={{ x: [0, -1000] }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+          className="flex items-center gap-8 text-xs font-bold uppercase tracking-widest"
+        >
+          {marqueeItems.concat(marqueeItems).map((item, idx) => (
+            <span key={idx} className="flex items-center gap-3">
+              <span>{item}</span>
+              <span className="text-white/30">•</span>
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* 3. VERIFIED PROFILES SHOWCASE (Interactive Slider / Carousel) */}
+      <section id="showcase" className="py-14 sm:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto space-y-2 mb-8 sm:mb-12"
+        >
           <span className="text-[10px] uppercase tracking-[0.3em] font-extrabold text-[#A17B5E] block">
             Curated Directory
           </span>
@@ -469,65 +595,72 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
           <p className="text-xs sm:text-sm text-[#6E6259]">
             Every candidate is screened with mandatory ID and education credentials. Log in or register free to view full biodatas.
           </p>
-        </div>
+        </motion.div>
 
         {showcaseProfiles.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-            {showcaseProfiles.map((p) => (
-              <div
-                key={p.id}
-                onClick={() => handleOpenRegister('Myself')}
-                className="bg-white rounded-2xl overflow-hidden border border-[#E8DDD0] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between cursor-pointer group"
-              >
-                {/* Photo with BlurShield */}
-                <div className="relative aspect-[4/5] bg-neutral-900 overflow-hidden">
-                  <img
-                    src={p.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600'}
-                    alt={p.display_name}
-                    className="w-full h-full object-cover filter blur-[2px] scale-105 group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                  
-                  {/* Verified Badge */}
-                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#560406] px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-xs">
-                    <ShieldCheck className="w-3 h-3 text-[#A17B5E]" />
-                    <span>100% Verified</span>
+          <div className="relative">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+              {showcaseProfiles.map((p, idx) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  whileHover={{ y: -6 }}
+                  onClick={() => handleOpenRegister('Myself')}
+                  className="bg-white rounded-2xl overflow-hidden border border-[#E8DDD0] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer group"
+                >
+                  {/* Photo with BlurShield */}
+                  <div className="relative aspect-[4/5] bg-neutral-900 overflow-hidden">
+                    <img
+                      src={p.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600'}
+                      alt={p.display_name}
+                      className="w-full h-full object-cover filter blur-[2px] scale-105 group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                    
+                    {/* Verified Badge */}
+                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#560406] px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-xs">
+                      <ShieldCheck className="w-3 h-3 text-[#A17B5E]" />
+                      <span>100% Verified</span>
+                    </div>
+
+                    {/* Match Score */}
+                    <div className="absolute top-3 right-3 bg-[#560406]/90 text-[#DFBE7E] px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#DFBE7E]/40">
+                      ★ {p.compatibility_score || 95}% Match
+                    </div>
+
+                    {/* Bottom Bio Overlay */}
+                    <div className="absolute bottom-3 inset-x-3 text-white text-left space-y-0.5">
+                      <div className="text-lg font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                        {p.display_name}, <span className="font-sans text-sm font-semibold">{p.age} yrs</span>
+                      </div>
+                      <div className="text-[11px] text-[#DFBE7E] font-medium flex items-center gap-1 truncate">
+                        <Briefcase className="w-3 h-3 shrink-0" />
+                        <span>{p.occupation || 'Professional'}</span>
+                      </div>
+                      <div className="text-[10px] text-neutral-300 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 shrink-0" />
+                        <span>{p.city} · {p.religion}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Match Score */}
-                  <div className="absolute top-3 right-3 bg-[#560406]/90 text-[#DFBE7E] px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#DFBE7E]/40">
-                    ★ {p.compatibility_score || 95}% Match
+                  {/* Card Footer */}
+                  <div className="p-3.5 bg-[#FAF8F5] border-t border-[#E8DDD0] flex items-center justify-between text-xs font-bold text-[#560406]">
+                    <span className="flex items-center gap-1 text-[11px] text-[#A17B5E]">
+                      <Lock className="w-3 h-3" />
+                      <span>BlurShield™ Active</span>
+                    </span>
+                    <span className="group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                      <span>View Bio-Data</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </span>
                   </div>
-
-                  {/* Bottom Bio Overlay */}
-                  <div className="absolute bottom-3 inset-x-3 text-white text-left space-y-0.5">
-                    <div className="text-lg font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                      {p.display_name}, <span className="font-sans text-sm font-semibold">{p.age} yrs</span>
-                    </div>
-                    <div className="text-[11px] text-[#DFBE7E] font-medium flex items-center gap-1 truncate">
-                      <Briefcase className="w-3 h-3 shrink-0" />
-                      <span>{p.occupation || 'Professional'}</span>
-                    </div>
-                    <div className="text-[10px] text-neutral-300 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 shrink-0" />
-                      <span>{p.city} · {p.religion}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Footer */}
-                <div className="p-3.5 bg-[#FAF8F5] border-t border-[#E8DDD0] flex items-center justify-between text-xs font-bold text-[#560406]">
-                  <span className="flex items-center gap-1 text-[11px] text-[#A17B5E]">
-                    <Lock className="w-3 h-3" />
-                    <span>BlurShield™ Active</span>
-                  </span>
-                  <span className="group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                    <span>View Bio-Data</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </span>
-                </div>
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#E8DDD0] shadow-sm max-w-2xl mx-auto text-center space-y-4">
@@ -554,13 +687,122 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         )}
 
         <div className="text-center pt-8">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
             type="button"
             onClick={() => handleOpenRegister('Myself')}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-[#F4EAE0] text-[#560406] border border-[#560406] text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-xs"
           >
             <span>Explore Complete Verified Directory →</span>
-          </button>
+          </motion.button>
+        </div>
+      </section>
+
+      {/* NEW INTERACTIVE SECTION: SUCCESS STORIES & BLESSED UNIONS SLIDER */}
+      <section id="stories" className="py-14 sm:py-20 bg-gradient-to-b from-[#240103] via-[#3A0204] to-[#1C0102] text-white border-y border-[#DFBE7E]/30 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          
+          <div className="text-center max-w-3xl mx-auto space-y-2 mb-10 sm:mb-14">
+            <span className="text-[10px] uppercase tracking-[0.3em] font-extrabold text-[#DFBE7E] block">
+              Real Unions
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+              Blessed Beginnings at Mannat
+            </h2>
+            <p className="text-xs sm:text-sm text-[#F5E6D3]/80">
+              Thousands of intentional, distinguished matches made with complete confidentiality and dignity.
+            </p>
+          </div>
+
+          {/* Interactive Animated Slider Card */}
+          <div className="max-w-4xl mx-auto">
+            <div className="relative bg-white/5 backdrop-blur-md rounded-3xl border border-[#DFBE7E]/40 p-6 sm:p-10 shadow-2xl overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={storyIndex}
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center"
+                >
+                  {/* Couple Portrait */}
+                  <div className="md:col-span-5 relative aspect-[4/3] md:aspect-square rounded-2xl overflow-hidden border border-[#DFBE7E]/30 shadow-lg">
+                    <img
+                      src={successStories[storyIndex].image}
+                      alt={successStories[storyIndex].couple}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3 text-left">
+                      <div className="inline-flex items-center gap-1.5 bg-[#DFBE7E] text-[#1C0102] text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-1">
+                        <Heart className="w-3 h-3 fill-current" />
+                        <span>{successStories[storyIndex].date}</span>
+                      </div>
+                      <div className="text-xs text-[#F5E6D3] font-medium">{successStories[storyIndex].location}</div>
+                    </div>
+                  </div>
+
+                  {/* Story Testimonial Details */}
+                  <div className="md:col-span-7 text-left space-y-4">
+                    <div className="flex items-center gap-1 text-[#DFBE7E]">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-current" />
+                      ))}
+                    </div>
+
+                    <p className="text-sm sm:text-base text-[#F5E6D3] italic leading-relaxed font-serif">
+                      "{successStories[storyIndex].quote}"
+                    </p>
+
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+                      <div>
+                        <h4 className="text-xl font-bold text-[#DFBE7E]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                          {successStories[storyIndex].couple}
+                        </h4>
+                        <span className="text-xs text-neutral-300">{successStories[storyIndex].detail}</span>
+                      </div>
+
+                      {/* Slider Navigation Arrows */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setStoryIndex((prev) => (prev === 0 ? successStories.length - 1 : prev - 1))}
+                          className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#DFBE7E] hover:text-[#1C0102] text-white flex items-center justify-center border border-white/20 transition cursor-pointer"
+                          aria-label="Previous Story"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setStoryIndex((prev) => (prev + 1) % successStories.length)}
+                          className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#DFBE7E] hover:text-[#1C0102] text-white flex items-center justify-center border border-white/20 transition cursor-pointer"
+                          aria-label="Next Story"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Slider Dots */}
+              <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-white/10">
+                {successStories.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    type="button"
+                    onClick={() => setStoryIndex(dotIdx)}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${storyIndex === dotIdx ? 'w-8 bg-[#DFBE7E]' : 'w-2 bg-white/30 hover:bg-white/60'}`}
+                    aria-label={`Go to slide ${dotIdx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -568,20 +810,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
       <section id="pillars" className="py-14 sm:py-20 bg-[#F4EAE0]/60 border-y border-[#E8DDD0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center max-w-3xl mx-auto space-y-2 mb-10 sm:mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto space-y-2 mb-10 sm:mb-14"
+          >
             <span className="text-[10px] uppercase tracking-[0.3em] font-extrabold text-[#A17B5E] block">
               Core Principles
             </span>
             <h2 className="text-2xl sm:text-4xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
               Why Discerning Families Choose Mannat
             </h2>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {matchmakingPillars.map((pillar, idx) => (
-              <div
+              <motion.div
                 key={idx}
-                className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-4 hover:border-[#A17B5E]/50 transition-colors"
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                whileHover={{ y: -4, borderColor: 'rgba(161, 123, 94, 0.6)' }}
+                className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-4 transition-all"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -604,7 +857,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#A17B5E]" />
                   <span>{pillar.highlight}</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
@@ -615,7 +868,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
       <section id="pricing" className="py-14 sm:py-20 bg-[#FAF7F2] border-t border-[#E8DDD0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center max-w-3xl mx-auto space-y-2 mb-10 sm:mb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto space-y-2 mb-10 sm:mb-14"
+          >
             <span className="text-[10px] uppercase tracking-[0.3em] font-extrabold text-[#A17B5E] block">
               Transparent &amp; Bespoke
             </span>
@@ -625,13 +884,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             <p className="text-xs sm:text-sm text-[#6E6259] leading-relaxed">
               100% Free bio-data registration &amp; match exploration. Upgrade whenever you are ready to initiate direct contact.
             </p>
-          </div>
+          </motion.div>
 
           {/* 4 Duration Plan Cards (1, 3, 6, 12 Months) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* Plan 1: 1 Month */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08)' }}
+              className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6 transition-all"
+            >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#6E6259] bg-[#FAF7F2] px-3 py-1 rounded-full border border-[#E8DDD0]">
@@ -678,10 +944,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               >
                 Choose 1 Month
               </button>
-            </div>
+            </motion.div>
 
             {/* Plan 2: 3 Months */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08)' }}
+              className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6 transition-all"
+            >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#A17B5E] bg-[#FAF7F2] px-3 py-1 rounded-full border border-[#E8DDD0]">
@@ -728,10 +1001,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               >
                 Choose 3 Months
               </button>
-            </div>
+            </motion.div>
 
             {/* Plan 3: 6 Months (Featured / Most Popular) */}
-            <div className="bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#240103] text-white rounded-3xl p-6 sm:p-7 border-2 border-[#DFBE7E] shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ y: -10, scale: 1.02, boxShadow: '0 25px 30px -5px rgba(86, 4, 6, 0.4)' }}
+              className="bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#240103] text-white rounded-3xl p-6 sm:p-7 border-2 border-[#DFBE7E] shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden transition-all"
+            >
               {/* Popular Ribbon */}
               <div className="absolute top-0 right-0 bg-[#DFBE7E] text-[#1C0102] text-[9px] font-black uppercase tracking-widest py-1 px-4 rounded-bl-xl shadow-xs">
                 ★ Most Popular
@@ -780,18 +1060,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 </div>
               </div>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 type="button"
                 onClick={() => handleOpenRegister('Myself')}
-                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#DFBE7E] via-[#E8DDD0] to-[#DFBE7E] text-[#1C0102] text-xs font-extrabold uppercase tracking-wider shadow-lg hover:brightness-105 transition cursor-pointer flex items-center justify-center gap-1.5"
+                className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#DFBE7E] via-[#E8DDD0] to-[#DFBE7E] text-[#1C0102] text-xs font-extrabold uppercase tracking-wider shadow-lg cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#1C0102]" />
                 <span>Choose 6 Months</span>
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
 
             {/* Plan 4: 12 Months */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              whileHover={{ y: -8, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.08)' }}
+              className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6 transition-all"
+            >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#A17B5E] bg-[#FAF7F2] px-3 py-1 rounded-full border border-[#E8DDD0]">
@@ -831,14 +1120,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 </div>
               </div>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 type="button"
                 onClick={() => handleOpenRegister('Myself')}
                 className="w-full py-3 rounded-full bg-[#560406] text-[#F5E6D3] hover:bg-[#730C0F] text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-xs"
               >
                 Choose 12 Months
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
 
           </div>
 
