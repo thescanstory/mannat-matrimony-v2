@@ -62,33 +62,12 @@ const INITIAL_MATCHMAKERS: MatchmakerCurator[] = [];
 function getInitialProfiles(): Profile[] {
   try {
     const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
-    const customStored = localStorage.getItem('mannat_custom_profiles');
-    const customList: Profile[] = customStored ? JSON.parse(customStored) : [];
-
-    const userProfileStored = localStorage.getItem('mannat_user_profile');
-    const userProfile: Profile | null = userProfileStored ? JSON.parse(userProfileStored) : null;
-
     const adminStored = localStorage.getItem('mannat_admin_candidates');
-    const adminList: Profile[] = adminStored ? JSON.parse(adminStored) : [];
-
-    const profileMap = new Map<string, Profile>();
-
-    // 1. Current active user profile
-    if (userProfile && !deletedIds.includes(userProfile.id)) {
-      profileMap.set(userProfile.id, userProfile);
+    if (adminStored) {
+      const adminList: Profile[] = JSON.parse(adminStored);
+      return adminList.filter(p => !deletedIds.includes(p.id));
     }
-
-    // 2. Admin created candidates
-    adminList.forEach(p => {
-      if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
-    });
-
-    // 3. User onboarding profiles
-    customList.forEach(p => {
-      if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
-    });
-
-    return Array.from(profileMap.values());
+    return [];
   } catch {
     return [];
   }
@@ -117,23 +96,19 @@ export function App() {
   // Fetch live profiles and callback requests from Supabase
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const loadSupabaseData = useCallback(async () => {
+  const loadSupabaseData = useCallback(async (forceCleanCache = false) => {
     setIsRefreshing(true);
     try {
+      if (forceCleanCache) {
+        localStorage.removeItem('mannat_admin_candidates');
+        localStorage.removeItem('mannat_custom_profiles');
+        localStorage.removeItem('mannat_admin_deleted_ids');
+      }
+
       const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-      const deletedIds: string[] = JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
-      
-      let localProfiles: Profile[] = [];
-      try {
-        const userP = localStorage.getItem('mannat_user_profile');
-        if (userP) localProfiles.push(JSON.parse(userP));
-        const custP = localStorage.getItem('mannat_custom_profiles');
-        if (custP) localProfiles.push(...JSON.parse(custP));
-      } catch {}
+      const deletedIds: string[] = forceCleanCache ? [] : JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
 
-      let currentProfilesList: Profile[] = localProfiles.filter(p => !deletedIds.includes(p.id));
-
-      if (data && !error) {
+      if (data && !error && data.length > 0) {
         const cloudProfiles: Profile[] = (data as any[])
           .filter(d => !deletedIds.includes(d.id))
           .map(d => ({
@@ -155,22 +130,14 @@ export function App() {
             gender: d.lifestyle_details?.gender || d.gender || 'male'
           }));
 
-        const profileMap = new Map<string, Profile>();
-        localProfiles.forEach(p => {
-          if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
-        });
-        cloudProfiles.forEach(p => {
-          if (!deletedIds.includes(p.id)) profileMap.set(p.id, p);
-        });
-
-        currentProfilesList = Array.from(profileMap.values());
-        setProfiles(currentProfilesList);
-        localStorage.setItem('mannat_admin_candidates', JSON.stringify(currentProfilesList));
-      } else if (localProfiles.length > 0) {
-        setProfiles(currentProfilesList);
+        setProfiles(cloudProfiles);
+        localStorage.setItem('mannat_admin_candidates', JSON.stringify(cloudProfiles));
+      } else if (data && data.length === 0) {
+        setProfiles([]);
+        localStorage.removeItem('mannat_admin_candidates');
       }
 
-      // 1. Fetch live VIP Consultations from localStorage
+      // 1. Fetch live VIP Consultations
       let localConsultations: VIPCallback[] = [];
       try {
         const rawLocal = localStorage.getItem('mannat_vip_consultations');
@@ -211,12 +178,11 @@ export function App() {
       };
 
       const mappedCallbacks: VIPCallback[] = (cbData || []).map((cb: any) => {
-        const matchedProfile = currentProfilesList.find((p: any) => p.id === cb.target_profile_id);
         return {
           id: cb.id,
           requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
           requester_phone: cb.requester_phone || '+91 98201 44521',
-          target_candidate_name: matchedProfile ? `${matchedProfile.display_name} (${matchedProfile.age})` : `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
+          target_candidate_name: `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
           requested_time: cb.created_at ? new Date(cb.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Today',
           managed_by: cb.status === 'wave_sent' ? 'Candidate' : 'Parent',
           status: statusMap[cb.status] || 'Pending',
@@ -617,8 +583,23 @@ export function App() {
           <button
             type="button"
             onClick={async () => {
+              showToast('🧹 Purging stale cache & syncing fresh cloud records...');
+              await loadSupabaseData(true);
+              showToast('✨ Clean cloud database synced! 7 Luxury Candidates Active.');
+            }}
+            disabled={isRefreshing}
+            className="px-3.5 py-2 rounded-full border border-red-800/60 bg-red-950/40 hover:bg-red-900/60 text-red-200 text-xs font-semibold transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+            title="Purge old browser cache and re-fetch directly from Supabase"
+          >
+            <Trash2 className="w-3.5 h-3.5 text-red-400" />
+            <span className="hidden sm:inline">Purge Cache &amp; Resync</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={async () => {
               showToast('🔄 Syncing live data from cloud database...');
-              await loadSupabaseData();
+              await loadSupabaseData(false);
               showToast('✨ Dashboard synchronized with cloud database!');
             }}
             disabled={isRefreshing}
