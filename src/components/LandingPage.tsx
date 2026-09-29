@@ -277,158 +277,208 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         </AnimatePresence>
       </header>
 
-      {/* 2. HERO: Warm Editorial Indian Luxury */}
-      <section className="relative bg-[#2B0305] text-[#FAF7F2] pt-12 sm:pt-20 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="max-w-5xl mx-auto text-center space-y-8 relative z-10">
+      {/* 2. HERO: Warm Editorial Indian Luxury with Indian Wedding Couple */}
+      <section className="relative bg-[#2B0305] text-[#FAF7F2] pt-10 sm:pt-16 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-6xl mx-auto relative z-10">
           
-          <div className="max-w-3xl mx-auto space-y-4">
-            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.25em] text-[#DFBE7E]">
-              Private Matrimonial Alliance Network
-            </span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            {/* Left Column: Headline, Copy, Preference Bar */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div className="space-y-3">
+                <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.25em] text-[#DFBE7E]">
+                  Private Matrimonial Alliance Network
+                </span>
 
-            <h1
-              className="text-3xl sm:text-5xl lg:text-[54px] font-normal text-white leading-[1.18] tracking-tight"
-              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
-            >
-              Find Your Forever with Verified Matrimonial Matches
-            </h1>
-
-            <p className="text-sm sm:text-base text-[#E2D6CA] leading-relaxed max-w-2xl mx-auto font-normal">
-              A refined matrimonial service tailored for modern Indian candidates and families. 
-              Browse verified candidate bio-datas protected by BlurShield™ privacy controls and direct WhatsApp family sharing.
-            </p>
-          </div>
-
-          {/* Clean Preference Search Bar */}
-          <div className="bg-white text-[#241E19] p-3 sm:p-4 rounded-2xl sm:rounded-full shadow-xl border border-[#DFBE7E]/30 max-w-4xl mx-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 items-center text-left">
-              
-              {/* Gender */}
-              <div className="col-span-1 px-3 sm:border-r border-[#E8DDD0]">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
-                  Seeking
-                </label>
-                <select
-                  value={heroGender}
-                  onChange={(e) => setHeroGender(e.target.value as any)}
-                  className="w-full text-xs sm:text-sm font-semibold text-[#560406] bg-transparent focus:outline-hidden cursor-pointer"
+                <h1
+                  className="text-3xl sm:text-5xl lg:text-[50px] font-normal text-white leading-[1.18] tracking-tight"
+                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
                 >
-                  <option value="female">Woman</option>
-                  <option value="male">Man</option>
-                </select>
+                  Find Your Forever with Verified Matrimonial Matches
+                </h1>
+
+                <p className="text-sm sm:text-base text-[#E2D6CA] leading-relaxed max-w-xl mx-auto lg:mx-0 font-normal">
+                  A bespoke matrimonial service tailored for modern Indian candidates and families. 
+                  Browse verified candidate bio-datas protected by BlurShield™ privacy controls and direct WhatsApp family sharing.
+                </p>
               </div>
 
-              {/* Age Range */}
-              <div className="col-span-1 px-3 sm:border-r border-[#E8DDD0]">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
-                  Age Range
-                </label>
-                <div className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#241E19]">
-                  <select
-                    value={heroAgeMin}
-                    onChange={(e) => setHeroAgeMin(e.target.value)}
-                    className="bg-transparent focus:outline-hidden cursor-pointer"
-                  >
-                    {[20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 32].map((a) => (
-                      <option key={a} value={a}>{a}</option>
-                    ))}
-                  </select>
-                  <span className="text-neutral-400 font-normal">to</span>
-                  <select
-                    value={heroAgeMax}
-                    onChange={(e) => setHeroAgeMax(e.target.value)}
-                    className="bg-transparent focus:outline-hidden cursor-pointer"
-                  >
-                    {[24, 25, 26, 27, 28, 29, 30, 32, 35, 40].map((a) => (
-                      <option key={a} value={a}>{a}</option>
-                    ))}
-                  </select>
+              {/* Preference Search Bar */}
+              <div className="bg-white text-[#241E19] p-3 sm:p-4 rounded-2xl shadow-xl border border-[#DFBE7E]/30 max-w-2xl mx-auto lg:mx-0">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 items-center text-left">
+                  
+                  {/* Gender */}
+                  <div className="col-span-1 px-1.5 sm:border-r border-[#E8DDD0]">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
+                      Seeking
+                    </label>
+                    <select
+                      value={heroGender}
+                      onChange={(e) => setHeroGender(e.target.value as any)}
+                      className="w-full text-xs sm:text-sm font-semibold text-[#560406] bg-transparent focus:outline-hidden cursor-pointer"
+                    >
+                      <option value="female">Woman</option>
+                      <option value="male">Man</option>
+                    </select>
+                  </div>
+
+                  {/* Age Range */}
+                  <div className="col-span-1 px-1.5 sm:border-r border-[#E8DDD0]">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
+                      Age
+                    </label>
+                    <div className="flex items-center gap-1 text-xs font-semibold text-[#241E19]">
+                      <select
+                        value={heroAgeMin}
+                        onChange={(e) => setHeroAgeMin(e.target.value)}
+                        className="bg-transparent focus:outline-hidden cursor-pointer"
+                      >
+                        {[20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 32].map((a) => (
+                          <option key={a} value={a}>{a}</option>
+                        ))}
+                      </select>
+                      <span className="text-neutral-400 font-normal text-[10px]">to</span>
+                      <select
+                        value={heroAgeMax}
+                        onChange={(e) => setHeroAgeMax(e.target.value)}
+                        className="bg-transparent focus:outline-hidden cursor-pointer"
+                      >
+                        {[24, 25, 26, 27, 28, 29, 30, 32, 35, 40].map((a) => (
+                          <option key={a} value={a}>{a}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Religion */}
+                  <div className="col-span-1 px-1.5 sm:border-r border-[#E8DDD0]">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
+                      Religion
+                    </label>
+                    <select
+                      value={heroReligion}
+                      onChange={(e) => setHeroReligion(e.target.value)}
+                      className="w-full text-xs font-semibold text-[#241E19] bg-transparent focus:outline-hidden cursor-pointer"
+                    >
+                      <option value="Select">Any</option>
+                      <option value="Christian">Christian</option>
+                      <option value="Hindu">Hindu</option>
+                      <option value="Muslim">Muslim</option>
+                      <option value="Sikh">Sikh</option>
+                      <option value="Jain">Jain</option>
+                      <option value="Parsi">Parsi</option>
+                    </select>
+                  </div>
+
+                  {/* Community / Language */}
+                  <div className="col-span-1 px-1.5">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
+                      Mother Tongue
+                    </label>
+                    <select
+                      value={heroCommunity}
+                      onChange={(e) => setHeroCommunity(e.target.value)}
+                      className="w-full text-xs font-semibold text-[#241E19] bg-transparent focus:outline-hidden cursor-pointer"
+                    >
+                      <option value="Select">Any</option>
+                      <option value="Tamil">Tamil</option>
+                      <option value="Telugu">Telugu</option>
+                      <option value="Punjabi">Punjabi</option>
+                      <option value="Hindi">Hindi</option>
+                      <option value="Malayalam">Malayalam</option>
+                      <option value="Marathi">Marathi</option>
+                      <option value="Bengali">Bengali</option>
+                      <option value="Gujarati">Gujarati</option>
+                      <option value="Kannada">Kannada</option>
+                    </select>
+                  </div>
+
+                  {/* Action */}
+                  <div className="col-span-2 sm:col-span-1">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenRegister('Myself')}
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#560406] hover:bg-[#6D090C] text-[#FAF7F2] text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1 shadow-sm"
+                    >
+                      <span>Begin</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#DFBE7E]" />
+                    </button>
+                  </div>
+
                 </div>
               </div>
 
-              {/* Religion */}
-              <div className="col-span-1 px-3 sm:border-r border-[#E8DDD0]">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
-                  Religion
-                </label>
-                <select
-                  value={heroReligion}
-                  onChange={(e) => setHeroReligion(e.target.value)}
-                  className="w-full text-xs sm:text-sm font-semibold text-[#241E19] bg-transparent focus:outline-hidden cursor-pointer"
-                >
-                  <option value="Select">Any Religion</option>
-                  <option value="Christian">Christian</option>
-                  <option value="Hindu">Hindu</option>
-                  <option value="Muslim">Muslim</option>
-                  <option value="Sikh">Sikh</option>
-                  <option value="Jain">Jain</option>
-                  <option value="Parsi">Parsi</option>
-                </select>
-              </div>
+              {/* 3 Grounded Trust Assurances */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-left">
+                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E2D6CA] space-y-0.5">
+                  <div className="font-semibold text-white flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#DFBE7E]" />
+                    <span>Verified IDs</span>
+                  </div>
+                  <p className="text-[11px] text-[#C2B5A8]">Mandatory ID checks</p>
+                </div>
 
-              {/* Mother Tongue */}
-              <div className="col-span-1 px-3">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-[#8C7355]">
-                  Mother Tongue
-                </label>
-                <select
-                  value={heroCommunity}
-                  onChange={(e) => setHeroCommunity(e.target.value)}
-                  className="w-full text-xs sm:text-sm font-semibold text-[#241E19] bg-transparent focus:outline-hidden cursor-pointer"
-                >
-                  <option value="Select">Any Language</option>
-                  <option value="Tamil">Tamil</option>
-                  <option value="Telugu">Telugu</option>
-                  <option value="Punjabi">Punjabi</option>
-                  <option value="Hindi">Hindi</option>
-                  <option value="Malayalam">Malayalam</option>
-                  <option value="Marathi">Marathi</option>
-                  <option value="Bengali">Bengali</option>
-                  <option value="Gujarati">Gujarati</option>
-                  <option value="Kannada">Kannada</option>
-                </select>
-              </div>
+                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E2D6CA] space-y-0.5">
+                  <div className="font-semibold text-white flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#DFBE7E]" />
+                    <span>BlurShield™</span>
+                  </div>
+                  <p className="text-[11px] text-[#C2B5A8]">Private photo controls</p>
+                </div>
 
-              {/* Action */}
-              <div className="col-span-2 sm:col-span-1">
-                <button
-                  type="button"
-                  onClick={() => handleOpenRegister('Myself')}
-                  className="w-full py-3 px-5 rounded-full bg-[#560406] hover:bg-[#6D090C] text-[#FAF7F2] text-xs font-bold uppercase tracking-wider transition cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
-                >
-                  <span>Let's Begin</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#DFBE7E]" />
-                </button>
+                <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E2D6CA] space-y-0.5">
+                  <div className="font-semibold text-white flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-[#DFBE7E]" />
+                    <span>Confidential</span>
+                  </div>
+                  <p className="text-[11px] text-[#C2B5A8]">Zero Google indexing</p>
+                </div>
               </div>
 
             </div>
-          </div>
 
-          {/* 3 Grounded Trust Assurances */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto pt-2 text-left">
-            <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E2D6CA] space-y-1">
-              <div className="font-semibold text-white flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#DFBE7E]" />
-                <span>Verified Identities</span>
+            {/* Right Column: Indian Wedding Couple Editorial Frame */}
+            <div className="lg:col-span-5 relative flex justify-center">
+              <div className="relative w-full max-w-sm sm:max-w-md">
+                
+                {/* Decorative Frame */}
+                <div className="absolute -inset-2 rounded-3xl border border-[#DFBE7E]/40 transform rotate-1 pointer-events-none" />
+                
+                {/* Main Couple Photo Card */}
+                <div className="relative rounded-2xl overflow-hidden border-2 border-[#DFBE7E]/60 shadow-2xl bg-[#1C0102]">
+                  <img
+                    src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=900"
+                    alt="Indian Wedding Couple - Blessed Matrimonial Alliances"
+                    className="w-full aspect-[4/5] object-cover object-center filter brightness-95 contrast-105"
+                  />
+                  
+                  {/* Subtle Bottom Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1C0102]/90 via-transparent to-black/10 pointer-events-none" />
+
+                  {/* Floating Gold Quality Plaque */}
+                  <div className="absolute bottom-4 inset-x-4 p-3.5 rounded-xl bg-[#2B0305]/95 backdrop-blur-md border border-[#DFBE7E]/50 text-center space-y-1 shadow-lg">
+                    <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#DFBE7E]">
+                      The House of Mannat
+                    </div>
+                    <div className="text-sm font-semibold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                      Where Cherished Alliances Begin
+                    </div>
+                    <div className="text-[10px] text-[#E2D6CA]">
+                      Exclusive Matchmaking for Cultured Families
+                    </div>
+                  </div>
+
+                  {/* Top Right Verified Seal */}
+                  <div className="absolute top-3 right-3 bg-[#2B0305]/90 border border-[#DFBE7E]/60 text-[#DFBE7E] text-[9px] font-extrabold uppercase tracking-wider py-1 px-3 rounded-full shadow-md flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-[#DFBE7E]" />
+                    <span>100% Verified</span>
+                  </div>
+
+                </div>
+
               </div>
-              <p className="text-[11px] text-[#C2B5A8]">Mandatory government ID checking for every candidate.</p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E2D6CA] space-y-1">
-              <div className="font-semibold text-white flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#DFBE7E]" />
-                <span>BlurShield™ Privacy</span>
-              </div>
-              <p className="text-[11px] text-[#C2B5A8]">Photos remain private and are unblurred upon mutual consent.</p>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-xs text-[#E2D6CA] space-y-1">
-              <div className="font-semibold text-white flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-[#DFBE7E]" />
-                <span>Confidential Alliances</span>
-              </div>
-              <p className="text-[11px] text-[#C2B5A8]">Zero public indexing on search engines. Dignified introductions.</p>
-            </div>
           </div>
 
         </div>
