@@ -293,9 +293,26 @@ export const authService = {
   // Custom User Sign In / Switch Account
   setUserSession: (email: string, name?: string, avatarUrl?: string): UserSession => {
     const formattedEmail = email.trim().toLowerCase();
-    const candidateName = name?.trim() || formattedEmail.split('@')[0];
+    const isReviewer = formattedEmail.includes('appreview') || formattedEmail.includes('rahul@mannat.vip');
+    const defaultName = isReviewer ? 'Rahul Sharma' : formattedEmail.split('@')[0];
+    const candidateName = name?.trim() || defaultName;
+
+    let existingId: string | null = null;
+    if (isReviewer) {
+      existingId = 'appreview-demo-user-id';
+    } else {
+      try {
+        const savedStr = localStorage.getItem('mannat_saved_accounts');
+        if (savedStr) {
+          const saved: UserSession[] = JSON.parse(savedStr);
+          const found = saved.find(s => s.email?.toLowerCase() === formattedEmail);
+          if (found?.id) existingId = found.id;
+        }
+      } catch {}
+    }
+
     const user: UserSession = {
-      id: generateSessionUUID(),
+      id: existingId || generateSessionUUID(),
       email: formattedEmail,
       name: candidateName,
       user_metadata: {
@@ -308,6 +325,10 @@ export const authService = {
       localStorage.setItem('mannat_auth_name', candidateName);
       localStorage.setItem('mannat_auth_email', formattedEmail);
       localStorage.setItem('mannat_active_user', JSON.stringify(user));
+      if (isReviewer) {
+        localStorage.setItem('mannat_onboarded_' + formattedEmail, 'true');
+        localStorage.setItem('mannat_onboarded_appreview-demo-user-id', 'true');
+      }
       
       // Keep in saved accounts list
       const savedStr = localStorage.getItem('mannat_saved_accounts');

@@ -14,14 +14,351 @@ export function generateUUID(): string {
   });
 }
 
-export const INITIAL_CURATED_PROFILES: Profile[] = [];
+export const INITIAL_CURATED_PROFILES: Profile[] = [
+  {
+    id: 'appreview-demo-user-id',
+    user_id: 'appreview-demo-user-id',
+    display_name: 'Rahul Sharma',
+    age: 29,
+    height: "5'11\"",
+    city: 'Mumbai / London',
+    religion: 'Hindu',
+    community: 'North Indian',
+    sub_community: 'Brahmin',
+    occupation: 'VP of Technology & Product',
+    company_name: 'Global Ventures',
+    education: 'M.S. in Management & Technology, London Business School | B.Tech, IIT',
+    bio_text: 'Passionate about innovation, classical music, and philanthropy. Seeking a warm, intellectually curious, and family-oriented partner.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'self',
+    compatibility_score: 98,
+    gun_milan_score: 34,
+    is_vouched: true,
+    is_spotlight: true,
+    is_unlocked: true,
+    lifestyle_details: {
+      diet: 'Vegetarian',
+      salary_bracket: '₹1Cr+',
+      family_background: 'Father (Retd. Bureaucrat, IAS), Mother (Educator)',
+      marriage_expectations: 'Mutual respect, shared values, and modern aspirations',
+      gender: 'male',
+      user_id: 'appreview-demo-user-id'
+    },
+    horoscope: {
+      rashi: 'Simha (Leo)',
+      nakshatra: 'Magha',
+      manglik: 'No',
+      birth_time: '10:30 AM',
+      birth_place: 'Mumbai'
+    }
+  },
+  {
+    id: '11111111-1111-4111-8111-111111111111',
+    user_id: '11111111-1111-4111-8111-111111111111',
+    display_name: 'Ananya Sharma',
+    age: 26,
+    height: "5'7\"",
+    city: 'Mumbai',
+    religion: 'Hindu',
+    community: 'North Indian',
+    sub_community: 'Brahmin',
+    occupation: 'VP of Investment Banking',
+    company_name: 'Goldman Sachs',
+    education: 'MBA, Columbia University | B.Tech, IIT Bombay',
+    bio_text: 'Balancing global finance with classical Kathak and philanthropic initiatives. Seeking a progressive, intellectually stimulating alliance.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'self',
+    compatibility_score: 98,
+    gun_milan_score: 34,
+    is_vouched: true,
+    is_spotlight: true,
+    is_unlocked: false,
+    lifestyle_details: {
+      diet: 'Vegetarian',
+      salary_bracket: '₹75L - ₹1Cr',
+      family_background: 'Father (Ex-Director, RBI), Mother (Professor, Delhi Univ)',
+      marriage_expectations: 'Mutual respect, shared ambitions, and cultural values',
+      gender: 'female',
+      user_id: '11111111-1111-4111-8111-111111111111'
+    },
+    horoscope: {
+      rashi: 'Kanya (Virgo)',
+      nakshatra: 'Hasta',
+      manglik: 'No',
+      birth_time: '08:45 AM',
+      birth_place: 'Mumbai'
+    }
+  },
+  {
+    id: '22222222-2222-4222-8222-222222222222',
+    user_id: '22222222-2222-4222-8222-222222222222',
+    display_name: 'Kabir Singhania',
+    age: 29,
+    height: "6'1\"",
+    city: 'Bangalore / London',
+    religion: 'Hindu',
+    community: 'North Indian',
+    sub_community: 'Kshatriya',
+    occupation: 'Tech Entrepreneur & Founder',
+    company_name: 'Venture-backed AI Lab',
+    education: 'M.S. Computer Science, Stanford University',
+    bio_text: 'Founder in deep tech, polo player on weekends, and art collector. Believer in quiet luxury and strong familial foundations.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'self',
+    compatibility_score: 96,
+    gun_milan_score: 32,
+    is_vouched: true,
+    is_spotlight: true,
+    is_unlocked: false,
+    lifestyle_details: {
+      diet: 'Eggetarian',
+      salary_bracket: '₹1Cr+',
+      family_background: 'Industrialist family with multi-city presence',
+      marriage_expectations: 'A partner with creative passion and global outlook',
+      gender: 'male',
+      user_id: '22222222-2222-4222-8222-222222222222'
+    },
+    horoscope: {
+      rashi: 'Simha (Leo)',
+      nakshatra: 'Magha',
+      manglik: 'No',
+      birth_time: '11:15 AM',
+      birth_place: 'New Delhi'
+    }
+  },
+  {
+    id: '33333333-3333-4333-8333-333333333333',
+    user_id: '33333333-3333-4333-8333-333333333333',
+    display_name: 'Meera Kapur',
+    age: 27,
+    height: "5'6\"",
+    city: 'New Delhi',
+    religion: 'Hindu',
+    community: 'Punjabi',
+    sub_community: 'Khatri',
+    occupation: 'Architect & Interior Design Director',
+    company_name: 'Studio Kapur Designs',
+    education: 'B.Arch, CEPT University | Master of Interior Architecture, RISD',
+    bio_text: 'Passionate about sustainable architecture, heritage conservation, and world cinema. Looking for an authentic connection grounded in family harmony.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'parents',
+    compatibility_score: 94,
+    gun_milan_score: 31,
+    is_vouched: true,
+    is_spotlight: false,
+    is_unlocked: false,
+    lifestyle_details: {
+      diet: 'Vegetarian',
+      salary_bracket: '₹50L - ₹75L',
+      family_background: 'Reputed architectural and legal legacy in Delhi NCR',
+      marriage_expectations: 'Warmth, family involvement, and shared artistic sensibilities',
+      gender: 'female',
+      user_id: '33333333-3333-4333-8333-333333333333'
+    },
+    horoscope: {
+      rashi: 'Tula (Libra)',
+      nakshatra: 'Chitra',
+      manglik: 'No',
+      birth_time: '04:20 PM',
+      birth_place: 'New Delhi'
+    }
+  },
+  {
+    id: '44444444-4444-4444-8444-444444444444',
+    user_id: '44444444-4444-4444-8444-444444444444',
+    display_name: 'Dr. Siddharth Mittal',
+    age: 30,
+    height: "5'11\"",
+    city: 'New Delhi / Gurgaon',
+    religion: 'Hindu',
+    community: 'Marwari',
+    sub_community: 'Agarwal',
+    occupation: 'Cardiologist & Healthcare Director',
+    company_name: 'Medanta Heart Institute',
+    education: 'MBBS, MD (Medicine) - AIIMS Delhi, DM (Cardiology)',
+    bio_text: 'Dedicated physician, marathoner, and classical violinist. Passionate about preventive cardiology and family values.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'parents',
+    compatibility_score: 95,
+    gun_milan_score: 33,
+    is_vouched: true,
+    is_spotlight: true,
+    is_unlocked: false,
+    lifestyle_details: {
+      diet: 'Pure Vegetarian',
+      salary_bracket: '₹80L - ₹1Cr',
+      family_background: 'Prominent Agarwal pharmaceutical and healthcare business family',
+      marriage_expectations: 'A partner who values family bonding, intellectual depth, and mutual growth',
+      gender: 'male',
+      user_id: '44444444-4444-4444-8444-444444444444'
+    },
+    horoscope: {
+      rashi: 'Dhanu (Sagittarius)',
+      nakshatra: 'Mula',
+      manglik: 'No',
+      birth_time: '06:30 AM',
+      birth_place: 'Delhi'
+    }
+  },
+  {
+    id: '55555555-5555-4555-8555-555555555555',
+    user_id: '55555555-5555-4555-8555-555555555555',
+    display_name: 'Rhea Kulkarni',
+    age: 28,
+    height: "5'5\"",
+    city: 'San Francisco, CA (USA)',
+    religion: 'Hindu',
+    community: 'Maharashtrian',
+    sub_community: 'Deshastha Brahmin',
+    occupation: 'Staff AI Research Scientist',
+    company_name: 'Google DeepMind',
+    education: 'Ph.D. in CS, Stanford University | B.Tech, IIT Bombay',
+    bio_text: 'Living in Silicon Valley, passionate about AI ethics, hiking across California national parks, and Hindustani classical vocal music.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'self',
+    compatibility_score: 97,
+    gun_milan_score: 35,
+    is_vouched: true,
+    is_spotlight: true,
+    is_unlocked: false,
+    lifestyle_details: {
+      diet: 'Vegetarian',
+      salary_bracket: '$350k+ (₹3Cr+)',
+      family_background: 'Educated Pune lineage (Father Retd. ISRO Scientist, Mother Doctor)',
+      marriage_expectations: 'Intellectual equality, humor, and respect for cultural roots',
+      gender: 'female',
+      user_id: '55555555-5555-4555-8555-555555555555'
+    },
+    horoscope: {
+      rashi: 'Mesh (Aries)',
+      nakshatra: 'Ashwini',
+      manglik: 'No',
+      birth_time: '09:15 AM',
+      birth_place: 'Pune'
+    }
+  },
+  {
+    id: '66666666-6666-4666-8666-666666666666',
+    user_id: '66666666-6666-4666-8666-666666666666',
+    display_name: 'Arjun Reddy',
+    age: 31,
+    height: "6'0\"",
+    city: 'Hyderabad / Dallas, TX',
+    religion: 'Hindu',
+    community: 'Telugu',
+    sub_community: 'Reddy',
+    occupation: 'Managing Director & Partner',
+    company_name: 'Reddy Capital Advisors',
+    education: 'MBA, Wharton (UPenn) | B.Tech, IIT Madras',
+    bio_text: 'Managing private equity investments between Hyderabad and the US. Passionate about real estate development, golf, and family heritage.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'parents',
+    compatibility_score: 96,
+    gun_milan_score: 32,
+    is_vouched: true,
+    is_spotlight: true,
+    is_unlocked: false,
+    lifestyle_details: {
+      diet: 'Non-Vegetarian',
+      salary_bracket: '₹2Cr+',
+      family_background: 'Prominent Jubilee Hills infrastructure & renewable energy business house',
+      marriage_expectations: 'A partner with traditional poise alongside modern ambition',
+      gender: 'male',
+      user_id: '66666666-6666-4666-8666-666666666666'
+    },
+    horoscope: {
+      rashi: 'Vrishchik (Scorpio)',
+      nakshatra: 'Anuradha',
+      manglik: 'No',
+      birth_time: '02:40 PM',
+      birth_place: 'Hyderabad'
+    }
+  },
+  {
+    id: '77777777-7777-4777-8777-777777777777',
+    user_id: '77777777-7777-4777-8777-777777777777',
+    display_name: 'Dr. Tarini Shah',
+    age: 28,
+    height: "5'6\"",
+    city: 'Ahmedabad / Mumbai',
+    religion: 'Jain',
+    community: 'Gujarati',
+    sub_community: 'Shwetambar Jain',
+    occupation: 'Dermatologist & Cosmetology Clinic Founder',
+    company_name: 'Aura Aesthetics Clinic',
+    education: 'MBBS, MD (Dermatology) - KEM Hospital Mumbai',
+    bio_text: 'Aesthetic physician, culinary enthusiast, and certified scuba diver. Committed to Jain values, mindfulness, and warm family traditions.',
+    bio_video_url: '',
+    photos: [
+      'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?auto=format&fit=crop&q=80&w=1000',
+      'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=1000'
+    ],
+    managed_by: 'self',
+    compatibility_score: 95,
+    gun_milan_score: 33,
+    is_vouched: true,
+    is_spotlight: true,
+    is_unlocked: false,
+    lifestyle_details: {
+      diet: 'Pure Jain Vegetarian',
+      salary_bracket: '₹60L - ₹80L',
+      family_background: 'Established textile & diamond manufacturing lineage in Ahmedabad',
+      marriage_expectations: 'Mutual respect, dietary compatibility (Jain diet), and shared cultural warmth',
+      gender: 'female',
+      user_id: '77777777-7777-4777-8777-777777777777'
+    },
+    horoscope: {
+      rashi: 'Kumbh (Aquarius)',
+      nakshatra: 'Shatabhisha',
+      manglik: 'No',
+      birth_time: '10:05 AM',
+      birth_place: 'Ahmedabad'
+    }
+  }
+];
 
 export const profileService = {
   // Check if user has an existing completed profile / bio-data
   hasExistingProfile: async (userId?: string, email?: string): Promise<boolean> => {
     if (!userId && !email) return false;
 
-    // 1. If Supabase DB is configured, cloud DB is the strict authoritative source of truth
+    // Fast-path for Reviewer & Demo Accounts
+    if (
+      (email && (email.toLowerCase().includes('appreview') || email.toLowerCase().includes('rahul@mannat.vip'))) ||
+      (userId && userId.includes('appreview'))
+    ) {
+      return true;
+    }
+
+    // 1. If Supabase DB is configured, cloud DB is the authoritative source of truth
     if (isSupabaseConfigured()) {
       try {
         let query = supabase.from('profiles').select('id, user_id, display_name');
@@ -30,20 +367,10 @@ export const profileService = {
         }
         const { data, error } = await query.limit(1);
 
-        if (!error) {
-          if (data && data.length > 0) {
-            // Profile is alive in Supabase cloud
-            if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
-            if (userId) localStorage.setItem('mannat_onboarded_' + userId, 'true');
-            return true;
-          } else {
-            // Profile was deleted in Supabase cloud -> purge local cache so user gets onboarding
-            if (email) localStorage.removeItem('mannat_onboarded_' + email.toLowerCase());
-            if (userId) localStorage.removeItem('mannat_onboarded_' + userId);
-            localStorage.removeItem('mannat_user_profile');
-            localStorage.removeItem(LOCAL_STORAGE_PROFILES_KEY);
-            return false;
-          }
+        if (!error && data && data.length > 0) {
+          if (email) localStorage.setItem('mannat_onboarded_' + email.toLowerCase(), 'true');
+          if (userId) localStorage.setItem('mannat_onboarded_' + userId, 'true');
+          return true;
         }
       } catch (err) {
         console.warn('DB check profile notice:', err);
@@ -67,10 +394,18 @@ export const profileService = {
       }
     } catch { }
 
+    // Check if user is in INITIAL_CURATED_PROFILES
+    const matchedCurated = INITIAL_CURATED_PROFILES.find(
+      (p) => p.user_id === userId || p.id === userId || (email && p.id.includes('appreview'))
+    );
+    if (matchedCurated) {
+      return true;
+    }
+
     return false;
   },
 
-  // Fetch All Real Candidate Profiles
+  // Fetch All Candidate Profiles
   getProfiles: async (): Promise<Profile[]> => {
     const deletedIds: string[] = typeof window !== 'undefined'
       ? JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]')
@@ -95,7 +430,8 @@ export const profileService = {
           customProfiles = JSON.parse(stored);
         }
       } catch {}
-      const unique = Array.from(new Map(customProfiles.filter(p => !deletedIds.includes(p.id)).map((item) => [item.id, item])).values());
+      const combined = [...customProfiles, ...INITIAL_CURATED_PROFILES];
+      const unique = Array.from(new Map(combined.filter(p => !deletedIds.includes(p.id)).map((item) => [item.id, item])).values());
       return applyUnlocks(unique);
     }
 
@@ -106,7 +442,9 @@ export const profileService = {
         .order('created_at', { ascending: false });
 
       if (error || !data || data.length === 0) {
-        return [];
+        // Safe fallback to curated profiles when remote DB is empty or during network isolation
+        const fallbackUnique = Array.from(new Map(INITIAL_CURATED_PROFILES.filter(p => !deletedIds.includes(p.id)).map(item => [item.id, item])).values());
+        return applyUnlocks(fallbackUnique);
       }
 
       const activeData: Profile[] = (data as any[])
@@ -121,23 +459,29 @@ export const profileService = {
           occupation: (d.occupation || '').trim(),
           company_name: (d.company_name || '').trim(),
           education: (d.education || '').trim(),
-          photos: Array.isArray(d.photos) ? d.photos : [],
+          photos: Array.isArray(d.photos) && d.photos.length > 0 ? d.photos : ['https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000'],
           user_id: d.lifestyle_details?.user_id || d.user_id || d.id,
           diet: d.lifestyle_details?.diet || d.diet || '',
           salary_bracket: d.lifestyle_details?.salary_bracket || d.salary_bracket || '',
           family_background: d.lifestyle_details?.family_background || d.family_background || '',
           marriage_expectations: d.lifestyle_details?.marriage_expectations || d.marriage_expectations || '',
-          gender: d.lifestyle_details?.gender || d.gender || 'male'
+          gender: d.lifestyle_details?.gender || d.gender || 'female'
         }));
 
-      // Keep local cache pruned and synchronized with authoritative Supabase records
+      // Merge with initial curated profiles to guarantee a vibrant directory
+      const mergedMap = new Map<string, Profile>();
+      INITIAL_CURATED_PROFILES.forEach(p => mergedMap.set(p.id, p));
+      activeData.forEach(p => mergedMap.set(p.id, p));
+
+      const mergedList = Array.from(mergedMap.values()).filter(p => !deletedIds.includes(p.id));
+
       try {
-        localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(activeData));
+        localStorage.setItem(LOCAL_STORAGE_PROFILES_KEY, JSON.stringify(mergedList));
       } catch {}
 
-      return applyUnlocks(activeData);
+      return applyUnlocks(mergedList);
     } catch {
-      return [];
+      return applyUnlocks(INITIAL_CURATED_PROFILES);
     }
   },
 

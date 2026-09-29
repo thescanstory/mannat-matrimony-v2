@@ -48,7 +48,8 @@ public class StoreKitPlugin: CAPPlugin, CAPBridgedPlugin, SKPaymentTransactionOb
         DispatchQueue.main.asyncAfter(deadline: .now() + 45.0, execute: timeoutWorkItem)
 
         if #available(iOS 15.0, *) {
-            Task {
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
                 do {
                     print("[StoreKitPlugin] Querying Product.products for: \(productId)")
                     let products = try await Product.products(for: [productId])

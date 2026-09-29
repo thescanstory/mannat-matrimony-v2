@@ -521,6 +521,11 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
               {/* Sticky Subscribe & Back Button */}
               <div className="p-4 sm:p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[#E8DDD0] bg-[#F8F6F2] sticky bottom-0 z-20 shadow-lg space-y-2">
+                {restoreMessage && (
+                  <div className="p-2.5 bg-amber-50 border border-amber-300 text-[#8C6D32] text-xs font-semibold rounded-xl text-center animate-fadeIn">
+                    {restoreMessage}
+                  </div>
+                )}
                 <button
                   type="button"
                   disabled={upgrading}

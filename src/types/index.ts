@@ -32,18 +32,30 @@ export interface PrivacySettings {
 }
 
 export interface LifestyleDetails {
+  diet?: string;
+  salary_bracket?: string;
+  family_background?: string;
+  marriage_expectations?: string;
+  gender?: string;
+  user_id?: string;
   travel_freq?: string;
   second_home?: boolean;
   private_clubs?: string;
   net_worth?: string;
   video_mirrored?: boolean;
+  [key: string]: any;
 }
 
 export interface Horoscope {
-  manglik?: 'Yes' | 'No' | "Doesn't Matter";
+  rashi?: string;
+  nakshatra?: string;
+  manglik?: 'Yes' | 'No' | "Doesn't Matter" | string;
   dob?: string;
+  birth_time?: string;
+  birth_place?: string;
   time_of_birth?: string;
   place_of_birth?: string;
+  [key: string]: any;
 }
 
 export interface Profile {
@@ -51,27 +63,27 @@ export interface Profile {
   user_id: string;
   display_name: string;
   age: number;
-  gender?: 'male' | 'female' | 'other';
+  gender?: 'male' | 'female' | 'other' | string;
   height_cm?: number;
-  marital_status: string;
+  marital_status?: string;
   religion: string;
   community: string;
   sub_community?: string;
   caste?: string;
   mother_tongue?: string;
   city: string;
-  salary_bracket: string;
+  salary_bracket?: string;
   income_bracket?: string;
   diet?: string;
-  bio_video_url: string;
+  bio_video_url?: string;
   intro_video_url?: string;
   voice_intro_url?: string;
-  credits: number;
+  credits?: number;
   is_vouched: boolean;
   is_verified?: boolean;
   is_spotlight?: boolean;
   spotlight_until?: string;
-  managed_by?: 'self' | 'parent';
+  managed_by?: 'self' | 'parent' | 'parents' | string;
   compatibility_score: number;
   mqs_score?: number;
   gun_milan_score?: number;
@@ -81,15 +93,16 @@ export interface Profile {
   education?: string;
   height?: string;
   photos?: string[];
-  occupation: string;
-  company_name: string;
-  family_background: string;
-  marriage_expectations: string;
+  occupation?: string;
+  company_name?: string;
+  family_background?: string;
+  marriage_expectations?: string;
   phone_number?: string;
-  location_intent?: 'Open to Relocate to US' | 'Open to Long Distance' | 'Only Same City';
+  location_intent?: 'Open to Relocate to US' | 'Open to Long Distance' | 'Only Same City' | string;
   privacy_settings?: PrivacySettings;
   lifestyle_details?: LifestyleDetails;
   horoscope?: Horoscope;
+  [key: string]: any;
 }
 
 export interface CallbackRequest {

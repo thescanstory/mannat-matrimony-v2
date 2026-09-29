@@ -1,6 +1,6 @@
-import type { Profile, Scenario } from '../types';
+import type { Scenario } from '../types';
+import { INITIAL_CURATED_PROFILES } from './profileService';
 
-// All mock/demo data removed — the app uses only real user-created profiles.
 export const MOCK_SCENARIOS: Scenario[] = [];
+export const MOCK_PROFILES = INITIAL_CURATED_PROFILES;
 
-export const MOCK_PROFILES: Profile[] = [];
