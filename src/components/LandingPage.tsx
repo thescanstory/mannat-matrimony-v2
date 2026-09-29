@@ -12,8 +12,7 @@ import {
   Sparkles,
   Lock,
   MapPin,
-  Briefcase,
-  LogIn
+  Briefcase
 } from 'lucide-react';
 import { type UserSession } from '../services/authService';
 import { LegalModal, type LegalDocType } from './LegalModal';
@@ -182,71 +181,61 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         )}
       </AnimatePresence>
 
-      {/* 1. Header (Clean, Royal Navigation) */}
-      <header className={`fixed left-0 right-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8DDD0] shadow-2xs transition-all ${showTopAppBanner ? 'top-7 sm:top-8' : 'top-0'}`}>
+      {/* 1. Header (Ultra-Sleek Royal Luxury Navigation) */}
+      <header className={`fixed left-0 right-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8DDD0]/80 shadow-xs transition-all ${showTopAppBanner ? 'top-7 sm:top-8' : 'top-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 h-16 sm:h-20">
+          <div className="flex items-center justify-between h-16 sm:h-20">
             
-            {/* Brand Logo */}
+            {/* Brand Logo Lockup */}
             <a href="/" className="flex items-center gap-3 group shrink-0">
               <img
                 src="/images/mannat-logo-square.png"
                 alt="Mannat Matrimony"
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xs ring-1 ring-[#560406]/20 group-hover:scale-105 transition-transform"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover shadow-xs ring-1 ring-[#560406]/15 group-hover:scale-105 transition-transform"
               />
               <div className="flex flex-col text-left">
                 <span className="text-xs sm:text-sm italic font-normal text-[#560406] -mb-1 leading-none" style={{ fontFamily: "'Pinyon Script', cursive" }}>
                   At
                 </span>
-                <span className="font-normal text-xl sm:text-2xl tracking-[0.22em] uppercase text-[#560406] group-hover:text-[#730C0F] transition-colors leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
+                <span className="font-normal text-xl sm:text-2xl tracking-[0.24em] uppercase text-[#560406] group-hover:text-[#730C0F] transition-colors leading-tight" style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif" }}>
                   MANNAT
                 </span>
-                <span className="text-[7px] uppercase tracking-[0.34em] font-bold text-[#A17B5E] -mt-0.5">
+                <span className="text-[7px] uppercase tracking-[0.32em] font-bold text-[#A17B5E] -mt-0.5">
                   Bespoke Matchmaking
                 </span>
               </div>
             </a>
 
-            {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-[#6E6259]">
+            {/* Clean Center Navigation Links (No Clutter, No Duplicates) */}
+            <nav className="hidden lg:flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-[#6E6259]">
+              <a href="#showcase" className="hover:text-[#560406] transition-colors">
+                Verified Profiles
+              </a>
+              <a href="#pillars" className="hover:text-[#560406] transition-colors">
+                Why Mannat
+              </a>
+              <a href="#faq" className="hover:text-[#560406] transition-colors">
+                FAQ
+              </a>
+            </nav>
+
+            {/* Right Action Buttons */}
+            <div className="flex items-center gap-3 shrink-0">
               <button
                 type="button"
                 onClick={handleOpenLogin}
-                className="hover:text-[#560406] transition cursor-pointer font-bold"
+                className="px-4 py-2 text-xs font-bold text-[#560406] hover:bg-[#560406]/10 rounded-full transition cursor-pointer"
               >
                 Log In
               </button>
-              <button
-                type="button"
-                onClick={() => handleOpenRegister('Myself')}
-                className="hover:text-[#560406] transition cursor-pointer font-bold text-[#560406]"
-              >
-                Register Free
-              </button>
-              <a href="#showcase" className="hover:text-[#560406] transition">Verified Profiles</a>
-              <a href="#pillars" className="hover:text-[#560406] transition">Why Mannat</a>
-              <a href="#faq" className="hover:text-[#560406] transition">FAQ</a>
-            </nav>
-
-            {/* Header Action Buttons */}
-            <div className="flex items-center gap-2.5 shrink-0">
-              <button
-                type="button"
-                onClick={handleOpenLogin}
-                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full border border-[#560406] text-xs font-bold text-[#560406] hover:bg-[#560406] hover:text-[#F5E6D3] transition cursor-pointer shadow-2xs active:scale-95"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>Log In</span>
-              </button>
 
               <button
                 type="button"
                 onClick={() => handleOpenRegister('Myself')}
-                className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#A17B5E]/60 text-xs font-bold tracking-wide shadow-md transition cursor-pointer whitespace-nowrap active:scale-95"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] hover:brightness-110 text-[#F5E6D3] border border-[#DFBE7E]/50 text-xs font-bold uppercase tracking-wider shadow-md transition cursor-pointer whitespace-nowrap active:scale-95"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#DFBE7E]" />
                 <span>Register Free</span>
-                <ArrowRight className="w-3.5 h-3.5 text-[#DFBE7E]" />
               </button>
 
               <button
@@ -436,29 +425,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             </div>
           </div>
 
-          {/* Quick Dual Cards: 1-Click Register & Member Sign In */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <button
-              type="button"
-              onClick={() => handleOpenRegister('Myself')}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#DFBE7E] via-[#E8DDD0] to-[#DFBE7E] text-[#1C0102] font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-105 transition active:scale-95 cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4 text-[#1C0102]" />
-              <span>Create Profile in 5 Steps (Free)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleOpenLogin}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs uppercase tracking-wider transition active:scale-95 cursor-pointer"
-            >
-              <LogIn className="w-4 h-4 text-[#DFBE7E]" />
-              <span>Existing Member Log In</span>
-            </button>
-          </div>
-
           {/* Trust Badges */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-4 text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-2 text-left">
             <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs">
               <CheckCircle2 className="w-5 h-5 text-[#DFBE7E] shrink-0" />
               <div>
@@ -499,63 +467,87 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {showcaseProfiles.map((p) => (
-            <div
-              key={p.id}
-              onClick={() => handleOpenRegister('Myself')}
-              className="bg-white rounded-2xl overflow-hidden border border-[#E8DDD0] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between cursor-pointer group"
-            >
-              {/* Photo with BlurShield */}
-              <div className="relative aspect-[4/5] bg-neutral-900 overflow-hidden">
-                <img
-                  src={p.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600'}
-                  alt={p.display_name}
-                  className="w-full h-full object-cover filter blur-[2px] scale-105 group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                
-                {/* Verified Badge */}
-                <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#560406] px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-xs">
-                  <ShieldCheck className="w-3 h-3 text-[#A17B5E]" />
-                  <span>100% Verified</span>
+        {showcaseProfiles.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+            {showcaseProfiles.map((p) => (
+              <div
+                key={p.id}
+                onClick={() => handleOpenRegister('Myself')}
+                className="bg-white rounded-2xl overflow-hidden border border-[#E8DDD0] shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between cursor-pointer group"
+              >
+                {/* Photo with BlurShield */}
+                <div className="relative aspect-[4/5] bg-neutral-900 overflow-hidden">
+                  <img
+                    src={p.photos?.[0] || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600'}
+                    alt={p.display_name}
+                    className="w-full h-full object-cover filter blur-[2px] scale-105 group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                  
+                  {/* Verified Badge */}
+                  <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#560406] px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-xs">
+                    <ShieldCheck className="w-3 h-3 text-[#A17B5E]" />
+                    <span>100% Verified</span>
+                  </div>
+
+                  {/* Match Score */}
+                  <div className="absolute top-3 right-3 bg-[#560406]/90 text-[#DFBE7E] px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#DFBE7E]/40">
+                    ★ {p.compatibility_score || 95}% Match
+                  </div>
+
+                  {/* Bottom Bio Overlay */}
+                  <div className="absolute bottom-3 inset-x-3 text-white text-left space-y-0.5">
+                    <div className="text-lg font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                      {p.display_name}, <span className="font-sans text-sm font-semibold">{p.age} yrs</span>
+                    </div>
+                    <div className="text-[11px] text-[#DFBE7E] font-medium flex items-center gap-1 truncate">
+                      <Briefcase className="w-3 h-3 shrink-0" />
+                      <span>{p.occupation || 'Professional'}</span>
+                    </div>
+                    <div className="text-[10px] text-neutral-300 flex items-center gap-1">
+                      <MapPin className="w-3 h-3 shrink-0" />
+                      <span>{p.city} · {p.religion}</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Match Score */}
-                <div className="absolute top-3 right-3 bg-[#560406]/90 text-[#DFBE7E] px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#DFBE7E]/40">
-                  ★ {p.compatibility_score}% Match
-                </div>
-
-                {/* Bottom Bio Overlay */}
-                <div className="absolute bottom-3 inset-x-3 text-white text-left space-y-0.5">
-                  <div className="text-lg font-bold" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                    {p.display_name}, <span className="font-sans text-sm font-semibold">{p.age} yrs</span>
-                  </div>
-                  <div className="text-[11px] text-[#DFBE7E] font-medium flex items-center gap-1 truncate">
-                    <Briefcase className="w-3 h-3 shrink-0" />
-                    <span>{p.occupation}</span>
-                  </div>
-                  <div className="text-[10px] text-neutral-300 flex items-center gap-1">
-                    <MapPin className="w-3 h-3 shrink-0" />
-                    <span>{p.city} · {p.religion}</span>
-                  </div>
+                {/* Card Footer */}
+                <div className="p-3.5 bg-[#FAF8F5] border-t border-[#E8DDD0] flex items-center justify-between text-xs font-bold text-[#560406]">
+                  <span className="flex items-center gap-1 text-[11px] text-[#A17B5E]">
+                    <Lock className="w-3 h-3" />
+                    <span>BlurShield™ Active</span>
+                  </span>
+                  <span className="group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                    <span>View Bio-Data</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
                 </div>
               </div>
-
-              {/* Card Footer */}
-              <div className="p-3.5 bg-[#FAF8F5] border-t border-[#E8DDD0] flex items-center justify-between text-xs font-bold text-[#560406]">
-                <span className="flex items-center gap-1 text-[11px] text-[#A17B5E]">
-                  <Lock className="w-3 h-3" />
-                  <span>BlurShield™ Active</span>
-                </span>
-                <span className="group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                  <span>View Bio-Data</span>
-                  <ArrowRight className="w-3 h-3" />
-                </span>
-              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#E8DDD0] shadow-sm max-w-2xl mx-auto text-center space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F5E6D3] to-[#E8DDD0] flex items-center justify-center mx-auto text-[#560406] shadow-sm">
+              <Crown className="w-8 h-8 text-[#560406]" />
             </div>
-          ))}
-        </div>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+              Private Verified Directory
+            </h3>
+            <p className="text-xs sm:text-sm text-[#6E6259] leading-relaxed max-w-md mx-auto">
+              Candidate bio-datas and contact profiles are protected under BlurShield™ privacy. Register or log in to explore matching candidates.
+            </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => handleOpenRegister('Myself')}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#730C0F] via-[#560406] to-[#3A0204] text-[#F5E6D3] text-xs font-bold uppercase tracking-wider shadow-md hover:brightness-110 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-[#DFBE7E]" />
+                <span>Register Free &amp; Explore Matches</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="text-center pt-8">
           <button
