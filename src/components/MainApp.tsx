@@ -185,7 +185,7 @@ export const MainApp: React.FC<MainAppProps> = ({ initialView = 'home', onNaviga
       }
     } catch {}
 
-    return profiles.find(p => p.id === 'appreview-demo-user-id') || null;
+    return profiles[0] || null;
   }, [currentUser, profiles]);
 
   const triggerToast = (msg: string, type: 'success' | 'heart' | 'sparkle' = 'success') => {

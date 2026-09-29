@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import { type UserSession } from '../services/authService';
 import { LegalModal, type LegalDocType } from './LegalModal';
-import { INITIAL_CURATED_PROFILES } from '../services/profileService';
+import { profileService } from '../services/profileService';
+import type { Profile } from '../types';
 import { RegistrationFlowModal } from './RegistrationFlowModal';
 
 interface LandingPageProps {
@@ -68,8 +69,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
     navigateToApp('home');
   };
 
-  // Top Curated Showcase Profiles
-  const showcaseProfiles = INITIAL_CURATED_PROFILES.filter(p => p.id !== 'appreview-demo-user-id').slice(0, 4);
+  // Live real candidate profiles
+  const [showcaseProfiles, setShowcaseProfiles] = useState<Profile[]>([]);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    profileService.getProfiles().then((list) => {
+      if (isMounted) {
+        setShowcaseProfiles(list.slice(0, 4));
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // 4 Pillars of Distinction
   const matchmakingPillars = [
