@@ -627,46 +627,46 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
             </p>
           </div>
 
-          {/* 4 Core Featured Plan Cards */}
+          {/* 4 Duration Plan Cards (1, 3, 6, 12 Months) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            {/* Plan 1: Free Forever */}
+            {/* Plan 1: 1 Month */}
             <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#6E6259] bg-[#FAF7F2] px-3 py-1 rounded-full border border-[#E8DDD0]">
-                    Starter Tier
+                    Silver Tier
                   </span>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                    Free Forever
+                    1 Month
                   </h3>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-3xl sm:text-4xl font-extrabold text-[#161412]">₹0</span>
-                    <span className="text-xs text-[#8C827A] font-semibold">/ Lifetime</span>
+                    <span className="text-3xl sm:text-4xl font-extrabold text-[#161412]">₹1,499</span>
+                    <span className="text-xs text-[#8C827A] font-semibold">/ 30 Days</span>
                   </div>
                   <p className="text-xs text-[#6E6259] mt-2 leading-relaxed">
-                    Create your candidate bio-data and explore matching alliances.
+                    Essential plan to quickly reach out and initiate direct conversations.
                   </p>
                 </div>
 
                 <div className="border-t border-[#E8DDD0] pt-4 space-y-2.5 text-xs text-[#422C1D]">
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>Complete 5-step registration &amp; bio-data</span>
+                    <span><strong>15 Direct Contacts</strong> unlock</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>Browse matching verified candidates</span>
+                    <span>Instant candidate direct messaging</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>Astrological horoscope &amp; compatibility score</span>
+                    <span>Mobile phone number &amp; WhatsApp access</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>BlurShield™ photo privacy protection</span>
+                    <span>Verified horoscope compatibility matches</span>
                   </div>
                 </div>
               </div>
@@ -676,47 +676,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 onClick={() => handleOpenRegister('Myself')}
                 className="w-full py-3 rounded-full border-2 border-[#560406] text-[#560406] hover:bg-[#560406] hover:text-[#F5E6D3] text-xs font-extrabold uppercase tracking-wider transition cursor-pointer"
               >
-                Register Free
+                Choose 1 Month
               </button>
             </div>
 
-            {/* Plan 2: Micro-Unlock */}
+            {/* Plan 2: 3 Months */}
             <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#A17B5E] bg-[#FAF7F2] px-3 py-1 rounded-full border border-[#E8DDD0]">
-                    Pay-As-You-Go
+                    Gold Tier
                   </span>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                    Single Unlock
+                    3 Months
                   </h3>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-3xl sm:text-4xl font-extrabold text-[#161412]">₹49</span>
-                    <span className="text-xs text-[#8C827A] font-semibold">/ One-Time</span>
+                    <span className="text-3xl sm:text-4xl font-extrabold text-[#161412]">₹4,499</span>
+                    <span className="text-xs text-[#8C827A] font-semibold">/ 90 Days</span>
                   </div>
                   <p className="text-xs text-[#6E6259] mt-2 leading-relaxed">
-                    Instant single candidate contact &amp; bio-data unlock without commitment.
+                    Complete quarterly access with advanced verified credentials.
                   </p>
                 </div>
 
                 <div className="border-t border-[#E8DDD0] pt-4 space-y-2.5 text-xs text-[#422C1D]">
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>Instant unlock of 1 candidate contact</span>
+                    <span><strong>50 Direct Contacts</strong> unlock</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>Reveals verified salary &amp; employer proof</span>
+                    <span>Verified salary &amp; education credential access</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>1-Click WhatsApp family alliance card</span>
+                    <span>In-app secure voice &amp; video calling</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>No recurring monthly subscription</span>
+                    <span>1-Click WhatsApp family alliance cards</span>
                   </div>
                 </div>
               </div>
@@ -726,11 +726,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 onClick={() => handleOpenRegister('Myself')}
                 className="w-full py-3 rounded-full border-2 border-[#560406] text-[#560406] hover:bg-[#560406] hover:text-[#F5E6D3] text-xs font-extrabold uppercase tracking-wider transition cursor-pointer"
               >
-                Unlock a Profile
+                Choose 3 Months
               </button>
             </div>
 
-            {/* Plan 3: Diamond VIP (Featured / Most Popular) */}
+            {/* Plan 3: 6 Months (Featured / Most Popular) */}
             <div className="bg-gradient-to-b from-[#3A0204] via-[#560406] to-[#240103] text-white rounded-3xl p-6 sm:p-7 border-2 border-[#DFBE7E] shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden">
               {/* Popular Ribbon */}
               <div className="absolute top-0 right-0 bg-[#DFBE7E] text-[#1C0102] text-[9px] font-black uppercase tracking-widest py-1 px-4 rounded-bl-xl shadow-xs">
@@ -740,19 +740,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#DFBE7E] bg-white/10 px-3 py-1 rounded-full border border-[#DFBE7E]/40">
-                    6 Months VIP
+                    Diamond VIP
                   </span>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[#DFBE7E]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                    Diamond VIP
+                    6 Months
                   </h3>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-3xl sm:text-4xl font-extrabold text-white">₹6,499</span>
-                    <span className="text-xs text-[#E8DDD0] font-semibold">/ 6 Months</span>
+                    <span className="text-xs text-[#E8DDD0] font-semibold">/ 180 Days</span>
                   </div>
                   <p className="text-xs text-[#F5E6D3]/90 mt-2 leading-relaxed">
-                    Our flagship membership for serious, active match-seekers.
+                    Our premier semi-annual plan for maximum search priority and engagement.
                   </p>
                 </div>
 
@@ -763,7 +763,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#DFBE7E] shrink-0 mt-0.5" />
-                    <span><strong>Priority Search Ranking</strong> over free users</span>
+                    <span><strong>Priority Search Ranking</strong> over standard users</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#DFBE7E] shrink-0 mt-0.5" />
@@ -786,47 +786,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#DFBE7E] via-[#E8DDD0] to-[#DFBE7E] text-[#1C0102] text-xs font-extrabold uppercase tracking-wider shadow-lg hover:brightness-105 transition cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#1C0102]" />
-                <span>Get Diamond Plan</span>
+                <span>Choose 6 Months</span>
               </button>
             </div>
 
-            {/* Plan 4: Platinum Plus (Annual VIP) */}
+            {/* Plan 4: 12 Months */}
             <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#E8DDD0] shadow-xs flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] uppercase font-extrabold tracking-wider text-[#A17B5E] bg-[#FAF7F2] px-3 py-1 rounded-full border border-[#E8DDD0]">
-                    12 Months VIP
+                    Platinum VIP
                   </span>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                    Platinum Plus
+                    12 Months
                   </h3>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-3xl sm:text-4xl font-extrabold text-[#161412]">₹12,999</span>
-                    <span className="text-xs text-[#8C827A] font-semibold">/ 12 Months</span>
+                    <span className="text-3xl sm:text-4xl font-extrabold text-[#161412]">₹10,999</span>
+                    <span className="text-xs text-[#8C827A] font-semibold">/ 365 Days</span>
                   </div>
                   <p className="text-xs text-[#6E6259] mt-2 leading-relaxed">
-                    Maximum quota allowance with full-year dedicated alliance advisory.
+                    Full year high-volume quota with dedicated alliance advisory.
                   </p>
                 </div>
 
                 <div className="border-t border-[#E8DDD0] pt-4 space-y-2.5 text-xs text-[#422C1D]">
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span><strong>600 Contacts</strong> (Maximum Cap)</span>
+                    <span><strong>300+ Direct Contacts</strong> allocation</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span><strong>Full-Year Spotlight</strong> pinned to search top</span>
+                    <span><strong>Full-Year Spotlight</strong> pinned at top</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span><strong>Free-Mode Response</strong> (free members reply free)</span>
+                    <span><strong>Free-Mode Response</strong> (unpaid matches reply free)</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="w-4 h-4 text-[#560406] shrink-0 mt-0.5" />
-                    <span>Priority dispute &amp; escalation relationship advisory</span>
+                    <span>Dedicated priority relationship advisory</span>
                   </div>
                 </div>
               </div>
@@ -836,20 +836,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
                 onClick={() => handleOpenRegister('Myself')}
                 className="w-full py-3 rounded-full bg-[#560406] text-[#F5E6D3] hover:bg-[#730C0F] text-xs font-extrabold uppercase tracking-wider transition cursor-pointer shadow-xs"
               >
-                Join Platinum Plus
+                Choose 12 Months
               </button>
             </div>
 
           </div>
 
-          {/* Full Membership Comparison Overview Table */}
+          {/* Clean Membership Comparison Overview Table */}
           <div className="mt-12 bg-white rounded-3xl p-6 sm:p-8 border border-[#E8DDD0] shadow-xs">
             <div className="text-center max-w-xl mx-auto mb-6">
               <h4 className="text-lg font-bold text-[#560406]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
-                Complete Subscription Tier Comparison
+                Plan Comparison
               </h4>
               <p className="text-xs text-[#6E6259]">
-                Choose flexible durations based on your family's matchmaking timeline
+                Compare features across all 4 duration options
               </p>
             </div>
 
@@ -857,62 +857,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-[#E8DDD0] text-[#560406] font-bold">
-                    <th className="pb-3 pr-4">Tier</th>
-                    <th className="pb-3 px-4">Duration</th>
+                    <th className="pb-3 pr-4">Duration</th>
                     <th className="pb-3 px-4">Price</th>
                     <th className="pb-3 px-4">Contact Quota</th>
-                    <th className="pb-3 pl-4">Key Highlights</th>
+                    <th className="pb-3 pl-4">Key Inclusions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E8DDD0]/60 text-[#422C1D]">
                   <tr>
-                    <td className="py-3 pr-4 font-bold text-[#560406]">Silver</td>
-                    <td className="py-3 px-4">1 Month</td>
+                    <td className="py-3 pr-4 font-bold text-[#560406]">1 Month (Silver)</td>
                     <td className="py-3 px-4 font-bold">₹1,499</td>
                     <td className="py-3 px-4">15 Contacts</td>
-                    <td className="py-3 pl-4 text-[#6E6259]">Direct chat messaging, mobile access</td>
+                    <td className="py-3 pl-4 text-[#6E6259]">Direct chat messaging, mobile phone access</td>
                   </tr>
                   <tr>
-                    <td className="py-3 pr-4 font-bold text-[#560406]">Gold</td>
-                    <td className="py-3 px-4">3 Months</td>
+                    <td className="py-3 pr-4 font-bold text-[#560406]">3 Months (Gold)</td>
                     <td className="py-3 px-4 font-bold">₹4,499</td>
                     <td className="py-3 px-4">50 Contacts</td>
-                    <td className="py-3 pl-4 text-[#6E6259]">Verified info access, secure voice/video calling</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pr-4 font-bold text-[#560406]">Gold Plus</td>
-                    <td className="py-3 px-4">3 Months</td>
-                    <td className="py-3 px-4 font-bold">₹5,499</td>
-                    <td className="py-3 px-4">50 Contacts</td>
-                    <td className="py-3 pl-4 text-[#6E6259]">Standard Gold + Profile Spotlight (+30% views)</td>
+                    <td className="py-3 pl-4 text-[#6E6259]">Verified info access, secure voice &amp; video calling</td>
                   </tr>
                   <tr className="bg-[#FAF5EF]">
-                    <td className="py-3 pr-4 font-extrabold text-[#560406]">Diamond (Popular)</td>
-                    <td className="py-3 px-4 font-bold">6 Months</td>
+                    <td className="py-3 pr-4 font-extrabold text-[#560406]">6 Months (Diamond VIP ★)</td>
                     <td className="py-3 px-4 font-extrabold text-[#560406]">₹6,499</td>
                     <td className="py-3 px-4 font-bold">60 Contacts</td>
-                    <td className="py-3 pl-4 text-[#422C1D] font-semibold">Priority search index ranking over free users</td>
+                    <td className="py-3 pl-4 text-[#422C1D] font-semibold">Priority search ranking over standard profiles</td>
                   </tr>
                   <tr>
-                    <td className="py-3 pr-4 font-bold text-[#560406]">Diamond Plus</td>
-                    <td className="py-3 px-4">6 Months</td>
-                    <td className="py-3 px-4 font-bold">₹7,499</td>
-                    <td className="py-3 px-4">100+ Contacts</td>
-                    <td className="py-3 pl-4 text-[#6E6259]">Spotlight, Free-Mode Response for non-paid users</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pr-4 font-bold text-[#560406]">Platinum</td>
-                    <td className="py-3 px-4">12 Months</td>
+                    <td className="py-3 pr-4 font-bold text-[#560406]">12 Months (Platinum VIP)</td>
                     <td className="py-3 px-4 font-bold">₹10,999</td>
-                    <td className="py-3 px-4">300+ Contacts</td>
-                    <td className="py-3 pl-4 text-[#6E6259]">Continuous full-year search priority, lowest monthly cost</td>
-                  </tr>
-                  <tr className="bg-[#FAF5EF]">
-                    <td className="py-3 pr-4 font-extrabold text-[#560406]">Platinum Plus VIP</td>
-                    <td className="py-3 px-4 font-bold">12 Months</td>
-                    <td className="py-3 px-4 font-extrabold text-[#560406]">₹12,999</td>
-                    <td className="py-3 px-4 font-bold">600 Contacts</td>
-                    <td className="py-3 pl-4 text-[#422C1D] font-semibold">Maximum quota, 1-year Spotlight, dedicated relationship advisory</td>
+                    <td className="py-3 px-4 font-bold">300+ Contacts</td>
+                    <td className="py-3 pl-4 text-[#6E6259]">Full-year Spotlight, free-mode response, dedicated advisory</td>
                   </tr>
                 </tbody>
               </table>
