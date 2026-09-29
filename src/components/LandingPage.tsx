@@ -632,6 +632,121 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
         </div>
       </section>
 
+      {/* 4.5. SACRED ALLIANCES & WEDDING CELEBRATIONS TRIPTYCH */}
+      <section className="py-20 sm:py-28 lg:py-32 bg-[#2B0305] text-[#FAF7F2] border-b border-[#560406] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
+          
+          <div className="text-center max-w-2xl mx-auto space-y-3 mb-14 sm:mb-16">
+            <span className="text-[11px] uppercase tracking-[0.25em] font-bold text-[#DFBE7E] block">
+              Cherished Alliances
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+              Where Sacred Vows &amp; Lifelong Traditions Begin
+            </h2>
+            <p className="text-xs sm:text-sm text-[#E2D6CA] leading-relaxed">
+              Every alliance at Mannat is treated with the dignity, confidentiality, and cultural reverence that lifelong matrimony deserves.
+            </p>
+          </div>
+
+          {/* 3-Card Editorial Gallery */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+            
+            {/* Image 1: Joyous Jaimala & Vivah Celebrations */}
+            <div className="relative group">
+              <div className="absolute -inset-2 rounded-3xl border border-[#DFBE7E]/30 transform -rotate-1 group-hover:rotate-0 transition-transform duration-300 pointer-events-none" />
+              <div className="relative rounded-2xl overflow-hidden border border-[#DFBE7E]/50 shadow-2xl bg-[#1C0102]">
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img
+                    src="/images/story-couple-1.jpg"
+                    alt="Joyous Indian Wedding Garland Ritual - Mannat Matrimony"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 filter brightness-95"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C0102] via-transparent to-black/20 pointer-events-none" />
+                <div className="absolute bottom-0 inset-x-0 p-5 text-left space-y-1 bg-[#1C0102]/85 backdrop-blur-xs border-t border-[#DFBE7E]/30">
+                  <span className="text-[9px] uppercase tracking-widest font-bold text-[#DFBE7E]">
+                    Sacred Jaimala
+                  </span>
+                  <h3 className="text-lg font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Joyous Celebrations
+                  </h3>
+                  <p className="text-[11px] text-[#E2D6CA] leading-relaxed">
+                    Cultured families united with blessings, laughter, and timeless traditions.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 2: Intimate Forehead Kiss / Mutual Respect */}
+            <div className="relative group">
+              <div className="absolute -inset-2 rounded-3xl border border-[#DFBE7E]/40 transform rotate-1 group-hover:rotate-0 transition-transform duration-300 pointer-events-none" />
+              <div className="relative rounded-2xl overflow-hidden border-2 border-[#DFBE7E]/70 shadow-2xl bg-[#1C0102]">
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img
+                    src="/images/story-couple-2.jpg"
+                    alt="Sacred Matrimonial Vows - Mannat Matrimony"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 filter brightness-95"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C0102] via-transparent to-black/20 pointer-events-none" />
+                <div className="absolute top-3 right-3 bg-[#2B0305]/90 border border-[#DFBE7E]/50 text-[#DFBE7E] text-[9px] font-bold uppercase tracking-wider py-1 px-3 rounded-full shadow-sm">
+                  ★ Pure Compatibility
+                </div>
+                <div className="absolute bottom-0 inset-x-0 p-5 text-left space-y-1 bg-[#1C0102]/85 backdrop-blur-xs border-t border-[#DFBE7E]/30">
+                  <span className="text-[9px] uppercase tracking-widest font-bold text-[#DFBE7E]">
+                    Enduring Devotion
+                  </span>
+                  <h3 className="text-lg font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Sacred Commitments
+                  </h3>
+                  <p className="text-[11px] text-[#E2D6CA] leading-relaxed">
+                    Authentic bonds rooted in emotional depth, intellectual wavelength, and mutual respect.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Image 3: Sacred Hands & Ritual Vows */}
+            <div className="relative group">
+              <div className="absolute -inset-2 rounded-3xl border border-[#DFBE7E]/30 transform -rotate-1 group-hover:rotate-0 transition-transform duration-300 pointer-events-none" />
+              <div className="relative rounded-2xl overflow-hidden border border-[#DFBE7E]/50 shadow-2xl bg-[#1C0102]">
+                <div className="aspect-[3/4] overflow-hidden">
+                  <img
+                    src="/images/story-couple-3.jpg"
+                    alt="Sacred Hastamelap & Mehndi Rituals - Mannat Matrimony"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 filter brightness-95"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1C0102] via-transparent to-black/20 pointer-events-none" />
+                <div className="absolute bottom-0 inset-x-0 p-5 text-left space-y-1 bg-[#1C0102]/85 backdrop-blur-xs border-t border-[#DFBE7E]/30">
+                  <span className="text-[9px] uppercase tracking-widest font-bold text-[#DFBE7E]">
+                    Hastamelap Rituals
+                  </span>
+                  <h3 className="text-lg font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                    Timeless Traditions
+                  </h3>
+                  <p className="text-[11px] text-[#E2D6CA] leading-relaxed">
+                    Honoring cultural heritage, Vedic horoscopes, and parent-guided alliances.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="text-center pt-12 sm:pt-14">
+            <button
+              type="button"
+              onClick={() => handleOpenRegister('Myself')}
+              className="px-8 py-3.5 rounded-full bg-[#DFBE7E] hover:bg-[#EADBBE] text-[#2B0305] text-xs font-bold uppercase tracking-wider shadow-md transition cursor-pointer"
+            >
+              Begin Your Alliance Search →
+            </button>
+          </div>
+
+        </div>
+      </section>
+
       {/* 5. MEMBERSHIP & INVESTMENT PLANS (1, 3, 6, 12 Months) */}
       <section id="pricing" className="py-20 sm:py-28 lg:py-32 bg-[#FAF7F2] border-t border-[#E8DDD0]">
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
