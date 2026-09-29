@@ -182,7 +182,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
           <div className="flex items-center justify-between h-14 sm:h-20">
             
             {/* Brand Logo */}
-            <a href="/" className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0">
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0 cursor-pointer"
+            >
               <img
                 src="/images/mannat-logo-square.png"
                 alt="Mannat Matrimony"
@@ -203,16 +210,44 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
 
             {/* Editorial Nav Links */}
             <nav className="hidden md:flex items-center gap-7 lg:gap-9 text-xs font-semibold uppercase tracking-widest text-[#5A4F46]">
-              <a href="#showcase" className="hover:text-[#560406] transition-colors py-1.5">
+              <a
+                href="#showcase"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('showcase')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="hover:text-[#560406] transition-colors py-1.5"
+              >
                 Verified Profiles
               </a>
-              <a href="#principles" className="hover:text-[#560406] transition-colors py-1.5">
+              <a
+                href="#principles"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('principles')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="hover:text-[#560406] transition-colors py-1.5"
+              >
                 Why Mannat
               </a>
-              <a href="#pricing" className="hover:text-[#560406] transition-colors py-1.5">
+              <a
+                href="#pricing"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="hover:text-[#560406] transition-colors py-1.5"
+              >
                 Membership
               </a>
-              <a href="#faq" className="hover:text-[#560406] transition-colors py-1.5">
+              <a
+                href="#faq"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="hover:text-[#560406] transition-colors py-1.5"
+              >
                 FAQ
               </a>
             </nav>
@@ -259,28 +294,44 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenApp }) => {
               <div className="flex flex-col space-y-2 text-xs font-semibold text-[#5A4F46] pb-2 border-b border-[#E8DDD0]">
                 <a
                   href="#showcase"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMobileMenuOpen(false);
+                    document.getElementById('showcase')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="py-1.5 px-2 hover:bg-[#560406]/5 rounded-lg text-[#560406]"
                 >
                   Verified Candidate Directory
                 </a>
                 <a
                   href="#principles"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMobileMenuOpen(false);
+                    document.getElementById('principles')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="py-1.5 px-2 hover:bg-[#560406]/5 rounded-lg text-[#560406]"
                 >
                   Why Mannat (4 Pillars)
                 </a>
                 <a
                   href="#pricing"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMobileMenuOpen(false);
+                    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="py-1.5 px-2 hover:bg-[#560406]/5 rounded-lg text-[#560406]"
                 >
                   Membership &amp; Plans
                 </a>
                 <a
                   href="#faq"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMobileMenuOpen(false);
+                    document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="py-1.5 px-2 hover:bg-[#560406]/5 rounded-lg text-[#560406]"
                 >
                   Frequently Asked Questions
