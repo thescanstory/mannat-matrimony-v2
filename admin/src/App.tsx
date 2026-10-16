@@ -108,8 +108,9 @@ export function App() {
       const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
       const deletedIds: string[] = forceCleanCache ? [] : JSON.parse(localStorage.getItem('mannat_admin_deleted_ids') || '[]');
 
+      let cloudProfiles: Profile[] = [];
       if (data && !error && data.length > 0) {
-        const cloudProfiles: Profile[] = (data as any[])
+        cloudProfiles = (data as any[])
           .filter(d => !deletedIds.includes(d.id))
           .map(d => ({
             ...d,
@@ -178,15 +179,31 @@ export function App() {
       };
 
       const mappedCallbacks: VIPCallback[] = (cbData || []).map((cb: any) => {
+        let meta: any = null;
+        if (cb.google_meet_url && typeof cb.google_meet_url === 'string' && cb.google_meet_url.trim().startsWith('{')) {
+          try {
+            meta = JSON.parse(cb.google_meet_url);
+          } catch {}
+        }
+
+        const requesterName = meta?.name || cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member');
+        const requesterPhone = meta?.phone || cb.requester_phone || '+91 98201 44521';
+        const targetName = meta?.profile_for
+          ? `Lead: ${meta.profile_for} (${meta.city || 'India'})`
+          : `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`;
+
         return {
           id: cb.id,
-          requester_name: cb.requester_name || (cb.status === 'wave_sent' ? 'Interested Candidate (Wave)' : 'Parent / Family Member'),
-          requester_phone: cb.requester_phone || '+91 98201 44521',
-          target_candidate_name: `Candidate (${cb.target_profile_id?.substring(0, 8) || 'Bio-data'})`,
+          requester_name: requesterName,
+          requester_phone: requesterPhone,
+          target_candidate_name: targetName,
           requested_time: cb.created_at ? new Date(cb.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Today',
-          managed_by: cb.status === 'wave_sent' ? 'Candidate' : 'Parent',
+          managed_by: meta?.profile_for || (cb.status === 'wave_sent' ? 'Candidate' : 'Parent'),
           status: statusMap[cb.status] || 'Pending',
-          notes: cb.status === 'wave_sent' ? 'Interest wave sent via feed.' : 'Requested confidential callback with family.'
+          notes: meta?.notes || (meta?.source ? `Source: ${meta.source} · Email: ${meta.email || 'N/A'}` : (cb.status === 'wave_sent' ? 'Interest wave sent via feed.' : 'Requested confidential callback with family.')),
+          email: meta?.email || cb.email,
+          city: meta?.city || cb.city,
+          source_cta: meta?.source || 'Website Lead'
         };
       });
 
@@ -205,8 +222,30 @@ export function App() {
         profession: v.profession
       }));
 
+      // 3. Map leads directly captured from website registration profiles
+      const mappedProfileLeads: VIPCallback[] = (cloudProfiles || [])
+        .filter(p => (p.lifestyle_details as any)?.is_lead || (p.lifestyle_details as any)?.phone || (p.lifestyle_details as any)?.email)
+        .map(p => {
+          const lsd = (p.lifestyle_details as any) || {};
+          return {
+            id: `reg_${p.id}`,
+            requester_name: p.display_name,
+            requester_phone: lsd.phone || lsd.phone_number || '+91 98201 44521',
+            target_candidate_name: `${lsd.profile_for || p.managed_by || 'Myself'} · ${p.city} (${p.religion} - ${p.community})`,
+            requested_time: p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently',
+            managed_by: lsd.gender || (p as any).gender || 'Seeking Match',
+            status: (lsd.status === 'contacted' ? 'In Progress' : lsd.status === 'completed' ? 'Completed' : 'Pending') as 'Pending' | 'In Progress' | 'Completed',
+            notes: `Profession: ${p.occupation || 'N/A'} · City: ${p.city || 'N/A'} · Source: ${lsd.lead_source || 'Website 5-Step Modal'}`,
+            email: lsd.email,
+            city: p.city,
+            profession: p.occupation,
+            education: p.education,
+            source_cta: lsd.lead_source || 'Website Registration'
+          };
+        });
+
       // Combine and de-duplicate by ID
-      const combined = [...localConsultations, ...mappedVip, ...mappedCallbacks];
+      const combined = [...localConsultations, ...mappedProfileLeads, ...mappedVip, ...mappedCallbacks];
       const uniqueMap = new Map<string, VIPCallback>();
       combined.forEach(item => {
         if (!uniqueMap.has(item.id)) {
@@ -1131,8 +1170,32 @@ export function App() {
                                 <h5 className="font-extrabold text-xs uppercase tracking-wider text-[#B89552]">
                                   4. Account & Metadata
                                 </h5>
-                                <div className="text-gray-700 space-y-0.5">
+                                <div className="text-gray-700 space-y-1">
                                   <div><span className="text-gray-400 font-bold">Email:</span> <span className="font-mono font-bold text-gray-900">{(candidate.lifestyle_details as any)?.email || candidate.display_name}</span></div>
+                                  {(candidate.lifestyle_details as any)?.phone && (
+                                    <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+                                      <div>
+                                        <span className="text-gray-400 font-bold">Phone:</span>{' '}
+                                        <span className="font-mono font-bold text-emerald-700">{(candidate.lifestyle_details as any)?.phone}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5">
+                                        <a
+                                          href={`tel:${String((candidate.lifestyle_details as any)?.phone).replace(/\s+/g, '')}`}
+                                          className="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 hover:bg-emerald-100 transition"
+                                        >
+                                          Call
+                                        </a>
+                                        <a
+                                          href={`https://wa.me/${String((candidate.lifestyle_details as any)?.phone).replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(candidate.display_name)},%20this%20is%20Mannat%20Matrimony%20regarding%20your%20profile.`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="px-2 py-0.5 rounded-lg bg-emerald-600 text-white text-[10px] font-bold hover:bg-emerald-700 transition"
+                                        >
+                                          WhatsApp
+                                        </a>
+                                      </div>
+                                    </div>
+                                  )}
                                   <div><span className="text-gray-400 font-bold">Database UUID:</span> <span className="font-mono text-[10px] text-gray-500">{candidate.id}</span></div>
                                 </div>
                               </div>
@@ -1964,8 +2027,32 @@ export function App() {
                   <h4 className="font-extrabold text-[#111111] text-xs uppercase tracking-wider text-[#B89552]">
                     4. Account & Verification Metadata
                   </h4>
-                  <div className="space-y-1 text-gray-700">
-                    <div><span className="text-gray-400 font-bold">Account Email:</span> <span className="font-mono font-bold text-gray-900">{(viewingCandidate.lifestyle_details as any)?.email || viewingCandidate.display_name}</span></div>
+                  <div className="space-y-1.5 text-gray-700">
+                    <div><span className="text-gray-400 font-bold">Account Email:</span> <span className="font-mono font-bold text-gray-900">{(viewingCandidate.lifestyle_details as any)?.email || 'Not provided'}</span></div>
+                    {(viewingCandidate.lifestyle_details as any)?.phone && (
+                      <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+                        <div>
+                          <span className="text-gray-400 font-bold">Mobile Phone:</span>{' '}
+                          <span className="font-mono font-bold text-emerald-700">{(viewingCandidate.lifestyle_details as any)?.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href={`tel:${String((viewingCandidate.lifestyle_details as any)?.phone).replace(/\s+/g, '')}`}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 hover:bg-emerald-100 transition"
+                          >
+                            Call
+                          </a>
+                          <a
+                            href={`https://wa.me/${String((viewingCandidate.lifestyle_details as any)?.phone).replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(viewingCandidate.display_name)},%20this%20is%20Mannat%20Matrimony%20regarding%20your%20profile.`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold hover:bg-emerald-700 transition"
+                          >
+                            WhatsApp
+                          </a>
+                        </div>
+                      </div>
+                    )}
                     <div><span className="text-gray-400 font-bold">Profile Database ID:</span> <span className="font-mono text-[10px] text-gray-500">{viewingCandidate.id}</span></div>
                     <div><span className="text-gray-400 font-bold">Compatibility Score:</span> <span className="font-bold text-emerald-700">{viewingCandidate.compatibility_score || 95}% (Gun Milan: {viewingCandidate.gun_milan_score || 32}/36)</span></div>
                   </div>

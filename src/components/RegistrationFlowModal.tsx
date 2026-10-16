@@ -369,6 +369,17 @@ export const RegistrationFlowModal: React.FC<RegistrationFlowModalProps> = ({
           marriage_expectations: 'Mutual respect, shared goals, and traditional family harmony',
           gender: gender,
           user_id: session.id,
+          email: cleanEmail,
+          phone: `${countryCode} ${cleanPhone}`,
+          phone_number: cleanPhone,
+          phone_country_code: countryCode,
+          profile_for: profileFor,
+          birth_date: birthDate,
+          calculated_age: calculatedAge,
+          lead_source: 'Web 5-Step Registration Modal',
+          registered_at: new Date().toISOString(),
+          is_lead: true,
+          status: 'pending'
         },
         horoscope: {
           rashi: 'Simha (Leo)',

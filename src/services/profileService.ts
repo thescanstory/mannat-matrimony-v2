@@ -260,9 +260,19 @@ export const profileService = {
     // Save to Supabase with valid UUID and schema columns
     if (isSupabaseConfigured()) {
       try {
+        // Validate user_id: Only attach if the user has an active authenticated Supabase Auth account.
+        // If not in auth.users, user_id MUST be null to satisfy the foreign key constraint.
+        let validAuthUserId: string | null = null;
+        try {
+          const { data: authData } = await supabase.auth.getUser();
+          if (authData?.user && authData.user.id === newProfile.user_id) {
+            validAuthUserId = authData.user.id;
+          }
+        } catch {}
+
         const payload = {
           id: newProfile.id,
-          user_id: isValidUUID(newProfile.user_id) ? newProfile.user_id : null,
+          user_id: validAuthUserId,
           display_name: (newProfile.display_name || '').trim() || 'Member',
           age: Number(newProfile.age) || 25,
           height: (newProfile.height || "5'8\"").trim(),
@@ -285,16 +295,29 @@ export const profileService = {
           is_unlocked: Boolean(newProfile.is_unlocked),
           lifestyle_details: {
             ...(newProfile.lifestyle_details || {}),
-            user_id: newProfile.user_id,
-            diet: newProfile.diet || '',
-            salary_bracket: newProfile.salary_bracket || '',
-            family_background: newProfile.family_background || '',
-            marriage_expectations: newProfile.marriage_expectations || '',
-            gender: newProfile.gender || 'male'
+            diet: newProfile.lifestyle_details?.diet || newProfile.diet || '',
+            salary_bracket: newProfile.lifestyle_details?.salary_bracket || newProfile.salary_bracket || '',
+            family_background: newProfile.lifestyle_details?.family_background || newProfile.family_background || '',
+            marriage_expectations: newProfile.lifestyle_details?.marriage_expectations || newProfile.marriage_expectations || '',
+            gender: newProfile.lifestyle_details?.gender || newProfile.gender || 'male',
+            email: (newProfile.lifestyle_details as any)?.email || (newProfile as any).email || '',
+            phone: (newProfile.lifestyle_details as any)?.phone || (newProfile as any).phone || '',
+            profile_for: (newProfile.lifestyle_details as any)?.profile_for || newProfile.managed_by || 'Myself',
+            is_lead: (newProfile.lifestyle_details as any)?.is_lead !== undefined ? (newProfile.lifestyle_details as any).is_lead : true,
+            lead_source: (newProfile.lifestyle_details as any)?.lead_source || 'Website Registration',
+            registered_at: (newProfile.lifestyle_details as any)?.registered_at || new Date().toISOString()
           },
           horoscope: newProfile.horoscope || {}
         };
-        const { error: upsertErr } = await supabase.from('profiles').upsert([payload]);
+
+        let { error: upsertErr } = await supabase.from('profiles').upsert([payload]);
+        if (upsertErr && (upsertErr.message?.includes('foreign key') || (upsertErr as any).code === '23503' || payload.user_id !== null)) {
+          console.warn('Foreign key on user_id detected, retrying with user_id: null for anonymous lead...');
+          payload.user_id = null;
+          const retryRes = await supabase.from('profiles').upsert([payload]);
+          upsertErr = retryRes.error;
+        }
+
         if (upsertErr) {
           console.error('Supabase profile upsert error:', upsertErr);
         } else {

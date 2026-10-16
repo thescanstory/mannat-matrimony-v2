@@ -49,7 +49,7 @@ export const vipConsultationService = {
     // 2. Save in Supabase cloud if configured
     if (isSupabaseConfigured()) {
       try {
-        await supabase.from('vip_consultations').insert([{
+        const { error } = await supabase.from('vip_consultations').insert([{
           id: leadId,
           profile_for: lead.profile_for,
           gender: lead.gender,
@@ -62,9 +62,27 @@ export const vipConsultationService = {
           created_at: new Date().toISOString(),
           status: 'pending'
         }]).select();
+
+        if (error) {
+          // If vip_consultations table is not present, persist to callback_requests which is guaranteed to exist
+          console.warn('vip_consultations unavailable, saving into callback_requests:', error.message);
+          await supabase.from('callback_requests').insert([{
+            status: 'pending',
+            google_meet_url: JSON.stringify({
+              lead_id: leadId,
+              name: lead.full_name,
+              phone: `${lead.phone_country_code} ${lead.phone_number}`.trim(),
+              email: lead.email,
+              profile_for: lead.profile_for,
+              city: lead.city,
+              source: lead.source_cta || 'Website Lead',
+              notes: lead.notes || ''
+            }),
+            created_at: new Date().toISOString()
+          }]);
+        }
       } catch (err) {
-        // Fallback gracefully if table hasn't been created yet
-        console.log('Supabase VIP consultation logged locally:', err);
+        console.log('Supabase VIP consultation fallback logged:', err);
       }
     }
 
